@@ -151,13 +151,34 @@
       ${crumb([{ label: "Home", to: "#/home" }])}
       <div class="page-header">
         <h1>Dashboard</h1>
-        <p class="lede">Official rosters — academic year ${esc(BBC_DATA.school.academicYear)}. Browse by department or open the full directories.</p>
+        <p class="lede">Official rosters — academic year ${esc(BBC_DATA.school.academicYear)}.</p>
       </div>
       <div class="stats-row">
         <div class="stat-card"><div class="label">Year groups</div><div class="value"><em>${stats.levels}</em></div></div>
         <div class="stat-card"><div class="label">Classes</div><div class="value">${stats.classes}</div></div>
         <div class="stat-card"><div class="label">Students</div><div class="value">${stats.students.toLocaleString("en-US")}</div></div>
         <div class="stat-card"><div class="label">Teachers listed</div><div class="value">${stats.teachers}</div></div>
+      </div>
+      <div class="dir-home-grid" style="margin-bottom:1.5rem">
+        <button type="button" class="dir-home-card" data-nav="#/teachers">
+          <div class="dir-home-icon" aria-hidden="true">${icons.users}</div>
+          <div>
+            <h3>Our teachers</h3>
+            <p>${stats.teachers} teachers — filter by name, ID, department, subject, or class.</p>
+          </div>
+          <span class="cta">Browse teachers →</span>
+        </button>
+        <button type="button" class="dir-home-card" data-nav="#/students">
+          <div class="dir-home-icon" aria-hidden="true">${icons.users}</div>
+          <div>
+            <h3>Our students</h3>
+            <p>${stats.students.toLocaleString("en-US")} students — filter by name, ID, department, year, class, or gender.</p>
+          </div>
+          <span class="cta">Browse students →</span>
+        </button>
+      </div>
+      <div class="page-header" style="margin-bottom:0.85rem">
+        <h2 class="section-title" style="margin:0">Departments</h2>
       </div>
       <div class="dept-grid">
         ${BBC_DATA.departments
@@ -176,28 +197,6 @@
         `
           )
           .join("")}
-      </div>
-      <div class="page-header" style="margin-top:2rem;margin-bottom:0.85rem">
-        <h2 class="section-title" style="margin:0">Directories</h2>
-        <p class="lede" style="margin-top:0.35rem">Search and filter the full teacher and student lists.</p>
-      </div>
-      <div class="dir-home-grid">
-        <button type="button" class="dir-home-card" data-nav="#/teachers">
-          <div class="dir-home-icon" aria-hidden="true">${icons.users}</div>
-          <div>
-            <h3>Our teachers</h3>
-            <p>${stats.teachers} teachers — filter by name, ID, department, subject, or class.</p>
-          </div>
-          <span class="cta">Browse teachers →</span>
-        </button>
-        <button type="button" class="dir-home-card" data-nav="#/students">
-          <div class="dir-home-icon" aria-hidden="true">${icons.users}</div>
-          <div>
-            <h3>Our students</h3>
-            <p>${stats.students.toLocaleString("en-US")} students — filter by name, ID, department, year, class, or gender.</p>
-          </div>
-          <span class="cta">Browse students →</span>
-        </button>
       </div>
     `);
   }
