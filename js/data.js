@@ -96,6 +96,53 @@ const BBC_DATA = (() => {
     };
   }
 
+  function listAllStudents() {
+    const results = [];
+    for (const dept of departments) {
+      for (const level of dept.levels) {
+        for (const cls of level.classes) {
+          for (const s of cls.students || []) {
+            results.push({ student: s, dept, level, cls });
+          }
+        }
+      }
+    }
+    return results;
+  }
+
+  function listAllTeachers() {
+    return (D.teachers || []).map((t) => ({
+      teacher: t,
+      classes: (t.classIds || []).map(findClassById).filter(Boolean),
+    }));
+  }
+
+  function listClassOptions() {
+    const opts = [];
+    for (const dept of departments) {
+      for (const level of dept.levels) {
+        for (const cls of level.classes) {
+          opts.push({
+            id: cls.id,
+            code: cls.code,
+            label: `${dept.label} · ${cls.code}`,
+            departmentId: dept.id,
+            levelId: level.id,
+          });
+        }
+      }
+    }
+    return opts;
+  }
+
+  function listModules() {
+    const set = new Set();
+    for (const t of D.teachers || []) {
+      for (const m of t.modules || []) set.add(m);
+    }
+    return [...set].sort((a, b) => a.localeCompare(b));
+  }
+
   return {
     school: D.school,
     departments,
@@ -110,6 +157,10 @@ const BBC_DATA = (() => {
     getStudent,
     searchStudents,
     getClassLabel,
+    listAllStudents,
+    listAllTeachers,
+    listClassOptions,
+    listModules,
     stats,
   };
 })();

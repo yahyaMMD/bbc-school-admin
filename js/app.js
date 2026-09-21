@@ -97,7 +97,7 @@
             </div>
           </div>
           <form class="top-search" id="global-search" autocomplete="off">
-            <input type="search" name="q" placeholder="Search student…" value="${esc(state.searchQuery)}" />
+            <input type="search" name="q" placeholder="Search student or go to directories…" value="${esc(state.searchQuery)}" />
             <button type="submit" class="btn btn-primary btn-search" aria-label="Search">${icons.search}</button>
           </form>
         </header>
@@ -148,10 +148,10 @@
   function viewHome() {
     const stats = BBC_DATA.stats();
     return shell(`
-      ${crumb([{ label: "Departments", to: "#/home" }])}
+      ${crumb([{ label: "Home", to: "#/home" }])}
       <div class="page-header">
         <h1>Dashboard</h1>
-        <p class="lede">Official student rosters — academic year ${esc(BBC_DATA.school.academicYear)}. Select a department.</p>
+        <p class="lede">Official rosters — academic year ${esc(BBC_DATA.school.academicYear)}. Browse by department or open the full directories.</p>
       </div>
       <div class="stats-row">
         <div class="stat-card"><div class="label">Year groups</div><div class="value"><em>${stats.levels}</em></div></div>
@@ -176,6 +176,28 @@
         `
           )
           .join("")}
+      </div>
+      <div class="page-header" style="margin-top:2rem;margin-bottom:0.85rem">
+        <h2 class="section-title" style="margin:0">Directories</h2>
+        <p class="lede" style="margin-top:0.35rem">Search and filter the full teacher and student lists.</p>
+      </div>
+      <div class="dir-home-grid">
+        <button type="button" class="dir-home-card" data-nav="#/teachers">
+          <div class="dir-home-icon" aria-hidden="true">${icons.users}</div>
+          <div>
+            <h3>Our teachers</h3>
+            <p>${stats.teachers} teachers — filter by name, ID, department, subject, or class.</p>
+          </div>
+          <span class="cta">Browse teachers →</span>
+        </button>
+        <button type="button" class="dir-home-card" data-nav="#/students">
+          <div class="dir-home-icon" aria-hidden="true">${icons.users}</div>
+          <div>
+            <h3>Our students</h3>
+            <p>${stats.students.toLocaleString("en-US")} students — filter by name, ID, department, year, class, or gender.</p>
+          </div>
+          <span class="cta">Browse students →</span>
+        </button>
       </div>
     `);
   }
@@ -431,39 +453,47 @@
       </div>`;
   }
 
-  function viewStudent(studentId) {
+  function viewStudent(studentId, from) {
     const found = BBC_DATA.getStudent(studentId);
     if (!found) return viewNotFound();
     const { student: s, dept, level, cls } = found;
     const short = DEPT_SHORT[dept.id] || dept.name;
-    const back = `#/dept/${dept.id}/level/${level.id}/class/${cls.id}`;
+    const classBack = `#/dept/${dept.id}/level/${level.id}/class/${cls.id}`;
+    const back = from || classBack;
     const hasPrev = !!s.previousYearDetails;
 
     return shell(`
       ${crumb([
-        { label: "Departments", to: "#/home" },
-        { label: short, to: `#/dept/${dept.id}` },
-        { label: level.name, to: `#/dept/${dept.id}/level/${level.id}` },
-        { label: cls.name, to: back },
+        { label: "Home", to: "#/home" },
+        ...(from && from.includes("/students")
+          ? [{ label: "Students", to: "#/students" }]
+          : [
+              { label: short, to: `#/dept/${dept.id}` },
+              { label: level.name, to: `#/dept/${dept.id}/level/${level.id}` },
+              { label: cls.name, to: classBack },
+            ]),
         { label: s.fullName || "Student", to: `#/student/${s.id}` },
       ])}
       <div class="page-header" style="margin-bottom:1rem">
-        <button type="button" class="btn btn-ghost" data-nav="${esc(back)}" style="margin-bottom:0.75rem;padding-left:0">← Back to class</button>
+        <button type="button" class="btn btn-ghost" data-nav="${esc(back)}" style="margin-bottom:0.75rem;padding-left:0">← Back</button>
       </div>
       <div class="teacher-hero">
         <div class="avatar avatar-lg">${esc(initials(s.firstName || s.fullName, s.lastName || ""))}</div>
         <div>
-          <h1>${esc(s.fullName || `${s.lastName} ${s.firstName}`)}</h1>
-          <p class="role">Student · ${esc(cls.name)} (${esc(cls.code)}) · ${esc(level.name)}</p>
+          <h1 dir="auto">${esc(s.fullName || `${s.lastName} ${s.firstName}`)}</h1>
+          <p class="role">Student · ${esc(cls.code)} · ${esc(level.name)} · ${esc(short)}</p>
         </div>
       </div>
       <div class="facts-grid">
-        <div class="fact-card"><div class="k">Last name</div><div class="v">${esc(s.lastName || "—")}</div></div>
-        <div class="fact-card"><div class="k">First name</div><div class="v">${esc(s.firstName || "—")}</div></div>
+        <div class="fact-card"><div class="k">Last name</div><div class="v" dir="auto">${esc(s.lastName || "—")}</div></div>
+        <div class="fact-card"><div class="k">First name</div><div class="v" dir="auto">${esc(s.firstName || "—")}</div></div>
         <div class="fact-card"><div class="k">Date of birth</div><div class="v">${esc(s.dateOfBirth || "Not on file")}</div></div>
         <div class="fact-card"><div class="k">Gender</div><div class="v">${esc(s.gender || "—")}</div></div>
         <div class="fact-card"><div class="k">Roster #</div><div class="v">${s.number ?? "—"}</div></div>
         <div class="fact-card"><div class="k">Department</div><div class="v">${esc(dept.name)}</div></div>
+        <div class="fact-card"><div class="k">Year</div><div class="v">${esc(level.name)}</div></div>
+        <div class="fact-card"><div class="k">Class</div><div class="v"><button type="button" class="link-btn" data-nav="${esc(classBack)}">${esc(cls.code)} · ${esc(cls.name)}</button></div></div>
+        <div class="fact-card"><div class="k">Student ID</div><div class="v">${esc(s.id)}</div></div>
       </div>
       ${
         s.notes
@@ -533,18 +563,225 @@
     `);
   }
 
-  function viewTeacher(teacherId, from) {
-    const t = BBC_DATA.getTeacher(teacherId);
-    if (!t) return viewNotFound();
-    const back = from || "#/home";
-    const classes = (t.classIds || [])
-      .map((cid) => BBC_DATA.getClassLabel(cid))
-      .filter(Boolean);
+  function viewTeachersDirectory(params) {
+    const q = (params.get("q") || "").trim().toLowerCase();
+    const dept = params.get("dept") || "";
+    const module = params.get("module") || "";
+    const classId = params.get("class") || "";
+    const modules = BBC_DATA.listModules();
+    const classOpts = BBC_DATA.listClassOptions();
+    const all = BBC_DATA.listAllTeachers();
+
+    const filtered = all.filter(({ teacher: t, classes }) => {
+      if (dept && !(t.departments || []).includes(dept)) return false;
+      if (module && !(t.modules || []).includes(module)) return false;
+      if (classId && !(t.classIds || []).includes(classId)) return false;
+      if (q) {
+        const hay = `${t.id} ${t.firstName || ""} ${t.lastName || ""} ${teacherLabel(t)} ${(t.phone || "")} ${(t.modules || []).join(" ")}`.toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    });
+
+    filtered.sort((a, b) => teacherLabel(a.teacher).localeCompare(teacherLabel(b.teacher), "ar"));
 
     return shell(`
       ${crumb([
-        { label: "Departments", to: "#/home" },
-        { label: "Teacher", to: `#/teacher/${t.id}` },
+        { label: "Home", to: "#/home" },
+        { label: "Teachers", to: "#/teachers" },
+      ])}
+      <div class="page-header">
+        <h1>Our teachers</h1>
+        <p class="lede">${filtered.length} of ${all.length} teachers</p>
+      </div>
+      <form class="filter-panel" id="dir-filter" data-dir="teachers" autocomplete="off">
+        <div class="filter-grid">
+          <label class="filter-field">
+            <span>Name / ID / phone</span>
+            <input type="search" name="q" value="${esc(params.get("q") || "")}" placeholder="Search…" />
+          </label>
+          <label class="filter-field">
+            <span>Department</span>
+            <select name="dept">
+              <option value="">All</option>
+              <option value="primary"${dept === "primary" ? " selected" : ""}>Primary</option>
+              <option value="middle"${dept === "middle" ? " selected" : ""}>Middle School</option>
+            </select>
+          </label>
+          <label class="filter-field">
+            <span>Subject</span>
+            <select name="module">
+              <option value="">All</option>
+              ${modules.map((m) => `<option value="${esc(m)}"${module === m ? " selected" : ""}>${esc(m)}</option>`).join("")}
+            </select>
+          </label>
+          <label class="filter-field">
+            <span>Class</span>
+            <select name="class">
+              <option value="">All</option>
+              ${classOpts.map((o) => `<option value="${esc(o.id)}"${classId === o.id ? " selected" : ""}>${esc(o.label)}</option>`).join("")}
+            </select>
+          </label>
+        </div>
+        <div class="filter-actions">
+          <button type="submit" class="btn btn-primary">Apply filters</button>
+          <button type="button" class="btn btn-ghost" data-nav="#/teachers">Clear</button>
+        </div>
+      </form>
+      <div class="dir-list" id="dir-list">
+        ${
+          filtered.length
+            ? filtered
+                .map(({ teacher: t, classes }) => {
+                  const depts = (t.departments || []).map((d) => DEPT_SHORT[d] || d).join(" · ");
+                  const classCodes = classes.map((x) => x.cls.code).join(", ") || "—";
+                  return `
+              <button type="button" class="dir-card" data-nav="#/teacher/${t.id}?from=${encodeURIComponent("#/teachers")}">
+                <div class="avatar">${esc(initials(t.firstName, t.lastName))}</div>
+                <div class="dir-card-body">
+                  <strong dir="auto">${esc(teacherLabel(t))}</strong>
+                  <span class="dir-meta">${esc(depts || "—")} · ${esc((t.modules || []).join(", ") || "—")}</span>
+                  <span class="dir-meta hide-sm">ID ${esc(t.id)} · Classes: ${esc(classCodes)}</span>
+                  <span class="dir-meta">${t.phone ? esc(t.phone) : "No phone"}</span>
+                </div>
+                <span class="chev">→</span>
+              </button>`;
+                })
+                .join("")
+            : `<div class="empty-state"><h2>No teachers match</h2><p>Try clearing some filters.</p></div>`
+        }
+      </div>
+    `);
+  }
+
+  function viewStudentsDirectory(params) {
+    const q = (params.get("q") || "").trim().toLowerCase();
+    const dept = params.get("dept") || "";
+    const classId = params.get("class") || "";
+    const gender = params.get("gender") || "";
+    const year = params.get("year") || "";
+    const classOpts = BBC_DATA.listClassOptions().filter((o) => !dept || o.departmentId === dept);
+    const all = BBC_DATA.listAllStudents();
+
+    const yearOptions = [];
+    for (const d of BBC_DATA.departments) {
+      for (const l of d.levels) {
+        yearOptions.push({
+          value: `${d.id}:${l.id}`,
+          label: `${DEPT_SHORT[d.id] || d.name} · ${l.name}`,
+        });
+      }
+    }
+
+    const filtered = all.filter(({ student: s, dept: d, level, cls }) => {
+      if (dept && d.id !== dept) return false;
+      if (classId && cls.id !== classId) return false;
+      if (gender && (s.gender || "") !== gender) return false;
+      if (year) {
+        const [yd, yl] = year.split(":");
+        if (d.id !== yd || String(level.id) !== String(yl)) return false;
+      }
+      if (q) {
+        const hay = `${s.id} ${s.fullName || ""} ${s.firstName || ""} ${s.lastName || ""} ${cls.code}`.toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    });
+
+    filtered.sort((a, b) =>
+      (a.student.fullName || "").localeCompare(b.student.fullName || "", "ar")
+    );
+
+    return shell(`
+      ${crumb([
+        { label: "Home", to: "#/home" },
+        { label: "Students", to: "#/students" },
+      ])}
+      <div class="page-header">
+        <h1>Our students</h1>
+        <p class="lede">${filtered.length} of ${all.length} students</p>
+      </div>
+      <form class="filter-panel" id="dir-filter" data-dir="students" autocomplete="off">
+        <div class="filter-grid">
+          <label class="filter-field">
+            <span>Name / ID</span>
+            <input type="search" name="q" value="${esc(params.get("q") || "")}" placeholder="Search…" />
+          </label>
+          <label class="filter-field">
+            <span>Department</span>
+            <select name="dept">
+              <option value="">All</option>
+              <option value="primary"${dept === "primary" ? " selected" : ""}>Primary</option>
+              <option value="middle"${dept === "middle" ? " selected" : ""}>Middle School</option>
+            </select>
+          </label>
+          <label class="filter-field">
+            <span>Year</span>
+            <select name="year">
+              <option value="">All</option>
+              ${yearOptions.map((o) => `<option value="${esc(o.value)}"${year === o.value ? " selected" : ""}>${esc(o.label)}</option>`).join("")}
+            </select>
+          </label>
+          <label class="filter-field">
+            <span>Class</span>
+            <select name="class">
+              <option value="">All</option>
+              ${classOpts.map((o) => `<option value="${esc(o.id)}"${classId === o.id ? " selected" : ""}>${esc(o.label)}</option>`).join("")}
+            </select>
+          </label>
+          <label class="filter-field">
+            <span>Gender</span>
+            <select name="gender">
+              <option value="">All</option>
+              <option value="Male"${gender === "Male" ? " selected" : ""}>Male</option>
+              <option value="Female"${gender === "Female" ? " selected" : ""}>Female</option>
+            </select>
+          </label>
+        </div>
+        <div class="filter-actions">
+          <button type="submit" class="btn btn-primary">Apply filters</button>
+          <button type="button" class="btn btn-ghost" data-nav="#/students">Clear</button>
+        </div>
+      </form>
+      <div class="dir-list" id="dir-list">
+        ${
+          filtered.length
+            ? filtered
+                .map(({ student: s, dept: d, level, cls }) => `
+              <button type="button" class="dir-card" data-nav="#/student/${s.id}?from=${encodeURIComponent("#/students")}">
+                <div class="avatar">${esc(initials(s.firstName || s.fullName, s.lastName || ""))}</div>
+                <div class="dir-card-body">
+                  <strong dir="auto">${esc(s.fullName || `${s.lastName} ${s.firstName}`)}</strong>
+                  <span class="dir-meta">${esc(DEPT_SHORT[d.id] || d.name)} · ${esc(level.name)} · ${esc(cls.code)}</span>
+                  <span class="dir-meta hide-sm">ID ${esc(s.id)}${s.dateOfBirth ? ` · DOB ${esc(s.dateOfBirth)}` : ""}</span>
+                  <span class="dir-meta">${esc(s.gender || "—")}</span>
+                </div>
+                <span class="chev">→</span>
+              </button>`)
+                .join("")
+            : `<div class="empty-state"><h2>No students match</h2><p>Try clearing some filters.</p></div>`
+        }
+      </div>
+    `);
+  }
+
+  function viewTeacher(teacherId, from) {
+    const t = BBC_DATA.getTeacher(teacherId);
+    if (!t) return viewNotFound();
+    const back = from || "#/teachers";
+    const classes = (t.classIds || [])
+      .map((cid) => BBC_DATA.getClassLabel(cid))
+      .filter(Boolean);
+    const depts = (t.departments || []).map((d) => {
+      const dept = BBC_DATA.getDepartment(d);
+      return dept ? dept.name : d;
+    });
+
+    return shell(`
+      ${crumb([
+        { label: "Home", to: "#/home" },
+        { label: "Teachers", to: "#/teachers" },
+        { label: teacherLabel(t), to: `#/teacher/${t.id}` },
       ])}
       <div class="page-header" style="margin-bottom:1rem">
         <button type="button" class="btn btn-ghost" data-nav="${esc(back)}" style="margin-bottom:0.75rem;padding-left:0">← Back</button>
@@ -552,23 +789,27 @@
       <div class="teacher-hero">
         <div class="avatar avatar-lg">${esc(initials(t.firstName, t.lastName))}</div>
         <div>
-          <h1>${esc(teacherLabel(t))}</h1>
-          <p class="role">Teacher · BBC School</p>
+          <h1 dir="auto">${esc(teacherLabel(t))}</h1>
+          <p class="role">Teacher · ${esc(depts.join(" · ") || "BBC School")}</p>
         </div>
       </div>
       <div class="facts-grid">
-        <div class="fact-card"><div class="k">First name</div><div class="v">${esc(dash(t.firstName))}</div></div>
-        <div class="fact-card"><div class="k">Last name</div><div class="v">${esc(dash(t.lastName))}</div></div>
+        <div class="fact-card"><div class="k">First name</div><div class="v" dir="auto">${esc(dash(t.firstName))}</div></div>
+        <div class="fact-card"><div class="k">Last name</div><div class="v" dir="auto">${esc(dash(t.lastName))}</div></div>
         <div class="fact-card"><div class="k">Phone</div><div class="v">${phoneWithWhatsApp(t.phone)}</div></div>
+        <div class="fact-card"><div class="k">Department</div><div class="v">${esc(depts.join(" · ") || "—")}</div></div>
         <div class="fact-card"><div class="k">Wilaya</div><div class="v">${esc(dash(t.wilaya))}</div></div>
         <div class="fact-card"><div class="k">Commune</div><div class="v">${esc(dash(t.commune))}</div></div>
         <div class="fact-card"><div class="k">ID</div><div class="v">${esc(t.id)}</div></div>
+        <div class="fact-card"><div class="k">Classes assigned</div><div class="v">${classes.length}</div></div>
       </div>
       <div class="detail-layout">
         <aside class="info-panel">
-          <div class="panel-label">Subjects</div>
+          <div class="panel-label">Subjects / modules</div>
           <div class="chip-row" style="margin-top:0.75rem">
-            ${(t.modules || []).map((m) => `<span class="chip">${esc(m)}</span>`).join("")}
+            ${(t.modules || []).length
+              ? (t.modules || []).map((m) => `<span class="chip">${esc(m)}</span>`).join("")
+              : `<span class="muted">None listed</span>`}
           </div>
         </aside>
         <section class="info-panel">
@@ -618,6 +859,9 @@
 
     if (parts.length === 0 || parts[0] === "home") return viewHome();
 
+    if (parts[0] === "teachers") return viewTeachersDirectory(params);
+    if (parts[0] === "students") return viewStudentsDirectory(params);
+
     if (parts[0] === "dept" && (parts[1] === "primary" || parts[1] === "middle")) {
       const deptId = parts[1];
       if (parts.length === 2) return viewLevels(deptId);
@@ -629,7 +873,9 @@
       }
     }
 
-    if (parts[0] === "student" && parts[1]) return viewStudent(parts[1]);
+    if (parts[0] === "student" && parts[1]) {
+      return viewStudent(parts[1], state.route.params.get("from"));
+    }
     if (parts[0] === "teacher" && parts[1]) {
       return viewTeacher(parts[1], state.route.params.get("from"));
     }
@@ -664,6 +910,27 @@
       state.searchQuery = String(q || "");
       go(`/search?q=${encodeURIComponent(state.searchQuery)}`);
     });
+
+    const dirFilter = document.getElementById("dir-filter");
+    if (dirFilter) {
+      const dir = dirFilter.getAttribute("data-dir") || "teachers";
+      dirFilter.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const fd = new FormData(dirFilter);
+        const qs = new URLSearchParams();
+        for (const [k, v] of fd.entries()) {
+          if (String(v).trim()) qs.set(k, String(v).trim());
+        }
+        const qstr = qs.toString();
+        go(qstr ? `/${dir}?${qstr}` : `/${dir}`);
+      });
+      // Live filter on select change for faster mobile use
+      dirFilter.querySelectorAll("select").forEach((sel) => {
+        sel.addEventListener("change", () => {
+          dirFilter.requestSubmit();
+        });
+      });
+    }
 
     const classSearch = document.getElementById("class-search");
     if (classSearch) {

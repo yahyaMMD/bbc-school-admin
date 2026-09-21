@@ -472,6 +472,182 @@ a {
   gap: 1.5rem;
 }
 
+/* ——— Home directories ——— */
+.dir-home-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.dir-home-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.85rem;
+  text-align: left;
+  border: 1px solid var(--line);
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.35rem;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+
+.dir-home-card:hover {
+  border-color: rgba(242, 101, 34, 0.4);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.dir-home-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: rgba(242, 101, 34, 0.12);
+  color: var(--orange-deep);
+}
+
+.dir-home-icon .icon-svg {
+  width: 22px;
+  height: 22px;
+}
+
+.dir-home-card h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.dir-home-card p {
+  margin: 0.35rem 0 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.dir-home-card .cta {
+  margin-top: auto;
+  padding-top: 0.5rem;
+  color: var(--orange-deep);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.filter-panel {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 1rem 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.filter-field span {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.filter-field input,
+.filter-field select {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xs);
+  padding: 0.65rem 0.75rem;
+  font: inherit;
+  background: var(--white);
+  color: var(--ink);
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.filter-field input:focus,
+.filter-field select:focus {
+  outline: 2px solid rgba(242, 101, 34, 0.35);
+  border-color: var(--orange);
+}
+
+.filter-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.85rem;
+}
+
+.filter-actions .btn-primary {
+  padding: 0.7rem 1.1rem;
+}
+
+.dir-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.dir-card {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  width: 100%;
+  text-align: left;
+  border: 1px solid var(--line);
+  background: var(--white);
+  border-radius: var(--radius-sm);
+  padding: 0.9rem 1rem;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.dir-card:hover {
+  border-color: rgba(242, 101, 34, 0.35);
+  box-shadow: var(--shadow-sm);
+}
+
+.dir-card-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.dir-card-body strong {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.02rem;
+}
+
+.dir-meta {
+  font-size: 0.82rem;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dir-card .chev {
+  color: var(--orange);
+  flex-shrink: 0;
+}
+
 .dept-card {
   position: relative;
   border: none;
@@ -1345,6 +1521,14 @@ a {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
 
+  .dir-home-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .stats-row,
   .facts-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1415,6 +1599,26 @@ a {
   .stats-row,
   .facts-grid {
     grid-template-columns: 1fr !important;
+  }
+
+  .filter-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-actions {
+    flex-direction: column;
+  }
+
+  .filter-actions .btn {
+    width: 100%;
+  }
+
+  .dir-card {
+    padding: 0.85rem 0.9rem;
+  }
+
+  .dir-meta {
+    white-space: normal;
   }
 
   .dept-card {
