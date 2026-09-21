@@ -82,7 +82,7 @@
         <header class="topbar">
           <div class="topbar-main">
             <button type="button" class="topbar-brand" data-nav="#/home" aria-label="Home">
-              <img src="assets/logo.png" alt="BBC School" width="44" height="44" />
+              <img src="assets/logo.png?v=2" alt="Quality Education Algeria" width="44" height="44" />
               <div class="topbar-brand-text">
                 <strong>${esc(school.name)}</strong>
                 <span class="hide-sm">Administration Portal</span>
@@ -125,7 +125,7 @@
       <div class="login-page">
         <div class="login-card">
           <div class="login-brand">
-            <img src="assets/logo.png" alt="BBC School" width="88" height="88" />
+            <img src="assets/logo.png?v=2" alt="Quality Education Algeria" width="88" height="88" />
             <div>
               <h1>BBC School</h1>
               <p>Administration access only — confidential information</p>

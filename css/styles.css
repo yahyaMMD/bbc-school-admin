@@ -118,7 +118,7 @@ a {
 .login-brand img {
   width: 88px;
   height: 88px;
-  border-radius: 20px;
+  border-radius: 50%;
   box-shadow: 0 8px 24px rgba(242, 101, 34, 0.35);
 }
 
@@ -267,7 +267,7 @@ a {
 .topbar-brand img {
   width: 44px;
   height: 44px;
-  border-radius: 12px;
+  border-radius: 50%;
   flex-shrink: 0;
 }
 
