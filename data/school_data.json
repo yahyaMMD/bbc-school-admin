@@ -909,6 +909,819 @@
       "classIds": [
         "P-Y5-C07"
       ]
+    },
+    {
+      "id": "T961B3455",
+      "firstName": "",
+      "lastName": "بلعروفي وليد",
+      "phone": "",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "Mathematics"
+      ],
+      "departments": [
+        "middle"
+      ],
+      "classIds": [
+        "M-Y4-C01",
+        "M-Y4-C02",
+        "M-Y4-C03",
+        "M-Y2-C05"
+      ]
+    },
+    {
+      "id": "TAC8FFEFA",
+      "firstName": "",
+      "lastName": "لطرش سليم",
+      "phone": "",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "Mathematics"
+      ],
+      "departments": [
+        "middle"
+      ],
+      "classIds": [
+        "M-Y2-C02",
+        "M-Y2-C03",
+        "M-Y2-C04",
+        "M-Y1-C02",
+        "M-Y1-C05"
+      ]
+    },
+    {
+      "id": "T494129A5",
+      "firstName": "",
+      "lastName": "بن عمارة أنيس",
+      "phone": "",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "Mathematics"
+      ],
+      "departments": [
+        "middle"
+      ],
+      "classIds": [
+        "M-Y3-C01",
+        "M-Y3-C02",
+        "M-Y3-C03",
+        "M-Y3-C04",
+        "M-Y3-C05"
+      ]
+    },
+    {
+      "id": "TEC9EB625",
+      "firstName": "",
+      "lastName": "جنين سعيد",
+      "phone": "",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "Mathematics"
+      ],
+      "departments": [
+        "middle"
+      ],
+      "classIds": [
+        "M-Y4-C04",
+        "M-Y1-C03",
+        "M-Y1-C04",
+        "M-Y1-C06",
+        "M-Y1-C07"
+      ]
+    },
+    {
+      "id": "T2CC77521",
+      "firstName": "",
+      "lastName": "صفصاف سفيان",
+      "phone": "",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "Mathematics"
+      ],
+      "departments": [
+        "middle"
+      ],
+      "classIds": [
+        "M-Y1-C01",
+        "M-Y2-C01"
+      ]
+    },
+    {
+      "id": "T4776F16B",
+      "firstName": "",
+      "lastName": "داود نعيمة",
+      "phone": "",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "Physical Sciences"
+      ],
+      "departments": [
+        "middle"
+      ],
+      "classIds": [
+        "M-Y4-C01",
+        "M-Y4-C04",
+        "M-Y2-C04",
+        "M-Y2-C05",
+        "M-Y2-C02"
+      ]
+    },
+    {
+      "id": "T1E301F43",
+      "firstName": "",
+      "lastName": "كلال محمد عمر",
+      "phone": "",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "Physical Sciences"
+      ],
+      "departments": [
+        "middle"
+      ],
+      "classIds": [
+        "M-Y4-C02",
+        "M-Y3-C01",
+        "M-Y3-C02",
+        "M-Y3-C03",
+        "M-Y3-C04",
+        "M-Y3-C05",
+        "M-Y2-C03",
+        "M-Y2-C01"
+      ]
+    },
+    {
+      "id": "T3892320C",
+      "firstName": "",
+      "lastName": "شنوف خديجة",
+      "phone": "",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "Natural Sciences"
+      ],
+      "departments": [
+        "middle"
+      ],
+      "classIds": [
+        "M-Y1-C02",
+        "M-Y1-C03",
+        "M-Y1-C04",
+        "M-Y1-C05"
+      ]
+    },
+    {
+      "id": "T07AA40FB",
+      "firstName": "",
+      "lastName": "دلاشي مليكة",
+      "phone": "",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "Natural Sciences"
+      ],
+      "departments": [
+        "middle"
+      ],
+      "classIds": [
+        "M-Y4-C03",
+        "M-Y1-C01",
+        "M-Y1-C06",
+        "M-Y1-C07"
+      ]
+    },
+    {
+      "id": "TC20594A9",
+      "firstName": "",
+      "lastName": "بوليان هاجر",
+      "phone": "",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "Natural Sciences"
+      ],
+      "departments": [
+        "middle"
+      ],
+      "classIds": [
+        "M-Y4-C04",
+        "M-Y2-C01",
+        "M-Y2-C03",
+        "M-Y2-C04",
+        "M-Y2-C02"
+      ]
+    },
+    {
+      "id": "TD7C1D464",
+      "firstName": "",
+      "lastName": "بن منصور عبد الرحمان",
+      "phone": "",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "Natural Sciences"
+      ],
+      "departments": [
+        "middle"
+      ],
+      "classIds": [
+        "M-Y4-C01",
+        "M-Y1-C06"
+      ]
+    },
+    {
+      "id": "TC6274AF0",
+      "firstName": "",
+      "lastName": "عون الله سامية",
+      "phone": "",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "Natural Sciences"
+      ],
+      "departments": [
+        "middle"
+      ],
+      "classIds": [
+        "M-Y4-C03",
+        "M-Y1-C01",
+        "M-Y1-C02",
+        "M-Y1-C03",
+        "M-Y1-C04",
+        "M-Y1-C05"
+      ]
+    },
+    {
+      "id": "T47BDD3CE",
+      "firstName": "",
+      "lastName": "غوتي نورة",
+      "phone": "",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "Natural Sciences"
+      ],
+      "departments": [
+        "middle"
+      ],
+      "classIds": [
+        "M-Y4-C02",
+        "M-Y3-C04",
+        "M-Y3-C05"
+      ]
+    },
+    {
+      "id": "TAD4A54A8",
+      "firstName": "",
+      "lastName": "صبرينة شرفاوي",
+      "phone": "",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "Arabic"
+      ],
+      "departments": [
+        "middle"
+      ],
+      "classIds": [
+        "M-Y2-C05",
+        "M-Y3-C02"
+      ]
+    },
+    {
+      "id": "T198DD455",
+      "firstName": "",
+      "lastName": "روابحي عبد المالك",
+      "phone": "",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "Arabic"
+      ],
+      "departments": [
+        "middle"
+      ],
+      "classIds": [
+        "M-Y3-C01",
+        "M-Y3-C03"
+      ]
+    },
+    {
+      "id": "T62B9246F",
+      "firstName": "",
+      "lastName": "طوطاوي محمد أمين",
+      "phone": "",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "Arabic",
+        "Islamic Education"
+      ],
+      "departments": [
+        "middle"
+      ],
+      "classIds": [
+        "M-Y4-C02",
+        "M-Y3-C05",
+        "M-Y3-C02",
+        "M-Y3-C03"
+      ]
+    },
+    {
+      "id": "T18CB6C15",
+      "firstName": "",
+      "lastName": "ديكماش كوثر",
+      "phone": "",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "Arabic",
+        "Islamic Education"
+      ],
+      "departments": [
+        "middle"
+      ],
+      "classIds": [
+        "M-Y2-C03",
+        "M-Y2-C04",
+        "M-Y2-C02",
+        "M-Y1-C06"
+      ]
+    },
+    {
+      "id": "TF81CFCE5",
+      "firstName": "",
+      "lastName": "شمون مريم",
+      "phone": "",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "Arabic"
+      ],
+      "departments": [
+        "middle"
+      ],
+      "classIds": [
+        "M-Y1-C01",
+        "M-Y1-C02",
+        "M-Y2-C01"
+      ]
+    },
+    {
+      "id": "TE14B1D9C",
+      "firstName": "",
+      "lastName": "سامر زليخة",
+      "phone": "",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "Arabic",
+        "Islamic Education"
+      ],
+      "departments": [
+        "middle"
+      ],
+      "classIds": [
+        "M-Y4-C01",
+        "M-Y4-C04",
+        "M-Y1-C01",
+        "M-Y1-C02"
+      ]
+    },
+    {
+      "id": "T646A5C13",
+      "firstName": "",
+      "lastName": "ساعد حليمة",
+      "phone": "",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "Arabic",
+        "Islamic Education"
+      ],
+      "departments": [
+        "middle"
+      ],
+      "classIds": [
+        "M-Y4-C03",
+        "M-Y3-C04",
+        "M-Y2-C01"
+      ]
+    },
+    {
+      "id": "T404735BB",
+      "firstName": "",
+      "lastName": "زندي أحلام",
+      "phone": "",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "Arabic",
+        "Islamic Education"
+      ],
+      "departments": [
+        "middle"
+      ],
+      "classIds": [
+        "M-Y2-C05",
+        "M-Y1-C04",
+        "M-Y1-C05",
+        "M-Y1-C03"
+      ]
+    },
+    {
+      "id": "T8BCD3C77",
+      "firstName": "",
+      "lastName": "برغوتي لينة",
+      "phone": "",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "English",
+        "Islamic Education"
+      ],
+      "departments": [
+        "middle"
+      ],
+      "classIds": [
+        "M-Y1-C07",
+        "M-Y3-C01"
+      ]
+    },
+    {
+      "id": "TC79492DE",
+      "firstName": "",
+      "lastName": "آيت عمر أسامة",
+      "phone": "",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "English"
+      ],
+      "departments": [
+        "middle"
+      ],
+      "classIds": [
+        "M-Y4-C01",
+        "M-Y3-C02",
+        "M-Y3-C03",
+        "M-Y3-C04"
+      ]
+    },
+    {
+      "id": "T157FBAF6",
+      "firstName": "",
+      "lastName": "زيدان نجاة",
+      "phone": "",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "English"
+      ],
+      "departments": [
+        "middle"
+      ],
+      "classIds": [
+        "M-Y4-C02",
+        "M-Y4-C03",
+        "M-Y1-C05",
+        "M-Y1-C07"
+      ]
+    },
+    {
+      "id": "TE18CACA1",
+      "firstName": "",
+      "lastName": "العباسي كمال",
+      "phone": "",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "English"
+      ],
+      "departments": [
+        "middle"
+      ],
+      "classIds": [
+        "M-Y4-C04",
+        "M-Y2-C02",
+        "M-Y2-C03",
+        "M-Y2-C04"
+      ]
+    },
+    {
+      "id": "TD5F4E8BA",
+      "firstName": "",
+      "lastName": "حمدان فارس",
+      "phone": "",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "English"
+      ],
+      "departments": [
+        "middle"
+      ],
+      "classIds": [
+        "M-Y1-C01",
+        "M-Y2-C01"
+      ]
+    },
+    {
+      "id": "TC973AA6E",
+      "firstName": "",
+      "lastName": "شتال خديجة",
+      "phone": "",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "English",
+        "Activity"
+      ],
+      "departments": [
+        "middle"
+      ],
+      "classIds": [
+        "M-Y2-C05",
+        "M-Y3-C01",
+        "M-Y3-C02",
+        "M-Y3-C03",
+        "M-Y3-C04",
+        "M-Y3-C05"
+      ]
+    },
+    {
+      "id": "TBC0D8A29",
+      "firstName": "",
+      "lastName": "نجاري حكيمة",
+      "phone": "",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "French"
+      ],
+      "departments": [
+        "middle"
+      ],
+      "classIds": [
+        "M-Y3-C05",
+        "M-Y3-C01",
+        "M-Y1-C02",
+        "M-Y1-C06"
+      ]
+    },
+    {
+      "id": "T5D53BC2D",
+      "firstName": "",
+      "lastName": "خادم ريان",
+      "phone": "",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "French"
+      ],
+      "departments": [
+        "middle"
+      ],
+      "classIds": [
+        "M-Y1-C06",
+        "M-Y1-C04"
+      ]
+    },
+    {
+      "id": "TEE7441B7",
+      "firstName": "",
+      "lastName": "بن دكون نجاة",
+      "phone": "",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "French"
+      ],
+      "departments": [
+        "middle"
+      ],
+      "classIds": [
+        "M-Y4-C03",
+        "M-Y4-C04",
+        "M-Y3-C02",
+        "M-Y3-C04",
+        "M-Y3-C05"
+      ]
+    },
+    {
+      "id": "T7AB840AE",
+      "firstName": "",
+      "lastName": "قاسي سميرة",
+      "phone": "",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "French"
+      ],
+      "departments": [
+        "middle"
+      ],
+      "classIds": [
+        "M-Y1-C02",
+        "M-Y1-C04",
+        "M-Y1-C07",
+        "M-Y3-C01"
+      ]
+    },
+    {
+      "id": "T2FE8DB3C",
+      "firstName": "",
+      "lastName": "دزيري فطومة",
+      "phone": "",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "French"
+      ],
+      "departments": [
+        "middle"
+      ],
+      "classIds": [
+        "M-Y4-C01",
+        "M-Y4-C02",
+        "M-Y2-C03"
+      ]
+    },
+    {
+      "id": "T20318AF8",
+      "firstName": "",
+      "lastName": "مالكي أسماء",
+      "phone": "",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "French"
+      ],
+      "departments": [
+        "middle"
+      ],
+      "classIds": [
+        "M-Y2-C03",
+        "M-Y2-C04",
+        "M-Y2-C05",
+        "M-Y1-C01",
+        "M-Y1-C05",
+        "M-Y1-C06"
+      ]
+    },
+    {
+      "id": "TDE58BABD",
+      "firstName": "",
+      "lastName": "دادو لينة",
+      "phone": "",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "French"
+      ],
+      "departments": [
+        "middle"
+      ],
+      "classIds": [
+        "M-Y1-C03",
+        "M-Y2-C01",
+        "M-Y2-C02"
+      ]
+    },
+    {
+      "id": "T73E7A218",
+      "firstName": "",
+      "lastName": "خلفة صلاح الدين",
+      "phone": "",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "Social Studies"
+      ],
+      "departments": [
+        "middle"
+      ],
+      "classIds": [
+        "M-Y4-C04",
+        "M-Y2-C02",
+        "M-Y2-C05"
+      ]
+    },
+    {
+      "id": "TEDCBBFBA",
+      "firstName": "",
+      "lastName": "حشاني أحمد",
+      "phone": "",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "Social Studies"
+      ],
+      "departments": [
+        "middle"
+      ],
+      "classIds": [
+        "M-Y4-C01",
+        "M-Y4-C02",
+        "M-Y4-C03",
+        "M-Y3-C04",
+        "M-Y3-C05"
+      ]
+    },
+    {
+      "id": "TA370C57B",
+      "firstName": "",
+      "lastName": "بن شريف عبد القادر",
+      "phone": "",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "Physical Education"
+      ],
+      "departments": [
+        "middle"
+      ],
+      "classIds": [
+        "M-Y2-C01",
+        "M-Y2-C04",
+        "M-Y1-C02",
+        "M-Y1-C05",
+        "M-Y1-C07",
+        "M-Y2-C03"
+      ]
+    },
+    {
+      "id": "TD5804BB7",
+      "firstName": "",
+      "lastName": "لويزة بلعيد",
+      "phone": "",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "Physical Education"
+      ],
+      "departments": [
+        "middle"
+      ],
+      "classIds": [
+        "M-Y3-C02",
+        "M-Y3-C03",
+        "M-Y1-C01",
+        "M-Y1-C03",
+        "M-Y1-C06",
+        "M-Y1-C04"
+      ]
+    },
+    {
+      "id": "TE2A9B340",
+      "firstName": "",
+      "lastName": "جعفر شريف وسام",
+      "phone": "",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "Physical Education"
+      ],
+      "departments": [
+        "middle"
+      ],
+      "classIds": [
+        "M-Y3-C01"
+      ]
+    },
+    {
+      "id": "TF289A73F",
+      "firstName": "",
+      "lastName": "خليفي",
+      "phone": "",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "Informatics"
+      ],
+      "departments": [
+        "middle"
+      ],
+      "classIds": [
+        "M-Y1-C01",
+        "M-Y1-C02",
+        "M-Y1-C03",
+        "M-Y1-C04",
+        "M-Y1-C05",
+        "M-Y1-C06",
+        "M-Y1-C07",
+        "M-Y2-C01",
+        "M-Y2-C02",
+        "M-Y2-C03",
+        "M-Y2-C04",
+        "M-Y2-C05"
+      ]
     }
   ],
   "primary": {
@@ -31132,6 +31945,86 @@
         "subtitle": "5 classes",
         "classes": [
           {
+            "id": "M-Y1-C01",
+            "name": "1M1",
+            "nameAr": "1م1",
+            "code": "1M1",
+            "year": 1,
+            "section": 1,
+            "sourceImage": "",
+            "studentCount": 0,
+            "stats": {
+              "total": 0,
+              "males": 0,
+              "females": 0
+            },
+            "teacherIds": [
+              "T2CC77521",
+              "T07AA40FB",
+              "TC6274AF0",
+              "TF81CFCE5",
+              "TE14B1D9C",
+              "TD5F4E8BA",
+              "T20318AF8",
+              "TD5804BB7",
+              "TF289A73F"
+            ],
+            "modules": [
+              "Arabic",
+              "French",
+              "English",
+              "Mathematics",
+              "Natural Sciences",
+              "Physical Sciences",
+              "Social Studies",
+              "Islamic Education",
+              "Informatics",
+              "Physical Education"
+            ],
+            "students": [],
+            "note": "Class referenced on teacher assignment sheet; roster not yet imported"
+          },
+          {
+            "id": "M-Y1-C02",
+            "name": "1M2",
+            "nameAr": "1م2",
+            "code": "1M2",
+            "year": 1,
+            "section": 2,
+            "sourceImage": "",
+            "studentCount": 0,
+            "stats": {
+              "total": 0,
+              "males": 0,
+              "females": 0
+            },
+            "teacherIds": [
+              "TAC8FFEFA",
+              "T3892320C",
+              "TC6274AF0",
+              "TF81CFCE5",
+              "TE14B1D9C",
+              "TBC0D8A29",
+              "T7AB840AE",
+              "TA370C57B",
+              "TF289A73F"
+            ],
+            "modules": [
+              "Arabic",
+              "French",
+              "English",
+              "Mathematics",
+              "Natural Sciences",
+              "Physical Sciences",
+              "Social Studies",
+              "Islamic Education",
+              "Informatics",
+              "Physical Education"
+            ],
+            "students": [],
+            "note": "Class referenced on teacher assignment sheet; roster not yet imported"
+          },
+          {
             "id": "M-Y1-C03",
             "name": "1M3",
             "nameAr": "1م3",
@@ -31145,7 +32038,15 @@
               "males": 13,
               "females": 11
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "TEC9EB625",
+              "T3892320C",
+              "TC6274AF0",
+              "T404735BB",
+              "TDE58BABD",
+              "TD5804BB7",
+              "TF289A73F"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -32015,7 +32916,16 @@
               "males": 9,
               "females": 15
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "TEC9EB625",
+              "T3892320C",
+              "TC6274AF0",
+              "T404735BB",
+              "T5D53BC2D",
+              "T7AB840AE",
+              "TD5804BB7",
+              "TF289A73F"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -32920,7 +33830,16 @@
               "males": 11,
               "females": 14
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "TAC8FFEFA",
+              "T3892320C",
+              "TC6274AF0",
+              "T404735BB",
+              "T157FBAF6",
+              "T20318AF8",
+              "TA370C57B",
+              "TF289A73F"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -33319,7 +34238,17 @@
               "males": 9,
               "females": 14
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "TEC9EB625",
+              "T07AA40FB",
+              "TD7C1D464",
+              "T18CB6C15",
+              "TBC0D8A29",
+              "T5D53BC2D",
+              "T20318AF8",
+              "TD5804BB7",
+              "TF289A73F"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -34132,7 +35061,15 @@
               "males": 11,
               "females": 11
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "TEC9EB625",
+              "T07AA40FB",
+              "T8BCD3C77",
+              "T157FBAF6",
+              "T7AB840AE",
+              "TA370C57B",
+              "TF289A73F"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -34940,7 +35877,17 @@
               "males": 13,
               "females": 11
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "T2CC77521",
+              "T1E301F43",
+              "TC20594A9",
+              "TF81CFCE5",
+              "T646A5C13",
+              "TD5F4E8BA",
+              "TDE58BABD",
+              "TA370C57B",
+              "TF289A73F"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -35282,7 +36229,16 @@
               "males": 12,
               "females": 13
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "TAC8FFEFA",
+              "T4776F16B",
+              "TC20594A9",
+              "T18CB6C15",
+              "TE18CACA1",
+              "TDE58BABD",
+              "T73E7A218",
+              "TF289A73F"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -35637,7 +36593,17 @@
               "males": 14,
               "females": 11
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "TAC8FFEFA",
+              "T1E301F43",
+              "TC20594A9",
+              "T18CB6C15",
+              "TE18CACA1",
+              "T2FE8DB3C",
+              "T20318AF8",
+              "TA370C57B",
+              "TF289A73F"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -35992,7 +36958,16 @@
               "males": 12,
               "females": 12
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "TAC8FFEFA",
+              "T4776F16B",
+              "TC20594A9",
+              "T18CB6C15",
+              "TE18CACA1",
+              "T20318AF8",
+              "TA370C57B",
+              "TF289A73F"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -36360,7 +37335,16 @@
               "males": 10,
               "females": 16
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "T961B3455",
+              "T4776F16B",
+              "TAD4A54A8",
+              "T404735BB",
+              "TC973AA6E",
+              "T20318AF8",
+              "T73E7A218",
+              "TF289A73F"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -36736,7 +37720,16 @@
               "males": 11,
               "females": 9
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "T494129A5",
+              "T1E301F43",
+              "T198DD455",
+              "T8BCD3C77",
+              "TC973AA6E",
+              "TBC0D8A29",
+              "T7AB840AE",
+              "TE2A9B340"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -37013,6 +38006,45 @@
             ]
           },
           {
+            "id": "M-Y3-C02",
+            "name": "3M2",
+            "nameAr": "3م2",
+            "code": "3M2",
+            "year": 3,
+            "section": 2,
+            "sourceImage": "",
+            "studentCount": 0,
+            "stats": {
+              "total": 0,
+              "males": 0,
+              "females": 0
+            },
+            "teacherIds": [
+              "T494129A5",
+              "T1E301F43",
+              "TAD4A54A8",
+              "T62B9246F",
+              "TC79492DE",
+              "TC973AA6E",
+              "TEE7441B7",
+              "TD5804BB7"
+            ],
+            "modules": [
+              "Arabic",
+              "French",
+              "English",
+              "Mathematics",
+              "Natural Sciences",
+              "Physical Sciences",
+              "Social Studies",
+              "Islamic Education",
+              "Informatics",
+              "Physical Education"
+            ],
+            "students": [],
+            "note": "Class referenced on teacher assignment sheet; roster not yet imported"
+          },
+          {
             "id": "M-Y3-C03",
             "name": "3M3",
             "nameAr": "3م3",
@@ -37026,7 +38058,15 @@
               "males": 15,
               "females": 10
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "T494129A5",
+              "T1E301F43",
+              "T198DD455",
+              "T62B9246F",
+              "TC79492DE",
+              "TC973AA6E",
+              "TD5804BB7"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -37381,7 +38421,16 @@
               "males": 11,
               "females": 10
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "T494129A5",
+              "T1E301F43",
+              "T47BDD3CE",
+              "T646A5C13",
+              "TC79492DE",
+              "TC973AA6E",
+              "TEE7441B7",
+              "TEDCBBFBA"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -37684,7 +38733,16 @@
               "males": 8,
               "females": 14
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "T494129A5",
+              "T1E301F43",
+              "T47BDD3CE",
+              "T62B9246F",
+              "TC973AA6E",
+              "TBC0D8A29",
+              "TEE7441B7",
+              "TEDCBBFBA"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -38008,7 +39066,15 @@
               "males": 11,
               "females": 14
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "T961B3455",
+              "T4776F16B",
+              "TD7C1D464",
+              "TE14B1D9C",
+              "TC79492DE",
+              "T2FE8DB3C",
+              "TEDCBBFBA"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -38363,7 +39429,15 @@
               "males": 10,
               "females": 12
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "T961B3455",
+              "T1E301F43",
+              "T47BDD3CE",
+              "T62B9246F",
+              "T157FBAF6",
+              "T2FE8DB3C",
+              "TEDCBBFBA"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -38679,7 +39753,15 @@
               "males": 7,
               "females": 14
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "T961B3455",
+              "T07AA40FB",
+              "TC6274AF0",
+              "T646A5C13",
+              "T157FBAF6",
+              "TEE7441B7",
+              "TEDCBBFBA"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -38982,7 +40064,15 @@
               "males": 13,
               "females": 7
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "TEC9EB625",
+              "T4776F16B",
+              "TC20594A9",
+              "TE14B1D9C",
+              "TE18CACA1",
+              "TEE7441B7",
+              "T73E7A218"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -39575,10 +40665,10 @@
   },
   "meta": {
     "primaryClasses": 51,
-    "middleClasses": 19,
+    "middleClasses": 21,
     "primaryStudents": 931,
     "middleStudents": 442,
-    "teachers": 49,
+    "teachers": 89,
     "totalStudents": 1373,
     "verified": true,
     "primarySource": "docx-tables",

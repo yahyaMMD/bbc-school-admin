@@ -1,0 +1,498 @@
+{
+  "source": "profs .pdf — إسناد الأساتذة الطور المتوسط 2026/2027",
+  "teachers": [
+    {
+      "name": "بلعروفي وليد",
+      "modules": [
+        "Mathematics"
+      ],
+      "classes": [
+        "4M1",
+        "4M2",
+        "4M3",
+        "2M5"
+      ]
+    },
+    {
+      "name": "لطرش سليم",
+      "modules": [
+        "Mathematics"
+      ],
+      "classes": [
+        "2M2",
+        "2M3",
+        "2M4",
+        "1M2",
+        "1M5"
+      ]
+    },
+    {
+      "name": "بن عمارة أنيس",
+      "modules": [
+        "Mathematics"
+      ],
+      "classes": [
+        "3M1",
+        "3M2",
+        "3M3",
+        "3M4",
+        "3M5"
+      ]
+    },
+    {
+      "name": "جنين سعيد",
+      "modules": [
+        "Mathematics"
+      ],
+      "classes": [
+        "4M4",
+        "1M3",
+        "1M4",
+        "1M6",
+        "1M7"
+      ]
+    },
+    {
+      "name": "صفصاف سفيان",
+      "modules": [
+        "Mathematics"
+      ],
+      "classes": [
+        "1M1",
+        "2M1"
+      ]
+    },
+    {
+      "name": "داود نعيمة",
+      "modules": [
+        "Physical Sciences"
+      ],
+      "classes": [
+        "4M1",
+        "4M4",
+        "2M4",
+        "2M5",
+        "2M2"
+      ]
+    },
+    {
+      "name": "كلال محمد عمر",
+      "modules": [
+        "Physical Sciences"
+      ],
+      "classes": [
+        "4M2",
+        "3M1",
+        "3M2",
+        "3M3",
+        "3M4",
+        "3M5",
+        "2M3",
+        "2M1"
+      ]
+    },
+    {
+      "name": "شنوف خديجة",
+      "modules": [
+        "Natural Sciences"
+      ],
+      "classes": [
+        "1M2",
+        "1M3",
+        "1M4",
+        "1M5"
+      ]
+    },
+    {
+      "name": "دلاشي مليكة",
+      "modules": [
+        "Natural Sciences"
+      ],
+      "classes": [
+        "4M3",
+        "1M1",
+        "1M6",
+        "1M7"
+      ]
+    },
+    {
+      "name": "بوليان هاجر",
+      "modules": [
+        "Natural Sciences"
+      ],
+      "classes": [
+        "4M4",
+        "2M1",
+        "2M3",
+        "2M4",
+        "2M2"
+      ]
+    },
+    {
+      "name": "بن منصور عبد الرحمان",
+      "modules": [
+        "Natural Sciences"
+      ],
+      "classes": [
+        "4M1",
+        "1M6"
+      ]
+    },
+    {
+      "name": "عون الله سامية",
+      "modules": [
+        "Natural Sciences"
+      ],
+      "classes": [
+        "4M3",
+        "1M1",
+        "1M2",
+        "1M3",
+        "1M4",
+        "1M5"
+      ]
+    },
+    {
+      "name": "غوتي نورة",
+      "modules": [
+        "Natural Sciences"
+      ],
+      "classes": [
+        "4M2",
+        "3M4",
+        "3M5"
+      ]
+    },
+    {
+      "name": "صبرينة شرفاوي",
+      "modules": [
+        "Arabic"
+      ],
+      "classes": [
+        "2M5",
+        "3M2"
+      ]
+    },
+    {
+      "name": "روابحي عبد المالك",
+      "modules": [
+        "Arabic"
+      ],
+      "classes": [
+        "3M1",
+        "3M3"
+      ]
+    },
+    {
+      "name": "طوطاوي محمد أمين",
+      "modules": [
+        "Arabic",
+        "Islamic Education"
+      ],
+      "classes": [
+        "4M2",
+        "3M5",
+        "3M2",
+        "3M3"
+      ]
+    },
+    {
+      "name": "ديكماش كوثر",
+      "modules": [
+        "Arabic",
+        "Islamic Education"
+      ],
+      "classes": [
+        "2M3",
+        "2M4",
+        "2M2",
+        "1M6"
+      ]
+    },
+    {
+      "name": "شمون مريم",
+      "modules": [
+        "Arabic"
+      ],
+      "classes": [
+        "1M1",
+        "1M2",
+        "2M1"
+      ]
+    },
+    {
+      "name": "سامر زليخة",
+      "modules": [
+        "Arabic",
+        "Islamic Education"
+      ],
+      "classes": [
+        "4M1",
+        "4M4",
+        "1M1",
+        "1M2"
+      ]
+    },
+    {
+      "name": "ساعد حليمة",
+      "modules": [
+        "Arabic",
+        "Islamic Education"
+      ],
+      "classes": [
+        "4M3",
+        "3M4",
+        "2M1"
+      ]
+    },
+    {
+      "name": "زندي أحلام",
+      "modules": [
+        "Arabic",
+        "Islamic Education"
+      ],
+      "classes": [
+        "2M5",
+        "1M4",
+        "1M5",
+        "1M3"
+      ]
+    },
+    {
+      "name": "برغوتي لينة",
+      "modules": [
+        "English",
+        "Islamic Education"
+      ],
+      "classes": [
+        "1M7",
+        "3M1"
+      ]
+    },
+    {
+      "name": "آيت عمر أسامة",
+      "modules": [
+        "English"
+      ],
+      "classes": [
+        "4M1",
+        "3M2",
+        "3M3",
+        "3M4"
+      ]
+    },
+    {
+      "name": "زيدان نجاة",
+      "modules": [
+        "English"
+      ],
+      "classes": [
+        "4M2",
+        "4M3",
+        "1M5",
+        "1M7"
+      ]
+    },
+    {
+      "name": "العباسي كمال",
+      "modules": [
+        "English"
+      ],
+      "classes": [
+        "4M4",
+        "2M2",
+        "2M3",
+        "2M4"
+      ]
+    },
+    {
+      "name": "حمدان فارس",
+      "modules": [
+        "English"
+      ],
+      "classes": [
+        "1M1",
+        "2M1"
+      ]
+    },
+    {
+      "name": "شتال خديجة",
+      "modules": [
+        "English",
+        "Activity"
+      ],
+      "classes": [
+        "2M5",
+        "3M1",
+        "3M2",
+        "3M3",
+        "3M4",
+        "3M5"
+      ]
+    },
+    {
+      "name": "نجاري حكيمة",
+      "modules": [
+        "French"
+      ],
+      "classes": [
+        "3M5",
+        "3M1",
+        "1M2",
+        "1M6"
+      ]
+    },
+    {
+      "name": "خادم ريان",
+      "modules": [
+        "French"
+      ],
+      "classes": [
+        "1M6",
+        "1M4"
+      ]
+    },
+    {
+      "name": "بن دكون نجاة",
+      "modules": [
+        "French"
+      ],
+      "classes": [
+        "4M3",
+        "4M4",
+        "3M2",
+        "3M4",
+        "3M5"
+      ]
+    },
+    {
+      "name": "قاسي سميرة",
+      "modules": [
+        "French"
+      ],
+      "classes": [
+        "1M2",
+        "1M4",
+        "1M7",
+        "3M1"
+      ]
+    },
+    {
+      "name": "دزيري فطومة",
+      "modules": [
+        "French"
+      ],
+      "classes": [
+        "4M1",
+        "4M2",
+        "2M3"
+      ]
+    },
+    {
+      "name": "مالكي أسماء",
+      "modules": [
+        "French"
+      ],
+      "classes": [
+        "2M3",
+        "2M4",
+        "2M5",
+        "1M1",
+        "1M5",
+        "1M6"
+      ]
+    },
+    {
+      "name": "دادو لينة",
+      "modules": [
+        "French"
+      ],
+      "classes": [
+        "1M3",
+        "2M1",
+        "2M2"
+      ]
+    },
+    {
+      "name": "خلفة صلاح الدين",
+      "modules": [
+        "Social Studies"
+      ],
+      "classes": [
+        "4M4",
+        "2M2",
+        "2M5"
+      ]
+    },
+    {
+      "name": "حشاني أحمد",
+      "modules": [
+        "Social Studies"
+      ],
+      "classes": [
+        "4M1",
+        "4M2",
+        "4M3",
+        "3M4",
+        "3M5"
+      ]
+    },
+    {
+      "name": "بن شريف عبد القادر",
+      "modules": [
+        "Physical Education"
+      ],
+      "classes": [
+        "2M1",
+        "2M4",
+        "1M2",
+        "1M5",
+        "1M7",
+        "2M3"
+      ]
+    },
+    {
+      "name": "لويزة بلعيد",
+      "modules": [
+        "Physical Education"
+      ],
+      "classes": [
+        "3M2",
+        "3M3",
+        "1M1",
+        "1M3",
+        "1M6",
+        "1M4"
+      ]
+    },
+    {
+      "name": "جعفر شريف وسام",
+      "modules": [
+        "Physical Education"
+      ],
+      "classes": [
+        "3M1"
+      ]
+    },
+    {
+      "name": "خليفي",
+      "modules": [
+        "Informatics"
+      ],
+      "classes": [
+        "1M1",
+        "1M2",
+        "1M3",
+        "1M4",
+        "1M5",
+        "1M6",
+        "1M7",
+        "2M1",
+        "2M2",
+        "2M3",
+        "2M4",
+        "2M5"
+      ]
+    }
+  ]
+}
