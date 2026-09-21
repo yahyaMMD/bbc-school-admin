@@ -798,6 +798,52 @@ a {
   gap: 0.65rem;
 }
 
+.teacher-row-wrap {
+  border: 1px solid var(--line);
+  background: var(--white);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.teacher-row-wrap:hover {
+  border-color: rgba(242, 101, 34, 0.35);
+  box-shadow: var(--shadow-sm);
+}
+
+.teacher-row-wrap .teacher-row {
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.teacher-row-wrap .teacher-row:hover {
+  border-color: transparent;
+  box-shadow: none;
+  transform: none;
+}
+
+.teacher-contact {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0 1.1rem 0.85rem;
+  margin-top: -0.25rem;
+}
+
+.teacher-contact .teacher-phone {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.btn-whatsapp-sm {
+  padding: 0.32rem 0.6rem;
+  font-size: 0.72rem;
+}
+
 .teacher-row {
   display: flex;
   align-items: center;
@@ -920,6 +966,43 @@ a {
   font-weight: 700;
   font-size: 1.05rem;
   font-family: var(--font-display);
+}
+
+.phone-with-wa {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.phone-with-wa .phone-num {
+  font-weight: 700;
+}
+
+.btn-whatsapp {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: var(--radius-xs);
+  background: #25d366;
+  color: #fff !important;
+  font-size: 0.78rem;
+  font-weight: 700;
+  font-family: var(--font-ui, inherit);
+  text-decoration: none !important;
+  line-height: 1;
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.35);
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.btn-whatsapp:hover {
+  background: #1ebe57;
+  transform: translateY(-1px);
+}
+
+.btn-whatsapp:active {
+  transform: scale(0.98);
 }
 
 /* ——— Student previous-year details (lazy) ——— */
