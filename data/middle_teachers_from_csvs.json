@@ -1,0 +1,507 @@
+[
+  {
+    "name": "شتال خديجة",
+    "module": "Activity",
+    "phone": "",
+    "classes": [
+      "1M1",
+      "1M2",
+      "1M3",
+      "1M4",
+      "1M5",
+      "1M6",
+      "1M7",
+      "2M1",
+      "2M2",
+      "2M3",
+      "2M4",
+      "2M5",
+      "3M1",
+      "3M2",
+      "3M3",
+      "3M4",
+      "3M5"
+    ]
+  },
+  {
+    "name": "طوطاوي محمد أمين",
+    "module": "Arabic",
+    "phone": "",
+    "classes": [
+      "4M2",
+      "3M5",
+      "3M2",
+      "3M3"
+    ]
+  },
+  {
+    "name": "ديكماش كوثر",
+    "module": "Arabic",
+    "phone": "",
+    "classes": [
+      "2M3",
+      "2M4",
+      "2M2",
+      "1M6"
+    ]
+  },
+  {
+    "name": "شمون مريم",
+    "module": "Arabic",
+    "phone": "",
+    "classes": [
+      "1M1",
+      "1M2",
+      "2M1"
+    ]
+  },
+  {
+    "name": "سامر زليخة",
+    "module": "Arabic",
+    "phone": "",
+    "classes": [
+      "4M1",
+      "4M4"
+    ]
+  },
+  {
+    "name": "ساعد حليمة",
+    "module": "Arabic",
+    "phone": "",
+    "classes": [
+      "4M3",
+      "3M4"
+    ]
+  },
+  {
+    "name": "زندي أحلام",
+    "module": "Arabic",
+    "phone": "",
+    "classes": [
+      "2M5",
+      "1M4",
+      "1M5",
+      "1M3"
+    ]
+  },
+  {
+    "name": "برغوثي لينة",
+    "module": "Arabic",
+    "phone": "",
+    "classes": [
+      "1M7",
+      "3M1"
+    ]
+  },
+  {
+    "name": "ايت عمر أسامة",
+    "module": "English",
+    "phone": "",
+    "classes": [
+      "4M1",
+      "3M2",
+      "3M3",
+      "3M4"
+    ]
+  },
+  {
+    "name": "نجاة زيدان",
+    "module": "English",
+    "phone": "",
+    "classes": [
+      "4M2",
+      "4M3",
+      "1M5",
+      "1M7"
+    ]
+  },
+  {
+    "name": "العباسي كمال",
+    "module": "English",
+    "phone": "",
+    "classes": [
+      "4M4",
+      "2M2",
+      "2M3",
+      "2M4"
+    ]
+  },
+  {
+    "name": "حمدان فارس",
+    "module": "English",
+    "phone": "",
+    "classes": [
+      "1M1",
+      "2M1"
+    ]
+  },
+  {
+    "name": "خديجة شتال",
+    "module": "English",
+    "phone": "",
+    "classes": [
+      "2M5"
+    ]
+  },
+  {
+    "name": "نجاري حكيمة",
+    "module": "English",
+    "phone": "",
+    "classes": [
+      "3M5",
+      "3M1",
+      "1M2",
+      "1M6"
+    ]
+  },
+  {
+    "name": "خايطي ريان",
+    "module": "English",
+    "phone": "",
+    "classes": [
+      "1M6",
+      "1M4"
+    ]
+  },
+  {
+    "name": "بن دكون نجاة",
+    "module": "French",
+    "phone": "",
+    "classes": [
+      "4M3",
+      "4M4",
+      "3M2",
+      "3M4",
+      "3M5"
+    ]
+  },
+  {
+    "name": "قاسي سميرة",
+    "module": "French",
+    "phone": "",
+    "classes": [
+      "1M2",
+      "1M4",
+      "1M7",
+      "3M1"
+    ]
+  },
+  {
+    "name": "دزيري فطومة",
+    "module": "French",
+    "phone": "",
+    "classes": [
+      "4M1",
+      "4M2",
+      "2M3"
+    ]
+  },
+  {
+    "name": "مالكي إسماء",
+    "module": "French",
+    "phone": "",
+    "classes": [
+      "2M3",
+      "2M4",
+      "2M5",
+      "1M1",
+      "1M5",
+      "1M6"
+    ]
+  },
+  {
+    "name": "دادو لينة",
+    "module": "French",
+    "phone": "",
+    "classes": [
+      "1M3",
+      "2M1",
+      "2M2"
+    ]
+  },
+  {
+    "name": "طوطاوي محمد",
+    "module": "Islamic Education",
+    "phone": "",
+    "classes": [
+      "4M2",
+      "3M5",
+      "3M2",
+      "3M3"
+    ]
+  },
+  {
+    "name": "دكيماش كوثر",
+    "module": "Islamic Education",
+    "phone": "",
+    "classes": [
+      "2M2",
+      "2M3",
+      "2M4",
+      "1M6"
+    ]
+  },
+  {
+    "name": "سامر زليخة",
+    "module": "Islamic Education",
+    "phone": "",
+    "classes": [
+      "4M1",
+      "4M4",
+      "1M1",
+      "1M2"
+    ]
+  },
+  {
+    "name": "ساعد حليمة",
+    "module": "Islamic Education",
+    "phone": "",
+    "classes": [
+      "4M3",
+      "2M1",
+      "3M4"
+    ]
+  },
+  {
+    "name": "زندي أحلام",
+    "module": "Islamic Education",
+    "phone": "",
+    "classes": [
+      "2M5",
+      "1M3",
+      "1M4",
+      "1M5"
+    ]
+  },
+  {
+    "name": "برغوثي لينة",
+    "module": "Islamic Education",
+    "phone": "",
+    "classes": [
+      "3M1",
+      "1M7"
+    ]
+  },
+  {
+    "name": "بلعزوقي وليد",
+    "module": "Mathematics",
+    "phone": "",
+    "classes": [
+      "4M1",
+      "4M2",
+      "4M3",
+      "2M5"
+    ]
+  },
+  {
+    "name": "لطرش سليم",
+    "module": "Mathematics",
+    "phone": "",
+    "classes": [
+      "2M2",
+      "2M3",
+      "2M4",
+      "1M2",
+      "1M5"
+    ]
+  },
+  {
+    "name": "بن عمارة أنيس",
+    "module": "Mathematics",
+    "phone": "",
+    "classes": [
+      "3M1",
+      "3M2",
+      "3M3",
+      "3M4",
+      "3M5"
+    ]
+  },
+  {
+    "name": "جحنين سعيد",
+    "module": "Mathematics",
+    "phone": "",
+    "classes": [
+      "4M4",
+      "1M3",
+      "1M4",
+      "1M6",
+      "1M7"
+    ]
+  },
+  {
+    "name": "صفصاف سفيان",
+    "module": "Mathematics",
+    "phone": "",
+    "classes": [
+      "1M1",
+      "2M1"
+    ]
+  },
+  {
+    "name": "داود نعيمة",
+    "module": "Physical Sciences",
+    "phone": "",
+    "classes": [
+      "4M1",
+      "4M4",
+      "2M4",
+      "2M5",
+      "2M2"
+    ]
+  },
+  {
+    "name": "كلال محمد عمر",
+    "module": "Physical Sciences",
+    "phone": "",
+    "classes": [
+      "4M2",
+      "3M1",
+      "3M2",
+      "3M3",
+      "3M4",
+      "3M5",
+      "2M3",
+      "2M1"
+    ]
+  },
+  {
+    "name": "شنوف خديجة",
+    "module": "Physical Sciences",
+    "phone": "",
+    "classes": [
+      "1M2",
+      "1M3",
+      "1M4",
+      "1M5"
+    ]
+  },
+  {
+    "name": "دلاشي مليكة",
+    "module": "Physical Sciences",
+    "phone": "",
+    "classes": [
+      "4M3",
+      "1M1",
+      "1M6",
+      "1M7"
+    ]
+  },
+  {
+    "name": "بوليان هاجر",
+    "module": "Natural Sciences",
+    "phone": "",
+    "classes": [
+      "4M4",
+      "2M1",
+      "2M3",
+      "2M4",
+      "2M2"
+    ]
+  },
+  {
+    "name": "بن منصور عبد الرحمن",
+    "module": "Natural Sciences",
+    "phone": "",
+    "classes": [
+      "4M1",
+      "1M6"
+    ]
+  },
+  {
+    "name": "عون الله سامية",
+    "module": "Natural Sciences",
+    "phone": "",
+    "classes": [
+      "4M3",
+      "1M1",
+      "1M2",
+      "1M3",
+      "1M4",
+      "1M5"
+    ]
+  },
+  {
+    "name": "غوتي نورة",
+    "module": "Natural Sciences",
+    "phone": "",
+    "classes": [
+      "4M2",
+      "3M4",
+      "3M5"
+    ]
+  },
+  {
+    "name": "شرفاوي صبرينة",
+    "module": "Natural Sciences",
+    "phone": "",
+    "classes": [
+      "2M5",
+      "3M2"
+    ]
+  },
+  {
+    "name": "روابي عبد المالك",
+    "module": "Natural Sciences",
+    "phone": "",
+    "classes": [
+      "3M1",
+      "3M3"
+    ]
+  },
+  {
+    "name": "خلفة صلاح الدين",
+    "module": "Social Studies",
+    "phone": "",
+    "classes": [
+      "4M4",
+      "2M2",
+      "2M5"
+    ]
+  },
+  {
+    "name": "حشاني أحمد",
+    "module": "Social Studies",
+    "phone": "",
+    "classes": [
+      "4M1",
+      "4M2",
+      "4M3",
+      "3M4",
+      "3M5"
+    ]
+  },
+  {
+    "name": "بن شريف عبد القادر",
+    "module": "Social Studies",
+    "phone": "",
+    "classes": [
+      "2M1",
+      "2M4",
+      "1M2",
+      "1M5",
+      "1M7"
+    ]
+  },
+  {
+    "name": "بلعيد لويزة",
+    "module": "Social Studies",
+    "phone": "",
+    "classes": [
+      "3M2",
+      "3M3",
+      "1M1",
+      "1M3",
+      "1M6",
+      "1M4"
+    ]
+  },
+  {
+    "name": "جعفر شريف وسام",
+    "module": "Social Studies",
+    "phone": "",
+    "classes": [
+      "3M1"
+    ]
+  }
+]
