@@ -28,9 +28,20 @@
   }
 
   function initials(a, b) {
-    const x = (a || "?").trim();
-    const y = (b || "?").trim();
-    return `${x[0] || "?"}${y[0] || ""}`.toUpperCase();
+    const x = (a || "").trim();
+    const y = (b || "").trim();
+    if (!x && !y) return "?";
+    return `${(x[0] || "")}${(y[0] || "")}`.toUpperCase() || "?";
+  }
+
+  function dash(v) {
+    const s = String(v ?? "").trim();
+    return s || "—";
+  }
+
+  function teacherLabel(t) {
+    const parts = [t.firstName, t.lastName].map((p) => String(p || "").trim()).filter(Boolean);
+    return parts.length ? parts.join(" ") : "—";
   }
 
   function esc(str) {
@@ -267,7 +278,7 @@
                       <button type="button" class="teacher-row" data-nav="#/teacher/${t.id}?from=${encodeURIComponent(`#/dept/${deptId}/level/${level.id}/class/${cls.id}`)}">
                         <div class="avatar">${esc(initials(t.firstName, t.lastName))}</div>
                         <div class="meta">
-                          <strong>${esc(t.firstName)} ${esc(t.lastName)}</strong>
+                          <strong>${esc(teacherLabel(t))}</strong>
                           <span>${esc((t.modules || []).join(" · "))}</span>
                         </div>
                         <span class="chev">→</span>
@@ -498,16 +509,16 @@
       <div class="teacher-hero">
         <div class="avatar avatar-lg">${esc(initials(t.firstName, t.lastName))}</div>
         <div>
-          <h1>${esc(t.firstName)} ${esc(t.lastName)}</h1>
+          <h1>${esc(teacherLabel(t))}</h1>
           <p class="role">Teacher · BBC School</p>
         </div>
       </div>
       <div class="facts-grid">
-        <div class="fact-card"><div class="k">First name</div><div class="v">${esc(t.firstName)}</div></div>
-        <div class="fact-card"><div class="k">Last name</div><div class="v">${esc(t.lastName)}</div></div>
+        <div class="fact-card"><div class="k">First name</div><div class="v">${esc(dash(t.firstName))}</div></div>
+        <div class="fact-card"><div class="k">Last name</div><div class="v">${esc(dash(t.lastName))}</div></div>
         <div class="fact-card"><div class="k">Phone</div><div class="v">${esc(t.phone || "Not on file")}</div></div>
-        <div class="fact-card"><div class="k">Wilaya</div><div class="v">${esc(t.wilaya)}</div></div>
-        <div class="fact-card"><div class="k">Commune</div><div class="v">${esc(t.commune)}</div></div>
+        <div class="fact-card"><div class="k">Wilaya</div><div class="v">${esc(dash(t.wilaya))}</div></div>
+        <div class="fact-card"><div class="k">Commune</div><div class="v">${esc(dash(t.commune))}</div></div>
         <div class="fact-card"><div class="k">ID</div><div class="v">${esc(t.id)}</div></div>
       </div>
       <div class="detail-layout">
