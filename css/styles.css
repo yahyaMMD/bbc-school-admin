@@ -843,6 +843,91 @@ a {
   font-family: var(--font-display);
 }
 
+/* ——— Student previous-year details (lazy) ——— */
+.student-more-panel #btn-more-details {
+  width: 100%;
+  justify-content: center;
+}
+
+.student-more-details {
+  margin-top: 1.15rem;
+  padding-top: 1.15rem;
+  border-top: 1px solid var(--line);
+}
+
+.prev-year-banner {
+  margin-bottom: 1rem;
+}
+
+.prev-year-title {
+  margin: 0.35rem 0 0.25rem;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: var(--ink);
+}
+
+.prev-year-hint {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.detail-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.detail-row {
+  display: grid;
+  grid-template-columns: minmax(140px, 220px) 1fr;
+  gap: 0.75rem 1rem;
+  padding: 0.85rem 1rem;
+  background: var(--bg, #faf8f6);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+
+.detail-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.detail-label .ar {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--ink);
+  line-height: 1.35;
+}
+
+.detail-label .en {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.detail-value {
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--ink-soft, #333);
+  white-space: pre-wrap;
+}
+
+.empty-details {
+  margin: 0;
+  color: var(--muted);
+}
+
+@media (max-width: 640px) {
+  .detail-row {
+    grid-template-columns: 1fr;
+  }
+}
+
 .chip-row {
   display: flex;
   flex-wrap: wrap;
@@ -1001,5 +1086,124 @@ a {
 
   .dept-card {
     min-height: 380px;
+  }
+}
+
+/* ——— Search & students ——— */
+.top-search {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.top-search input {
+  width: min(220px, 28vw);
+  padding: 0.5rem 0.75rem;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-xs);
+  background: #fafafa;
+}
+
+.top-search input:focus {
+  outline: none;
+  border-color: var(--orange);
+  background: var(--white);
+}
+
+.btn-search {
+  padding: 0.45rem 0.65rem;
+  min-width: auto;
+}
+
+.stack-panels {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.inline-search input {
+  padding: 0.45rem 0.7rem;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-xs);
+  min-width: 180px;
+}
+
+.inline-search input:focus {
+  outline: none;
+  border-color: var(--orange);
+}
+
+.student-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+
+.student-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+.student-table th {
+  text-align: left;
+  background: var(--orange-soft);
+  color: var(--orange-deep);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.7rem 0.85rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.student-table td {
+  padding: 0.65rem 0.85rem;
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+}
+
+.student-table tbody tr:hover {
+  background: rgba(242, 101, 34, 0.04);
+}
+
+.link-btn {
+  border: none;
+  background: none;
+  color: var(--orange-deep);
+  font-weight: 700;
+  cursor: pointer;
+  font: inherit;
+}
+
+.link-btn:hover {
+  text-decoration: underline;
+}
+
+.code-inline {
+  font-size: 0.55em;
+  font-weight: 700;
+  color: var(--orange);
+  vertical-align: middle;
+  margin-left: 0.35rem;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+@media (max-width: 900px) {
+  .top-search input {
+    width: 140px;
+  }
+  .badge-year {
+    display: none;
   }
 }
