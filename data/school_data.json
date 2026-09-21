@@ -318,24 +318,6 @@
       ]
     },
     {
-      "id": "TCB5F68C3",
-      "firstName": "Khadidja",
-      "lastName": "CHATAL",
-      "phone": "0552118329",
-      "wilaya": "Algiers",
-      "commune": "",
-      "modules": [
-        "English"
-      ],
-      "departments": [
-        "primary"
-      ],
-      "classIds": [
-        "P-Y3-C07",
-        "P-Y5-C01"
-      ]
-    },
-    {
       "id": "TC0991685",
       "firstName": "Aicha",
       "lastName": "CHENNOUGA",
@@ -497,24 +479,6 @@
       ]
     },
     {
-      "id": "T7ED39681",
-      "firstName": "Fares",
-      "lastName": "HAMDANE",
-      "phone": "0540196918",
-      "wilaya": "Algiers",
-      "commune": "",
-      "modules": [
-        "English"
-      ],
-      "departments": [
-        "primary"
-      ],
-      "classIds": [
-        "P-Y4-C08",
-        "P-Y5-C02"
-      ]
-    },
-    {
       "id": "T3D0C90DA",
       "firstName": "Rayane",
       "lastName": "HAMIDI",
@@ -642,24 +606,6 @@
       ]
     },
     {
-      "id": "TE04AA30E",
-      "firstName": "Rayane",
-      "lastName": "KHAITI",
-      "phone": "0667462551",
-      "wilaya": "Algiers",
-      "commune": "",
-      "modules": [
-        "English"
-      ],
-      "departments": [
-        "primary"
-      ],
-      "classIds": [
-        "P-Y5-C06",
-        "P-Y5-C07"
-      ]
-    },
-    {
       "id": "T1368776C",
       "firstName": "",
       "lastName": "KOURANE",
@@ -766,23 +712,6 @@
       ],
       "classIds": [
         "P-Y2-C06"
-      ]
-    },
-    {
-      "id": "T18F34BB5",
-      "firstName": "Zidane",
-      "lastName": "NADJET",
-      "phone": "0673904755",
-      "wilaya": "Algiers",
-      "commune": "",
-      "modules": [
-        "English"
-      ],
-      "departments": [
-        "primary"
-      ],
-      "classIds": [
-        "P-Y4-C01"
       ]
     },
     {
@@ -1222,6 +1151,28 @@
       ]
     },
     {
+      "id": "TB644F3D8",
+      "firstName": "فارس",
+      "lastName": "حمدان",
+      "phone": "0540196918",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "English"
+      ],
+      "departments": [
+        "primary",
+        "middle"
+      ],
+      "classIds": [
+        "M-Y1-C01",
+        "M-Y2-C01",
+        "P-Y4-C08",
+        "P-Y5-C02"
+      ],
+      "nameLatin": "Fares HAMDANE"
+    },
+    {
       "id": "TDEB36198",
       "firstName": "",
       "lastName": "حموم",
@@ -1235,6 +1186,28 @@
         "primary"
       ],
       "classIds": []
+    },
+    {
+      "id": "TC7CA2AEE",
+      "firstName": "ريان",
+      "lastName": "خايطي",
+      "phone": "0667462551",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "English"
+      ],
+      "departments": [
+        "primary",
+        "middle"
+      ],
+      "classIds": [
+        "M-Y1-C06",
+        "M-Y1-C04",
+        "P-Y5-C06",
+        "P-Y5-C07"
+      ],
+      "nameLatin": "Rayane KHAITI"
     },
     {
       "id": "T8019CDF5",
@@ -1350,6 +1323,29 @@
       "classIds": []
     },
     {
+      "id": "T6F87F814",
+      "firstName": "نجاة",
+      "lastName": "زيدان",
+      "phone": "0673904755",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "English"
+      ],
+      "departments": [
+        "primary",
+        "middle"
+      ],
+      "classIds": [
+        "M-Y4-C02",
+        "M-Y4-C03",
+        "M-Y1-C05",
+        "M-Y1-C07",
+        "P-Y4-C01"
+      ],
+      "nameLatin": "Zidane NADJET"
+    },
+    {
       "id": "TB27C7D85",
       "firstName": "",
       "lastName": "زيراوي",
@@ -1380,6 +1376,44 @@
       "classIds": [
         "P-Y1-C01"
       ]
+    },
+    {
+      "id": "TC8EE4040",
+      "firstName": "خديجة",
+      "lastName": "شتال",
+      "phone": "0552118329",
+      "wilaya": "Algiers",
+      "commune": "",
+      "modules": [
+        "Activity",
+        "English"
+      ],
+      "departments": [
+        "primary",
+        "middle"
+      ],
+      "classIds": [
+        "M-Y1-C01",
+        "M-Y1-C02",
+        "M-Y1-C03",
+        "M-Y1-C04",
+        "M-Y1-C05",
+        "M-Y1-C06",
+        "M-Y1-C07",
+        "M-Y2-C01",
+        "M-Y2-C02",
+        "M-Y2-C03",
+        "M-Y2-C04",
+        "M-Y2-C05",
+        "M-Y3-C01",
+        "M-Y3-C02",
+        "M-Y3-C03",
+        "M-Y3-C04",
+        "M-Y3-C05",
+        "P-Y3-C07",
+        "P-Y5-C01"
+      ],
+      "nameLatin": "Khadidja CHATAL"
     },
     {
       "id": "TC09E9751",
@@ -1942,42 +1976,6 @@
       ]
     },
     {
-      "id": "T32F81A40",
-      "firstName": "فارس",
-      "lastName": "حمدان",
-      "phone": "",
-      "wilaya": "Algiers",
-      "commune": "",
-      "modules": [
-        "English"
-      ],
-      "departments": [
-        "middle"
-      ],
-      "classIds": [
-        "M-Y1-C01",
-        "M-Y2-C01"
-      ]
-    },
-    {
-      "id": "T4ACC38AA",
-      "firstName": "ريان",
-      "lastName": "خايطي",
-      "phone": "",
-      "wilaya": "Algiers",
-      "commune": "",
-      "modules": [
-        "English"
-      ],
-      "departments": [
-        "middle"
-      ],
-      "classIds": [
-        "M-Y1-C06",
-        "M-Y1-C04"
-      ]
-    },
-    {
       "id": "T9A63A7D6",
       "firstName": "صلاح الدين",
       "lastName": "خلفة",
@@ -2174,40 +2172,6 @@
         "M-Y4-C04",
         "M-Y1-C01",
         "M-Y1-C02"
-      ]
-    },
-    {
-      "id": "T3EC78C65",
-      "firstName": "خديجة",
-      "lastName": "شتال",
-      "phone": "",
-      "wilaya": "Algiers",
-      "commune": "",
-      "modules": [
-        "Activity",
-        "English"
-      ],
-      "departments": [
-        "middle"
-      ],
-      "classIds": [
-        "M-Y1-C01",
-        "M-Y1-C02",
-        "M-Y1-C03",
-        "M-Y1-C04",
-        "M-Y1-C05",
-        "M-Y1-C06",
-        "M-Y1-C07",
-        "M-Y2-C01",
-        "M-Y2-C02",
-        "M-Y2-C03",
-        "M-Y2-C04",
-        "M-Y2-C05",
-        "M-Y3-C01",
-        "M-Y3-C02",
-        "M-Y3-C03",
-        "M-Y3-C04",
-        "M-Y3-C05"
       ]
     },
     {
@@ -2432,26 +2396,6 @@
         "M-Y1-C01",
         "M-Y1-C05",
         "M-Y1-C06"
-      ]
-    },
-    {
-      "id": "T458014DE",
-      "firstName": "زيدان",
-      "lastName": "نجاة",
-      "phone": "",
-      "wilaya": "Algiers",
-      "commune": "",
-      "modules": [
-        "English"
-      ],
-      "departments": [
-        "middle"
-      ],
-      "classIds": [
-        "M-Y4-C02",
-        "M-Y4-C03",
-        "M-Y1-C05",
-        "M-Y1-C07"
       ]
     },
     {
@@ -19901,7 +19845,7 @@
               "females": null
             },
             "teacherIds": [
-              "TCB5F68C3",
+              "TC8EE4040",
               "TC9B14086",
               "T1F530DB7"
             ],
@@ -22188,7 +22132,7 @@
               "females": null
             },
             "teacherIds": [
-              "T18F34BB5",
+              "T6F87F814",
               "T36DCEA15"
             ],
             "modules": [
@@ -26674,7 +26618,7 @@
               "females": null
             },
             "teacherIds": [
-              "T7ED39681",
+              "TB644F3D8",
               "TD2FB5689"
             ],
             "modules": [
@@ -27848,7 +27792,7 @@
               "females": null
             },
             "teacherIds": [
-              "TCB5F68C3",
+              "TC8EE4040",
               "T407549C4"
             ],
             "modules": [
@@ -28501,7 +28445,7 @@
               "females": null
             },
             "teacherIds": [
-              "T7ED39681",
+              "TB644F3D8",
               "TFB2C1E5A"
             ],
             "modules": [
@@ -31456,7 +31400,7 @@
               "females": null
             },
             "teacherIds": [
-              "TE04AA30E",
+              "TC7CA2AEE",
               "T407549C4"
             ],
             "modules": [
@@ -32061,7 +32005,7 @@
               "females": null
             },
             "teacherIds": [
-              "TE04AA30E",
+              "TC7CA2AEE",
               "T43106374"
             ],
             "modules": [
@@ -32705,9 +32649,9 @@
               "females": 9
             },
             "teacherIds": [
-              "T3EC78C65",
+              "TC8EE4040",
               "T488FE6ED",
-              "T32F81A40",
+              "TB644F3D8",
               "TD77CAD4F",
               "T6735BB5C",
               "T992B2A11",
@@ -32967,7 +32911,7 @@
               "females": 11
             },
             "teacherIds": [
-              "T3EC78C65",
+              "TC8EE4040",
               "T488FE6ED",
               "T6362FA37",
               "TA63F351B",
@@ -33329,7 +33273,7 @@
               "females": 11
             },
             "teacherIds": [
-              "T3EC78C65",
+              "TC8EE4040",
               "T8D924925",
               "T543F1C6A",
               "TDEE712D9",
@@ -34186,9 +34130,9 @@
               "females": 16
             },
             "teacherIds": [
-              "T3EC78C65",
+              "TC8EE4040",
               "T8D924925",
-              "T4ACC38AA",
+              "TC7CA2AEE",
               "TA63F351B",
               "TDEE712D9",
               "T89ACA128",
@@ -35101,9 +35045,9 @@
               "females": 14
             },
             "teacherIds": [
-              "T3EC78C65",
+              "TC8EE4040",
               "T8D924925",
-              "T458014DE",
+              "T6F87F814",
               "TD77CAD4F",
               "T7E600729",
               "T89ACA128",
@@ -35510,10 +35454,10 @@
               "females": 14
             },
             "teacherIds": [
-              "T3EC78C65",
+              "TC8EE4040",
               "T68744D62",
               "T6362FA37",
-              "T4ACC38AA",
+              "TC7CA2AEE",
               "TD77CAD4F",
               "TDEE712D9",
               "T526BC4DB",
@@ -36334,9 +36278,9 @@
               "females": 11
             },
             "teacherIds": [
-              "T3EC78C65",
+              "TC8EE4040",
               "TB69F3D42",
-              "T458014DE",
+              "T6F87F814",
               "TA63F351B",
               "TDEE712D9",
               "T526BC4DB",
@@ -37151,9 +37095,9 @@
               "females": 11
             },
             "teacherIds": [
-              "T3EC78C65",
+              "TC8EE4040",
               "T488FE6ED",
-              "T32F81A40",
+              "TB644F3D8",
               "T543F1C6A",
               "T99F519D2",
               "T992B2A11",
@@ -37504,7 +37448,7 @@
               "females": 13
             },
             "teacherIds": [
-              "T3EC78C65",
+              "TC8EE4040",
               "T68744D62",
               "TCDE27D58",
               "T543F1C6A",
@@ -37869,7 +37813,7 @@
               "females": 11
             },
             "teacherIds": [
-              "T3EC78C65",
+              "TC8EE4040",
               "T68744D62",
               "TCDE27D58",
               "TCD136ED2",
@@ -38234,7 +38178,7 @@
               "females": 12
             },
             "teacherIds": [
-              "T3EC78C65",
+              "TC8EE4040",
               "T68744D62",
               "TCDE27D58",
               "TD77CAD4F",
@@ -38599,7 +38543,7 @@
               "females": 16
             },
             "teacherIds": [
-              "T3EC78C65",
+              "TC8EE4040",
               "T8D924925",
               "TD77CAD4F",
               "TD33B8B8C",
@@ -38984,7 +38928,7 @@
               "females": 9
             },
             "teacherIds": [
-              "T3EC78C65",
+              "TC8EE4040",
               "TB69F3D42",
               "T6362FA37",
               "TA63F351B",
@@ -39284,7 +39228,7 @@
               "females": 11
             },
             "teacherIds": [
-              "T3EC78C65",
+              "TC8EE4040",
               "T32A52E3B",
               "T51BAB2A3",
               "T4CAEED56",
@@ -39597,7 +39541,7 @@
               "females": 10
             },
             "teacherIds": [
-              "T3EC78C65",
+              "TC8EE4040",
               "T32A52E3B",
               "T51BAB2A3",
               "T42A7D57C",
@@ -39948,7 +39892,7 @@
               "females": 10
             },
             "teacherIds": [
-              "T3EC78C65",
+              "TC8EE4040",
               "T99F519D2",
               "T51BAB2A3",
               "T4CAEED56",
@@ -40261,7 +40205,7 @@
               "females": 14
             },
             "teacherIds": [
-              "T3EC78C65",
+              "TC8EE4040",
               "T32A52E3B",
               "T6362FA37",
               "T4CAEED56",
@@ -40960,7 +40904,7 @@
             },
             "teacherIds": [
               "T32A52E3B",
-              "T458014DE",
+              "T6F87F814",
               "TCD136ED2",
               "TD33B8B8C",
               "TB856EE5C",
@@ -41285,7 +41229,7 @@
             },
             "teacherIds": [
               "T99F519D2",
-              "T458014DE",
+              "T6F87F814",
               "T4CAEED56",
               "TD33B8B8C",
               "T526BC4DB",
@@ -41889,7 +41833,7 @@
     "middleClasses": 21,
     "primaryStudents": 930,
     "middleStudents": 480,
-    "teachers": 135,
+    "teachers": 131,
     "totalStudents": 1410,
     "verified": true,
     "primarySource": "docx-tables",

@@ -44,6 +44,10 @@
     return parts.length ? parts.join(" ") : "—";
   }
 
+  function teacherLatin(t) {
+    return String(t.nameLatin || "").trim();
+  }
+
   /** Digits for wa.me — Algerian 0XXXXXXXXX → 213XXXXXXXXX */
   function whatsappNumber(phone) {
     let digits = String(phone || "").replace(/\D/g, "");
@@ -576,7 +580,7 @@
       if (module && !(t.modules || []).includes(module)) return false;
       if (classId && !(t.classIds || []).includes(classId)) return false;
       if (q) {
-        const hay = `${t.id} ${t.firstName || ""} ${t.lastName || ""} ${teacherLabel(t)} ${(t.phone || "")} ${(t.modules || []).join(" ")}`.toLowerCase();
+        const hay = `${t.id} ${t.firstName || ""} ${t.lastName || ""} ${teacherLabel(t)} ${teacherLatin(t)} ${(t.phone || "")} ${(t.modules || []).join(" ")}`.toLowerCase();
         if (!hay.includes(q)) return false;
       }
       return true;
@@ -639,6 +643,7 @@
                 <div class="avatar">${esc(initials(t.firstName, t.lastName))}</div>
                 <div class="dir-card-body">
                   <strong dir="auto">${esc(teacherLabel(t))}</strong>
+                  ${teacherLatin(t) ? `<span class="dir-meta">${esc(teacherLatin(t))}</span>` : ""}
                   <span class="dir-meta">${esc(depts || "—")} · ${esc((t.modules || []).join(", ") || "—")}</span>
                   <span class="dir-meta hide-sm">ID ${esc(t.id)} · Classes: ${esc(classCodes)}</span>
                   <span class="dir-meta">${t.phone ? esc(t.phone) : "No phone"}</span>
@@ -789,12 +794,13 @@
         <div class="avatar avatar-lg">${esc(initials(t.firstName, t.lastName))}</div>
         <div>
           <h1 dir="auto">${esc(teacherLabel(t))}</h1>
-          <p class="role">Teacher · ${esc(depts.join(" · ") || "BBC School")}</p>
+          <p class="role">Teacher · ${esc(depts.join(" · ") || "BBC School")}${teacherLatin(t) ? ` · ${esc(teacherLatin(t))}` : ""}</p>
         </div>
       </div>
       <div class="facts-grid">
         <div class="fact-card"><div class="k">First name</div><div class="v" dir="auto">${esc(dash(t.firstName))}</div></div>
         <div class="fact-card"><div class="k">Last name</div><div class="v" dir="auto">${esc(dash(t.lastName))}</div></div>
+        ${teacherLatin(t) ? `<div class="fact-card"><div class="k">Latin name</div><div class="v">${esc(teacherLatin(t))}</div></div>` : ""}
         <div class="fact-card"><div class="k">Phone</div><div class="v">${phoneWithWhatsApp(t.phone)}</div></div>
         <div class="fact-card"><div class="k">Department</div><div class="v">${esc(depts.join(" · ") || "—")}</div></div>
         <div class="fact-card"><div class="k">Wilaya</div><div class="v">${esc(dash(t.wilaya))}</div></div>
