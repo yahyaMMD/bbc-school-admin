@@ -46,21 +46,26 @@
     return `
       <div class="app-shell">
         <header class="topbar">
-          <button type="button" class="topbar-brand" data-nav="#/home" aria-label="Home">
-            <img src="assets/logo.png" alt="BBC School" width="44" height="44" />
-            <div>
-              <strong>${esc(school.name)}</strong>
-              <span>Administration Portal</span>
+          <div class="topbar-main">
+            <button type="button" class="topbar-brand" data-nav="#/home" aria-label="Home">
+              <img src="assets/logo.png" alt="BBC School" width="44" height="44" />
+              <div class="topbar-brand-text">
+                <strong>${esc(school.name)}</strong>
+                <span class="hide-sm">Administration Portal</span>
+              </div>
+            </button>
+            <div class="topbar-actions">
+              <span class="badge-year hide-md">${esc(school.academicYear)}</span>
+              <button type="button" class="btn btn-ghost btn-logout" id="btn-logout" aria-label="Sign out">
+                <span class="hide-sm">Sign out</span>
+                <span class="show-sm-only" aria-hidden="true">Out</span>
+              </button>
             </div>
-          </button>
-          <div class="topbar-actions">
-            <form class="top-search" id="global-search" autocomplete="off">
-              <input type="search" name="q" placeholder="Search student by name…" value="${esc(state.searchQuery)}" />
-              <button type="submit" class="btn btn-primary btn-search" aria-label="Search">${icons.search}</button>
-            </form>
-            <span class="badge-year">${esc(school.academicYear)}</span>
-            <button type="button" class="btn btn-ghost" id="btn-logout">Sign out</button>
           </div>
+          <form class="top-search" id="global-search" autocomplete="off">
+            <input type="search" name="q" placeholder="Search student…" value="${esc(state.searchQuery)}" />
+            <button type="submit" class="btn btn-primary btn-search" aria-label="Search">${icons.search}</button>
+          </form>
         </header>
         <main class="page">${content}</main>
       </div>
@@ -159,7 +164,7 @@
         <h1>${esc(dept.name)}</h1>
         <p class="lede">${dept.levels.length} year groups · ${totalClasses} classes · ${totalStudents} students</p>
       </div>
-      <div class="floor-grid" style="grid-template-columns: repeat(${Math.min(dept.levels.length, 5)}, 1fr);">
+      <div class="floor-grid" style="--cols: ${Math.min(dept.levels.length, 5)}">
         ${dept.levels
           .map(
             (l, i) => `
@@ -285,12 +290,13 @@
               <table class="student-table" id="student-table">
                 <thead>
                   <tr>
-                    <th>#</th>
-                    <th>Last name</th>
-                    <th>First name</th>
-                    <th>Date of birth</th>
-                    <th>Gender</th>
-                    <th></th>
+                    <th class="col-num">#</th>
+                    <th class="col-name-full hide-desktop">Student</th>
+                    <th class="col-last hide-mobile">Last name</th>
+                    <th class="col-first hide-mobile">First name</th>
+                    <th class="col-dob hide-mobile">Date of birth</th>
+                    <th class="col-gender hide-sm">Gender</th>
+                    <th class="col-action"></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -298,12 +304,13 @@
                     .map(
                       (s) => `
                     <tr data-search="${esc((s.searchName || s.fullName || "").toLowerCase())}">
-                      <td>${s.number ?? ""}</td>
-                      <td>${esc(s.lastName)}</td>
-                      <td>${esc(s.firstName)}</td>
-                      <td>${esc(s.dateOfBirth || "—")}</td>
-                      <td>${esc(s.gender || "—")}</td>
-                      <td><button type="button" class="link-btn" data-nav="#/student/${s.id}">View →</button></td>
+                      <td class="col-num" data-label="#">${s.number ?? ""}</td>
+                      <td class="col-name-full hide-desktop" data-label="Student">${esc(s.fullName || `${s.lastName} ${s.firstName}`)}</td>
+                      <td class="col-last hide-mobile" data-label="Last name">${esc(s.lastName)}</td>
+                      <td class="col-first hide-mobile" data-label="First name">${esc(s.firstName)}</td>
+                      <td class="col-dob hide-mobile" data-label="DOB">${esc(s.dateOfBirth || "—")}</td>
+                      <td class="col-gender hide-sm" data-label="Gender">${esc(s.gender || "—")}</td>
+                      <td class="col-action" data-label=""><button type="button" class="link-btn" data-nav="#/student/${s.id}">View</button></td>
                     </tr>`
                     )
                     .join("")}
@@ -439,14 +446,14 @@
       ${
         results.length
           ? `<div class="student-table-wrap">
-              <table class="student-table">
+              <table class="student-table student-table-search">
                 <thead>
                   <tr>
                     <th>Name</th>
-                    <th>Department</th>
-                    <th>Year</th>
+                    <th class="hide-sm">Department</th>
+                    <th class="hide-mobile">Year</th>
                     <th>Class</th>
-                    <th>Gender</th>
+                    <th class="hide-sm">Gender</th>
                     <th></th>
                   </tr>
                 </thead>
@@ -455,12 +462,12 @@
                     .map(
                       ({ student: s, dept, level, cls }) => `
                     <tr>
-                      <td><strong>${esc(s.fullName)}</strong></td>
-                      <td>${esc(DEPT_SHORT[dept.id] || dept.name)}</td>
-                      <td>${esc(level.name)}</td>
-                      <td>${esc(cls.code)}</td>
-                      <td>${esc(s.gender || "—")}</td>
-                      <td><button type="button" class="link-btn" data-nav="#/student/${s.id}">View →</button></td>
+                      <td data-label="Name"><strong dir="auto">${esc(s.fullName)}</strong></td>
+                      <td class="hide-sm" data-label="Department">${esc(DEPT_SHORT[dept.id] || dept.name)}</td>
+                      <td class="hide-mobile" data-label="Year">${esc(level.name)}</td>
+                      <td data-label="Class">${esc(cls.code)}</td>
+                      <td class="hide-sm" data-label="Gender">${esc(s.gender || "—")}</td>
+                      <td data-label=""><button type="button" class="link-btn" data-nav="#/student/${s.id}">View</button></td>
                     </tr>`
                     )
                     .join("")}
