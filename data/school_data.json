@@ -32718,30 +32718,6 @@
             ],
             "floorNumber": 4,
             "classOnFloor": 7
-          },
-          {
-            "id": "P-Y5-C08",
-            "name": "Class 8",
-            "nameAr": "القسم 8",
-            "code": "5P08",
-            "year": 5,
-            "floor": "Floor 4",
-            "floorRaw": "الرابع",
-            "studentCount": 0,
-            "stats": {
-              "total": 0,
-              "males": null,
-              "females": null
-            },
-            "teacherIds": [],
-            "modules": [
-              "Arabic",
-              "French",
-              "English"
-            ],
-            "students": [],
-            "floorNumber": 4,
-            "classOnFloor": 8
           }
         ]
       }
@@ -41957,7 +41933,7 @@
     ]
   },
   "meta": {
-    "primaryClasses": 51,
+    "primaryClasses": 50,
     "middleClasses": 21,
     "primaryStudents": 931,
     "middleStudents": 480,
