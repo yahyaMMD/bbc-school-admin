@@ -11834,11 +11834,11 @@
             "year": 2,
             "floor": "Floor 1",
             "floorRaw": "الأول",
-            "studentCount": 15,
+            "studentCount": 14,
             "stats": {
-              "total": 15,
-              "males": null,
-              "females": null
+              "total": 14,
+              "males": 0,
+              "females": 0
             },
             "teacherIds": [
               "TEECEE953",
@@ -12019,19 +12019,6 @@
                 "classId": "P-Y2-C05",
                 "departmentId": "primary",
                 "searchName": "سوادني نورسين"
-              },
-              {
-                "id": "S5873DB0417",
-                "number": 14,
-                "firstName": "عبد الرزاق ريان",
-                "lastName": "بوزغتي",
-                "fullName": "بوزغتي عبد الرزاق ريان",
-                "dateOfBirth": "",
-                "gender": "",
-                "notes": "",
-                "classId": "P-Y2-C05",
-                "departmentId": "primary",
-                "searchName": "بوزغتي عبد الرزاق ريان"
               },
               {
                 "id": "S7546C214E9",
@@ -42058,10 +42045,10 @@
   "meta": {
     "primaryClasses": 50,
     "middleClasses": 21,
-    "primaryStudents": 931,
+    "primaryStudents": 930,
     "middleStudents": 480,
     "teachers": 143,
-    "totalStudents": 1411,
+    "totalStudents": 1410,
     "verified": true,
     "primarySource": "docx-tables",
     "middleSource": "2026.2027.xlsx"
