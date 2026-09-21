@@ -45,40 +45,6 @@
       ]
     },
     {
-      "id": "T3D06159C",
-      "firstName": "—",
-      "lastName": "غراس",
-      "phone": "",
-      "wilaya": "Algiers",
-      "commune": "Cheraga",
-      "modules": [
-        "French"
-      ],
-      "departments": [
-        "primary"
-      ],
-      "classIds": [
-        "P-Y5-C06"
-      ]
-    },
-    {
-      "id": "T56C892FA",
-      "firstName": "—",
-      "lastName": "منال",
-      "phone": "",
-      "wilaya": "Algiers",
-      "commune": "Cheraga",
-      "modules": [
-        "English"
-      ],
-      "departments": [
-        "primary"
-      ],
-      "classIds": [
-        "P-Y5-C06"
-      ]
-    },
-    {
       "id": "T8904DCFB",
       "firstName": "—",
       "lastName": "انزار",
@@ -87,40 +53,6 @@
       "commune": "Cheraga",
       "modules": [
         "Arabic"
-      ],
-      "departments": [
-        "primary"
-      ],
-      "classIds": [
-        "P-Y5-C07"
-      ]
-    },
-    {
-      "id": "T38EA70A6",
-      "firstName": "موسى",
-      "lastName": "بن",
-      "phone": "",
-      "wilaya": "Algiers",
-      "commune": "Cheraga",
-      "modules": [
-        "French"
-      ],
-      "departments": [
-        "primary"
-      ],
-      "classIds": [
-        "P-Y5-C07"
-      ]
-    },
-    {
-      "id": "T09D56416",
-      "firstName": "—",
-      "lastName": "ريان",
-      "phone": "",
-      "wilaya": "Algiers",
-      "commune": "Cheraga",
-      "modules": [
-        "English"
       ],
       "departments": [
         "primary"
@@ -147,27 +79,10 @@
       ]
     },
     {
-      "id": "T734DFC3A",
-      "firstName": "عبد الرحمان",
-      "lastName": "حاج",
-      "phone": "",
-      "wilaya": "Algiers",
-      "commune": "Cheraga",
-      "modules": [
-        "French"
-      ],
-      "departments": [
-        "primary"
-      ],
-      "classIds": [
-        "P-Y5-C08"
-      ]
-    },
-    {
-      "id": "TE5FEF7EF",
+      "id": "TED1D9D6B",
       "firstName": "—",
-      "lastName": "فارس",
-      "phone": "",
+      "lastName": "SIFOUANE",
+      "phone": "0540355907",
       "wilaya": "Algiers",
       "commune": "Cheraga",
       "modules": [
@@ -177,7 +92,873 @@
         "primary"
       ],
       "classIds": [
-        "P-Y5-C08"
+        "P-Y1-C02",
+        "P-Y1-C08"
+      ]
+    },
+    {
+      "id": "TB00D9A30",
+      "firstName": "Maria",
+      "lastName": "—",
+      "phone": "0670214271",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "English"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y1-C12",
+        "P-Y1-C06"
+      ]
+    },
+    {
+      "id": "T7966CA8A",
+      "firstName": "Douniazed",
+      "lastName": "REBHAOUI",
+      "phone": "0662342554",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "English"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y1-C07"
+      ]
+    },
+    {
+      "id": "TDD56AF5B",
+      "firstName": "Asma",
+      "lastName": "HARNENE",
+      "phone": "0551178965",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "English"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y1-C10",
+        "P-Y1-C11"
+      ]
+    },
+    {
+      "id": "TA41FAC39",
+      "firstName": "Hadjer",
+      "lastName": "CHERIF",
+      "phone": "0558419282",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "English"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y1-C03",
+        "P-Y1-C04",
+        "P-Y2-C11"
+      ]
+    },
+    {
+      "id": "T18839BBE",
+      "firstName": "Merina",
+      "lastName": "—",
+      "phone": "0550213514",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "English"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y1-C01"
+      ]
+    },
+    {
+      "id": "T50B83F0B",
+      "firstName": "Fella",
+      "lastName": "BACH",
+      "phone": "0556731792",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "English"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y1-C09"
+      ]
+    },
+    {
+      "id": "T2DFD9286",
+      "firstName": "Zohor",
+      "lastName": "—",
+      "phone": "0771438235",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "English"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y1-C05",
+        "P-Y2-C08"
+      ]
+    },
+    {
+      "id": "TC19AE988",
+      "firstName": "Basma",
+      "lastName": "TERNISH",
+      "phone": "0698862089",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "English"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y2-C04",
+        "P-Y2-C10"
+      ]
+    },
+    {
+      "id": "T5C33CA53",
+      "firstName": "Sarah",
+      "lastName": "MILOUDI",
+      "phone": "0781521831",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "English"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y2-C06"
+      ]
+    },
+    {
+      "id": "T224E6BEA",
+      "firstName": "Lynda",
+      "lastName": "BELAIDI",
+      "phone": "0556677876",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "English"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y2-C05",
+        "P-Y3-C10",
+        "P-Y3-C01"
+      ]
+    },
+    {
+      "id": "T308C9D15",
+      "firstName": "Rayane",
+      "lastName": "HAMIDI",
+      "phone": "0542175226",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "English"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y2-C07",
+        "P-Y2-C03",
+        "P-Y2-C12"
+      ]
+    },
+    {
+      "id": "T948A6793",
+      "firstName": "Ibtissem",
+      "lastName": "MAZZOUNI",
+      "phone": "0657783043",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "English"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y2-C01",
+        "P-Y3-C09",
+        "P-Y3-C05"
+      ]
+    },
+    {
+      "id": "T58ECDA23",
+      "firstName": "Zineddine",
+      "lastName": "HAMIDI",
+      "phone": "0672213346",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "English"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y2-C02",
+        "P-Y2-C09"
+      ]
+    },
+    {
+      "id": "TB6AF65AB",
+      "firstName": "Khadidja",
+      "lastName": "CHATAL",
+      "phone": "0552118329",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "English"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y3-C07",
+        "P-Y5-C01"
+      ]
+    },
+    {
+      "id": "TF04A0FB7",
+      "firstName": "Achour",
+      "lastName": "BARAKA",
+      "phone": "0541493023",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "English"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y3-C02",
+        "P-Y3-C04",
+        "P-Y3-C08"
+      ]
+    },
+    {
+      "id": "T668F9C00",
+      "firstName": "Manel",
+      "lastName": "BACHARI",
+      "phone": "0557054241",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "English"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y3-C06",
+        "P-Y4-C05",
+        "P-Y4-C07"
+      ]
+    },
+    {
+      "id": "T5BB3D90F",
+      "firstName": "Yasmine",
+      "lastName": "—",
+      "phone": "0562542769",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "English"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y3-C03",
+        "P-Y4-C02"
+      ]
+    },
+    {
+      "id": "TF3356B8C",
+      "firstName": "Aimen",
+      "lastName": "—",
+      "phone": "0795195297",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "English"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y4-C04",
+        "P-Y4-C06",
+        "P-Y5-C04"
+      ]
+    },
+    {
+      "id": "T02885512",
+      "firstName": "Fares",
+      "lastName": "HAMDANE",
+      "phone": "0540196918",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "English"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y4-C08",
+        "P-Y5-C02"
+      ]
+    },
+    {
+      "id": "T29B409F1",
+      "firstName": "Aicha",
+      "lastName": "CHENNOUGA",
+      "phone": "0555349715",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "English"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y4-C03",
+        "P-Y5-C03",
+        "P-Y5-C05"
+      ]
+    },
+    {
+      "id": "T33D55199",
+      "firstName": "Zidane",
+      "lastName": "NADJET",
+      "phone": "0673904755",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "English"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y4-C01"
+      ]
+    },
+    {
+      "id": "TDD6EBC31",
+      "firstName": "Rayane",
+      "lastName": "KHAITI",
+      "phone": "0667462551",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "English"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y5-C06",
+        "P-Y5-C07"
+      ]
+    },
+    {
+      "id": "T53D53507",
+      "firstName": "—",
+      "lastName": "AIT AMEUR",
+      "phone": "0560175269",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "French"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y1-C01",
+        "P-Y1-C11",
+        "P-Y4-C09"
+      ]
+    },
+    {
+      "id": "T53974812",
+      "firstName": "—",
+      "lastName": "KASSA",
+      "phone": "0795941335",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "French"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y1-C02",
+        "P-Y1-C12"
+      ]
+    },
+    {
+      "id": "T8FA864DA",
+      "firstName": "—",
+      "lastName": "KELLAL",
+      "phone": "0556916355",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "French"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y1-C03",
+        "P-Y1-C08"
+      ]
+    },
+    {
+      "id": "T9A04007F",
+      "firstName": "—",
+      "lastName": "BELHARIZI",
+      "phone": "0770776546",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "French"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y1-C04",
+        "P-Y1-C06"
+      ]
+    },
+    {
+      "id": "T6DFB8520",
+      "firstName": "—",
+      "lastName": "AMMARI",
+      "phone": "0661697069",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "French"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y1-C05",
+        "P-Y1-C10"
+      ]
+    },
+    {
+      "id": "TE29598F2",
+      "firstName": "Hanene",
+      "lastName": "BOUALEM",
+      "phone": "0780679265",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "French"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y1-C07"
+      ]
+    },
+    {
+      "id": "TFEBFAD65",
+      "firstName": "—",
+      "lastName": "BRIKI",
+      "phone": "0541859342",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "French"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y1-C09"
+      ]
+    },
+    {
+      "id": "TAD526A44",
+      "firstName": "—",
+      "lastName": "KOURANE",
+      "phone": "0542079319",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "French"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y2-C01",
+        "P-Y2-C12"
+      ]
+    },
+    {
+      "id": "T2996C507",
+      "firstName": "—",
+      "lastName": "ZERROUK",
+      "phone": "0799160050",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "French"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y2-C02",
+        "P-Y2-C09"
+      ]
+    },
+    {
+      "id": "TB1A0FF41",
+      "firstName": "—",
+      "lastName": "ADDA",
+      "phone": "0674640175",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "French"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y2-C03",
+        "P-Y2-C07"
+      ]
+    },
+    {
+      "id": "T5CC86CEA",
+      "firstName": "—",
+      "lastName": "DJOUATI",
+      "phone": "0556354604",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "French"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y2-C04",
+        "P-Y2-C10"
+      ]
+    },
+    {
+      "id": "TA6E29FAA",
+      "firstName": "—",
+      "lastName": "DAHABI",
+      "phone": "0561253411",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "French"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y2-C05",
+        "P-Y2-C08"
+      ]
+    },
+    {
+      "id": "T2CE626BF",
+      "firstName": "—",
+      "lastName": "OUSSAR",
+      "phone": "0771370034",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "French"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y2-C06",
+        "P-Y2-C11"
+      ]
+    },
+    {
+      "id": "T8D80E157",
+      "firstName": "—",
+      "lastName": "DJENADI",
+      "phone": "0561111855",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "French"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y3-C01",
+        "P-Y3-C10"
+      ]
+    },
+    {
+      "id": "TA86D0BDD",
+      "firstName": "—",
+      "lastName": "HASSANI",
+      "phone": "0669286720",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "French"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y3-C02",
+        "P-Y3-C06"
+      ]
+    },
+    {
+      "id": "T16B1B065",
+      "firstName": "—",
+      "lastName": "IKENOU",
+      "phone": "0782062014",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "French"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y3-C03",
+        "P-Y3-C04"
+      ]
+    },
+    {
+      "id": "T3848C167",
+      "firstName": "—",
+      "lastName": "OUHADA",
+      "phone": "0557041480",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "French"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y3-C05",
+        "P-Y3-C09"
+      ]
+    },
+    {
+      "id": "TC547C4D5",
+      "firstName": "—",
+      "lastName": "SILMI",
+      "phone": "0795224240",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "French"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y3-C07",
+        "P-Y3-C08"
+      ]
+    },
+    {
+      "id": "T42DD6BF6",
+      "firstName": "—",
+      "lastName": "LEULMI",
+      "phone": "0555053197",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "French"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y4-C01",
+        "P-Y4-C02"
+      ]
+    },
+    {
+      "id": "TBF939D24",
+      "firstName": "—",
+      "lastName": "LOULI",
+      "phone": "0560961534",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "French"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y4-C03",
+        "P-Y4-C08"
+      ]
+    },
+    {
+      "id": "T9816EAB5",
+      "firstName": "—",
+      "lastName": "GHERAS",
+      "phone": "0795835026",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "French"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y4-C04"
+      ]
+    },
+    {
+      "id": "TDABCB11B",
+      "firstName": "—",
+      "lastName": "HADJ ABDERRAHMANE",
+      "phone": "0540815262",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "French"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y4-C05",
+        "P-Y4-C07"
+      ]
+    },
+    {
+      "id": "T2FA45052",
+      "firstName": "—",
+      "lastName": "CHERGUI",
+      "phone": "0540606981",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "French"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y4-C06"
+      ]
+    },
+    {
+      "id": "T8E145CDB",
+      "firstName": "—",
+      "lastName": "BEN MOUSSA",
+      "phone": "0771334123",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "French"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y5-C01",
+        "P-Y5-C05",
+        "P-Y5-C06"
+      ]
+    },
+    {
+      "id": "T811BD397",
+      "firstName": "—",
+      "lastName": "MESSAH",
+      "phone": "0798918544",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "French"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y5-C02",
+        "P-Y5-C03",
+        "P-Y5-C04"
+      ]
+    },
+    {
+      "id": "TE9874D7E",
+      "firstName": "—",
+      "lastName": "CHERRAD",
+      "phone": "0559035235",
+      "wilaya": "Algiers",
+      "commune": "Cheraga",
+      "modules": [
+        "French"
+      ],
+      "departments": [
+        "primary"
+      ],
+      "classIds": [
+        "P-Y5-C07"
       ]
     }
   ],
@@ -208,7 +989,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "T18839BBE",
+              "T53D53507"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -876,7 +1660,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "TED1D9D6B",
+              "T53974812"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -1566,7 +2353,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "TA41FAC39",
+              "T8FA864DA"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -2269,7 +3059,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "TA41FAC39",
+              "T9A04007F"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -2893,7 +3686,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "T2DFD9286",
+              "T6DFB8520"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -3561,7 +4357,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "TB00D9A30",
+              "T9A04007F"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -4229,7 +5028,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "T7966CA8A",
+              "TE29598F2"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -4919,7 +5721,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "TED1D9D6B",
+              "T8FA864DA"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -5587,7 +6392,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "T50B83F0B",
+              "TFEBFAD65"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -6044,7 +6852,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "TDD56AF5B",
+              "T6DFB8520"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -6316,7 +7127,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "TDD56AF5B",
+              "T53D53507"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -6562,7 +7376,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "TB00D9A30",
+              "T53974812"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -6851,7 +7668,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "T948A6793",
+              "TAD526A44"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -7427,7 +8247,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "T58ECDA23",
+              "T2996C507"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -8073,7 +8896,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "T308C9D15",
+              "TB1A0FF41"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -8732,7 +9558,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "TC19AE988",
+              "T5CC86CEA"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -9343,7 +10172,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "T224E6BEA",
+              "TA6E29FAA"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -9563,7 +10395,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "T5C33CA53",
+              "T2CE626BF"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -10174,7 +11009,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "T308C9D15",
+              "TB1A0FF41"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -10785,7 +11623,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "T2DFD9286",
+              "TA6E29FAA"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -11431,7 +12272,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "T58ECDA23",
+              "T2996C507"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -12007,7 +12851,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "TC19AE988",
+              "T5CC86CEA"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -12535,7 +13382,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "TA41FAC39",
+              "T2CE626BF"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -13133,7 +13983,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "T308C9D15",
+              "TAD526A44"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -13726,7 +14579,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "T224E6BEA",
+              "T8D80E157"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -14464,7 +15320,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "TF04A0FB7",
+              "TA86D0BDD"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -15132,7 +15991,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "T5BB3D90F",
+              "T16B1B065"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -15708,7 +16570,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "TF04A0FB7",
+              "T16B1B065"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -16319,7 +17184,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "T948A6793",
+              "T3848C167"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -16943,7 +17811,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "T668F9C00",
+              "TA86D0BDD"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -17501,7 +18372,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "TB6AF65AB",
+              "TC547C4D5"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -18204,7 +19078,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "TF04A0FB7",
+              "TC547C4D5"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -18705,7 +19582,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "T948A6793",
+              "T3848C167"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -19228,7 +20108,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "T224E6BEA",
+              "T8D80E157"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -19772,7 +20655,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "T33D55199",
+              "T42DD6BF6"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -20580,7 +21466,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "T5BB3D90F",
+              "T42DD6BF6"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -21208,7 +22097,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "T29B409F1",
+              "TBF939D24"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -21898,7 +22790,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "TF3356B8C",
+              "T9816EAB5"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -22522,7 +23417,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "T668F9C00",
+              "TDABCB11B"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -22993,7 +23891,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "TF3356B8C",
+              "T2FA45052"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -23604,7 +24505,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "T668F9C00",
+              "TDABCB11B"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -24237,7 +25141,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "T02885512",
+              "TBF939D24"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -24822,7 +25729,9 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "T53D53507"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -25406,7 +26315,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "TB6AF65AB",
+              "T8E145CDB"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -26056,7 +26968,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "T02885512",
+              "T811BD397"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -26851,7 +27766,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "T29B409F1",
+              "T811BD397"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -27589,7 +28507,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "TF3356B8C",
+              "T811BD397"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -28349,7 +29270,10 @@
               "males": null,
               "females": null
             },
-            "teacherIds": [],
+            "teacherIds": [
+              "T29B409F1",
+              "T8E145CDB"
+            ],
             "modules": [
               "Arabic",
               "French",
@@ -29000,9 +29924,9 @@
               "females": null
             },
             "teacherIds": [
-              "T2D2E1957",
-              "T3D06159C",
-              "T56C892FA"
+              "TDD6EBC31",
+              "T8E145CDB",
+              "T2D2E1957"
             ],
             "modules": [
               "Arabic",
@@ -29606,9 +30530,9 @@
               "females": null
             },
             "teacherIds": [
-              "T8904DCFB",
-              "T38EA70A6",
-              "T09D56416"
+              "TDD6EBC31",
+              "TE9874D7E",
+              "T8904DCFB"
             ],
             "modules": [
               "Arabic",
@@ -30234,9 +31158,7 @@
               "females": null
             },
             "teacherIds": [
-              "TB6B5E16C",
-              "T734DFC3A",
-              "TE5FEF7EF"
+              "TB6B5E16C"
             ],
             "modules": [
               "Arabic",
@@ -38711,7 +39633,7 @@
     "middleClasses": 19,
     "primaryStudents": 931,
     "middleStudents": 442,
-    "teachers": 9,
+    "teachers": 52,
     "totalStudents": 1373,
     "verified": true,
     "primarySource": "docx-tables",
