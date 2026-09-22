@@ -261,8 +261,8 @@
             (c) => `
           <button type="button" class="group-card" data-nav="#/dept/${deptId}/level/${level.id}/class/${c.id}">
             <div class="group-icon">${icons.users}</div>
-            <h3>${esc(c.name)}</h3>
-            <div class="code">${esc(c.code)}${c.floor ? " · " + esc(c.floor) : ""}</div>
+            <h3>${esc(c.code || c.name)}</h3>
+            <div class="code">${esc([c.nameAr && c.nameAr !== (c.code || c.name) ? c.nameAr : "", c.floor || ""].filter(Boolean).join(" · "))}</div>
             <div class="hint">${c.students.length} students · ${(c.modules || []).length} modules</div>
           </button>
         `
@@ -287,11 +287,11 @@
         { label: "Departments", to: "#/home" },
         { label: short, to: `#/dept/${deptId}` },
         { label: level.name, to: `#/dept/${deptId}/level/${level.id}` },
-        { label: cls.name, to: `#/dept/${deptId}/level/${level.id}/class/${cls.id}` },
+        { label: cls.code || cls.name, to: `#/dept/${deptId}/level/${level.id}/class/${cls.id}` },
       ])}
       <div class="page-header">
-        <h1>${esc(cls.name)} <span class="code-inline">${esc(cls.code)}</span></h1>
-        <p class="lede">${esc(cls.nameAr || "")}${cls.floor ? " · " + esc(cls.floor) : ""}</p>
+        <h1>${esc(cls.code || cls.name)}</h1>
+        <p class="lede">${esc([cls.nameAr && cls.nameAr !== (cls.code || cls.name) ? cls.nameAr : "", cls.floor || ""].filter(Boolean).join(" · "))}</p>
       </div>
 
       <div class="detail-layout">
@@ -473,7 +473,7 @@
           : [
               { label: short, to: `#/dept/${dept.id}` },
               { label: level.name, to: `#/dept/${dept.id}/level/${level.id}` },
-              { label: cls.name, to: classBack },
+              { label: cls.code || cls.name, to: classBack },
             ]),
         { label: s.fullName || "Student", to: `#/student/${s.id}` },
       ])}
@@ -495,7 +495,7 @@
         <div class="fact-card"><div class="k">Roster #</div><div class="v">${s.number ?? "—"}</div></div>
         <div class="fact-card"><div class="k">Department</div><div class="v">${esc(dept.name)}</div></div>
         <div class="fact-card"><div class="k">Year</div><div class="v">${esc(level.name)}</div></div>
-        <div class="fact-card"><div class="k">Class</div><div class="v"><button type="button" class="link-btn" data-nav="${esc(classBack)}">${esc(cls.code)} · ${esc(cls.name)}</button></div></div>
+        <div class="fact-card"><div class="k">Class</div><div class="v"><button type="button" class="link-btn" data-nav="${esc(classBack)}">${esc(cls.code || cls.name)}${cls.nameAr && cls.nameAr !== (cls.code || cls.name) ? " · " + esc(cls.nameAr) : ""}</button></div></div>
         <div class="fact-card"><div class="k">Student ID</div><div class="v">${esc(s.id)}</div></div>
       </div>
       ${

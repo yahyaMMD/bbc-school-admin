@@ -84,15 +84,21 @@ const BBC_DATA = (() => {
     };
   }
 
+  function classCode(cls) {
+    return (cls && (cls.code || cls.name)) || "";
+  }
+
   function getClassLabel(classId) {
     const found = findClassById(classId);
     if (!found) return null;
+    const code = classCode(found.cls);
     return {
       class: found.cls,
       floorName: found.level.name,
       departmentId: found.dept.id,
       departmentName: found.dept.name,
-      path: `${found.dept.label} · ${found.level.name} · ${found.cls.name}`,
+      code,
+      path: `${found.dept.label} · ${found.level.name} · ${code}`,
     };
   }
 
@@ -124,8 +130,8 @@ const BBC_DATA = (() => {
         for (const cls of level.classes) {
           opts.push({
             id: cls.id,
-            code: cls.code,
-            label: `${dept.label} · ${cls.code}`,
+            code: cls.code || cls.name,
+            label: `${dept.label} · ${cls.code || cls.name}`,
             departmentId: dept.id,
             levelId: level.id,
           });
@@ -156,6 +162,7 @@ const BBC_DATA = (() => {
     getTeacher,
     getStudent,
     searchStudents,
+    classCode,
     getClassLabel,
     listAllStudents,
     listAllTeachers,
