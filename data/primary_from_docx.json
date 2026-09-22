@@ -1,20 +1,22 @@
 [
   {
+    "code": "1P01",
     "year": 1,
     "classNumber": 1,
     "labelAr": "سنة اولى قسم ( 1 )",
+    "floor": "Ground Floor",
     "floorRaw": "الارضي",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:         ا. الغة الفرنسية:           ا. اللغة الانجليزية :                            الطابق : الارضي",
     "students": [
       {
         "number": 1,
         "fullName": "عيد محمد امير",
         "dateOfBirth": "",
-        "notes": "تخفيض السن",
+        "notes": "",
         "gender": ""
       },
       {
@@ -28,7 +30,7 @@
         "number": 3,
         "fullName": "حليمي جواد",
         "dateOfBirth": "",
-        "notes": "حركي",
+        "notes": "",
         "gender": ""
       },
       {
@@ -56,7 +58,7 @@
         "number": 7,
         "fullName": "حاج عيسى ابراهيم",
         "dateOfBirth": "",
-        "notes": "تخفيض السن",
+        "notes": "",
         "gender": ""
       },
       {
@@ -75,95 +77,102 @@
       },
       {
         "number": 10,
-        "fullName": "برشاش يمان سراج",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 11,
         "fullName": "سكال كميل",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 12,
+        "number": 11,
         "fullName": "هاشمي روى",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 13,
+        "number": 12,
         "fullName": "بن مولود ايناس",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 14,
+        "number": 13,
         "fullName": "بلقاسمي سيرين",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 15,
+        "number": 14,
         "fullName": "ميهاليل سيرين",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 16,
+        "number": 15,
         "fullName": "النعيمي ليث",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 17,
+        "number": 16,
         "fullName": "طلقنت ايناس",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 18,
+        "number": 17,
         "fullName": "بوزيد الينا",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 19,
+        "number": 18,
         "fullName": "شايب ليانا",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 19,
+        "fullName": "حيطاشي أمير",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 20,
+        "fullName": "خرشي آنيا",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       }
     ],
     "stats": {
-      "total": 19,
-      "males": null,
-      "females": null
+      "total": 20,
+      "males": 12,
+      "females": 8
     },
-    "source": "docx-table",
-    "floor": "Ground Floor",
-    "label": "Year 1 — Class 1",
-    "code": "1P01"
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 1 Class 1"
   },
   {
+    "code": "1P02",
     "year": 1,
     "classNumber": 2,
     "labelAr": "سنة اولى قسم ( 2 )",
+    "floor": "Ground Floor",
     "floorRaw": "الارضي",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:             ا. الغة الفرنسية:           ا. اللغة الانجليزية :             الطابق : الارضي",
     "students": [
       {
         "number": 1,
@@ -174,9 +183,9 @@
       },
       {
         "number": 2,
-        "fullName": "زيون ادم",
+        "fullName": "زيوان ادم",
         "dateOfBirth": "",
-        "notes": "تخفيض السن",
+        "notes": "",
         "gender": ""
       },
       {
@@ -202,123 +211,130 @@
       },
       {
         "number": 6,
-        "fullName": "حيطاشي امير",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 7,
         "fullName": "وانجلي قاسم جواد",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 8,
+        "number": 7,
         "fullName": "سعودي محمد",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 9,
+        "number": 8,
         "fullName": "بوشارف محمد مير",
         "dateOfBirth": "",
-        "notes": "تخفيض السن",
+        "notes": "",
         "gender": ""
       },
       {
-        "number": 10,
-        "fullName": "بلقاضي صهان مصطفى",
-        "dateOfBirth": "",
-        "notes": "تخفيض السن",
-        "gender": ""
-      },
-      {
-        "number": 11,
+        "number": 9,
         "fullName": "بولقروش قاسم",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 12,
+        "number": 10,
         "fullName": "سربوح رزان",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 13,
+        "number": 11,
         "fullName": "عبد الرزاق لميس",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 14,
+        "number": 12,
         "fullName": "براهيمي انس",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 15,
+        "number": 13,
         "fullName": "ختيم لينة",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 16,
+        "number": 14,
         "fullName": "رامول مليا",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 17,
+        "number": 15,
         "fullName": "اكموسي اناييس",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 18,
+        "number": 16,
         "fullName": "عويسي سيرين",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 19,
+        "number": 17,
         "fullName": "مخالفي دينة",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 18,
+        "fullName": "حاج موسى خالد",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 19,
+        "fullName": "حديبي جواد",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 20,
+        "fullName": "بوعزة مريام",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       }
     ],
     "stats": {
-      "total": 19,
-      "males": null,
-      "females": null
+      "total": 20,
+      "males": 11,
+      "females": 9
     },
-    "source": "docx-table",
-    "floor": "Ground Floor",
-    "label": "Year 1 — Class 2",
-    "code": "1P02"
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 1 Class 2"
   },
   {
+    "code": "1P03",
     "year": 1,
     "classNumber": 3,
     "labelAr": "سنة اولى قسم ( 3 )",
+    "floor": "Ground Floor",
     "floorRaw": "الارضي",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:         ا. الغة الفرنسية:         ا. اللغة الانجليزية :          الطابق : الارضي",
     "students": [
       {
         "number": 1,
@@ -364,98 +380,98 @@
       },
       {
         "number": 7,
-        "fullName": "لطيفي مريم",
-        "dateOfBirth": "",
-        "notes": "زابي عبلة",
-        "gender": ""
-      },
-      {
-        "number": 8,
         "fullName": "انباتي لقمان",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 9,
+        "number": 8,
         "fullName": "زرقي فراس",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 10,
+        "number": 9,
         "fullName": "يوسفي شهاب",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 11,
+        "number": 10,
         "fullName": "مولوج احمد",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 12,
+        "number": 11,
         "fullName": "حمدي باشا دانيا",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 13,
+        "number": 12,
         "fullName": "خريف اميمة",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 14,
+        "number": 13,
         "fullName": "بوسجرة اميرة",
         "dateOfBirth": "",
-        "notes": "تحفيض السن",
+        "notes": "",
         "gender": ""
       },
       {
-        "number": 15,
+        "number": 14,
         "fullName": "بوعاش جمانة",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 16,
+        "number": 15,
         "fullName": "بوعاش سيدرة",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 17,
+        "number": 16,
         "fullName": "بوعاش رزان",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 18,
+        "number": 17,
         "fullName": "شمون ياسمين",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 19,
+        "number": 18,
         "fullName": "سعادة ايلين",
         "dateOfBirth": "",
-        "notes": "تحفيض السن",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 19,
+        "fullName": "بوزيد ايلا",
+        "dateOfBirth": "",
+        "notes": "",
         "gender": ""
       },
       {
         "number": 20,
-        "fullName": "بوزيد ايلا",
+        "fullName": "بريكي عبد الهادي",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
@@ -463,30 +479,30 @@
     ],
     "stats": {
       "total": 20,
-      "males": null,
-      "females": null
+      "males": 11,
+      "females": 9
     },
-    "source": "docx-table",
-    "floor": "Ground Floor",
-    "label": "Year 1 — Class 3",
-    "code": "1P03"
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 1 Class 3"
   },
   {
+    "code": "1P04",
     "year": 1,
     "classNumber": 4,
     "labelAr": "سنة اولى قسم ( 4 )",
+    "floor": "Ground Floor",
     "floorRaw": "الارضي",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:     ا. الغة الفرنسية:              ا. اللغة الانجليزية :          الطابق : الارضي",
     "students": [
       {
         "number": 1,
         "fullName": "محامدي اليسيا",
         "dateOfBirth": "",
-        "notes": "تخفيض السن",
+        "notes": "",
         "gender": ""
       },
       {
@@ -505,7 +521,7 @@
       },
       {
         "number": 4,
-        "fullName": "جودي اكسيل",
+        "fullName": "بودي اكسيل",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
@@ -563,7 +579,7 @@
         "number": 12,
         "fullName": "بسالم ليتيسيا",
         "dateOfBirth": "",
-        "notes": "تخفيض السن",
+        "notes": "",
         "gender": ""
       },
       {
@@ -582,35 +598,35 @@
       },
       {
         "number": 15,
-        "fullName": "حاج موسى خالد",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 16,
         "fullName": "موساوي نيليا",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 17,
-        "fullName": "حديبي جواد",
-        "dateOfBirth": "",
-        "notes": "تخفيض السن",
-        "gender": ""
-      },
-      {
-        "number": 18,
+        "number": 16,
         "fullName": "مساعدية إياد",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
+        "number": 17,
+        "fullName": "يحيى محمد أصيل خالد",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 18,
+        "fullName": "فلاح ماريا",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
         "number": 19,
-        "fullName": "اوحادة نائل",
+        "fullName": "أفطيس نيليا",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
@@ -618,24 +634,24 @@
     ],
     "stats": {
       "total": 19,
-      "males": null,
-      "females": null
+      "males": 8,
+      "females": 11
     },
-    "source": "docx-table",
-    "floor": "Ground Floor",
-    "label": "Year 1 — Class 4",
-    "code": "1P04"
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 1 Class 4"
   },
   {
+    "code": "1P05",
     "year": 1,
     "classNumber": 5,
     "labelAr": "سنة اولى قسم ( 5 )",
+    "floor": "Ground Floor",
     "floorRaw": "الارضي",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:        ا. الغة الفرنسية:         ا. اللغة الانجليزية :          الطابق : الارضي",
     "students": [
       {
         "number": 1,
@@ -674,123 +690,116 @@
       },
       {
         "number": 6,
-        "fullName": "يعقوب انيا",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 7,
         "fullName": "مزياني رسيم",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 8,
+        "number": 7,
         "fullName": "سلامي يانيس",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 9,
+        "number": 8,
         "fullName": "شلابي زكريا",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 10,
+        "number": 9,
         "fullName": "مخلوف أمير",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 11,
+        "number": 10,
         "fullName": "قارة دارين",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 12,
-        "fullName": "خرشي آنية",
-        "dateOfBirth": "",
-        "notes": "تحفيض السن",
-        "gender": ""
-      },
-      {
-        "number": 13,
+        "number": 11,
         "fullName": "مرابط هداية",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 14,
+        "number": 12,
         "fullName": "ايت احمد غزلان",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 15,
+        "number": 13,
         "fullName": "عماري نايا",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 16,
+        "number": 14,
         "fullName": "بن عيسى اليانا دانيا",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 17,
+        "number": 15,
         "fullName": "جدو سيدرة",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 18,
+        "number": 16,
         "fullName": "فداق ماريا",
         "dateOfBirth": "",
-        "notes": "تخفيض السن",
+        "notes": "",
         "gender": ""
       },
       {
-        "number": 19,
+        "number": 17,
         "fullName": "تمام محمد ابراهيم",
         "dateOfBirth": "",
-        "notes": "تخفيض السن",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 18,
+        "fullName": "حراث آدم",
+        "dateOfBirth": "",
+        "notes": "",
         "gender": ""
       }
     ],
     "stats": {
-      "total": 19,
-      "males": null,
-      "females": null
+      "total": 18,
+      "males": 11,
+      "females": 7
     },
-    "source": "docx-table",
-    "floor": "Ground Floor",
-    "label": "Year 1 — Class 5",
-    "code": "1P05"
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 1 Class 5"
   },
   {
+    "code": "1P06",
     "year": 1,
     "classNumber": 6,
     "labelAr": "سنة اولى قسم ( 6 )",
+    "floor": "Ground Floor",
     "floorRaw": "الارضي",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:         ا. الغة الفرنسية:         ا. اللغة الانجليزية :        الطابق : الارضي",
     "students": [
       {
         "number": 1,
@@ -801,151 +810,158 @@
       },
       {
         "number": 2,
-        "fullName": "وادي امير دوريان",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 3,
         "fullName": "اكموسي ديلان",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 4,
+        "number": 3,
         "fullName": "بوبدرة اناييس",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 5,
+        "number": 4,
         "fullName": "زراد يوسف",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 6,
+        "number": 5,
         "fullName": "بن رايس امير",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 7,
+        "number": 6,
         "fullName": "زيبوش يانيس",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 8,
+        "number": 7,
         "fullName": "قليز كنزي",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 9,
+        "number": 8,
         "fullName": "طايبي سراج",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 10,
+        "number": 9,
         "fullName": "مهالول جود",
         "dateOfBirth": "",
-        "notes": "تخفيض لسن",
+        "notes": "",
         "gender": ""
       },
       {
-        "number": 11,
+        "number": 10,
         "fullName": "بعليش ليتيسيا",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 12,
+        "number": 11,
         "fullName": "تلي اناييس",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 13,
+        "number": 12,
         "fullName": "كاديك ماريا",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 14,
+        "number": 13,
         "fullName": "قشطولي حنين",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 15,
+        "number": 14,
         "fullName": "زروق اكرام",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 16,
-        "fullName": "نجاري مايا",
-        "dateOfBirth": "",
-        "notes": "تخفيض السن",
-        "gender": ""
-      },
-      {
-        "number": 17,
+        "number": 15,
         "fullName": "اوشنير تاليا",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 18,
+        "number": 16,
         "fullName": "قندول سيرين",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
+        "number": 17,
+        "fullName": "منصوري سيدرا",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 18,
+        "fullName": "اوحادة نائل",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
         "number": 19,
-        "fullName": "بوعزة ميريام",
+        "fullName": "صافي يحيى",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 20,
+        "fullName": "بلقاضي صهان",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       }
     ],
     "stats": {
-      "total": 19,
-      "males": null,
-      "females": null
+      "total": 20,
+      "males": 11,
+      "females": 9
     },
-    "source": "docx-table",
-    "floor": "Ground Floor",
-    "label": "Year 1 — Class 6",
-    "code": "1P06"
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 1 Class 6"
   },
   {
+    "code": "1P07",
     "year": 1,
     "classNumber": 7,
     "labelAr": "سنة اولى قسم ( 7 )",
+    "floor": "Ground Floor",
     "floorRaw": "الارضي",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:       ا. الغة الفرنسية:          ا. اللغة الانجليزية :             الطابق : الارضي",
     "students": [
       {
         "number": 1,
@@ -965,117 +981,117 @@
         "number": 3,
         "fullName": "برغيدة جاد",
         "dateOfBirth": "",
-        "notes": "تخفيض السن",
-        "gender": ""
-      },
-      {
-        "number": 4,
-        "fullName": "حراث ادم",
-        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 5,
+        "number": 4,
         "fullName": "رزايقية لقمان",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 6,
+        "number": 5,
         "fullName": "بورزاق ادم",
         "dateOfBirth": "",
-        "notes": "تحفيض السن",
+        "notes": "",
         "gender": ""
       },
       {
-        "number": 7,
+        "number": 6,
         "fullName": "بلقاسم اياد",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 8,
+        "number": 7,
         "fullName": "ولد مالك يوسف",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 9,
-        "fullName": "صافي يحي",
+        "number": 8,
+        "fullName": "طايبي ميليا",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 10,
-        "fullName": "طايبي ميليا",
-        "dateOfBirth": "",
-        "notes": "تخفيض السن",
-        "gender": ""
-      },
-      {
-        "number": 11,
+        "number": 9,
         "fullName": "بلهيبة روان",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 12,
+        "number": 10,
         "fullName": "خيدر كاميليا",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 13,
+        "number": 11,
         "fullName": "بلكبير ايناس",
         "dateOfBirth": "",
-        "notes": "تخفيض لسن",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 12,
+        "fullName": "رياش نور الهدى",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 13,
+        "fullName": "فيطاس مريم",
+        "dateOfBirth": "",
+        "notes": "",
         "gender": ""
       },
       {
         "number": 14,
-        "fullName": "رياش نور الهدى",
-        "dateOfBirth": "",
-        "notes": "تحفيض السن",
-        "gender": ""
-      },
-      {
-        "number": 15,
-        "fullName": "فيطاس مريم",
-        "dateOfBirth": "",
-        "notes": "تخفيض السن",
-        "gender": ""
-      },
-      {
-        "number": 16,
         "fullName": "شرفي جنى",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 17,
+        "number": 15,
         "fullName": "طباش كهينة",
         "dateOfBirth": "",
-        "notes": "تخفيض السن",
+        "notes": "",
         "gender": ""
       },
       {
-        "number": 18,
+        "number": 16,
         "fullName": "قارة عشيرة نائل",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 19,
+        "number": 17,
         "fullName": "اكنو ملك الين",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 18,
+        "fullName": "نجاري مايا",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 19,
+        "fullName": "سالم عطية مليكة هانية",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
@@ -1083,24 +1099,24 @@
     ],
     "stats": {
       "total": 19,
-      "males": null,
-      "females": null
+      "males": 7,
+      "females": 12
     },
-    "source": "docx-table",
-    "floor": "Ground Floor",
-    "label": "Year 1 — Class 7",
-    "code": "1P07"
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 1 Class 7"
   },
   {
+    "code": "1P08",
     "year": 1,
     "classNumber": 8,
     "labelAr": "سنة اولى قسم (8)",
+    "floor": "Ground Floor",
     "floorRaw": "الارضي",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:       ا. الغة الفرنسية:         ا. اللغة الانجليزية :             الطابق : الارضي",
     "students": [
       {
         "number": 1,
@@ -1183,7 +1199,7 @@
         "number": 12,
         "fullName": "علاوي تالا",
         "dateOfBirth": "",
-        "notes": "تخفيض السن",
+        "notes": "",
         "gender": ""
       },
       {
@@ -1209,28 +1225,28 @@
       },
       {
         "number": 16,
-        "fullName": "جدي بن عبدة انيس",
-        "dateOfBirth": "15/02/2020",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 17,
         "fullName": "قرابة ملينة",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
+        "number": 17,
+        "fullName": "يعقوب آنيا",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
         "number": 18,
-        "fullName": "تواتي نوفل",
+        "fullName": "بن زروق محمد رياض",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 19,
-        "fullName": "بريكي عبد الهادي",
+        "fullName": "بوهرور كنزي الياس",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
@@ -1238,37 +1254,37 @@
     ],
     "stats": {
       "total": 19,
-      "males": null,
-      "females": null
+      "males": 10,
+      "females": 9
     },
-    "source": "docx-table",
-    "floor": "Ground Floor",
-    "label": "Year 1 — Class 8",
-    "code": "1P08"
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 1 Class 8"
   },
   {
+    "code": "1P09",
     "year": 1,
     "classNumber": 9,
     "labelAr": "سنة اولى قسم ( 09 )",
+    "floor": "Ground Floor",
     "floorRaw": "الارضي",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:        ا. الغة الفرنسية:          ا. اللغة الانجليزية :             الطابق : الارضي",
     "students": [
       {
         "number": 1,
         "fullName": "بوزيد محمد غيث",
         "dateOfBirth": "",
-        "notes": "تحفيض السن",
+        "notes": "",
         "gender": ""
       },
       {
         "number": 2,
         "fullName": "طباش كليسي",
         "dateOfBirth": "",
-        "notes": "تخفيض السن",
+        "notes": "",
         "gender": ""
       },
       {
@@ -1282,7 +1298,7 @@
         "number": 4,
         "fullName": "بوعلام جمال",
         "dateOfBirth": "",
-        "notes": "تخفيض السن",
+        "notes": "",
         "gender": ""
       },
       {
@@ -1296,114 +1312,121 @@
         "number": 6,
         "fullName": "ناجي رشيد",
         "dateOfBirth": "",
-        "notes": "تحفيض السن",
+        "notes": "",
         "gender": ""
       },
       {
         "number": 7,
-        "fullName": "بوهرور كنزي الياس",
+        "fullName": "برابية وائل",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 8,
-        "fullName": "برابية وائل",
-        "dateOfBirth": "",
-        "notes": "تحفيض لسن",
-        "gender": ""
-      },
-      {
-        "number": 9,
         "fullName": "شعبني الين",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 10,
+        "number": 9,
         "fullName": "سنوسي سهيل",
         "dateOfBirth": "",
-        "notes": "تخفيض السن",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 10,
+        "fullName": "يلدرم بيرين",
+        "dateOfBirth": "",
+        "notes": "",
         "gender": ""
       },
       {
         "number": 11,
-        "fullName": "يلدرم بيرين",
-        "dateOfBirth": "",
-        "notes": "تخفيض السن",
-        "gender": ""
-      },
-      {
-        "number": 12,
         "fullName": "حب الحمص رامي",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 13,
+        "number": 12,
         "fullName": "قدير أردا أياس",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 14,
+        "number": 13,
         "fullName": "بورقعة إليان",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
+        "number": 14,
+        "fullName": "دماد بيار سامي",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
         "number": 15,
-        "fullName": "داماد بيار سامي",
+        "fullName": "كفصي اناييس",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 16,
-        "fullName": "قفصي اناييس",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 17,
         "fullName": "مزياني رسيم",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 18,
+        "number": 17,
         "fullName": "خلفة عبد الله",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 18,
+        "fullName": "ناجي يوسف",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 19,
+        "fullName": "لجرم أميليا",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       }
     ],
     "stats": {
-      "total": 18,
-      "males": null,
-      "females": null
+      "total": 19,
+      "males": 13,
+      "females": 6
     },
-    "source": "docx-table",
-    "floor": "Ground Floor",
-    "label": "Year 1 — Class 9",
-    "code": "1P09"
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 1 Class 9"
   },
   {
+    "code": "1P10",
     "year": 1,
     "classNumber": 10,
     "labelAr": "سنة اولى قسم ( 10 )",
+    "floor": "Floor 1",
     "floorRaw": "الاول",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:       ا. الغة الفرنسية:         ا. اللغة الانجليزية :            الطابق : الاول",
     "students": [
       {
         "number": 1,
@@ -1414,151 +1437,158 @@
       },
       {
         "number": 2,
-        "fullName": "فلاح ماريا",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 3,
         "fullName": "لبيض توفيق فهد",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 4,
+        "number": 3,
         "fullName": "عبد السلام محمد",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 5,
+        "number": 4,
         "fullName": "أبو ورد ريان",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 6,
-        "fullName": "أفطيس نيليا",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 7,
+        "number": 5,
         "fullName": "عطّيف أميرة ماريا",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 8,
-        "fullName": "آيات طارق",
+        "number": 6,
+        "fullName": "عياط طارق",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 9,
+        "number": 7,
         "fullName": "بلعيد أكسل",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 10,
+        "number": 8,
         "fullName": "بن خدة علي عبد الله",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 11,
-        "fullName": "بو بترة أيلا",
+        "number": 9,
+        "fullName": "بو بطرة أيلا",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 12,
+        "number": 10,
         "fullName": "بوبلاطة يحيى",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 13,
+        "number": 11,
         "fullName": "معيوف صوفيا",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 14,
+        "number": 12,
         "fullName": "ناجي نور اليقين",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 15,
-        "fullName": "سالم عطية مليكة هانية",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 16,
+        "number": 13,
         "fullName": "صغير مايسا فاطمة",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 17,
-        "fullName": "سرقين أريان أسيل",
+        "number": 14,
+        "fullName": "سرقين أريام أسيل",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 18,
+        "number": 15,
         "fullName": "الركرمة محمد منيل",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 19,
+        "number": 16,
         "fullName": "مبراك فارس",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 17,
+        "fullName": "حفيظ آية",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 18,
+        "fullName": "مشروح دينة",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 19,
+        "fullName": "جدي بن عبدة أنس",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 20,
+        "fullName": "وادي دوريان أمير",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       }
     ],
     "stats": {
-      "total": 19,
-      "males": null,
-      "females": null
+      "total": 20,
+      "males": 11,
+      "females": 9
     },
-    "source": "docx-table",
-    "floor": "Floor 1",
-    "label": "Year 1 — Class 10",
-    "code": "1P10"
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 1 Class 10"
   },
   {
+    "code": "1P11",
     "year": 1,
     "classNumber": 11,
     "labelAr": "سنة اولى قسم ( 11 )",
+    "floor": "Floor 1",
     "floorRaw": "الاول",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:             ا. الغة الفرنسية:          ا. اللغة الانجليزية :           الطابق :الاول",
     "students": [
       {
         "number": 1,
@@ -1576,7 +1606,7 @@
       },
       {
         "number": 3,
-        "fullName": "توبرينا نور الهدي",
+        "fullName": "توبرينات نور الهدي",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
@@ -1653,7 +1683,7 @@
       },
       {
         "number": 14,
-        "fullName": "بلاع يانيس",
+        "fullName": "بلعة يانيس",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
@@ -1669,7 +1699,7 @@
         "number": 16,
         "fullName": "مكارنية نائل",
         "dateOfBirth": "",
-        "notes": "صحراوي / بودربالة",
+        "notes": "",
         "gender": ""
       },
       {
@@ -1678,32 +1708,39 @@
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
+      },
+      {
+        "number": 18,
+        "fullName": "سعيدات حمزة",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
       }
     ],
     "stats": {
-      "total": 17,
-      "males": null,
-      "females": null
+      "total": 18,
+      "males": 12,
+      "females": 6
     },
-    "source": "docx-table",
-    "floor": "Floor 1",
-    "label": "Year 1 — Class 11",
-    "code": "1P11"
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 1 Class 11"
   },
   {
+    "code": "1P12",
     "year": 1,
     "classNumber": 12,
     "labelAr": "سنة اولى قسم (12)",
+    "floor": "Ground Floor",
     "floorRaw": "الارضي",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:       ا. الغة الفرنسية:           ا. اللغة الانجليزية :             الطابق : الارضي",
     "students": [
       {
         "number": 1,
-        "fullName": "شريفي ريحانة",
+        "fullName": "شريفي ريحان",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
@@ -1826,28 +1863,42 @@
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
+      },
+      {
+        "number": 19,
+        "fullName": "حساني آلاء",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 20,
+        "fullName": "لطيفي مريم",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
       }
     ],
     "stats": {
-      "total": 18,
-      "males": null,
-      "females": null
+      "total": 20,
+      "males": 10,
+      "females": 10
     },
-    "source": "docx-table",
-    "floor": "Ground Floor",
-    "label": "Year 1 — Class 12",
-    "code": "1P12"
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 1 Class 12"
   },
   {
+    "code": "2P01",
     "year": 2,
     "classNumber": 1,
     "labelAr": "سنة ثانية قسم ( 1 )",
-    "floorRaw": "الأول",
+    "floor": "Floor 1",
+    "floorRaw": "الاول",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:       ا. الغة الفرنسية:           ا. اللغة الانجليزية :           الطابق :الأول",
     "students": [
       {
         "number": 1,
@@ -1971,24 +2022,24 @@
     ],
     "stats": {
       "total": 17,
-      "males": null,
-      "females": null
+      "males": 10,
+      "females": 7
     },
-    "source": "docx-table",
-    "floor": "Floor 1",
-    "label": "Year 2 — Class 1",
-    "code": "2P01"
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 2 Class 1"
   },
   {
+    "code": "2P02",
     "year": 2,
     "classNumber": 2,
     "labelAr": "سنة ثانية قسم (2)",
+    "floor": "Floor 1",
     "floorRaw": "الاول",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:        ا. الغة الفرنسية:          ا. اللغة الانجليزية :             الطابق : الاول",
     "students": [
       {
         "number": 1,
@@ -2126,134 +2177,134 @@
     ],
     "stats": {
       "total": 19,
-      "males": null,
-      "females": null
+      "males": 7,
+      "females": 12
     },
-    "source": "docx-table",
-    "floor": "Floor 1",
-    "label": "Year 2 — Class 2",
-    "code": "2P02"
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 2 Class 2"
   },
   {
+    "code": "2P03",
     "year": 2,
     "classNumber": 3,
-    "labelAr": "سنة الثانية قسم ( 3 )",
+    "labelAr": "سنة الثانية  قسم ( 3 )",
+    "floor": "Floor 1",
     "floorRaw": "الاول",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:       ا. الغة الفرنسية:          ا. اللغة الانجليزية :             الطابق : الاول",
     "students": [
       {
         "number": 1,
         "fullName": "جريدل لانا",
-        "dateOfBirth": "02 مارس 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 2,
         "fullName": "جريدل دانا",
-        "dateOfBirth": "02 مارس 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 3,
         "fullName": "جوادي اليسيا",
-        "dateOfBirth": "13 جوان 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 4,
         "fullName": "عمريوي الين جنى",
-        "dateOfBirth": "24 اكتوبر 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 5,
         "fullName": "علواش ليا مريم",
-        "dateOfBirth": "22/01/2020",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 6,
         "fullName": "بلقاسم ليان",
-        "dateOfBirth": "07 جانفي 2020",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 7,
         "fullName": "رحماني شيراز",
-        "dateOfBirth": "27 جانفي 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 8,
         "fullName": "عليلي انس",
-        "dateOfBirth": "12 جانفي 2020",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 9,
         "fullName": "تومي مرام",
-        "dateOfBirth": "14 ماي 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 10,
         "fullName": "غضبان اليسيا",
-        "dateOfBirth": "23 جوان 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 11,
         "fullName": "زموشي اية",
-        "dateOfBirth": "16 جوان 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 12,
         "fullName": "حميدي معاذ",
-        "dateOfBirth": "02 جانفي 2020",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 13,
         "fullName": "بوعزة الياس",
-        "dateOfBirth": "13 جانفي 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 14,
         "fullName": "دزيري اليان محمد",
-        "dateOfBirth": "28 اكتوبر 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 15,
         "fullName": "بن لحسن اسحاق",
-        "dateOfBirth": "27/05/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 16,
         "fullName": "غلاز ماسيتسيا",
-        "dateOfBirth": "23/01/2020",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
@@ -2288,172 +2339,172 @@
     ],
     "stats": {
       "total": 20,
-      "males": null,
-      "females": null
+      "males": 10,
+      "females": 10
     },
-    "source": "docx-table",
-    "floor": "Floor 1",
-    "label": "Year 2 — Class 3",
-    "code": "2P03"
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 2 Class 3"
   },
   {
+    "code": "2P04",
     "year": 2,
     "classNumber": 4,
     "labelAr": "سنة الثانية قسم (4 )",
+    "floor": "Floor 1",
     "floorRaw": "الاول",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:          ا. الغة الفرنسية:          ا. اللغة الانجليزية :              الطابق : الاول",
     "students": [
       {
         "number": 1,
         "fullName": "بروال نيسيا",
-        "dateOfBirth": "12 اكتوبر 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 2,
         "fullName": "حاج حمو ريم",
-        "dateOfBirth": "16 سبتمبر 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 3,
         "fullName": "بوحمة ريم صوفي",
-        "dateOfBirth": "16 جويلية 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 4,
         "fullName": "سعيود لين",
-        "dateOfBirth": "06 اوت 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 5,
         "fullName": "سعدو ريم",
-        "dateOfBirth": "17 اوت 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 6,
         "fullName": "فرطاس دارين لجين",
-        "dateOfBirth": "02 اكتوبر 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 7,
         "fullName": "بولحية ميرة",
-        "dateOfBirth": "15 فيفري 2020",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 8,
         "fullName": "بوتقان يوسف",
-        "dateOfBirth": "30 جويلية 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 9,
         "fullName": "حماني بشرى",
-        "dateOfBirth": "05 جانفي 2020",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 10,
         "fullName": "رامول محمد جاد",
-        "dateOfBirth": "08 أكتوبر 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 11,
         "fullName": "محمودي انس",
-        "dateOfBirth": "20 جوان 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 12,
         "fullName": "قيطاري نيبراس",
-        "dateOfBirth": "15 ماي 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 13,
         "fullName": "بلعزوق ايوب",
-        "dateOfBirth": "03 مارس 2020",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 14,
         "fullName": "بن محرز نورالاسلام مقران",
-        "dateOfBirth": "23 ديسمبر 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 15,
         "fullName": "طبال جابر",
-        "dateOfBirth": "22 ماي 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 16,
         "fullName": "جاب الله مهدي",
-        "dateOfBirth": "08/12/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 17,
         "fullName": "نديل محمد يانيس",
-        "dateOfBirth": "02/11/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 18,
         "fullName": "دهمش لارين",
-        "dateOfBirth": "21/11/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       }
     ],
     "stats": {
       "total": 18,
-      "males": null,
-      "females": null
+      "males": 8,
+      "females": 10
     },
-    "source": "docx-table",
-    "floor": "Floor 1",
-    "label": "Year 2 — Class 4",
-    "code": "2P04"
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 2 Class 4"
   },
   {
+    "code": "2P05",
     "year": 2,
     "classNumber": 5,
     "labelAr": "سنة الثانية قسم ( 5 )",
+    "floor": "Floor 1",
     "floorRaw": "الاول",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:         ا. الغة الفرنسية:           ا. اللغة الانجليزية :             الطابق : الاول",
     "students": [
       {
         "number": 1,
@@ -2563,127 +2614,127 @@
     ],
     "stats": {
       "total": 15,
-      "males": null,
-      "females": null
+      "males": 10,
+      "females": 5
     },
-    "source": "docx-table",
-    "floor": "Floor 1",
-    "label": "Year 2 — Class 5",
-    "code": "2P05"
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 2 Class 5"
   },
   {
+    "code": "2P06",
     "year": 2,
     "classNumber": 6,
     "labelAr": "سنة الثانية قسم ( 6 )",
+    "floor": "Floor 1",
     "floorRaw": "الاول",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:         ا. الغة الفرنسية:           ا. اللغة الانجليزية :             الطابق : الاول",
     "students": [
       {
         "number": 1,
         "fullName": "سويسي دانا",
-        "dateOfBirth": "11 جويلية 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 2,
         "fullName": "حمدي باشا نيلاي",
-        "dateOfBirth": "20 اكتوبر 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 3,
         "fullName": "كلاش بتول",
-        "dateOfBirth": "30 مارس 2020",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 4,
         "fullName": "بشينية لميس",
-        "dateOfBirth": "30 ديسمبر 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 5,
         "fullName": "منصوري منيب معز بالله",
-        "dateOfBirth": "11 مارس 2020",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 6,
         "fullName": "كيلارج جعفر",
-        "dateOfBirth": "24 ديسمبر 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 7,
         "fullName": "ملياني سيدعلي",
-        "dateOfBirth": "15 اكتوبر 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 8,
         "fullName": "موسى اجندين",
-        "dateOfBirth": "28 افريل 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 9,
         "fullName": "رزايقية انفال",
-        "dateOfBirth": "12 افريل 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 10,
         "fullName": "بوعلي محمد",
-        "dateOfBirth": "18 جانفي 2020",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 11,
         "fullName": "براهمي اياد محمد",
-        "dateOfBirth": "02 اكتوبر 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 12,
         "fullName": "صغير عيسى علي شاهين",
-        "dateOfBirth": "24 فيفري 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 13,
         "fullName": "حوحو منصف عبد الرحمن",
-        "dateOfBirth": "30/12/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 14,
         "fullName": "يعلى زكريا",
-        "dateOfBirth": "17/07/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 15,
         "fullName": "ما يوسف",
-        "dateOfBirth": "18/06/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
@@ -2711,134 +2762,134 @@
     ],
     "stats": {
       "total": 18,
-      "males": null,
-      "females": null
+      "males": 9,
+      "females": 9
     },
-    "source": "docx-table",
-    "floor": "Floor 1",
-    "label": "Year 2 — Class 6",
-    "code": "2P06"
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 2 Class 6"
   },
   {
+    "code": "2P07",
     "year": 2,
     "classNumber": 7,
     "labelAr": "سنة الثانية قسم ( 7 )",
+    "floor": "Floor 1",
     "floorRaw": "الاول",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:          ا. الغة الفرنسية:          ا. اللغة الانجليزية :             الطابق : الاول",
     "students": [
       {
         "number": 1,
         "fullName": "خليفة تاليا",
-        "dateOfBirth": "11 جوان 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 2,
         "fullName": "التن ميرة",
-        "dateOfBirth": "17 مارس 2020",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 3,
         "fullName": "لرباس انيا اميرة",
-        "dateOfBirth": "30/09/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 4,
         "fullName": "شاب الله ليانا",
-        "dateOfBirth": "09 جوان 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 5,
         "fullName": "شويعل ياسمين",
-        "dateOfBirth": "09 ماي 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 6,
         "fullName": "زيتوني ماريا",
-        "dateOfBirth": "20 فيفري 2020",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 7,
         "fullName": "علواش ديهية",
-        "dateOfBirth": "12جوان 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 8,
         "fullName": "بلونجة هيثم",
-        "dateOfBirth": "01 افريل 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 9,
         "fullName": "بن صافي اناييس",
-        "dateOfBirth": "27 فيفري 2020",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 10,
         "fullName": "مغاري نسرين",
-        "dateOfBirth": "10 جويلية 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 11,
         "fullName": "سعيداني الياس",
-        "dateOfBirth": "25 ماي 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 12,
         "fullName": "رياض المصري",
-        "dateOfBirth": "03 سبتمبر 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 13,
         "fullName": "بلاسي ادم",
-        "dateOfBirth": "19 ديسمبر 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 14,
         "fullName": "رحماني ياسين",
-        "dateOfBirth": "25 فيفري 2020",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 15,
         "fullName": "شويب عاطف",
-        "dateOfBirth": "05 اوت 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 16,
         "fullName": "الحجان اكسال مازيغ",
-        "dateOfBirth": "02 جوان 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
@@ -2859,289 +2910,289 @@
     ],
     "stats": {
       "total": 18,
-      "males": null,
-      "females": null
+      "males": 7,
+      "females": 11
     },
-    "source": "docx-table",
-    "floor": "Floor 1",
-    "label": "Year 2 — Class 7",
-    "code": "2P07"
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 2 Class 7"
   },
   {
+    "code": "2P08",
     "year": 2,
     "classNumber": 8,
     "labelAr": "سنةالثانية قسم ( 8)",
+    "floor": "Floor 1",
     "floorRaw": "الاول",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:          ا. الغة الفرنسية:          ا. اللغة الانجليزية :             الطابق : الاول",
     "students": [
       {
         "number": 1,
         "fullName": "بوراس كنان",
-        "dateOfBirth": "2/01/2020",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 2,
         "fullName": "عبد اللطيف ليديا",
-        "dateOfBirth": "20/03/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 3,
         "fullName": "ايزم نليا",
-        "dateOfBirth": "30/03/2020",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 4,
         "fullName": "بوحلاسة اياد",
-        "dateOfBirth": "14/03/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 5,
         "fullName": "برماكي الين ينال",
-        "dateOfBirth": "02/05/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 6,
         "fullName": "أنين أليسيا الين",
-        "dateOfBirth": "02/07/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 7,
         "fullName": "شرتوح ارسلان",
-        "dateOfBirth": "23/09/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 8,
         "fullName": "علاق جواد",
-        "dateOfBirth": "18 ديسمبر 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 9,
         "fullName": "سلوم احمد خليل",
-        "dateOfBirth": "05/11/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 10,
         "fullName": "تباش ابراهيم",
-        "dateOfBirth": "06/12/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 11,
         "fullName": "فياض جاد",
-        "dateOfBirth": "07/07/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 12,
         "fullName": "بولمرقة مريم الاء",
-        "dateOfBirth": "09/02/2020",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 13,
         "fullName": "براهيمي سيليا",
-        "dateOfBirth": "19/09/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 14,
         "fullName": "خالد ملاك",
-        "dateOfBirth": "11/01/2020",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 15,
         "fullName": "شرفي هارون",
-        "dateOfBirth": "21/07/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 16,
         "fullName": "حناشي رمزي",
-        "dateOfBirth": "26/04/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 17,
         "fullName": "دربوشي رضوان",
-        "dateOfBirth": "01/03/2020",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 18,
         "fullName": "عيسى يوسف",
-        "dateOfBirth": "07/07/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 19,
         "fullName": "بن منصور دانا",
-        "dateOfBirth": "04/02/2020",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       }
     ],
     "stats": {
       "total": 19,
-      "males": null,
-      "females": null
+      "males": 11,
+      "females": 8
     },
-    "source": "docx-table",
-    "floor": "Floor 1",
-    "label": "Year 2 — Class 8",
-    "code": "2P08"
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 2 Class 8"
   },
   {
+    "code": "2P09",
     "year": 2,
     "classNumber": 9,
     "labelAr": "سنة الثانية قسم ( 9 )",
+    "floor": "Floor 1",
     "floorRaw": "الاول",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:          ا. الغة الفرنسية:         ا. اللغة الانجليزية :     الطابق : الاول",
     "students": [
       {
         "number": 1,
         "fullName": "زوخ نورسين ياسمين",
-        "dateOfBirth": "07/05/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 2,
         "fullName": "شرفي داني",
-        "dateOfBirth": "02/02/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 3,
         "fullName": "وزاني نادين زينب",
-        "dateOfBirth": "29/12/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 4,
         "fullName": "قادير ياسمين انجي",
-        "dateOfBirth": "16/04/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 5,
         "fullName": "بومخيلة دانيا",
-        "dateOfBirth": "11/02/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 6,
         "fullName": "نزار لونة",
-        "dateOfBirth": "07/09/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 7,
         "fullName": "عيساني رهف",
-        "dateOfBirth": "10/04/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 8,
         "fullName": "مسعودي إليان",
-        "dateOfBirth": "13/08/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 9,
         "fullName": "حاج عبد الرحمن ريماس",
-        "dateOfBirth": "06/02/2020",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 10,
         "fullName": "ايت عقيل زكريا",
-        "dateOfBirth": "26/02/2020",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 11,
         "fullName": "النعيمي عمر",
-        "dateOfBirth": "23/10/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 12,
         "fullName": "بن عيسى قيس محمد",
-        "dateOfBirth": "06/06/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 13,
         "fullName": "بولشعب محمد اسكندر",
-        "dateOfBirth": "30/05/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 14,
         "fullName": "بلعزوق اسراء",
-        "dateOfBirth": "11/07/2019",
+        "dateOfBirth": "",
         "notes": "التحقت 04/01/2026",
         "gender": ""
       },
       {
         "number": 15,
         "fullName": "عبد الليش ميلينا جود",
-        "dateOfBirth": "15/08/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 16,
         "fullName": "لعيدوني ادم جاد",
-        "dateOfBirth": "22/07/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
@@ -3155,120 +3206,120 @@
     ],
     "stats": {
       "total": 17,
-      "males": null,
-      "females": null
+      "males": 7,
+      "females": 10
     },
-    "source": "docx-table",
-    "floor": "Floor 1",
-    "label": "Year 2 — Class 9",
-    "code": "2P09"
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 2 Class 9"
   },
   {
+    "code": "2P10",
     "year": 2,
     "classNumber": 10,
     "labelAr": "سنة الثانية قسم ( 10 )",
+    "floor": "Floor 1",
     "floorRaw": "الاول",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:           ا. الغة الفرنسية:           ا. اللغة الانجليزية :              الطابق : الاول",
     "students": [
       {
         "number": 1,
         "fullName": "شويح محمد امير",
-        "dateOfBirth": "02/12/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 2,
         "fullName": "حمتين ليتيسيا",
-        "dateOfBirth": "04/09/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 3,
         "fullName": "الرجب براء رسيم",
-        "dateOfBirth": "12/04/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 4,
         "fullName": "قربان امير كغان",
-        "dateOfBirth": "28/01/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 5,
         "fullName": "يوسف نزيم",
-        "dateOfBirth": "18/10/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 6,
         "fullName": "توافق رامي",
-        "dateOfBirth": "11/10/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 7,
         "fullName": "حمي محمد",
-        "dateOfBirth": "02/09/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 8,
         "fullName": "شرشالي اصيل",
-        "dateOfBirth": "30/04/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 9,
         "fullName": "موالك لينا",
-        "dateOfBirth": "01/03/2020",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 10,
         "fullName": "دحماني طه يوسف",
-        "dateOfBirth": "27/06/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 11,
         "fullName": "بن جلول ايوب",
-        "dateOfBirth": "08/12/2018",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 12,
         "fullName": "تمام تنهنان سناء",
-        "dateOfBirth": "06/12/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 13,
         "fullName": "جيملي ليانا",
-        "dateOfBirth": "28/07/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 14,
         "fullName": "سلام اميرة",
-        "dateOfBirth": "26/08/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
@@ -3282,299 +3333,299 @@
     ],
     "stats": {
       "total": 15,
-      "males": null,
-      "females": null
+      "males": 10,
+      "females": 5
     },
-    "source": "docx-table",
-    "floor": "Floor 1",
-    "label": "Year 2 — Class 10",
-    "code": "2P10"
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 2 Class 10"
   },
   {
+    "code": "2P11",
     "year": 2,
     "classNumber": 11,
     "labelAr": "سنة الثانية قسم ( 11 )",
+    "floor": "Floor 2",
     "floorRaw": "الثاني",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:          ا. الغة الفرنسية:           ا. اللغة الانجليزية :              الطابق : الثاني",
     "students": [
       {
         "number": 1,
         "fullName": "وردي كنان أحمد",
-        "dateOfBirth": "10/01/2020",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 2,
         "fullName": "بوزينة آدم",
-        "dateOfBirth": "21/05/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 3,
         "fullName": "براهيمي سيرين",
-        "dateOfBirth": "28/11/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 4,
         "fullName": "سبتي ندى أروى",
-        "dateOfBirth": "18/08/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 5,
         "fullName": "ايديري أيلان",
-        "dateOfBirth": "10/10/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 6,
         "fullName": "قرقور أمير ربيع",
-        "dateOfBirth": "17/09/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 7,
         "fullName": "سالي محمد",
-        "dateOfBirth": "27/08/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 8,
         "fullName": "دميش امير",
-        "dateOfBirth": "20/20/2020",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 9,
         "fullName": "شرشور ميريا",
-        "dateOfBirth": "18/11/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 10,
         "fullName": "امسعودان إيلينا",
-        "dateOfBirth": "13/08/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 11,
         "fullName": "يحيا نورهان",
-        "dateOfBirth": "15/07/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 12,
         "fullName": "بلقاسم افنان",
-        "dateOfBirth": "08/01/2020",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 13,
         "fullName": "بروال سيلين",
-        "dateOfBirth": "26/03/2020",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 14,
         "fullName": "بوطباخ رسيم",
-        "dateOfBirth": "20/08/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 15,
         "fullName": "جازولي وسيم",
-        "dateOfBirth": "31/03/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 16,
         "fullName": "موروش سليمان",
-        "dateOfBirth": "16/06/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 17,
         "fullName": "سمارة علي",
-        "dateOfBirth": "18/09/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       }
     ],
     "stats": {
       "total": 17,
-      "males": null,
-      "females": null
+      "males": 10,
+      "females": 7
     },
-    "source": "docx-table",
-    "floor": "Floor 2",
-    "label": "Year 2 — Class 11",
-    "code": "2P11"
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 2 Class 11"
   },
   {
+    "code": "2P12",
     "year": 2,
     "classNumber": 12,
     "labelAr": "سنة الثانية قسم ( 12 )",
+    "floor": "Floor 2",
     "floorRaw": "الثاني",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:         ا. الغة الفرنسية:                    ا. اللغة الانجليزية :               الطابق : الثاني",
     "students": [
       {
         "number": 1,
         "fullName": "ايت بلقاسم لينا",
-        "dateOfBirth": "31/01/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 2,
         "fullName": "سعد سعود الين",
-        "dateOfBirth": "25/01/2020",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 3,
         "fullName": "عيشون أمير الدين",
-        "dateOfBirth": "31جويلية2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 4,
         "fullName": "شاوش ايناس فاطمة",
-        "dateOfBirth": "13/07/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 5,
         "fullName": "فداق سامي علي",
-        "dateOfBirth": "25/04/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 6,
         "fullName": "بن عبد الصمد فهد",
-        "dateOfBirth": "24/02/2020",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 7,
         "fullName": "بن لعمري إيرينا",
-        "dateOfBirth": "04/11/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 8,
         "fullName": "بدر الاء",
-        "dateOfBirth": "19/09/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 9,
         "fullName": "حطاب محمد امير",
-        "dateOfBirth": "01 افريل 2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 10,
         "fullName": "حروزي الياس عماد الدين",
-        "dateOfBirth": "18/01/2020",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 11,
         "fullName": "عماري آية نهال",
-        "dateOfBirth": "09/03/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 12,
         "fullName": "ميهوبي وسيم سعدي",
-        "dateOfBirth": "25/10/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 13,
         "fullName": "علاوي نور",
-        "dateOfBirth": "05/01/2020",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 14,
         "fullName": "قرابة مرام",
-        "dateOfBirth": "26/06/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 15,
         "fullName": "مكي محمد رسيم",
-        "dateOfBirth": "28/11/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 16,
         "fullName": "واقيني حبيب الله",
-        "dateOfBirth": "11/03/2019",
+        "dateOfBirth": "",
         "notes": "",
         "gender": ""
       }
     ],
     "stats": {
       "total": 16,
-      "males": null,
-      "females": null
+      "males": 8,
+      "females": 8
     },
-    "source": "docx-table",
-    "floor": "Floor 2",
-    "label": "Year 2 — Class 12",
-    "code": "2P12"
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 2 Class 12"
   },
   {
+    "code": "3P01",
     "year": 3,
     "classNumber": 1,
     "labelAr": "سنة الثالثة قسم ( 1 )",
+    "floor": "Floor 2",
     "floorRaw": "الثاني",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:        ا. الغة الفرنسية:             ا. اللغة الانجليزية :         الطابق : الثاني",
     "students": [
       {
         "number": 1,
@@ -3726,24 +3777,24 @@
     ],
     "stats": {
       "total": 21,
-      "males": null,
-      "females": null
+      "males": 9,
+      "females": 12
     },
-    "source": "docx-table",
-    "floor": "Floor 2",
-    "label": "Year 3 — Class 1",
-    "code": "3P01"
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 3 Class 1"
   },
   {
+    "code": "3P02",
     "year": 3,
     "classNumber": 2,
     "labelAr": "سنة الثالثة قسم ( 2)",
+    "floor": "Floor 2",
     "floorRaw": "الثاني",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:        ا. الغة الفرنسية:             ا. اللغة الانجليزية :         الطابق : الثاني",
     "students": [
       {
         "number": 1,
@@ -3881,24 +3932,24 @@
     ],
     "stats": {
       "total": 19,
-      "males": null,
-      "females": null
+      "males": 8,
+      "females": 11
     },
-    "source": "docx-table",
-    "floor": "Floor 2",
-    "label": "Year 3 — Class 2",
-    "code": "3P02"
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 3 Class 2"
   },
   {
+    "code": "3P03",
     "year": 3,
     "classNumber": 3,
     "labelAr": "سنة الثالثة قسم ( 3 )",
+    "floor": "Floor 2",
     "floorRaw": "الثاني",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:        ا. الغة الفرنسية:             ا. اللغة الانجليزية :         الطابق : الثاني",
     "students": [
       {
         "number": 1,
@@ -4022,24 +4073,24 @@
     ],
     "stats": {
       "total": 17,
-      "males": null,
-      "females": null
+      "males": 10,
+      "females": 7
     },
-    "source": "docx-table",
-    "floor": "Floor 2",
-    "label": "Year 3 — Class 3",
-    "code": "3P03"
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 3 Class 3"
   },
   {
+    "code": "3P04",
     "year": 3,
     "classNumber": 4,
     "labelAr": "سنة الثالثة قسم ( 4 )",
+    "floor": "Floor 2",
     "floorRaw": "الثاني",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا"
     },
+    "teacherLine": "ا.اللغة العربية:       ا. الغة الفرنسية:     ا          ا. اللغة الانجليزية :         الطابق : الثاني",
     "students": [
       {
         "number": 1,
@@ -4170,24 +4221,24 @@
     ],
     "stats": {
       "total": 18,
-      "males": null,
-      "females": null
+      "males": 9,
+      "females": 9
     },
-    "source": "docx-table",
-    "floor": "Floor 2",
-    "label": "Year 3 — Class 4",
-    "code": "3P04"
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 3 Class 4"
   },
   {
+    "code": "3P05",
     "year": 3,
     "classNumber": 5,
     "labelAr": "سنة الثالثة قسم ( 5 )",
+    "floor": "Floor 2",
     "floorRaw": "الثاني",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:         ا. الغة الفرنسية:             ا. اللغة الانجليزية :         الطابق : الثاني",
     "students": [
       {
         "number": 1,
@@ -4325,24 +4376,24 @@
     ],
     "stats": {
       "total": 19,
-      "males": null,
-      "females": null
+      "males": 10,
+      "females": 9
     },
-    "source": "docx-table",
-    "floor": "Floor 2",
-    "label": "Year 3 — Class 5",
-    "code": "3P05"
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 3 Class 5"
   },
   {
+    "code": "3P06",
     "year": 3,
     "classNumber": 6,
     "labelAr": "سنة الثالثة قسم ( 6 )",
+    "floor": "Floor 2",
     "floorRaw": "الثاني",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:            ا. الغة الفرنسية:                ا. اللغة الانجليزية :           الطابق : الثاني",
     "students": [
       {
         "number": 1,
@@ -4480,24 +4531,24 @@
     ],
     "stats": {
       "total": 19,
-      "males": null,
-      "females": null
+      "males": 12,
+      "females": 7
     },
-    "source": "docx-table",
-    "floor": "Floor 2",
-    "label": "Year 3 — Class 6",
-    "code": "3P06"
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 3 Class 6"
   },
   {
+    "code": "3P07",
     "year": 3,
     "classNumber": 7,
     "labelAr": "سنة الثالثة قسم ( 7 )",
+    "floor": "Floor 2",
     "floorRaw": "الثاني",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:          ا. الغة الفرنسية:                 ا. اللغة الانجليزية :        الطابق : الثاني",
     "students": [
       {
         "number": 1,
@@ -4642,24 +4693,24 @@
     ],
     "stats": {
       "total": 20,
-      "males": null,
-      "females": null
+      "males": 13,
+      "females": 7
     },
-    "source": "docx-table",
-    "floor": "Floor 2",
-    "label": "Year 3 — Class 7",
-    "code": "3P07"
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 3 Class 7"
   },
   {
+    "code": "3P08",
     "year": 3,
     "classNumber": 8,
     "labelAr": "سنة الثالثة قسم ( 8 )",
+    "floor": "Floor 2",
     "floorRaw": "الثاني",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:       ا. الغة الفرنسية:       ا. اللغة الانجليزية :       الطابق : الثاني",
     "students": [
       {
         "number": 1,
@@ -4790,24 +4841,24 @@
     ],
     "stats": {
       "total": 18,
-      "males": null,
-      "females": null
+      "males": 11,
+      "females": 7
     },
-    "source": "docx-table",
-    "floor": "Floor 2",
-    "label": "Year 3 — Class 8",
-    "code": "3P08"
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 3 Class 8"
   },
   {
+    "code": "3P09",
     "year": 3,
     "classNumber": 9,
     "labelAr": "سنة الثالثة قسم ( 9 )",
+    "floor": "Floor 2",
     "floorRaw": "الثاني",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:        ا. الغة الفرنسية:                 ا. اللغة الانجليزية :              الطابق : الثاني",
     "students": [
       {
         "number": 1,
@@ -4938,24 +4989,24 @@
     ],
     "stats": {
       "total": 18,
-      "males": null,
-      "females": null
+      "males": 10,
+      "females": 8
     },
-    "source": "docx-table",
-    "floor": "Floor 2",
-    "label": "Year 3 — Class 9",
-    "code": "3P09"
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 3 Class 9"
   },
   {
+    "code": "3P10",
     "year": 3,
     "classNumber": 10,
     "labelAr": "سنة الثالثة قسم ( 10 )",
+    "floor": "Floor 2",
     "floorRaw": "الثاني",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:       ا. الغة الفرنسية:             ا. اللغة الانجليزية :            الطابق : الثاني",
     "students": [
       {
         "number": 1,
@@ -5093,24 +5144,24 @@
     ],
     "stats": {
       "total": 19,
-      "males": null,
-      "females": null
+      "males": 9,
+      "females": 10
     },
-    "source": "docx-table",
-    "floor": "Floor 2",
-    "label": "Year 3 — Class 10",
-    "code": "3P10"
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 3 Class 10"
   },
   {
+    "code": "4P01",
     "year": 4,
     "classNumber": 1,
     "labelAr": "سنة رابعة قسم ( 1 )",
+    "floor": "Floor 3",
     "floorRaw": "الثالث",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:          ا. الغة الفرنسية:              ا. اللغة الانجليزية :              الطابق : الثالث",
     "students": [
       {
         "number": 1,
@@ -5170,130 +5221,98 @@
       },
       {
         "number": 9,
-        "fullName": "بن صالح حبيبة",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 10,
         "fullName": "جاب الله لينا",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 11,
+        "number": 10,
         "fullName": "رايس سيلين",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 12,
+        "number": 11,
         "fullName": "سايح هناء",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 13,
+        "number": 12,
         "fullName": "قروج فتيحة جنة",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 14,
+        "number": 13,
         "fullName": "شلابي الياس",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 15,
-        "fullName": "زياد ميرة",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 16,
+        "number": 14,
         "fullName": "علوان امين",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 17,
+        "number": 15,
         "fullName": "عيد لينا",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 18,
+        "number": 16,
         "fullName": "سعداوي رائد",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 19,
+        "number": 17,
         "fullName": "بوقنة انس",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 20,
-        "fullName": "مداني يحي",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 21,
+        "number": 18,
         "fullName": "صلاح اكرم",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 22,
-        "fullName": "فرحاتي محمد انس",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 23,
+        "number": 19,
         "fullName": "عميار محمد يوسف",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       }
     ],
-    "stats": {
-      "total": 23,
-      "males": null,
-      "females": null
-    },
-    "source": "docx-table",
-    "floor": "Floor 3",
-    "label": "Year 4 — Class 1",
-    "code": "4P01"
+    "stats": null,
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 4 Class 1"
   },
   {
+    "code": "4P02",
     "year": 4,
     "classNumber": 2,
     "labelAr": "سنة رابعة قسم ( 2 )",
+    "floor": "Floor 3",
     "floorRaw": "الثالث",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:          ا. الغة الفرنسية:                  ا. اللغة الانجليزية :            الطابق : الثالث",
     "students": [
       {
         "number": 1,
@@ -5381,88 +5400,70 @@
       },
       {
         "number": 13,
-        "fullName": "حساين صهيب",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 14,
         "fullName": "ولد سليمان نزيم",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 15,
+        "number": 14,
         "fullName": "بلحاج الزين كنزي",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
+        "number": 15,
+        "fullName": "سبع ليليا",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
         "number": 16,
-        "fullName": "عشاب وليد",
+        "fullName": "سويسي علاء الدين",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 17,
-        "fullName": "باوية ميلينة",
+        "fullName": "حميش مريم",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 18,
-        "fullName": "بو خالفي محمد عبد الرحمن",
+        "fullName": "ساقو سيرين",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 19,
-        "fullName": "مدني رئيسة",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 20,
-        "fullName": "تلورار ابتهال",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 21,
-        "fullName": "حمداش أكسل",
+        "fullName": "رامول مليسا",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       }
     ],
-    "stats": {
-      "total": 21,
-      "males": null,
-      "females": null
-    },
-    "source": "docx-table",
-    "floor": "Floor 3",
-    "label": "Year 4 — Class 2",
-    "code": "4P02"
+    "stats": null,
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 4 Class 2"
   },
   {
+    "code": "4P03",
     "year": 4,
     "classNumber": 3,
     "labelAr": "سنة رابعة قسم ( 3 )",
+    "floor": "Floor 3",
     "floorRaw": "الثالث",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:          ا. الغة الفرنسية:                ا. اللغة الانجليزية :              الطابق : الثالث",
     "students": [
       {
         "number": 1,
@@ -5473,151 +5474,140 @@
       },
       {
         "number": 2,
-        "fullName": "جودي ادريس",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 3,
         "fullName": "مكيد عبد السلام",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 4,
+        "number": 3,
         "fullName": "بوشافية كاميليا",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 5,
+        "number": 4,
         "fullName": "بوشيرب ادريس",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 6,
+        "number": 5,
         "fullName": "حب الحمص لين",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 7,
+        "number": 6,
         "fullName": "بن تامر اسكندر",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 8,
+        "number": 7,
         "fullName": "سلاقجي رسيم",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 9,
+        "number": 8,
         "fullName": "قاصد دانا",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 10,
-        "fullName": "بن قاسي إلياس",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 11,
+        "number": 9,
         "fullName": "قطاري يونس",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 12,
+        "number": 10,
         "fullName": "طلقنت تسنيم",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 13,
+        "number": 11,
         "fullName": "عماري مارية",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 14,
+        "number": 12,
         "fullName": "ما هارون",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 15,
+        "number": 13,
         "fullName": "شريتي ونيس",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 16,
+        "number": 14,
         "fullName": "بوخاوش ابراهيم",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 17,
+        "number": 15,
         "fullName": "نزار فاطمة",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 18,
+        "number": 16,
         "fullName": "غضبان بجاد",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 19,
+        "number": 17,
         "fullName": "بلوط مريم",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 18,
+        "fullName": "بسام جويرية ميار",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       }
     ],
-    "stats": {
-      "total": 19,
-      "males": null,
-      "females": null
-    },
-    "source": "docx-table",
-    "floor": "Floor 3",
-    "label": "Year 4 — Class 3",
-    "code": "4P03"
+    "stats": null,
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 4 Class 3"
   },
   {
+    "code": "4P04",
     "year": 4,
     "classNumber": 4,
     "labelAr": "سنة رابعة قسم ( 4 )",
+    "floor": "Floor 3",
     "floorRaw": "الثالث",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:          ا. الغة الفرنسية:                ا. اللغة الانجليزية :               الطابق : الثالث",
     "students": [
       {
         "number": 1,
@@ -5698,349 +5688,316 @@
       },
       {
         "number": 12,
-        "fullName": "طيب شحيمة محمد",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 13,
-        "fullName": "بوصبيع حيدر",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 14,
         "fullName": "دوداح رياض",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 15,
+        "number": 13,
         "fullName": "مزيود أحلام",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 16,
+        "number": 14,
         "fullName": "مهدي اسحاق",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 17,
-        "fullName": "وابد أحمد سراج الدين",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 18,
-        "fullName": "بودومي عبد لمتين",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 19,
-        "fullName": "صحراوي محمد مروان",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      }
-    ],
-    "stats": {
-      "total": 19,
-      "males": null,
-      "females": null
-    },
-    "source": "docx-table",
-    "floor": "Floor 3",
-    "label": "Year 4 — Class 4",
-    "code": "4P04"
-  },
-  {
-    "year": 4,
-    "classNumber": 5,
-    "labelAr": "سنة رابعة قسم ( 5 )",
-    "floorRaw": "الثالث",
-    "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
-    },
-    "students": [
-      {
-        "number": 1,
-        "fullName": "تواتي بهاء الدين",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 2,
-        "fullName": "ريتاج رقية",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 3,
-        "fullName": "عفيف أنيس",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 4,
-        "fullName": "سليم الماس",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 5,
-        "fullName": "مخبي مهدي",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 6,
-        "fullName": "بوطمين رسيم",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 7,
-        "fullName": "رامول إسراء",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 8,
-        "fullName": "دزيري ياسمين",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 9,
-        "fullName": "بلقاسمي الاء نور الدنيا",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 10,
-        "fullName": "بن حليمة أحمد",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 11,
-        "fullName": "بايراكتار زهرة",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 12,
-        "fullName": "رسولة جاد داليا",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 13,
-        "fullName": "تومي باديس",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 14,
-        "fullName": "سعيدات رحمة",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      }
-    ],
-    "stats": {
-      "total": 14,
-      "males": null,
-      "females": null
-    },
-    "source": "docx-table",
-    "floor": "Floor 3",
-    "label": "Year 4 — Class 5",
-    "code": "4P05"
-  },
-  {
-    "year": 4,
-    "classNumber": 6,
-    "labelAr": "سنة رابعة قسم ( 6 )",
-    "floorRaw": "الثالث",
-    "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
-    },
-    "students": [
-      {
-        "number": 1,
-        "fullName": "قاسي عيسى الهام",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 2,
-        "fullName": "قرابة مانيسا",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 3,
-        "fullName": "لمعوش ندى",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 4,
-        "fullName": "عبيدي زكريا",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 5,
-        "fullName": "شادر اياد",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 6,
-        "fullName": "حناشي كنزي",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 7,
-        "fullName": "فكاري أناييس",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 8,
-        "fullName": "بكار هشام",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 9,
+        "number": 15,
         "fullName": "خيدرتنهنان",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 10,
-        "fullName": "راجي فرح",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 11,
-        "fullName": "بوشيرب ايناس",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 12,
-        "fullName": "بورنان مايا",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 13,
-        "fullName": "طرابلسي دارين",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 14,
-        "fullName": "منور احلام",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 15,
-        "fullName": "جغلال رشا",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
         "number": 16,
-        "fullName": "برابية رحاب",
+        "fullName": "علاق ميال",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 17,
-        "fullName": "عيسات محمد",
+        "fullName": "بوسيس مريم",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 18,
-        "fullName": "رحو أمير",
+        "fullName": "بختي عبد المالك",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       }
     ],
-    "stats": {
-      "total": 18,
-      "males": null,
-      "females": null
-    },
-    "source": "docx-table",
-    "floor": "Floor 3",
-    "label": "Year 4 — Class 6",
-    "code": "4P06"
+    "stats": null,
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 4 Class 4"
   },
   {
+    "code": "4P05",
+    "year": 4,
+    "classNumber": 5,
+    "labelAr": "سنة رابعة قسم ( 5 )",
+    "floor": "Floor 3",
+    "floorRaw": "الثالث",
+    "teachers": {
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
+    },
+    "teacherLine": "ا.اللغة العربية:           ا. الغة الفرنسية:                 ا. اللغة الانجليزية :              الطابق : الثالث",
+    "students": [
+      {
+        "number": 1,
+        "fullName": "ريتاج رقية",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 2,
+        "fullName": "عفيف أنيس",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 3,
+        "fullName": "سليم الماس",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 4,
+        "fullName": "مخبي مهدي",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 5,
+        "fullName": "بوطمين رسيم",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 6,
+        "fullName": "رامول إسراء",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 7,
+        "fullName": "دزيري ياسمين",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 8,
+        "fullName": "بلقاسمي الاء نور الدنيا",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 9,
+        "fullName": "بن حليمة أحمد",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 10,
+        "fullName": "بايراكتار زهرة",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 11,
+        "fullName": "رسولة جاد داليا",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 12,
+        "fullName": "تومي باديس",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 13,
+        "fullName": "لعرباوي إلياس",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 14,
+        "fullName": "حاجي محمد إياد",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 15,
+        "fullName": "اوصيف خليل",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      }
+    ],
+    "stats": null,
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 4 Class 5"
+  },
+  {
+    "code": "4P06",
+    "year": 4,
+    "classNumber": 6,
+    "labelAr": "سنة رابعة قسم ( 6 )",
+    "floor": "Floor 3",
+    "floorRaw": "الثالث",
+    "teachers": {
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
+    },
+    "teacherLine": "ا.اللغة العربية:           ا. الغة الفرنسية:                 ا. اللغة الانجليزية :               الطابق : الثالث",
+    "students": [
+      {
+        "number": 1,
+        "fullName": "لمعوش ندى",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 2,
+        "fullName": "عبيدي زكريا",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 3,
+        "fullName": "حناشي كنزي",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 4,
+        "fullName": "فكاري أناييس",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 5,
+        "fullName": "بكار هشام",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 6,
+        "fullName": "راجي فرح",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 7,
+        "fullName": "بوشيرب ايناس",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 8,
+        "fullName": "بورنان مايا",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 9,
+        "fullName": "طرابلسي دارين",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 10,
+        "fullName": "جغلال رشا",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 11,
+        "fullName": "رحو أمير",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 12,
+        "fullName": "محجوبي اويس",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 13,
+        "fullName": "تركي تيسير",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 14,
+        "fullName": "غوتي آية",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 15,
+        "fullName": "بوصبيع صالح حيدر",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      }
+    ],
+    "stats": null,
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 4 Class 6"
+  },
+  {
+    "code": "4P07",
     "year": 4,
     "classNumber": 7,
     "labelAr": "سنة رابعة قسم (7)",
+    "floor": "Floor 3",
     "floorRaw": "الثالث",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:           ا. الغة الفرنسية:                 ا. اللغة الانجليزية :              الطابق : الثالث",
     "students": [
       {
         "number": 1,
@@ -6051,419 +6008,393 @@
       },
       {
         "number": 2,
-        "fullName": "غباش علي",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 3,
         "fullName": "عياش ريان",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 4,
+        "number": 3,
         "fullName": "عينوش نزيم",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 5,
+        "number": 4,
         "fullName": "قطار ياسمين",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 6,
-        "fullName": "محجوبي يحي",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 7,
-        "fullName": "فرفاش لينة",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 8,
+        "number": 5,
         "fullName": "أمالو غزلان",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 9,
+        "number": 6,
         "fullName": "تشوكش كبير رانيا",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 10,
+        "number": 7,
         "fullName": "زيتوني اسراء رودينة",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 11,
+        "number": 8,
         "fullName": "عمريوي اسيل",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 12,
+        "number": 9,
         "fullName": "طايبي اياد",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 13,
+        "number": 10,
         "fullName": "بوحلاسة ايلين اليشا",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 14,
+        "number": 11,
         "fullName": "خيدر نيليا",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 15,
+        "number": 12,
         "fullName": "ابو طه ملك",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 16,
+        "number": 13,
         "fullName": "برايك محمد امير",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 17,
+        "number": 14,
         "fullName": "مجراب ادم",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 18,
-        "fullName": "باوية ملينة",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       }
     ],
-    "stats": {
-      "total": 18,
-      "males": null,
-      "females": null
-    },
-    "source": "docx-table",
-    "floor": "Floor 3",
-    "label": "Year 4 — Class 7",
-    "code": "4P07"
+    "stats": null,
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 4 Class 7"
   },
   {
+    "code": "4P08",
     "year": 4,
     "classNumber": 8,
     "labelAr": "سنة رابعة قسم (8)",
-    "floorRaw": "",
+    "floor": "Floor 3",
+    "floorRaw": "الثالث",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:         ا. الغة الفرنسية:                  ا. اللغة الانجليزية :             الطابق :",
     "students": [
       {
         "number": 1,
-        "fullName": "طيبي سلسبيل",
+        "fullName": "حساين صهيب",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 2,
-        "fullName": "مرزاق محفوظ عبد الرؤوف",
+        "fullName": "جودي ادريس",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 3,
-        "fullName": "بوسيس مريم",
+        "fullName": "بن تامر اسكندر",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 4,
-        "fullName": "سبع ليليا",
+        "fullName": "لجرم أليسيا",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 5,
-        "fullName": "غوثي اية",
+        "fullName": "طيب شحيمة محمد",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 6,
-        "fullName": "محرور فارس",
+        "fullName": "طايبي سلسبيل",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 7,
-        "fullName": "سويسي علاء الدين",
+        "fullName": "لعلالي أيلين",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 8,
-        "fullName": "تركي تيسير",
+        "fullName": "قاسي عيسى إلهام",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 9,
-        "fullName": "لعلالي الينا",
+        "fullName": "قرابة مانيسا",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 10,
-        "fullName": "حميش مريم",
+        "fullName": "شادر فرح",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 11,
-        "fullName": "رامول ميليسا",
+        "fullName": "منور أحلام",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 12,
-        "fullName": "لعرباوي الياس",
+        "fullName": "محجوبي يحيى",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 13,
-        "fullName": "بسام ميار جورية",
+        "fullName": "فرفاش لينة",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
         "number": 14,
-        "fullName": "مهور ملينا",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 15,
-        "fullName": "علاق ميال",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 16,
-        "fullName": "محجوبي اويس",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      }
-    ],
-    "stats": {
-      "total": 16,
-      "males": null,
-      "females": null
-    },
-    "source": "docx-table",
-    "floor": "Unspecified",
-    "label": "Year 4 — Class 8",
-    "code": "4P08"
-  },
-  {
-    "year": 4,
-    "classNumber": 9,
-    "labelAr": "سنة رابعة قسم (9)",
-    "floorRaw": "",
-    "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
-    },
-    "students": [
-      {
-        "number": 1,
-        "fullName": "حاجي محمد إياد",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 2,
         "fullName": "آل السيد الشيخ هارون",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 3,
+        "number": 15,
         "fullName": "مباركية آلاء",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 4,
-        "fullName": "دمبري بشرى",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 5,
-        "fullName": "عبيكشي اميرة",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 6,
-        "fullName": "زرطيط محمد صالح",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 7,
-        "fullName": "محمد أمير مطماطي",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 8,
+        "number": 16,
         "fullName": "النصيرات فيصل",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 9,
-        "fullName": "ساقو سيرين",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 10,
-        "fullName": "بن تامر نهال",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 11,
-        "fullName": "عيسى عيسى",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 12,
-        "fullName": "قشوطولي محمد هاني",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 13,
-        "fullName": "إنباتي آية خديجة",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 14,
-        "fullName": "بختي عبد المالك",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 15,
-        "fullName": "رقية شرقي",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
-      },
-      {
-        "number": 16,
+        "number": 17,
         "fullName": "ناجي خديجة",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       },
       {
-        "number": 17,
-        "fullName": "أكموسي صوفيا",
+        "number": 18,
+        "fullName": "غباش علي",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 19,
+        "fullName": "زياد ميرة",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 20,
+        "fullName": "معاشو عبد الله",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
       }
     ],
-    "stats": {
-      "total": 17,
-      "males": null,
-      "females": null
-    },
-    "source": "docx-table",
-    "floor": "Unspecified",
-    "label": "Year 4 — Class 9",
-    "code": "4P09"
+    "stats": null,
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 4 Class 8"
   },
   {
+    "code": "4P09",
+    "year": 4,
+    "classNumber": 9,
+    "labelAr": "سنة رابعة قسم (9)",
+    "floor": "Floor 3",
+    "floorRaw": "الثالث",
+    "teachers": {
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
+    },
+    "teacherLine": "ا.اللغة العربية:         ا. الغة الفرنسية:                  ا. اللغة الانجليزية :             الطابق :",
+    "students": [
+      {
+        "number": 1,
+        "fullName": "دمبري بشرى",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 2,
+        "fullName": "عبيكشي اميرة",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 3,
+        "fullName": "زرطيط محمد صالح",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 4,
+        "fullName": "محمد أمير مطماطي",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 5,
+        "fullName": "بن تامر نهال",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 6,
+        "fullName": "عيسى عيسى",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 7,
+        "fullName": "قشوطولي محمد هاني",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 8,
+        "fullName": "إنباتي آية خديجة",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 9,
+        "fullName": "مداني يحيى",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 10,
+        "fullName": "مزراق محفوظ عبد الرؤوف",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 11,
+        "fullName": "محرور فارس",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 12,
+        "fullName": "مهور ملينا",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 13,
+        "fullName": "فرحاتي محمد انس",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 14,
+        "fullName": "بن قاسي الياس",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 15,
+        "fullName": "شرفي رقية",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      }
+    ],
+    "stats": null,
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 4 Class 9"
+  },
+  {
+    "code": "5P01",
     "year": 5,
     "classNumber": 1,
     "labelAr": "سنة خامسة قسم (1)",
-    "floorRaw": "االرابع",
+    "floor": "Floor 4",
+    "floorRaw": "الرابع",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:          ا. الغة الفرنسية:                  ا. اللغة الانجليزية :              الطابق : االرابع",
     "students": [
       {
         "number": 1,
@@ -6611,28 +6542,31 @@
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
+      },
+      {
+        "number": 22,
+        "fullName": "عبد الرزاق ميساء",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
       }
     ],
-    "stats": {
-      "total": 21,
-      "males": null,
-      "females": null
-    },
-    "source": "docx-table",
-    "floor": "Floor 4",
-    "label": "Year 5 — Class 1",
-    "code": "5P01"
+    "stats": null,
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 5 Class 1"
   },
   {
+    "code": "5P02",
     "year": 5,
     "classNumber": 2,
     "labelAr": "سنة خامسة قسم (2)",
+    "floor": "Floor 4",
     "floorRaw": "الرابع",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:         ا. الغة الفرنسية:                ا. اللغة الانجليزية :               الطابق : الرابع",
     "students": [
       {
         "number": 1,
@@ -6789,26 +6723,22 @@
         "gender": ""
       }
     ],
-    "stats": {
-      "total": 22,
-      "males": null,
-      "females": null
-    },
-    "source": "docx-table",
-    "floor": "Floor 4",
-    "label": "Year 5 — Class 2",
-    "code": "5P02"
+    "stats": null,
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 5 Class 2"
   },
   {
+    "code": "5P03",
     "year": 5,
     "classNumber": 3,
     "labelAr": "سنة خامسة قسم (3)",
+    "floor": "Floor 4",
     "floorRaw": "الرابع",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:           ا. الغة الفرنسية:           ا. اللغة الانجليزية :           الطابق : الرابع",
     "students": [
       {
         "number": 1,
@@ -6959,25 +6889,25 @@
       }
     ],
     "stats": {
-      "total": 21,
-      "males": null,
-      "females": null
+      "total": 15,
+      "males": 9,
+      "females": 6
     },
-    "source": "docx-table",
-    "floor": "Floor 4",
-    "label": "Year 5 — Class 3",
-    "code": "5P03"
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 5 Class 3"
   },
   {
+    "code": "5P04",
     "year": 5,
     "classNumber": 4,
     "labelAr": "سنة خامسة قسم (4)",
+    "floor": "Floor 4",
     "floorRaw": "الرابع",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:          ا. الغة الفرنسية:           ا. اللغة الانجليزية :          الطابق : الرابع",
     "students": [
       {
         "number": 1,
@@ -7114,7 +7044,7 @@
       },
       {
         "number": 20,
-        "fullName": "عبد الرزاق ميساء",
+        "fullName": "عبيدي سعد فادية",
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
@@ -7127,26 +7057,22 @@
         "gender": ""
       }
     ],
-    "stats": {
-      "total": 21,
-      "males": null,
-      "females": null
-    },
-    "source": "docx-table",
-    "floor": "Floor 4",
-    "label": "Year 5 — Class 4",
-    "code": "5P04"
+    "stats": null,
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 5 Class 4"
   },
   {
+    "code": "5P05",
     "year": 5,
     "classNumber": 5,
     "labelAr": "سنة خامسة قسم (5)",
+    "floor": "Floor 2",
     "floorRaw": "الثاني",
     "teachers": {
-      "Arabic": "",
-      "French": "",
-      "English": ""
+      "Arabic": "ا. الغة الفرنسية:",
+      "French": "ا. اللغة الانجليزية :"
     },
+    "teacherLine": "ا.اللغة العربية:           ا. الغة الفرنسية:           ا. اللغة الانجليزية :            الطابق : الثاني",
     "students": [
       {
         "number": 1,
@@ -7296,26 +7222,23 @@
         "gender": ""
       }
     ],
-    "stats": {
-      "total": 21,
-      "males": null,
-      "females": null
-    },
-    "source": "docx-table",
-    "floor": "Floor 2",
-    "label": "Year 5 — Class 5",
-    "code": "5P05"
+    "stats": null,
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 5 Class 5"
   },
   {
+    "code": "5P06",
     "year": 5,
     "classNumber": 6,
     "labelAr": "سنة خامسة قسم (6)",
+    "floor": "Floor 4",
     "floorRaw": "الرابع",
     "teachers": {
       "Arabic": "بديار",
       "French": "غراس",
       "English": "منال"
     },
+    "teacherLine": "ا.اللغة العربية:بديار        ا. الغة الفرنسية:  غراس         ا. اللغة الانجليزية : منال           الطابق : الرابع",
     "students": [
       {
         "number": 1,
@@ -7442,35 +7365,25 @@
         "dateOfBirth": "",
         "notes": "",
         "gender": ""
-      },
-      {
-        "number": 19,
-        "fullName": "عبيدي سعد فادية",
-        "dateOfBirth": "",
-        "notes": "",
-        "gender": ""
       }
     ],
-    "stats": {
-      "total": 19,
-      "males": null,
-      "females": null
-    },
-    "source": "docx-table",
-    "floor": "Floor 4",
-    "label": "Year 5 — Class 6",
-    "code": "5P06"
+    "stats": null,
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 5 Class 6"
   },
   {
+    "code": "5P07",
     "year": 5,
     "classNumber": 7,
     "labelAr": "سنة خامسة قسم (7)",
+    "floor": "Floor 4",
     "floorRaw": "الرابع",
     "teachers": {
       "Arabic": "انزار",
       "French": "بن موسى",
       "English": "ريان"
     },
+    "teacherLine": "ا.اللغة العربية:انزار          ا. الغة الفرنسية:  بن موسى         ا. اللغة الانجليزية : ريان           الطابق : الرابع",
     "students": [
       {
         "number": 1,
@@ -7606,35 +7519,157 @@
         "gender": ""
       }
     ],
-    "stats": {
-      "total": 19,
-      "males": null,
-      "females": null
-    },
-    "source": "docx-table",
-    "floor": "Floor 4",
-    "label": "Year 5 — Class 7",
-    "code": "5P07"
+    "stats": null,
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 5 Class 7"
   },
   {
-    "year": 5,
-    "classNumber": 8,
-    "labelAr": "سنة الخامسة قسم ( 8 )",
+    "code": "4P10",
+    "year": 4,
+    "classNumber": 10,
+    "labelAr": "سنة الرابعة قسم ( 10 )",
+    "floor": "Floor 4",
     "floorRaw": "الرابع",
     "teachers": {
       "Arabic": "مازوني",
       "French": "حاج عبد الرحمان",
       "English": "فارس"
     },
-    "students": [],
+    "teacherLine": "ا.اللغة العربية: مازوني         ا. الغة الفرنسية:  حاج عبد الرحمان         ا. اللغة الانجليزية : فارس           الطابق : الرابع",
+    "students": [
+      {
+        "number": 1,
+        "fullName": "زياد ميرة",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 2,
+        "fullName": "أكموس صوفيا",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 3,
+        "fullName": "باوية ملينة",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 4,
+        "fullName": "وابد أحمد سراج الدين",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 5,
+        "fullName": "بودومي عبد لمتين",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 6,
+        "fullName": "صحرواي محمد مروان",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 7,
+        "fullName": "عشاب وليد",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 8,
+        "fullName": "بوخالفي محمد عبد الرحمن",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 9,
+        "fullName": "مدني رايسة",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 10,
+        "fullName": "تلورار ابتهال",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 11,
+        "fullName": "حمداش أكسل",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 12,
+        "fullName": "سجل ماسي آمال",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 13,
+        "fullName": "سعيدات رحمة",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 14,
+        "fullName": "برابية رحاب",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 15,
+        "fullName": "عيسات محمد",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 16,
+        "fullName": "كشكار / ذكر",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": "Male"
+      },
+      {
+        "number": 17,
+        "fullName": "بن صالح حبيبة",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      },
+      {
+        "number": 18,
+        "fullName": "يحيى دارين",
+        "dateOfBirth": "",
+        "notes": "",
+        "gender": ""
+      }
+    ],
     "stats": {
-      "total": 0,
-      "males": null,
-      "females": null
+      "total": 21,
+      "males": 13,
+      "females": 8
     },
-    "source": "docx-table",
-    "floor": "Floor 4",
-    "label": "Year 5 — Class 8",
-    "code": "5P08"
+    "source": "قوائم التلاميذ 2026-2027 (2).docx",
+    "label": "Year 4 Class 10"
   }
 ]
