@@ -10,6 +10,7 @@
   const icons = {
     users: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
     search: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>`,
+    alert: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
   };
 
   const DEPT_SHORT = { primary: "Primary", middle: "Middle School" };
@@ -151,6 +152,8 @@
 
   function viewHome() {
     const stats = BBC_DATA.stats();
+    const issues = BBC_DATA.listIssues();
+    const openIssues = issues.filter((i) => i.status === "open").length;
     return shell(`
       ${crumb([{ label: "Home", to: "#/home" }])}
       <div class="page-header">
@@ -180,6 +183,14 @@
           </div>
           <span class="cta">Browse students →</span>
         </button>
+        <button type="button" class="dir-home-card dir-home-card-wide" data-nav="#/issues">
+          <div class="dir-home-icon" aria-hidden="true">${icons.alert}</div>
+          <div>
+            <h3>Operations issues</h3>
+            <p>${openIssues} open — pickup calls, loudspeaker (مكبر الصوت), and other school-day problems to fix.</p>
+          </div>
+          <span class="cta">Review issues →</span>
+        </button>
       </div>
       <div class="page-header" style="margin-bottom:0.85rem">
         <h2 class="section-title" style="margin:0">Departments</h2>
@@ -201,6 +212,108 @@
         `
           )
           .join("")}
+      </div>
+    `);
+  }
+
+  function severityBadge(sev) {
+    const s = String(sev || "").toLowerCase();
+    const cls = s === "high" ? "sev-high" : s === "medium" ? "sev-medium" : "sev-low";
+    return `<span class="issue-badge ${cls}">${esc((sev || "—").toUpperCase())}</span>`;
+  }
+
+  function statusBadge(status) {
+    const s = String(status || "").toLowerCase();
+    const cls = s === "open" ? "status-open" : s === "resolved" ? "status-resolved" : "status-other";
+    return `<span class="issue-badge ${cls}">${esc(status || "—")}</span>`;
+  }
+
+  function viewIssues() {
+    const issues = BBC_DATA.listIssues();
+    return shell(`
+      ${crumb([
+        { label: "Home", to: "#/home" },
+        { label: "Operations issues", to: "#/issues" },
+      ])}
+      <div class="page-header">
+        <h1>Operations issues</h1>
+        <p class="lede">School-day problems for leadership and admin — current process, impact, and what should change.</p>
+      </div>
+      <div class="issue-list">
+        ${
+          issues.length
+            ? issues
+                .map(
+                  (issue) => `
+          <button type="button" class="issue-card" data-nav="#/issues/${esc(issue.id)}">
+            <div class="issue-card-top">
+              ${statusBadge(issue.status)}
+              ${severityBadge(issue.severity)}
+              <span class="issue-area">${esc(issue.area || "")}</span>
+            </div>
+            <h3>${esc(issue.title)}</h3>
+            ${issue.titleAr ? `<p class="issue-ar" dir="rtl">${esc(issue.titleAr)}</p>` : ""}
+            <p>${esc(issue.summary || "")}</p>
+            <span class="cta">Open issue →</span>
+          </button>`
+                )
+                .join("")
+            : `<div class="empty-state"><p>No issues recorded yet.</p></div>`
+        }
+      </div>
+    `);
+  }
+
+  function viewIssueDetail(issueId) {
+    const issue = BBC_DATA.getIssue(issueId);
+    if (!issue) return viewNotFound();
+    const list = (arr) =>
+      (arr || []).length
+        ? `<ul class="issue-bullets">${arr.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>`
+        : `<p class="muted">—</p>`;
+    return shell(`
+      ${crumb([
+        { label: "Home", to: "#/home" },
+        { label: "Operations issues", to: "#/issues" },
+        { label: issue.title, to: `#/issues/${issue.id}` },
+      ])}
+      <div class="page-header">
+        <div class="issue-card-top" style="margin-bottom:0.75rem">
+          ${statusBadge(issue.status)}
+          ${severityBadge(issue.severity)}
+          <span class="issue-area">${esc(issue.area || "")}</span>
+          ${issue.updated ? `<span class="issue-area">Updated ${esc(issue.updated)}</span>` : ""}
+        </div>
+        <h1>${esc(issue.title)}</h1>
+        ${issue.titleAr ? `<p class="lede issue-ar" dir="rtl">${esc(issue.titleAr)}</p>` : ""}
+        <p class="lede">${esc(issue.summary || "")}</p>
+      </div>
+      <div class="detail-layout">
+        <section class="info-panel">
+          <div class="panel-label">Current process</div>
+          ${list(issue.currentProcess)}
+        </section>
+        <section class="info-panel">
+          <div class="panel-label">Impact</div>
+          ${list(issue.impact)}
+        </section>
+      </div>
+      <div class="info-panel" style="margin-top:1rem">
+        <div class="panel-label">Goal</div>
+        <p style="margin-top:0.65rem">${esc(issue.goal || "—")}</p>
+      </div>
+      ${
+        issue.notes
+          ? `<div class="info-panel" style="margin-top:1rem">
+              <div class="panel-label">Notes</div>
+              <p style="margin-top:0.65rem">${esc(issue.notes)}</p>
+            </div>`
+          : ""
+      }
+      <div class="info-panel" style="margin-top:1rem">
+        <div class="panel-label">Quick lookup while fixing this</div>
+        <p style="margin-top:0.65rem;margin-bottom:0.85rem">Find the student’s class code (e.g. <strong>4P10</strong>, <strong>1M1</strong>) and contact that room — avoid school-wide مكبر الصوت calls when possible.</p>
+        <button type="button" class="btn btn-primary" data-nav="#/students">Open student directory</button>
       </div>
     `);
   }
@@ -866,6 +979,10 @@
 
     if (parts[0] === "teachers") return viewTeachersDirectory(params);
     if (parts[0] === "students") return viewStudentsDirectory(params);
+    if (parts[0] === "issues") {
+      if (parts[1]) return viewIssueDetail(parts[1]);
+      return viewIssues();
+    }
 
     if (parts[0] === "dept" && (parts[1] === "primary" || parts[1] === "middle")) {
       const deptId = parts[1];

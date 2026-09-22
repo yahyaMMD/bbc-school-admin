@@ -41677,5 +41677,32 @@
     "verified": true,
     "primarySource": "قوائم التلاميذ 2026-2027 (2).docx",
     "middleSource": "2026.2027 قائمة.xlsx"
-  }
+  },
+  "operationsIssues": [
+    {
+      "id": "ISSUE-PICKUP-PA",
+      "status": "open",
+      "severity": "high",
+      "title": "Parent pickup calls via loudspeaker (مكبر الصوت)",
+      "titleAr": "استدعاء التلاميذ عند حضور الأولياء عبر مكبر الصوت",
+      "area": "Dismissal / parent pickup",
+      "updated": "2026-09-22",
+      "summary": "When parents arrive to collect students, names are announced on the school loudspeaker (مكبر الصوت). Students leave their classrooms early and wait outside, disrupting lessons.",
+      "currentProcess": [
+        "Parent arrives at reception / gate to take their child.",
+        "The student’s name is announced on the loudspeaker (مكبر الصوت).",
+        "Students often leave their classrooms up to about 30 minutes before the real pickup moment and gather outside waiting to be called.",
+        "Classes are interrupted repeatedly throughout the afternoon dismissal window."
+      ],
+      "impact": [
+        "Lost instructional time — students exit rooms early.",
+        "Crowding in corridors and outside areas.",
+        "Noise and disruption for students who are still in class.",
+        "Harder supervision: many children out of class at once.",
+        "Broadcast announcements disturb the whole school for each individual pickup."
+      ],
+      "goal": "Keep students in their classrooms until they are specifically needed, and call them in a targeted way (by class code such as 4P10 / 1M1) instead of emptying rooms early via school-wide loudspeaker.",
+      "notes": "Staff are familiar with class codes (e.g. 4P10, 1M1). Any improved process should use those codes so the right room is contacted without a campus-wide announcement."
+    }
+  ]
 }

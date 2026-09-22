@@ -149,6 +149,14 @@ const BBC_DATA = (() => {
     return [...set].sort((a, b) => a.localeCompare(b));
   }
 
+  function listIssues() {
+    return [...(D.operationsIssues || [])];
+  }
+
+  function getIssue(id) {
+    return (D.operationsIssues || []).find((x) => x.id === id) || null;
+  }
+
   return {
     school: D.school,
     departments,
@@ -168,6 +176,8 @@ const BBC_DATA = (() => {
     listAllTeachers,
     listClassOptions,
     listModules,
+    listIssues,
+    getIssue,
     stats,
   };
 })();
