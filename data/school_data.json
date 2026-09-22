@@ -32642,11 +32642,11 @@
             "year": 1,
             "section": 1,
             "sourceImage": "",
-            "studentCount": 17,
+            "studentCount": 16,
             "stats": {
-              "total": 17,
-              "males": 8,
-              "females": 9
+              "total": 16,
+              "males": 5,
+              "females": 11
             },
             "teacherIds": [
               "TC8EE4040",
@@ -32725,30 +32725,52 @@
                 "searchName": "بوثلجة ميار آية"
               },
               {
-                "id": "S1664251887",
+                "id": "S5227681FF2",
                 "number": 5,
-                "firstName": "عبد السلام",
-                "lastName": "دهار",
-                "fullName": "دهار عبد السلام",
-                "dateOfBirth": "2015-11-02",
+                "firstName": "رسيم",
+                "lastName": "حسين",
+                "fullName": "حسين رسيم",
+                "dateOfBirth": "2015-04-05",
                 "gender": "Male",
                 "notes": "",
                 "classId": "M-Y1-C01",
                 "departmentId": "middle",
-                "searchName": "دهار عبد السلام"
+                "searchName": "حسين رسيم",
+                "previousYearDetails": {
+                  "previousYear": "Year 5 (Primary)",
+                  "previousYearAr": "السنة الخامسة ابتدائي",
+                  "previousClass": "5AP6",
+                  "sourceFile": "5TH Graders.xlsx",
+                  "matchedName": "حسين رسيم",
+                  "matchMethod": "exact",
+                  "number": "1",
+                  "dateOfBirth": "",
+                  "age": "",
+                  "annualAverage": "",
+                  "socialStatus": "",
+                  "healthStatus": "",
+                  "strengths": "مجتهد",
+                  "weaknesses": "قلة التركيز",
+                  "behavioralPerformance": "",
+                  "academicPerformance": "",
+                  "talents": "",
+                  "additionalNotes": "قسم لديه قدرات ولكنه يحتاج إلى عمل بجهد كبير بسبب العلاقة القوية بين التلاميذ وهناك من يؤيد التفجير وبعض آخر لا يؤيد\nيحتاج إلى دعم و تأطير",
+                  "actionPlan": "",
+                  "generalNote": "يبكي دائمًأ في الخروج بسبب خوفه مدعيًّا أنه ربما سوف ينساه السائق / تأثير الأم عليه بالحديث معه عن والده"
+                }
               },
               {
-                "id": "S3A0DAA1D90",
+                "id": "SE45755BDC7",
                 "number": 6,
-                "firstName": "رسيم",
-                "lastName": "رازم",
-                "fullName": "رازم رسيم",
-                "dateOfBirth": "2015-11-11",
+                "firstName": "حافظ",
+                "lastName": "موسى",
+                "fullName": "موسى حافظ",
+                "dateOfBirth": "2015-08-13",
                 "gender": "Male",
                 "notes": "",
                 "classId": "M-Y1-C01",
                 "departmentId": "middle",
-                "searchName": "رازم رسيم"
+                "searchName": "موسى حافظ"
               },
               {
                 "id": "S8BCCEC8956",
@@ -32816,17 +32838,17 @@
                 "searchName": "عدوان دانية"
               },
               {
-                "id": "SC3A0B230A7",
+                "id": "S2E587E2AFC",
                 "number": 12,
-                "firstName": "محمد ادم",
-                "lastName": "عمار",
-                "fullName": "عمار محمد ادم",
-                "dateOfBirth": "",
+                "firstName": "سامي",
+                "lastName": "مصباح",
+                "fullName": "مصباح سامي",
+                "dateOfBirth": "2015-06-23",
                 "gender": "Male",
                 "notes": "",
                 "classId": "M-Y1-C01",
                 "departmentId": "middle",
-                "searchName": "عمار محمد ادم"
+                "searchName": "مصباح سامي"
               },
               {
                 "id": "SB6C8F58979",
@@ -32855,46 +32877,33 @@
                 "searchName": "مزاري أصيلة"
               },
               {
-                "id": "S2E587E2AFC",
+                "id": "SCEBF5CE117",
                 "number": 15,
-                "firstName": "سامي",
-                "lastName": "مصباح",
-                "fullName": "مصباح سامي",
-                "dateOfBirth": "2015-06-23",
-                "gender": "Male",
+                "firstName": "مايا",
+                "lastName": "سلامي",
+                "fullName": "سلامي مايا",
+                "dateOfBirth": "2014-10-16",
+                "gender": "Female",
                 "notes": "",
                 "classId": "M-Y1-C01",
                 "departmentId": "middle",
-                "searchName": "مصباح سامي"
+                "searchName": "سلامي مايا"
               },
               {
-                "id": "SE45755BDC7",
+                "id": "S01C9B4EE2E",
                 "number": 16,
-                "firstName": "حافظ",
-                "lastName": "موسى",
-                "fullName": "موسى حافظ",
-                "dateOfBirth": "2015-08-13",
-                "gender": "Male",
+                "firstName": "لينا",
+                "lastName": "لعبيدي",
+                "fullName": "لعبيدي لينا",
+                "dateOfBirth": "2015-10-30",
+                "gender": "Female",
                 "notes": "",
                 "classId": "M-Y1-C01",
                 "departmentId": "middle",
-                "searchName": "موسى حافظ"
-              },
-              {
-                "id": "SC787D12C6E",
-                "number": 17,
-                "firstName": "عبد الرحمن",
-                "lastName": "سرياك",
-                "fullName": "سرياك عبد الرحمن",
-                "dateOfBirth": "2015-02-06",
-                "gender": "Male",
-                "notes": "",
-                "classId": "M-Y1-C01",
-                "departmentId": "middle",
-                "searchName": "سرياك عبد الرحمن"
+                "searchName": "لعبيدي لينا"
               }
             ],
-            "sourceExcel": "2026.2027.xlsx"
+            "sourceExcel": "2026.2027 قائمة.xlsx"
           },
           {
             "id": "M-Y1-C02",
@@ -32904,11 +32913,11 @@
             "year": 1,
             "section": 2,
             "sourceImage": "",
-            "studentCount": 23,
+            "studentCount": 22,
             "stats": {
-              "total": 23,
-              "males": 12,
-              "females": 11
+              "total": 22,
+              "males": 13,
+              "females": 9
             },
             "teacherIds": [
               "TC8EE4040",
@@ -33007,7 +33016,7 @@
                 "fullName": "بشار محمد شاهين",
                 "dateOfBirth": "2015-01-08",
                 "gender": "Male",
-                "notes": "incomplete DOB",
+                "notes": "",
                 "classId": "M-Y1-C02",
                 "departmentId": "middle",
                 "searchName": "بشار محمد شاهين",
@@ -33139,17 +33148,17 @@
                 "searchName": "سعيداني أحمد يانيس"
               },
               {
-                "id": "SCEBF5CE117",
+                "id": "S1664251887",
                 "number": 15,
-                "firstName": "مايا",
-                "lastName": "سلامي",
-                "fullName": "سلامي مايا",
-                "dateOfBirth": "2014-10-16",
-                "gender": "Female",
+                "firstName": "عبد السلام",
+                "lastName": "دهار",
+                "fullName": "دهار عبد السلام",
+                "dateOfBirth": "2015-11-02",
+                "gender": "Male",
                 "notes": "",
                 "classId": "M-Y1-C02",
                 "departmentId": "middle",
-                "searchName": "سلامي مايا"
+                "searchName": "دهار عبد السلام"
               },
               {
                 "id": "S4A9CF89958",
@@ -33178,17 +33187,17 @@
                 "searchName": "عياد أمير"
               },
               {
-                "id": "S00C77B4E5B",
+                "id": "SE47070E0ED",
                 "number": 18,
-                "firstName": "مريم نور",
-                "lastName": "كلاش",
-                "fullName": "كلاش مريم نور",
-                "dateOfBirth": "2015-11-24",
-                "gender": "Female",
+                "firstName": "يوسف إسلام",
+                "lastName": "وارث",
+                "fullName": "وارث يوسف إسلام",
+                "dateOfBirth": "2016-03-22",
+                "gender": "Male",
                 "notes": "",
                 "classId": "M-Y1-C02",
                 "departmentId": "middle",
-                "searchName": "كلاش مريم نور"
+                "searchName": "وارث يوسف إسلام"
               },
               {
                 "id": "SD6C2667687",
@@ -33204,17 +33213,17 @@
                 "searchName": "كنزاري وسيم"
               },
               {
-                "id": "S01C9B4EE2E",
+                "id": "S45E609D423",
                 "number": 20,
-                "firstName": "لينا",
-                "lastName": "لعبيدي",
-                "fullName": "لعبيدي لينا",
-                "dateOfBirth": "2015-10-30",
-                "gender": "Female",
+                "firstName": "محمد الطاهر معاذ",
+                "lastName": "ناجي",
+                "fullName": "ناجي محمد الطاهر معاذ",
+                "dateOfBirth": "2015-01-21",
+                "gender": "Male",
                 "notes": "",
                 "classId": "M-Y1-C02",
                 "departmentId": "middle",
-                "searchName": "لعبيدي لينا"
+                "searchName": "ناجي محمد الطاهر معاذ"
               },
               {
                 "id": "S12714FF73F",
@@ -33230,33 +33239,20 @@
                 "searchName": "مروش إسماعيل"
               },
               {
-                "id": "S45E609D423",
+                "id": "S00C77B4E5B",
                 "number": 22,
-                "firstName": "محمد الطاهر معاذ",
-                "lastName": "ناجي",
-                "fullName": "ناجي محمد الطاهر معاذ",
-                "dateOfBirth": "2015-01-21",
-                "gender": "Male",
+                "firstName": "مريم نور",
+                "lastName": "كلاش",
+                "fullName": "كلاش مريم نور",
+                "dateOfBirth": "2015-11-24",
+                "gender": "Female",
                 "notes": "",
                 "classId": "M-Y1-C02",
                 "departmentId": "middle",
-                "searchName": "ناجي محمد الطاهر معاذ"
-              },
-              {
-                "id": "SE47070E0ED",
-                "number": 23,
-                "firstName": "يوسف إسلام",
-                "lastName": "وارث",
-                "fullName": "وارث يوسف إسلام",
-                "dateOfBirth": "2016-03-22",
-                "gender": "Male",
-                "notes": "",
-                "classId": "M-Y1-C02",
-                "departmentId": "middle",
-                "searchName": "وارث يوسف إسلام"
+                "searchName": "كلاش مريم نور"
               }
             ],
-            "sourceExcel": "2026.2027.xlsx"
+            "sourceExcel": "2026.2027 قائمة.xlsx"
           },
           {
             "id": "M-Y1-C03",
@@ -33266,10 +33262,10 @@
             "year": 1,
             "section": 3,
             "sourceImage": "img_01.png",
-            "studentCount": 24,
+            "studentCount": 23,
             "stats": {
-              "total": 24,
-              "males": 13,
+              "total": 23,
+              "males": 12,
               "females": 11
             },
             "teacherIds": [
@@ -33553,38 +33549,38 @@
                 }
               },
               {
-                "id": "S5227681FF2",
+                "id": "S272D8EE170",
                 "number": 9,
-                "firstName": "رسيم",
-                "lastName": "حسين",
-                "fullName": "حسين رسيم",
-                "dateOfBirth": "2015-04-05",
+                "firstName": "عبد الرحمان",
+                "lastName": "ناجي",
+                "fullName": "ناجي عبد الرحمان",
+                "dateOfBirth": "2015-07-01",
                 "gender": "Male",
                 "notes": "",
                 "classId": "M-Y1-C03",
                 "departmentId": "middle",
-                "searchName": "حسين رسيم",
+                "searchName": "ناجي عبد الرحمان",
                 "previousYearDetails": {
                   "previousYear": "Year 5 (Primary)",
                   "previousYearAr": "السنة الخامسة ابتدائي",
-                  "previousClass": "5AP6",
+                  "previousClass": "5AP7",
                   "sourceFile": "5TH Graders.xlsx",
-                  "matchedName": "حسين رسيم",
-                  "matchMethod": "exact",
-                  "number": "1",
+                  "matchedName": "ناجي عبد الرحمن",
+                  "matchMethod": "fuzzy:99",
+                  "number": "10",
                   "dateOfBirth": "",
                   "age": "",
                   "annualAverage": "",
                   "socialStatus": "",
                   "healthStatus": "",
-                  "strengths": "مجتهد",
-                  "weaknesses": "قلة التركيز",
+                  "strengths": "تعبير جيد",
+                  "weaknesses": "التسرع و الكسل",
                   "behavioralPerformance": "",
                   "academicPerformance": "",
                   "talents": "",
-                  "additionalNotes": "قسم لديه قدرات ولكنه يحتاج إلى عمل بجهد كبير بسبب العلاقة القوية بين التلاميذ وهناك من يؤيد التفجير وبعض آخر لا يؤيد\nيحتاج إلى دعم و تأطير",
+                  "additionalNotes": "تلميذ استطاع أن يحقق نتائج مرضية رغم حالته الإجتماعية قدراته أكبر بكثيير من نقاطه\nسلوك عادي لكنه كثير الحركة و الكلام و الضحك",
                   "actionPlan": "",
-                  "generalNote": "يبكي دائمًأ في الخروج بسبب خوفه مدعيًّا أنه ربما سوف ينساه السائق / تأثير الأم عليه بالحديث معه عن والده"
+                  "generalNote": "تغيير القسم"
                 }
               },
               {
@@ -34076,44 +34072,9 @@
                   "actionPlan": "",
                   "generalNote": "تغيير القسم"
                 }
-              },
-              {
-                "id": "S272D8EE170",
-                "number": 24,
-                "firstName": "عبد الرحمان",
-                "lastName": "ناجي",
-                "fullName": "ناجي عبد الرحمان",
-                "dateOfBirth": "2015-07-01",
-                "gender": "Male",
-                "notes": "",
-                "classId": "M-Y1-C03",
-                "departmentId": "middle",
-                "searchName": "ناجي عبد الرحمان",
-                "previousYearDetails": {
-                  "previousYear": "Year 5 (Primary)",
-                  "previousYearAr": "السنة الخامسة ابتدائي",
-                  "previousClass": "5AP7",
-                  "sourceFile": "5TH Graders.xlsx",
-                  "matchedName": "ناجي عبد الرحمن",
-                  "matchMethod": "fuzzy:99",
-                  "number": "10",
-                  "dateOfBirth": "",
-                  "age": "",
-                  "annualAverage": "",
-                  "socialStatus": "",
-                  "healthStatus": "",
-                  "strengths": "تعبير جيد",
-                  "weaknesses": "التسرع و الكسل",
-                  "behavioralPerformance": "",
-                  "academicPerformance": "",
-                  "talents": "",
-                  "additionalNotes": "تلميذ استطاع أن يحقق نتائج مرضية رغم حالته الإجتماعية قدراته أكبر بكثيير من نقاطه\nسلوك عادي لكنه كثير الحركة و الكلام و الضحك",
-                  "actionPlan": "",
-                  "generalNote": "تغيير القسم"
-                }
               }
             ],
-            "sourceExcel": "2026.2027.xlsx"
+            "sourceExcel": "2026.2027 قائمة.xlsx"
           },
           {
             "id": "M-Y1-C04",
@@ -34126,8 +34087,8 @@
             "studentCount": 25,
             "stats": {
               "total": 25,
-              "males": 9,
-              "females": 16
+              "males": 10,
+              "females": 15
             },
             "teacherIds": [
               "TC8EE4040",
@@ -34573,38 +34534,38 @@
                 }
               },
               {
-                "id": "SB1C328361C",
+                "id": "S392034376B",
                 "number": 13,
-                "firstName": "ملاك",
-                "lastName": "عصنون",
-                "fullName": "عصنون ملاك",
-                "dateOfBirth": "2016-02-08",
-                "gender": "Female",
+                "firstName": "أمير حسان",
+                "lastName": "منصوري",
+                "fullName": "منصوري أمير حسان",
+                "dateOfBirth": "2015-08-07",
+                "gender": "Male",
                 "notes": "",
                 "classId": "M-Y1-C04",
                 "departmentId": "middle",
-                "searchName": "عصنون ملاك",
+                "searchName": "منصوري أمير حسان",
                 "previousYearDetails": {
                   "previousYear": "Year 5 (Primary)",
                   "previousYearAr": "السنة الخامسة ابتدائي",
                   "previousClass": "5AP2",
                   "sourceFile": "5TH Graders.xlsx",
-                  "matchedName": "عصنون ملاك",
-                  "matchMethod": "exact",
-                  "number": "19",
+                  "matchedName": "منصوري امير",
+                  "matchMethod": "fuzzy:95",
+                  "number": "11",
                   "dateOfBirth": "",
                   "age": "",
                   "annualAverage": "",
                   "socialStatus": "",
                   "healthStatus": "",
-                  "strengths": "حب العمل",
-                  "weaknesses": "",
+                  "strengths": "الدقة في الفهم",
+                  "weaknesses": "الخوف في الاختبارات",
                   "behavioralPerformance": "",
                   "academicPerformance": "",
-                  "talents": "قراءة القصص",
-                  "additionalNotes": "يتملك كل امكانيات التميز وعليه بالمواصلة على هذا المنوال",
+                  "talents": "الشغف بعلم البحار والمحيطات",
+                  "additionalNotes": "تلميذة شغوفة بالعلم والمعرفة لديها ثقافة واسعة .عنصر حاضر وفعال في القسم\nيتشاجر مع البنات",
                   "actionPlan": "",
-                  "generalNote": ""
+                  "generalNote": "تغيير القسم يجب ألا تكون مع تيران"
                 }
               },
               {
@@ -35028,7 +34989,7 @@
                 }
               }
             ],
-            "sourceExcel": "2026.2027.xlsx"
+            "sourceExcel": "2026.2027 قائمة.xlsx"
           },
           {
             "id": "M-Y1-C05",
@@ -35041,8 +35002,8 @@
             "studentCount": 25,
             "stats": {
               "total": 25,
-              "males": 11,
-              "females": 14
+              "males": 12,
+              "females": 13
             },
             "teacherIds": [
               "TC8EE4040",
@@ -35068,73 +35029,138 @@
             ],
             "students": [
               {
-                "id": "S8445CC2587",
+                "id": "S582C0A9A0B",
                 "number": 1,
+                "firstName": "مصطفى",
+                "lastName": "أيت عبد القادر",
+                "fullName": "أيت عبد القادر مصطفى",
+                "dateOfBirth": "",
+                "gender": "Male",
+                "notes": "",
+                "classId": "M-Y1-C05",
+                "departmentId": "middle",
+                "searchName": "أيت عبد القادر مصطفى"
+              },
+              {
+                "id": "S8445CC2587",
+                "number": 2,
                 "firstName": "صونيا ياسمين",
                 "lastName": "براهيمي",
                 "fullName": "براهيمي صونيا ياسمين",
                 "dateOfBirth": "",
                 "gender": "Female",
-                "notes": "incomplete DOB",
+                "notes": "",
                 "classId": "M-Y1-C05",
                 "departmentId": "middle",
                 "searchName": "براهيمي صونيا ياسمين"
               },
               {
+                "id": "S9EEBCD9044",
+                "number": 3,
+                "firstName": "هند",
+                "lastName": "بلحمزي",
+                "fullName": "بلحمزي هند",
+                "dateOfBirth": "",
+                "gender": "Female",
+                "notes": "",
+                "classId": "M-Y1-C05",
+                "departmentId": "middle",
+                "searchName": "بلحمزي هند"
+              },
+              {
+                "id": "S66CED0F48E",
+                "number": 4,
+                "firstName": "لينا رحمة",
+                "lastName": "بلحوت",
+                "fullName": "بلحوت لينا رحمة",
+                "dateOfBirth": "",
+                "gender": "Female",
+                "notes": "",
+                "classId": "M-Y1-C05",
+                "departmentId": "middle",
+                "searchName": "بلحوت لينا رحمة"
+              },
+              {
                 "id": "S58393F8221",
-                "number": 2,
+                "number": 5,
                 "firstName": "ادم",
                 "lastName": "بوطباخ",
                 "fullName": "بوطباخ ادم",
                 "dateOfBirth": "",
                 "gender": "Male",
-                "notes": "incomplete DOB",
+                "notes": "",
                 "classId": "M-Y1-C05",
                 "departmentId": "middle",
                 "searchName": "بوطباخ ادم"
               },
               {
                 "id": "SE62BE41244",
-                "number": 3,
+                "number": 6,
                 "firstName": "زكرياء",
                 "lastName": "تالورار",
                 "fullName": "تالورار زكرياء",
                 "dateOfBirth": "",
                 "gender": "Male",
-                "notes": "incomplete DOB",
+                "notes": "",
                 "classId": "M-Y1-C05",
                 "departmentId": "middle",
                 "searchName": "تالورار زكرياء"
               },
               {
                 "id": "SA78BF4B71C",
-                "number": 4,
+                "number": 7,
                 "firstName": "إسراء",
                 "lastName": "تيجاني",
                 "fullName": "تيجاني إسراء",
                 "dateOfBirth": "",
                 "gender": "Female",
-                "notes": "incomplete DOB",
+                "notes": "",
                 "classId": "M-Y1-C05",
                 "departmentId": "middle",
                 "searchName": "تيجاني إسراء"
               },
               {
+                "id": "SF5737A7395",
+                "number": 8,
+                "firstName": "نور",
+                "lastName": "جرافة",
+                "fullName": "جرافة نور",
+                "dateOfBirth": "",
+                "gender": "Female",
+                "notes": "",
+                "classId": "M-Y1-C05",
+                "departmentId": "middle",
+                "searchName": "جرافة نور"
+              },
+              {
+                "id": "S09C8ABE283",
+                "number": 9,
+                "firstName": "لين",
+                "lastName": "جفال",
+                "fullName": "جفال لين",
+                "dateOfBirth": "",
+                "gender": "Female",
+                "notes": "",
+                "classId": "M-Y1-C05",
+                "departmentId": "middle",
+                "searchName": "جفال لين"
+              },
+              {
                 "id": "SC597457560",
-                "number": 5,
+                "number": 10,
                 "firstName": "عبد السلام",
                 "lastName": "حازي",
                 "fullName": "حازي عبد السلام",
                 "dateOfBirth": "",
                 "gender": "Male",
-                "notes": "incomplete DOB",
+                "notes": "",
                 "classId": "M-Y1-C05",
                 "departmentId": "middle",
                 "searchName": "حازي عبد السلام"
               },
               {
                 "id": "S2D3A36691A",
-                "number": 6,
+                "number": 11,
                 "firstName": "وسيم",
                 "lastName": "حجايجية",
                 "fullName": "حجايجية وسيم",
@@ -35147,7 +35173,7 @@
               },
               {
                 "id": "S295E993534",
-                "number": 7,
+                "number": 12,
                 "firstName": "رنيم",
                 "lastName": "حجايجية",
                 "fullName": "حجايجية رنيم",
@@ -35160,7 +35186,7 @@
               },
               {
                 "id": "SD25B742D50",
-                "number": 8,
+                "number": 13,
                 "firstName": "بشير",
                 "lastName": "حجايجية",
                 "fullName": "حجايجية بشير",
@@ -35173,194 +35199,107 @@
               },
               {
                 "id": "SB94701A6DB",
-                "number": 9,
+                "number": 14,
                 "firstName": "اسكندر",
                 "lastName": "دخان",
                 "fullName": "دخان اسكندر",
                 "dateOfBirth": "",
                 "gender": "Male",
-                "notes": "incomplete DOB",
+                "notes": "",
                 "classId": "M-Y1-C05",
                 "departmentId": "middle",
                 "searchName": "دخان اسكندر"
               },
               {
-                "id": "S3117405C7B",
-                "number": 10,
-                "firstName": "محمد عمار",
-                "lastName": "شرفي",
-                "fullName": "شرفي محمد عمار",
-                "dateOfBirth": "",
+                "id": "SC787D12C6E",
+                "number": 15,
+                "firstName": "عبد الرحمن",
+                "lastName": "سرياك",
+                "fullName": "سرياك عبد الرحمن",
+                "dateOfBirth": "2015-02-06",
                 "gender": "Male",
-                "notes": "incomplete DOB",
+                "notes": "",
                 "classId": "M-Y1-C05",
                 "departmentId": "middle",
-                "searchName": "شرفي محمد عمار"
+                "searchName": "سرياك عبد الرحمن"
+              },
+              {
+                "id": "SF960C4D5AB",
+                "number": 16,
+                "firstName": "محمد كمال",
+                "lastName": "شرفي",
+                "fullName": "شرفي محمد كمال",
+                "dateOfBirth": "",
+                "gender": "Male",
+                "notes": "",
+                "classId": "M-Y1-C05",
+                "departmentId": "middle",
+                "searchName": "شرفي محمد كمال"
+              },
+              {
+                "id": "S14434B2408",
+                "number": 17,
+                "firstName": "نسيم",
+                "lastName": "شهري",
+                "fullName": "شهري نسيم",
+                "dateOfBirth": "",
+                "gender": "Male",
+                "notes": "",
+                "classId": "M-Y1-C05",
+                "departmentId": "middle",
+                "searchName": "شهري نسيم"
               },
               {
                 "id": "SA3A4BE01E0",
-                "number": 11,
+                "number": 18,
                 "firstName": "مريم",
                 "lastName": "صخري",
                 "fullName": "صخري مريم",
                 "dateOfBirth": "",
                 "gender": "Female",
-                "notes": "incomplete DOB",
+                "notes": "",
                 "classId": "M-Y1-C05",
                 "departmentId": "middle",
                 "searchName": "صخري مريم"
               },
               {
                 "id": "S49E0630A3A",
-                "number": 12,
+                "number": 19,
                 "firstName": "ياسمين",
                 "lastName": "طالمات",
                 "fullName": "طالمات ياسمين",
                 "dateOfBirth": "",
                 "gender": "Female",
-                "notes": "incomplete DOB",
+                "notes": "",
                 "classId": "M-Y1-C05",
                 "departmentId": "middle",
                 "searchName": "طالمات ياسمين"
               },
               {
                 "id": "SFAFCAB6E5F",
-                "number": 13,
+                "number": 20,
                 "firstName": "هبة رحيل",
                 "lastName": "فرتوس",
                 "fullName": "فرتوس هبة رحيل",
                 "dateOfBirth": "",
                 "gender": "Female",
-                "notes": "incomplete DOB",
+                "notes": "",
                 "classId": "M-Y1-C05",
                 "departmentId": "middle",
                 "searchName": "فرتوس هبة رحيل"
               },
               {
                 "id": "S05C90FE372",
-                "number": 14,
+                "number": 21,
                 "firstName": "لينا",
                 "lastName": "قوادرية بوجلطية",
                 "fullName": "قوادرية بوجلطية لينا",
                 "dateOfBirth": "",
                 "gender": "Female",
-                "notes": "incomplete DOB",
-                "classId": "M-Y1-C05",
-                "departmentId": "middle",
-                "searchName": "قوادرية بوجلطية لينا"
-              },
-              {
-                "id": "SB6FD418C04",
-                "number": 15,
-                "firstName": "محمد",
-                "lastName": "منصوري",
-                "fullName": "منصوري محمد",
-                "dateOfBirth": "",
-                "gender": "Male",
-                "notes": "incomplete DOB",
-                "classId": "M-Y1-C05",
-                "departmentId": "middle",
-                "searchName": "منصوري محمد"
-              },
-              {
-                "id": "SD6E8B01D09",
-                "number": 16,
-                "firstName": "كوثر",
-                "lastName": "ونيغي",
-                "fullName": "ونيغي كوثر",
-                "dateOfBirth": "",
-                "gender": "Female",
-                "notes": "incomplete DOB",
-                "classId": "M-Y1-C05",
-                "departmentId": "middle",
-                "searchName": "ونيغي كوثر"
-              },
-              {
-                "id": "SBD5B906385",
-                "number": 17,
-                "firstName": "فزيل",
-                "lastName": "يوسفي",
-                "fullName": "يوسفي فزيل",
-                "dateOfBirth": "",
-                "gender": "Male",
                 "notes": "",
                 "classId": "M-Y1-C05",
                 "departmentId": "middle",
-                "searchName": "يوسفي فزيل"
-              },
-              {
-                "id": "S14434B2408",
-                "number": 18,
-                "firstName": "نسيم",
-                "lastName": "شهري",
-                "fullName": "شهري نسيم",
-                "dateOfBirth": "",
-                "gender": "Male",
-                "notes": "incomplete DOB",
-                "classId": "M-Y1-C05",
-                "departmentId": "middle",
-                "searchName": "شهري نسيم"
-              },
-              {
-                "id": "S09C8ABE283",
-                "number": 19,
-                "firstName": "لين",
-                "lastName": "جفال",
-                "fullName": "جفال لين",
-                "dateOfBirth": "",
-                "gender": "Female",
-                "notes": "incomplete DOB",
-                "classId": "M-Y1-C05",
-                "departmentId": "middle",
-                "searchName": "جفال لين"
-              },
-              {
-                "id": "SD999BEBE42",
-                "number": 20,
-                "firstName": "أنس",
-                "lastName": "صبري",
-                "fullName": "صبري أنس",
-                "dateOfBirth": "",
-                "gender": "Male",
-                "notes": "incomplete DOB",
-                "classId": "M-Y1-C05",
-                "departmentId": "middle",
-                "searchName": "صبري أنس",
-                "previousYearDetails": {
-                  "previousYear": "Year 5 (Primary)",
-                  "previousYearAr": "السنة الخامسة ابتدائي",
-                  "previousClass": "5AP2",
-                  "sourceFile": "5TH Graders.xlsx",
-                  "matchedName": "صبري انس",
-                  "matchMethod": "exact",
-                  "number": "16",
-                  "dateOfBirth": "",
-                  "age": "",
-                  "annualAverage": "",
-                  "socialStatus": "",
-                  "healthStatus": "",
-                  "strengths": "ذكي",
-                  "weaknesses": "",
-                  "behavioralPerformance": "",
-                  "academicPerformance": "",
-                  "talents": "التجويد، المسرح، و يحب المجال العلمي",
-                  "additionalNotes": "تشجيعه على الطالعة من اجل اثراء رصيده اللغوي",
-                  "actionPlan": "",
-                  "generalNote": "تغيير القسم لأنه هو المؤثر على القسم فهو مستواه أعلى من مستواهم ويقوم بتحريضهم على الفوضى"
-                }
-              },
-              {
-                "id": "S9EEBCD9044",
-                "number": 21,
-                "firstName": "هند",
-                "lastName": "بلحمزي",
-                "fullName": "بلحمزي هند",
-                "dateOfBirth": "",
-                "gender": "Female",
-                "notes": "incomplete DOB",
-                "classId": "M-Y1-C05",
-                "departmentId": "middle",
-                "searchName": "بلحمزي هند"
+                "searchName": "قوادرية بوجلطية لينا"
               },
               {
                 "id": "SB533A7936D",
@@ -35370,74 +35309,52 @@
                 "fullName": "محمد علي فاطمة زهراء",
                 "dateOfBirth": "",
                 "gender": "Female",
-                "notes": "incomplete DOB",
+                "notes": "",
                 "classId": "M-Y1-C05",
                 "departmentId": "middle",
                 "searchName": "محمد علي فاطمة زهراء"
               },
               {
-                "id": "SF5737A7395",
+                "id": "SB6FD418C04",
                 "number": 23,
-                "firstName": "نور",
-                "lastName": "جرافة",
-                "fullName": "جرافة نور",
+                "firstName": "محمد",
+                "lastName": "منصوري",
+                "fullName": "منصوري محمد",
                 "dateOfBirth": "",
-                "gender": "Female",
-                "notes": "incomplete DOB",
+                "gender": "Male",
+                "notes": "",
                 "classId": "M-Y1-C05",
                 "departmentId": "middle",
-                "searchName": "جرافة نور"
+                "searchName": "منصوري محمد"
               },
               {
-                "id": "S66CED0F48E",
+                "id": "SD6E8B01D09",
                 "number": 24,
-                "firstName": "لينا رحمة",
-                "lastName": "بلحوت",
-                "fullName": "بلحوت لينا رحمة",
+                "firstName": "كوثر",
+                "lastName": "ونيغي",
+                "fullName": "ونيغي كوثر",
                 "dateOfBirth": "",
                 "gender": "Female",
-                "notes": "incomplete DOB",
+                "notes": "",
                 "classId": "M-Y1-C05",
                 "departmentId": "middle",
-                "searchName": "بلحوت لينا رحمة"
+                "searchName": "ونيغي كوثر"
               },
               {
-                "id": "S9926544224",
+                "id": "SBD5B906385",
                 "number": 25,
-                "firstName": "محمد شاهين",
-                "lastName": "بشار",
-                "fullName": "بشار محمد شاهين",
+                "firstName": "فزيل",
+                "lastName": "يوسفي",
+                "fullName": "يوسفي فزيل",
                 "dateOfBirth": "",
-                "gender": "Female",
-                "notes": "incomplete DOB",
+                "gender": "Male",
+                "notes": "",
                 "classId": "M-Y1-C05",
                 "departmentId": "middle",
-                "searchName": "بشار محمد شاهين",
-                "previousYearDetails": {
-                  "previousYear": "Year 5 (Primary)",
-                  "previousYearAr": "السنة الخامسة ابتدائي",
-                  "previousClass": "5AP8",
-                  "sourceFile": "5TH Graders.xlsx",
-                  "matchedName": "بشار شاهين",
-                  "matchMethod": "fuzzy:95",
-                  "number": "9",
-                  "dateOfBirth": "",
-                  "age": "",
-                  "annualAverage": "",
-                  "socialStatus": "",
-                  "healthStatus": "",
-                  "strengths": "",
-                  "weaknesses": "كسول",
-                  "behavioralPerformance": "",
-                  "academicPerformance": "",
-                  "talents": "يحب الشعر والالقاء",
-                  "additionalNotes": "تلميذ لديه صعوبات لكن رغبته كبيرة سينجح في المستقبل )",
-                  "actionPlan": "",
-                  "generalNote": ""
-                }
+                "searchName": "يوسفي فزيل"
               }
             ],
-            "sourceExcel": "2026.2027.xlsx"
+            "sourceExcel": "2026.2027 قائمة.xlsx"
           },
           {
             "id": "M-Y1-C06",
@@ -35450,8 +35367,8 @@
             "studentCount": 23,
             "stats": {
               "total": 23,
-              "males": 9,
-              "females": 14
+              "males": 8,
+              "females": 15
             },
             "teacherIds": [
               "TC8EE4040",
@@ -36226,42 +36143,42 @@
                 "searchName": "لصطب رميساء"
               },
               {
-                "id": "S392034376B",
+                "id": "SB1C328361C",
                 "number": 23,
-                "firstName": "أمير حسان",
-                "lastName": "منصوري",
-                "fullName": "منصوري أمير حسان",
-                "dateOfBirth": "2015-08-07",
-                "gender": "Male",
+                "firstName": "ملاك",
+                "lastName": "عصنون",
+                "fullName": "عصنون ملاك",
+                "dateOfBirth": "2016-02-08",
+                "gender": "Female",
                 "notes": "",
                 "classId": "M-Y1-C06",
                 "departmentId": "middle",
-                "searchName": "منصوري أمير حسان",
+                "searchName": "عصنون ملاك",
                 "previousYearDetails": {
                   "previousYear": "Year 5 (Primary)",
                   "previousYearAr": "السنة الخامسة ابتدائي",
                   "previousClass": "5AP2",
                   "sourceFile": "5TH Graders.xlsx",
-                  "matchedName": "منصوري امير",
-                  "matchMethod": "fuzzy:95",
-                  "number": "11",
+                  "matchedName": "عصنون ملاك",
+                  "matchMethod": "exact",
+                  "number": "19",
                   "dateOfBirth": "",
                   "age": "",
                   "annualAverage": "",
                   "socialStatus": "",
                   "healthStatus": "",
-                  "strengths": "الدقة في الفهم",
-                  "weaknesses": "الخوف في الاختبارات",
+                  "strengths": "حب العمل",
+                  "weaknesses": "",
                   "behavioralPerformance": "",
                   "academicPerformance": "",
-                  "talents": "الشغف بعلم البحار والمحيطات",
-                  "additionalNotes": "تلميذة شغوفة بالعلم والمعرفة لديها ثقافة واسعة .عنصر حاضر وفعال في القسم\nيتشاجر مع البنات",
+                  "talents": "قراءة القصص",
+                  "additionalNotes": "يتملك كل امكانيات التميز وعليه بالمواصلة على هذا المنوال",
                   "actionPlan": "",
-                  "generalNote": "تغيير القسم يجب ألا تكون مع تيران"
+                  "generalNote": ""
                 }
               }
             ],
-            "sourceExcel": "2026.2027.xlsx"
+            "sourceExcel": "2026.2027 قائمة.xlsx"
           },
           {
             "id": "M-Y1-C07",
@@ -36271,10 +36188,10 @@
             "year": 1,
             "section": 7,
             "sourceImage": "img_16.png",
-            "studentCount": 22,
+            "studentCount": 23,
             "stats": {
-              "total": 22,
-              "males": 11,
+              "total": 23,
+              "males": 12,
               "females": 11
             },
             "teacherIds": [
@@ -37068,9 +36985,44 @@
                   "actionPlan": "يحتاج تأطير",
                   "generalNote": "تغيير في قسم خاص"
                 }
+              },
+              {
+                "id": "SD999BEBE42",
+                "number": 23,
+                "firstName": "أنس",
+                "lastName": "صابري",
+                "fullName": "صابري أنس",
+                "dateOfBirth": "",
+                "gender": "Male",
+                "notes": "",
+                "classId": "M-Y1-C07",
+                "departmentId": "middle",
+                "searchName": "صابري أنس",
+                "previousYearDetails": {
+                  "previousYear": "Year 5 (Primary)",
+                  "previousYearAr": "السنة الخامسة ابتدائي",
+                  "previousClass": "5AP2",
+                  "sourceFile": "5TH Graders.xlsx",
+                  "matchedName": "صبري انس",
+                  "matchMethod": "exact",
+                  "number": "16",
+                  "dateOfBirth": "",
+                  "age": "",
+                  "annualAverage": "",
+                  "socialStatus": "",
+                  "healthStatus": "",
+                  "strengths": "ذكي",
+                  "weaknesses": "",
+                  "behavioralPerformance": "",
+                  "academicPerformance": "",
+                  "talents": "التجويد، المسرح، و يحب المجال العلمي",
+                  "additionalNotes": "تشجيعه على الطالعة من اجل اثراء رصيده اللغوي",
+                  "actionPlan": "",
+                  "generalNote": "تغيير القسم لأنه هو المؤثر على القسم فهو مستواه أعلى من مستواهم ويقوم بتحريضهم على الفوضى"
+                }
               }
             ],
-            "sourceExcel": "2026.2027.xlsx"
+            "sourceExcel": "2026.2027 قائمة.xlsx"
           }
         ]
       },
@@ -37088,11 +37040,11 @@
             "year": 2,
             "section": 1,
             "sourceImage": "img_14.png",
-            "studentCount": 24,
+            "studentCount": 23,
             "stats": {
-              "total": 24,
+              "total": 23,
               "males": 13,
-              "females": 11
+              "females": 10
             },
             "teacherIds": [
               "TC8EE4040",
@@ -37386,23 +37338,23 @@
                 "fullName": "فتوحي أيوب",
                 "dateOfBirth": "",
                 "gender": "Male",
-                "notes": "incomplete DOB",
+                "notes": "",
                 "classId": "M-Y2-C01",
                 "departmentId": "middle",
                 "searchName": "فتوحي أيوب"
               },
               {
-                "id": "S197C79CA8E",
+                "id": "S87001919D6",
                 "number": 22,
-                "firstName": "ليتيسيا",
-                "lastName": "اوشنير",
-                "fullName": "اوشنير ليتيسيا",
-                "dateOfBirth": "2014-11-22",
+                "firstName": "هاجر",
+                "lastName": "برابح",
+                "fullName": "برابح هاجر",
+                "dateOfBirth": "",
                 "gender": "Female",
                 "notes": "",
                 "classId": "M-Y2-C01",
                 "departmentId": "middle",
-                "searchName": "اوشنير ليتيسيا"
+                "searchName": "برابح هاجر"
               },
               {
                 "id": "SF367617B0A",
@@ -37416,22 +37368,9 @@
                 "classId": "M-Y2-C01",
                 "departmentId": "middle",
                 "searchName": "فوغالي لين ميس"
-              },
-              {
-                "id": "S87001919D6",
-                "number": 24,
-                "firstName": "هاجر",
-                "lastName": "برابح",
-                "fullName": "برابح هاجر",
-                "dateOfBirth": "",
-                "gender": "Female",
-                "notes": "incomplete DOB",
-                "classId": "M-Y2-C01",
-                "departmentId": "middle",
-                "searchName": "برابح هاجر"
               }
             ],
-            "sourceExcel": "2026.2027.xlsx"
+            "sourceExcel": "2026.2027 قائمة.xlsx"
           },
           {
             "id": "M-Y2-C02",
@@ -37444,8 +37383,8 @@
             "studentCount": 25,
             "stats": {
               "total": 25,
-              "males": 12,
-              "females": 13
+              "males": 9,
+              "females": 16
             },
             "teacherIds": [
               "TC8EE4040",
@@ -37523,17 +37462,17 @@
                 "searchName": "ايفور أحمد وسيم"
               },
               {
-                "id": "S0510A1E32C",
+                "id": "S197C79CA8E",
                 "number": 5,
-                "firstName": "عبدالرحيم",
-                "lastName": "عصنون",
-                "fullName": "عصنون عبدالرحيم",
-                "dateOfBirth": "2013-09-29",
-                "gender": "Male",
+                "firstName": "ليتيسيا",
+                "lastName": "اوشنير",
+                "fullName": "اوشنير ليتيسيا",
+                "dateOfBirth": "2014-11-22",
+                "gender": "Female",
                 "notes": "",
                 "classId": "M-Y2-C02",
                 "departmentId": "middle",
-                "searchName": "عصنون عبدالرحيم"
+                "searchName": "اوشنير ليتيسيا"
               },
               {
                 "id": "S96310BE268",
@@ -37562,17 +37501,17 @@
                 "searchName": "داود ادم"
               },
               {
-                "id": "S78BA399888",
+                "id": "S78B3FDA705",
                 "number": 8,
-                "firstName": "آدم",
-                "lastName": "يعلى",
-                "fullName": "يعلى آدم",
-                "dateOfBirth": "2014-11-18",
-                "gender": "Male",
+                "firstName": "دانية",
+                "lastName": "أمالو",
+                "fullName": "أمالو دانية",
+                "dateOfBirth": "2014-12-19",
+                "gender": "Female",
                 "notes": "",
                 "classId": "M-Y2-C02",
                 "departmentId": "middle",
-                "searchName": "يعلى آدم"
+                "searchName": "أمالو دانية"
               },
               {
                 "id": "S4D376D7905",
@@ -37757,17 +37696,17 @@
                 "searchName": "براهمي سيرين"
               },
               {
-                "id": "SD7A4C1C6D0",
+                "id": "S1B61CB61A1",
                 "number": 23,
-                "firstName": "محمد",
-                "lastName": "مولاي عمار",
-                "fullName": "مولاي عمار محمد",
-                "dateOfBirth": "2014-02-10",
+                "firstName": "عبد القادر",
+                "lastName": "مولاي",
+                "fullName": "مولاي عبد القادر",
+                "dateOfBirth": "",
                 "gender": "Male",
                 "notes": "",
                 "classId": "M-Y2-C02",
                 "departmentId": "middle",
-                "searchName": "مولاي عمار محمد"
+                "searchName": "مولاي عبد القادر"
               },
               {
                 "id": "S80F86322C3",
@@ -37777,26 +37716,26 @@
                 "fullName": "خلف الله أسيل سلسبيل",
                 "dateOfBirth": "",
                 "gender": "Female",
-                "notes": "incomplete DOB",
+                "notes": "",
                 "classId": "M-Y2-C02",
                 "departmentId": "middle",
                 "searchName": "خلف الله أسيل سلسبيل"
               },
               {
-                "id": "SFB86750455",
+                "id": "SF1C01BEA26",
                 "number": 25,
-                "firstName": "أمينة",
-                "lastName": "زعبوب",
-                "fullName": "زعبوب أمينة",
-                "dateOfBirth": "",
-                "gender": "Male",
-                "notes": "incomplete DOB",
+                "firstName": "تقوى",
+                "lastName": "رزايقية",
+                "fullName": "رزايقية تقوى",
+                "dateOfBirth": "2014-09-12",
+                "gender": "Female",
+                "notes": "",
                 "classId": "M-Y2-C02",
                 "departmentId": "middle",
-                "searchName": "زعبوب أمينة"
+                "searchName": "رزايقية تقوى"
               }
             ],
-            "sourceExcel": "2026.2027.xlsx"
+            "sourceExcel": "2026.2027 قائمة.xlsx"
           },
           {
             "id": "M-Y2-C03",
@@ -37806,11 +37745,11 @@
             "year": 2,
             "section": 3,
             "sourceImage": "img_17.png",
-            "studentCount": 25,
+            "studentCount": 26,
             "stats": {
-              "total": 25,
-              "males": 14,
-              "females": 11
+              "total": 26,
+              "males": 16,
+              "females": 10
             },
             "teacherIds": [
               "TC8EE4040",
@@ -37882,7 +37821,7 @@
                 "fullName": "قدام محمد أوستان",
                 "dateOfBirth": "",
                 "gender": "Male",
-                "notes": "incomplete DOB",
+                "notes": "",
                 "classId": "M-Y2-C03",
                 "departmentId": "middle",
                 "searchName": "قدام محمد أوستان"
@@ -38051,7 +37990,7 @@
                 "fullName": "وابد ايناس",
                 "dateOfBirth": "",
                 "gender": "Female",
-                "notes": "incomplete DOB",
+                "notes": "",
                 "classId": "M-Y2-C03",
                 "departmentId": "middle",
                 "searchName": "وابد ايناس"
@@ -38109,17 +38048,17 @@
                 "searchName": "خداري أنس عبد المالك"
               },
               {
-                "id": "S1B61CB61A1",
+                "id": "S0510A1E32C",
                 "number": 22,
-                "firstName": "عبد القادر",
-                "lastName": "مولاي",
-                "fullName": "مولاي عبد القادر",
-                "dateOfBirth": "",
+                "firstName": "عبدالرحيم",
+                "lastName": "عصنون",
+                "fullName": "عصنون عبدالرحيم",
+                "dateOfBirth": "2013-09-29",
                 "gender": "Male",
-                "notes": "incomplete DOB",
+                "notes": "",
                 "classId": "M-Y2-C03",
                 "departmentId": "middle",
-                "searchName": "مولاي عبد القادر"
+                "searchName": "عصنون عبدالرحيم"
               },
               {
                 "id": "S1529BF9937",
@@ -38135,33 +38074,46 @@
                 "searchName": "بن لعمري عبد الحكيم"
               },
               {
-                "id": "SE5B8474C91",
+                "id": "SD7A4C1C6D0",
                 "number": 24,
-                "firstName": "تهاني",
-                "lastName": "قصاص",
-                "fullName": "قصاص تهاني",
-                "dateOfBirth": "",
-                "gender": "Female",
-                "notes": "incomplete DOB",
+                "firstName": "محمد",
+                "lastName": "مولاي عمار",
+                "fullName": "مولاي عمار محمد",
+                "dateOfBirth": "2014-02-10",
+                "gender": "Male",
+                "notes": "",
                 "classId": "M-Y2-C03",
                 "departmentId": "middle",
-                "searchName": "قصاص تهاني"
+                "searchName": "مولاي عمار محمد"
               },
               {
-                "id": "S78B3FDA705",
+                "id": "S78BA399888",
                 "number": 25,
-                "firstName": "دانية",
-                "lastName": "أمالو",
-                "fullName": "أمالو دانية",
-                "dateOfBirth": "2014-12-19",
+                "firstName": "آدم",
+                "lastName": "يعلى",
+                "fullName": "يعلى آدم",
+                "dateOfBirth": "2014-11-18",
+                "gender": "Male",
+                "notes": "",
+                "classId": "M-Y2-C03",
+                "departmentId": "middle",
+                "searchName": "يعلى آدم"
+              },
+              {
+                "id": "S962BDB1665",
+                "number": 26,
+                "firstName": "إيمان",
+                "lastName": "عزي",
+                "fullName": "عزي إيمان",
+                "dateOfBirth": "2014-08-11",
                 "gender": "Female",
                 "notes": "",
                 "classId": "M-Y2-C03",
                 "departmentId": "middle",
-                "searchName": "أمالو دانية"
+                "searchName": "عزي إيمان"
               }
             ],
-            "sourceExcel": "2026.2027.xlsx"
+            "sourceExcel": "2026.2027 قائمة.xlsx"
           },
           {
             "id": "M-Y2-C04",
@@ -38171,11 +38123,11 @@
             "year": 2,
             "section": 4,
             "sourceImage": "img_11.png",
-            "studentCount": 25,
+            "studentCount": 26,
             "stats": {
-              "total": 25,
-              "males": 13,
-              "females": 12
+              "total": 26,
+              "males": 15,
+              "females": 11
             },
             "teacherIds": [
               "TC8EE4040",
@@ -38201,17 +38153,17 @@
             ],
             "students": [
               {
-                "id": "SF1C01BEA26",
+                "id": "S684D5CAEFA",
                 "number": 1,
-                "firstName": "تقوى",
-                "lastName": "رزايقية",
-                "fullName": "رزايقية تقوى",
-                "dateOfBirth": "2014-09-12",
-                "gender": "Female",
+                "firstName": "احمد عمر تقي الدين انس",
+                "lastName": "بن حدة",
+                "fullName": "بن حدة احمد عمر تقي الدين انس",
+                "dateOfBirth": "2015-09-27",
+                "gender": "Male",
                 "notes": "",
                 "classId": "M-Y2-C04",
                 "departmentId": "middle",
-                "searchName": "رزايقية تقوى"
+                "searchName": "بن حدة احمد عمر تقي الدين انس"
               },
               {
                 "id": "SAD14329929",
@@ -38409,17 +38361,17 @@
                 "searchName": "يحيا صهيب محمد اياد"
               },
               {
-                "id": "S962BDB1665",
+                "id": "S6F20354F06",
                 "number": 17,
-                "firstName": "إيمان",
-                "lastName": "عزي",
-                "fullName": "عزي إيمان",
-                "dateOfBirth": "2014-08-11",
-                "gender": "Female",
+                "firstName": "أمين",
+                "lastName": "زعبوب",
+                "fullName": "زعبوب أمين",
+                "dateOfBirth": "",
+                "gender": "Male",
                 "notes": "",
                 "classId": "M-Y2-C04",
                 "departmentId": "middle",
-                "searchName": "عزي إيمان"
+                "searchName": "زعبوب أمين"
               },
               {
                 "id": "S866EF4AF81",
@@ -38494,7 +38446,7 @@
                 "fullName": "بودومي لارين",
                 "dateOfBirth": "",
                 "gender": "Female",
-                "notes": "incomplete DOB",
+                "notes": "",
                 "classId": "M-Y2-C04",
                 "departmentId": "middle",
                 "searchName": "بودومي لارين"
@@ -38507,26 +38459,39 @@
                 "fullName": "سليمي مايسة مليكة",
                 "dateOfBirth": "",
                 "gender": "Female",
-                "notes": "incomplete DOB",
+                "notes": "",
                 "classId": "M-Y2-C04",
                 "departmentId": "middle",
                 "searchName": "سليمي مايسة مليكة"
               },
               {
-                "id": "S684D5CAEFA",
+                "id": "SEF7624CDDE",
                 "number": 25,
-                "firstName": "احمد عمر تقي الدين انس",
-                "lastName": "بن حدة",
-                "fullName": "بن حدة احمد عمر تقي الدين انس",
-                "dateOfBirth": "2015-09-27",
+                "firstName": "سلمى",
+                "lastName": "إبراهيم محمد عيسى",
+                "fullName": "إبراهيم محمد عيسى سلمى",
+                "dateOfBirth": "2014-01-06",
+                "gender": "Female",
+                "notes": "",
+                "classId": "M-Y2-C04",
+                "departmentId": "middle",
+                "searchName": "إبراهيم محمد عيسى سلمى"
+              },
+              {
+                "id": "S68CAAB6A1E",
+                "number": 26,
+                "firstName": "مجد",
+                "lastName": "عسولي",
+                "fullName": "عسولي مجد",
+                "dateOfBirth": "2014-05-21",
                 "gender": "Male",
                 "notes": "",
                 "classId": "M-Y2-C04",
                 "departmentId": "middle",
-                "searchName": "بن حدة احمد عمر تقي الدين انس"
+                "searchName": "عسولي مجد"
               }
             ],
-            "sourceExcel": "2026.2027.xlsx"
+            "sourceExcel": "2026.2027 قائمة.xlsx"
           },
           {
             "id": "M-Y2-C05",
@@ -38676,7 +38641,7 @@
                 "fullName": "بوطغان أيمن",
                 "dateOfBirth": "",
                 "gender": "Male",
-                "notes": "incomplete DOB",
+                "notes": "",
                 "classId": "M-Y2-C05",
                 "departmentId": "middle",
                 "searchName": "بوطغان أيمن"
@@ -38877,17 +38842,17 @@
                 "searchName": "عطيف حمزة عبد الغني"
               },
               {
-                "id": "SEF7624CDDE",
+                "id": "SE5B8474C91",
                 "number": 25,
-                "firstName": "سلمى",
-                "lastName": "إبراهيم محمد عيسى",
-                "fullName": "إبراهيم محمد عيسى سلمى",
-                "dateOfBirth": "2014-01-06",
+                "firstName": "تهاني",
+                "lastName": "قصاص",
+                "fullName": "قصاص تهاني",
+                "dateOfBirth": "",
                 "gender": "Female",
                 "notes": "",
                 "classId": "M-Y2-C05",
                 "departmentId": "middle",
-                "searchName": "إبراهيم محمد عيسى سلمى"
+                "searchName": "قصاص تهاني"
               },
               {
                 "id": "S3D0341B7D8",
@@ -38897,13 +38862,13 @@
                 "fullName": "حمودة ميرال",
                 "dateOfBirth": "",
                 "gender": "Female",
-                "notes": "incomplete DOB",
+                "notes": "",
                 "classId": "M-Y2-C05",
                 "departmentId": "middle",
                 "searchName": "حمودة ميرال"
               }
             ],
-            "sourceExcel": "2026.2027.xlsx"
+            "sourceExcel": "2026.2027 قائمة.xlsx"
           }
         ]
       },
@@ -39192,7 +39157,7 @@
                 "fullName": "سي محمد شاكر يانيس",
                 "dateOfBirth": "",
                 "gender": "Male",
-                "notes": "incomplete DOB",
+                "notes": "",
                 "classId": "M-Y3-C01",
                 "departmentId": "middle",
                 "searchName": "سي محمد شاكر يانيس"
@@ -39205,13 +39170,13 @@
                 "fullName": "كوشكار الياس",
                 "dateOfBirth": "",
                 "gender": "Male",
-                "notes": "incomplete DOB",
+                "notes": "",
                 "classId": "M-Y3-C01",
                 "departmentId": "middle",
                 "searchName": "كوشكار الياس"
               }
             ],
-            "sourceExcel": "2026.2027.xlsx"
+            "sourceExcel": "2026.2027 قائمة.xlsx"
           },
           {
             "id": "M-Y3-C02",
@@ -39301,6 +39266,19 @@
                 "classId": "M-Y3-C02",
                 "departmentId": "middle",
                 "searchName": "بوعلام بلال"
+              },
+              {
+                "id": "S36130CD235",
+                "number": 5,
+                "firstName": "روزة ذهبية خديجة",
+                "lastName": "موسود",
+                "fullName": "موسود روزة ذهبية خديجة",
+                "dateOfBirth": "2014-03-01",
+                "gender": "Female",
+                "notes": "",
+                "classId": "M-Y3-C02",
+                "departmentId": "middle",
+                "searchName": "موسود روزة ذهبية خديجة"
               },
               {
                 "id": "S914D439465",
@@ -39509,22 +39487,9 @@
                 "classId": "M-Y3-C02",
                 "departmentId": "middle",
                 "searchName": "ملوكي ريناد"
-              },
-              {
-                "id": "S36130CD235",
-                "number": 23,
-                "firstName": "روزة ذهبية خديجة",
-                "lastName": "موسود",
-                "fullName": "موسود روزة ذهبية خديجة",
-                "dateOfBirth": "2014-03-01",
-                "gender": "Female",
-                "notes": "",
-                "classId": "M-Y3-C02",
-                "departmentId": "middle",
-                "searchName": "موسود روزة ذهبية خديجة"
               }
             ],
-            "sourceExcel": "2026.2027.xlsx"
+            "sourceExcel": "2026.2027 قائمة.xlsx"
           },
           {
             "id": "M-Y3-C03",
@@ -39534,10 +39499,10 @@
             "year": 3,
             "section": 3,
             "sourceImage": "img_04.png",
-            "studentCount": 24,
+            "studentCount": 25,
             "stats": {
-              "total": 24,
-              "males": 14,
+              "total": 25,
+              "males": 15,
               "females": 10
             },
             "teacherIds": [
@@ -39700,7 +39665,7 @@
                 "fullName": "علان أسماء",
                 "dateOfBirth": "",
                 "gender": "Female",
-                "notes": "incomplete DOB",
+                "notes": "",
                 "classId": "M-Y3-C03",
                 "departmentId": "middle",
                 "searchName": "علان أسماء"
@@ -39852,14 +39817,14 @@
                 "id": "S45E0E445CA",
                 "number": 23,
                 "firstName": "نزيم",
-                "lastName": "بعجوج",
-                "fullName": "بعجوج نزيم",
+                "lastName": "بعبوج",
+                "fullName": "بعبوج نزيم",
                 "dateOfBirth": "",
                 "gender": "Male",
-                "notes": "incomplete DOB",
+                "notes": "",
                 "classId": "M-Y3-C03",
                 "departmentId": "middle",
-                "searchName": "بعجوج نزيم"
+                "searchName": "بعبوج نزيم"
               },
               {
                 "id": "SDDAD8907B2",
@@ -39869,13 +39834,26 @@
                 "fullName": "أوصيف جواد",
                 "dateOfBirth": "",
                 "gender": "Male",
-                "notes": "incomplete DOB",
+                "notes": "",
                 "classId": "M-Y3-C03",
                 "departmentId": "middle",
                 "searchName": "أوصيف جواد"
+              },
+              {
+                "id": "S05F31C1487",
+                "number": 25,
+                "firstName": "اياد",
+                "lastName": "أوصيف",
+                "fullName": "أوصيف اياد",
+                "dateOfBirth": "",
+                "gender": "Male",
+                "notes": "",
+                "classId": "M-Y3-C03",
+                "departmentId": "middle",
+                "searchName": "أوصيف اياد"
               }
             ],
-            "sourceExcel": "2026.2027.xlsx"
+            "sourceExcel": "2026.2027 قائمة.xlsx"
           },
           {
             "id": "M-Y3-C04",
@@ -39885,10 +39863,10 @@
             "year": 3,
             "section": 4,
             "sourceImage": "img_08.png",
-            "studentCount": 21,
+            "studentCount": 20,
             "stats": {
-              "total": 21,
-              "males": 11,
+              "total": 20,
+              "males": 10,
               "females": 10
             },
             "teacherIds": [
@@ -40019,17 +39997,17 @@
                 "searchName": "مرسلي هاجر"
               },
               {
-                "id": "S09CDB5578A",
+                "id": "S9BAC017FCC",
                 "number": 9,
-                "firstName": "ادم",
-                "lastName": "عويسي",
-                "fullName": "عويسي ادم",
-                "dateOfBirth": "2013-03-05",
+                "firstName": "أمير",
+                "lastName": "تلي",
+                "fullName": "تلي أمير",
+                "dateOfBirth": "2014-03-30",
                 "gender": "Male",
                 "notes": "",
                 "classId": "M-Y3-C04",
                 "departmentId": "middle",
-                "searchName": "عويسي ادم"
+                "searchName": "تلي أمير"
               },
               {
                 "id": "S6F6538FB85",
@@ -40156,7 +40134,7 @@
                 "fullName": "بلحمزي سارة",
                 "dateOfBirth": "",
                 "gender": "Female",
-                "notes": "incomplete DOB",
+                "notes": "",
                 "classId": "M-Y3-C04",
                 "departmentId": "middle",
                 "searchName": "بلحمزي سارة"
@@ -40169,26 +40147,13 @@
                 "fullName": "صخري محمد",
                 "dateOfBirth": "",
                 "gender": "Male",
-                "notes": "incomplete DOB",
-                "classId": "M-Y3-C04",
-                "departmentId": "middle",
-                "searchName": "صخري محمد"
-              },
-              {
-                "id": "S9BAC017FCC",
-                "number": 21,
-                "firstName": "أمير",
-                "lastName": "تلي",
-                "fullName": "تلي أمير",
-                "dateOfBirth": "2014-03-30",
-                "gender": "Male",
                 "notes": "",
                 "classId": "M-Y3-C04",
                 "departmentId": "middle",
-                "searchName": "تلي أمير"
+                "searchName": "صخري محمد"
               }
             ],
-            "sourceExcel": "2026.2027.xlsx"
+            "sourceExcel": "2026.2027 قائمة.xlsx"
           },
           {
             "id": "M-Y3-C05",
@@ -40198,10 +40163,10 @@
             "year": 3,
             "section": 5,
             "sourceImage": "img_03.png",
-            "studentCount": 22,
+            "studentCount": 23,
             "stats": {
-              "total": 22,
-              "males": 8,
+              "total": 23,
+              "males": 9,
               "females": 14
             },
             "teacherIds": [
@@ -40319,6 +40284,19 @@
                 "searchName": "بن ديمراد فريال ملاك"
               },
               {
+                "id": "S09CDB5578A",
+                "number": 8,
+                "firstName": "ادم",
+                "lastName": "عويسي",
+                "fullName": "عويسي ادم",
+                "dateOfBirth": "2013-03-05",
+                "gender": "Male",
+                "notes": "",
+                "classId": "M-Y3-C05",
+                "departmentId": "middle",
+                "searchName": "عويسي ادم"
+              },
+              {
                 "id": "S29AAA043A3",
                 "number": 9,
                 "firstName": "مليسا",
@@ -40410,6 +40388,19 @@
                 "searchName": "جواق ايهم"
               },
               {
+                "id": "SF78789ADF8",
+                "number": 16,
+                "firstName": "شمس الدين",
+                "lastName": "لكحل",
+                "fullName": "لكحل شمس الدين",
+                "dateOfBirth": "",
+                "gender": "Male",
+                "notes": "",
+                "classId": "M-Y3-C05",
+                "departmentId": "middle",
+                "searchName": "لكحل شمس الدين"
+              },
+              {
                 "id": "S49623AC5BB",
                 "number": 17,
                 "firstName": "ميسة رهام",
@@ -40499,22 +40490,9 @@
                 "classId": "M-Y3-C05",
                 "departmentId": "middle",
                 "searchName": "ملاز إلين"
-              },
-              {
-                "id": "SF78789ADF8",
-                "number": 24,
-                "firstName": "شمس الدين",
-                "lastName": "لكحل",
-                "fullName": "لكحل شمس الدين",
-                "dateOfBirth": "",
-                "gender": "Male",
-                "notes": "incomplete DOB",
-                "classId": "M-Y3-C05",
-                "departmentId": "middle",
-                "searchName": "لكحل شمس الدين"
               }
             ],
-            "sourceExcel": "2026.2027.xlsx"
+            "sourceExcel": "2026.2027 قائمة.xlsx"
           }
         ]
       },
@@ -40532,10 +40510,10 @@
             "year": 4,
             "section": 1,
             "sourceImage": "img_15.png",
-            "studentCount": 25,
+            "studentCount": 24,
             "stats": {
-              "total": 25,
-              "males": 11,
+              "total": 24,
+              "males": 10,
               "females": 14
             },
             "teacherIds": [
@@ -40871,22 +40849,9 @@
                 "classId": "M-Y4-C01",
                 "departmentId": "middle",
                 "searchName": "ناجي ملاك"
-              },
-              {
-                "id": "S761DC583BD",
-                "number": 25,
-                "firstName": "أدم",
-                "lastName": "بوخاوش",
-                "fullName": "بوخاوش أدم",
-                "dateOfBirth": "",
-                "gender": "Male",
-                "notes": "incomplete DOB",
-                "classId": "M-Y4-C01",
-                "departmentId": "middle",
-                "searchName": "بوخاوش أدم"
               }
             ],
-            "sourceExcel": "2026.2027.xlsx"
+            "sourceExcel": "2026.2027 قائمة.xlsx"
           },
           {
             "id": "M-Y4-C02",
@@ -40899,8 +40864,8 @@
             "studentCount": 22,
             "stats": {
               "total": 22,
-              "males": 10,
-              "females": 12
+              "males": 12,
+              "females": 10
             },
             "teacherIds": [
               "T32A52E3B",
@@ -40951,17 +40916,17 @@
                 "searchName": "العلي لين"
               },
               {
-                "id": "S8E2350A2DA",
+                "id": "S761DC583BD",
                 "number": 3,
-                "firstName": "مرام",
-                "lastName": "العياشي",
-                "fullName": "العياشي مرام",
-                "dateOfBirth": "2012-05-31",
-                "gender": "Female",
+                "firstName": "أدم",
+                "lastName": "بوخاوش",
+                "fullName": "بوخاوش أدم",
+                "dateOfBirth": "",
+                "gender": "Male",
                 "notes": "",
                 "classId": "M-Y4-C02",
                 "departmentId": "middle",
-                "searchName": "العياشي مرام"
+                "searchName": "بوخاوش أدم"
               },
               {
                 "id": "S52DAF04C88",
@@ -40990,6 +40955,32 @@
                 "searchName": "ايت ماتن فارس"
               },
               {
+                "id": "S35123EF8DF",
+                "number": 6,
+                "firstName": "محمد نزيم",
+                "lastName": "قوجيل",
+                "fullName": "قوجيل محمد نزيم",
+                "dateOfBirth": "2013-02-19",
+                "gender": "Male",
+                "notes": "",
+                "classId": "M-Y4-C02",
+                "departmentId": "middle",
+                "searchName": "قوجيل محمد نزيم"
+              },
+              {
+                "id": "S1678A92089",
+                "number": 7,
+                "firstName": "سيليان",
+                "lastName": "يمال",
+                "fullName": "يمال سيليان",
+                "dateOfBirth": "2013-01-27",
+                "gender": "Male",
+                "notes": "",
+                "classId": "M-Y4-C02",
+                "departmentId": "middle",
+                "searchName": "يمال سيليان"
+              },
+              {
                 "id": "S222B97EC4F",
                 "number": 8,
                 "firstName": "عمران أحمد",
@@ -41003,17 +40994,30 @@
                 "searchName": "دحماني عمران أحمد"
               },
               {
-                "id": "S53DA0F7438",
-                "number": 10,
-                "firstName": "حفصة هيبة",
-                "lastName": "رحيم",
-                "fullName": "رحيم حفصة هيبة",
-                "dateOfBirth": "2012-11-20",
+                "id": "S0065E798D7",
+                "number": 9,
+                "firstName": "جيهان",
+                "lastName": "لنوار",
+                "fullName": "لنوار جيهان",
+                "dateOfBirth": "2012-07-30",
                 "gender": "Female",
                 "notes": "",
                 "classId": "M-Y4-C02",
                 "departmentId": "middle",
-                "searchName": "رحيم حفصة هيبة"
+                "searchName": "لنوار جيهان"
+              },
+              {
+                "id": "S1F5A26EEF9",
+                "number": 10,
+                "firstName": "أكرم سعيد",
+                "lastName": "حمداش",
+                "fullName": "حمداش أكرم سعيد",
+                "dateOfBirth": "",
+                "gender": "Male",
+                "notes": "",
+                "classId": "M-Y4-C02",
+                "departmentId": "middle",
+                "searchName": "حمداش أكرم سعيد"
               },
               {
                 "id": "S0563A8C8F4",
@@ -41042,17 +41046,17 @@
                 "searchName": "زيتوني بوديسة يوسف"
               },
               {
-                "id": "SE7D1CF0AAE",
+                "id": "S9EA25FCE1E",
                 "number": 13,
-                "firstName": "رشا",
-                "lastName": "شواي",
-                "fullName": "شواي رشا",
-                "dateOfBirth": "2012-06-13",
+                "firstName": "ملاك",
+                "lastName": "زغودي",
+                "fullName": "زغودي ملاك",
+                "dateOfBirth": "",
                 "gender": "Female",
                 "notes": "",
                 "classId": "M-Y4-C02",
                 "departmentId": "middle",
-                "searchName": "شواي رشا"
+                "searchName": "زغودي ملاك"
               },
               {
                 "id": "SD9036687F6",
@@ -41101,40 +41105,14 @@
                 "fullName": "وابد ريتال",
                 "dateOfBirth": "",
                 "gender": "Female",
-                "notes": "incomplete DOB",
+                "notes": "",
                 "classId": "M-Y4-C02",
                 "departmentId": "middle",
                 "searchName": "وابد ريتال"
               },
               {
-                "id": "S35123EF8DF",
-                "number": 18,
-                "firstName": "محمد نزيم",
-                "lastName": "قوجيل",
-                "fullName": "قوجيل محمد نزيم",
-                "dateOfBirth": "2013-02-19",
-                "gender": "Male",
-                "notes": "",
-                "classId": "M-Y4-C02",
-                "departmentId": "middle",
-                "searchName": "قوجيل محمد نزيم"
-              },
-              {
-                "id": "S0065E798D7",
-                "number": 19,
-                "firstName": "جيهان",
-                "lastName": "لنوار",
-                "fullName": "لنوار جيهان",
-                "dateOfBirth": "2012-07-30",
-                "gender": "Female",
-                "notes": "",
-                "classId": "M-Y4-C02",
-                "departmentId": "middle",
-                "searchName": "لنوار جيهان"
-              },
-              {
                 "id": "S6B20A6E7C9",
-                "number": 20,
+                "number": 18,
                 "firstName": "ألاء",
                 "lastName": "مطاي",
                 "fullName": "مطاي ألاء",
@@ -41147,7 +41125,7 @@
               },
               {
                 "id": "S545DBEAFB2",
-                "number": 21,
+                "number": 19,
                 "firstName": "عبد الغاني",
                 "lastName": "وقنوني",
                 "fullName": "وقنوني عبد الغاني",
@@ -41160,7 +41138,7 @@
               },
               {
                 "id": "S41BB8F4F78",
-                "number": 22,
+                "number": 20,
                 "firstName": "سارة",
                 "lastName": "بوخيبة",
                 "fullName": "بوخيبة سارة",
@@ -41172,46 +41150,33 @@
                 "searchName": "بوخيبة سارة"
               },
               {
-                "id": "S1678A92089",
-                "number": 23,
-                "firstName": "سيليان",
-                "lastName": "يمال",
-                "fullName": "يمال سيليان",
-                "dateOfBirth": "2013-01-27",
-                "gender": "Male",
-                "notes": "",
-                "classId": "M-Y4-C02",
-                "departmentId": "middle",
-                "searchName": "يمال سيليان"
-              },
-              {
                 "id": "SCD484DD919",
-                "number": 24,
+                "number": 21,
                 "firstName": "ايلين رشال",
                 "lastName": "بودومي",
                 "fullName": "بودومي ايلين رشال",
                 "dateOfBirth": "",
                 "gender": "Female",
-                "notes": "incomplete DOB",
+                "notes": "",
                 "classId": "M-Y4-C02",
                 "departmentId": "middle",
                 "searchName": "بودومي ايلين رشال"
               },
               {
-                "id": "S1F5A26EEF9",
-                "number": 25,
-                "firstName": "أكرم سعيد",
-                "lastName": "حمداش",
-                "fullName": "حمداش أكرم سعيد",
-                "dateOfBirth": "",
+                "id": "SE4FA088B5C",
+                "number": 22,
+                "firstName": "محمد لواء الدين",
+                "lastName": "تومي",
+                "fullName": "تومي محمد لواء الدين",
+                "dateOfBirth": "2012-09-30",
                 "gender": "Male",
-                "notes": "incomplete DOB",
+                "notes": "",
                 "classId": "M-Y4-C02",
                 "departmentId": "middle",
-                "searchName": "حمداش أكرم سعيد"
+                "searchName": "تومي محمد لواء الدين"
               }
             ],
-            "sourceExcel": "2026.2027.xlsx"
+            "sourceExcel": "2026.2027 قائمة.xlsx"
           },
           {
             "id": "M-Y4-C03",
@@ -41221,11 +41186,11 @@
             "year": 4,
             "section": 3,
             "sourceImage": "img_19.png",
-            "studentCount": 21,
+            "studentCount": 23,
             "stats": {
-              "total": 21,
+              "total": 23,
               "males": 7,
-              "females": 14
+              "females": 16
             },
             "teacherIds": [
               "T99F519D2",
@@ -41367,17 +41332,17 @@
                 "searchName": "حمبلي نهال"
               },
               {
-                "id": "S9EA25FCE1E",
+                "id": "SB6155BA62D",
                 "number": 10,
-                "firstName": "ملاك",
-                "lastName": "زغودي",
-                "fullName": "زغودي ملاك",
-                "dateOfBirth": "",
+                "firstName": "سلمى",
+                "lastName": "راشي",
+                "fullName": "راشي سلمى",
+                "dateOfBirth": "2012-08-04",
                 "gender": "Female",
-                "notes": "incomplete DOB",
+                "notes": "",
                 "classId": "M-Y4-C03",
                 "departmentId": "middle",
-                "searchName": "زغودي ملاك"
+                "searchName": "راشي سلمى"
               },
               {
                 "id": "SF3DF69DC00",
@@ -41510,20 +41475,46 @@
                 "searchName": "غفار لينا"
               },
               {
-                "id": "SB6155BA62D",
+                "id": "S8E2350A2DA",
                 "number": 21,
-                "firstName": "سلمى",
-                "lastName": "راشي",
-                "fullName": "راشي سلمى",
-                "dateOfBirth": "2012-08-04",
+                "firstName": "مرام",
+                "lastName": "العياشي",
+                "fullName": "العياشي مرام",
+                "dateOfBirth": "2012-05-31",
                 "gender": "Female",
                 "notes": "",
                 "classId": "M-Y4-C03",
                 "departmentId": "middle",
-                "searchName": "راشي سلمى"
+                "searchName": "العياشي مرام"
+              },
+              {
+                "id": "S53DA0F7438",
+                "number": 22,
+                "firstName": "حفصة هيبة",
+                "lastName": "رحيم",
+                "fullName": "رحيم حفصة هيبة",
+                "dateOfBirth": "2012-11-20",
+                "gender": "Female",
+                "notes": "",
+                "classId": "M-Y4-C03",
+                "departmentId": "middle",
+                "searchName": "رحيم حفصة هيبة"
+              },
+              {
+                "id": "SE7D1CF0AAE",
+                "number": 23,
+                "firstName": "رشا",
+                "lastName": "شواي",
+                "fullName": "شواي رشا",
+                "dateOfBirth": "2012-06-13",
+                "gender": "Female",
+                "notes": "",
+                "classId": "M-Y4-C03",
+                "departmentId": "middle",
+                "searchName": "شواي رشا"
               }
             ],
-            "sourceExcel": "2026.2027.xlsx"
+            "sourceExcel": "2026.2027 قائمة.xlsx"
           },
           {
             "id": "M-Y4-C04",
@@ -41533,10 +41524,10 @@
             "year": 4,
             "section": 4,
             "sourceImage": "img_05.png",
-            "studentCount": 20,
+            "studentCount": 19,
             "stats": {
-              "total": 20,
-              "males": 13,
+              "total": 19,
+              "males": 12,
               "females": 7
             },
             "teacherIds": [
@@ -41582,7 +41573,7 @@
                 "fullName": "عزي محمد ابراهيم",
                 "dateOfBirth": "",
                 "gender": "Male",
-                "notes": "incomplete DOB",
+                "notes": "",
                 "classId": "M-Y4-C04",
                 "departmentId": "middle",
                 "searchName": "عزي محمد ابراهيم"
@@ -41627,17 +41618,17 @@
                 "searchName": "بوخالفة ريم باتول"
               },
               {
-                "id": "SE4FA088B5C",
+                "id": "SF0D62E06AA",
                 "number": 6,
-                "firstName": "محمد لواء الدين",
-                "lastName": "تومي",
-                "fullName": "تومي محمد لواء الدين",
-                "dateOfBirth": "2012-09-30",
+                "firstName": "ريان",
+                "lastName": "نايت سليمان",
+                "fullName": "نايت سليمان ريان",
+                "dateOfBirth": "2012-07-19",
                 "gender": "Male",
                 "notes": "",
                 "classId": "M-Y4-C04",
                 "departmentId": "middle",
-                "searchName": "تومي محمد لواء الدين"
+                "searchName": "نايت سليمان ريان"
               },
               {
                 "id": "S20A7640FCE",
@@ -41807,22 +41798,9 @@
                 "classId": "M-Y4-C04",
                 "departmentId": "middle",
                 "searchName": "منصوري معتصم بالله"
-              },
-              {
-                "id": "SF0D62E06AA",
-                "number": 20,
-                "firstName": "ريان",
-                "lastName": "نايت سليمان",
-                "fullName": "نايت سليمان ريان",
-                "dateOfBirth": "2012-07-19",
-                "gender": "Male",
-                "notes": "",
-                "classId": "M-Y4-C04",
-                "departmentId": "middle",
-                "searchName": "نايت سليمان ريان"
               }
             ],
-            "sourceExcel": "2026.2027.xlsx"
+            "sourceExcel": "2026.2027 قائمة.xlsx"
           }
         ]
       }
@@ -41837,6 +41815,6 @@
     "totalStudents": 1410,
     "verified": true,
     "primarySource": "docx-tables",
-    "middleSource": "2026.2027.xlsx"
+    "middleSource": "2026.2027 قائمة.xlsx"
   }
 }
