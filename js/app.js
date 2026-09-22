@@ -5,6 +5,10 @@
 
 (() => {
   const app = document.getElementById("app");
+  if (!app) {
+    document.body.innerHTML = "<p style='padding:2rem;font-family:sans-serif'>App root #app missing.</p>";
+    return;
+  }
   const state = { route: parseHash(), searchQuery: "", pendingRole: null };
 
   const icons = {
@@ -81,7 +85,12 @@
   }
 
   function shell(content) {
-    const { school } = BBC_DATA;
+    let school = { name: "BBC School", academicYear: "2026 — 2027" };
+    try {
+      school = BBC_DATA.school || school;
+    } catch (_) {
+      /* data not loaded yet */
+    }
     return `
       <div class="app-shell">
         <header class="topbar">
@@ -98,7 +107,9 @@
               ${
                 Auth.isAdmin()
                   ? `<button type="button" class="btn btn-ghost hide-sm" data-nav="#/manage">Manage</button>`
-                  : `<span class="badge-year hide-md">Director</span>`
+                  : Auth.isDirector()
+                    ? `<span class="badge-year hide-md">Director</span>`
+                    : ""
               }
               <button type="button" class="btn btn-ghost btn-logout" id="btn-logout" aria-label="Sign out">
                 <span class="hide-sm">Sign out</span>
@@ -1205,8 +1216,14 @@
     if (state.route.params.get("q")) {
       state.searchQuery = state.route.params.get("q") || "";
     }
-    app.innerHTML = resolveView();
-    bindEvents();
+    try {
+      app.innerHTML = resolveView();
+      bindEvents();
+    } catch (err) {
+      console.error(err);
+      app.innerHTML = `<div class="login-page"><div class="login-card"><h1>Display error</h1><p>${esc(err.message || err)}</p><button type="button" class="btn btn-primary" id="btn-reload">Reload</button></div></div>`;
+      document.getElementById("btn-reload")?.addEventListener("click", () => location.reload());
+    }
     window.scrollTo(0, 0);
   }
 

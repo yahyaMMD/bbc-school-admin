@@ -35,7 +35,7 @@ fi
 grep -E '^(DIRECTOR_PASSWORD|ADMIN_PASSWORD|HOST_PORT)=' .env || true
 
 echo "[4/5] Start stack..."
-docker compose up -d --build
+docker compose up -d --build --force-recreate
 
 echo "[5/5] Local firewall (optional)..."
 if command -v ufw >/dev/null 2>&1; then
