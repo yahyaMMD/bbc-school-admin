@@ -1,14 +1,27 @@
 /**
- * BBC School — data accessors over SCHOOL_DATA (official 2026/2027 rosters)
+ * BBC School — data accessors over live SCHOOL_DATA
  */
 
 const BBC_DATA = (() => {
-  const D = SCHOOL_DATA;
+  let D = typeof SCHOOL_DATA !== "undefined" ? SCHOOL_DATA : null;
 
-  const departments = [D.primary, D.middle];
+  function setData(data) {
+    D = data;
+    if (typeof window !== "undefined") window.SCHOOL_DATA = data;
+  }
+
+  function getD() {
+    if (!D) throw new Error("School data not loaded");
+    return D;
+  }
+
+  function departments() {
+    const d = getD();
+    return [d.primary, d.middle];
+  }
 
   function getDepartment(id) {
-    return departments.find((d) => d.id === id) || null;
+    return departments().find((d) => d.id === id) || null;
   }
 
   function getLevel(deptId, levelId) {
@@ -24,29 +37,25 @@ const BBC_DATA = (() => {
   }
 
   function findClassById(classId) {
-    for (const dept of departments) {
+    for (const dept of departments()) {
       for (const level of dept.levels) {
         const cls = level.classes.find((c) => c.id === classId);
-        if (cls) {
-          return { dept, level, cls };
-        }
+        if (cls) return { dept, level, cls };
       }
     }
     return null;
   }
 
   function getTeacher(id) {
-    return D.teachers.find((t) => t.id === id) || null;
+    return getD().teachers.find((t) => t.id === id) || null;
   }
 
   function getStudent(id) {
-    for (const dept of departments) {
+    for (const dept of departments()) {
       for (const level of dept.levels) {
         for (const cls of level.classes) {
           const s = cls.students.find((x) => x.id === id);
-          if (s) {
-            return { student: s, dept, level, cls };
-          }
+          if (s) return { student: s, dept, level, cls };
         }
       }
     }
@@ -57,14 +66,12 @@ const BBC_DATA = (() => {
     const q = (query || "").trim().toLowerCase();
     if (!q) return [];
     const results = [];
-    for (const dept of departments) {
+    for (const dept of departments()) {
       for (const level of dept.levels) {
         for (const cls of level.classes) {
           for (const s of cls.students) {
             const hay = `${s.fullName || ""} ${s.firstName || ""} ${s.lastName || ""}`.toLowerCase();
-            if (hay.includes(q)) {
-              results.push({ student: s, dept, level, cls });
-            }
+            if (hay.includes(q)) results.push({ student: s, dept, level, cls });
           }
         }
       }
@@ -73,14 +80,15 @@ const BBC_DATA = (() => {
   }
 
   function stats() {
+    const m = getD().meta || {};
     return {
-      floors: D.primary.levels.length + D.middle.levels.length,
-      levels: D.primary.levels.length + D.middle.levels.length,
-      classes: D.meta.primaryClasses + D.meta.middleClasses,
-      students: D.meta.totalStudents,
-      teachers: D.meta.teachers,
-      primaryStudents: D.meta.primaryStudents,
-      middleStudents: D.meta.middleStudents,
+      floors: getD().primary.levels.length + getD().middle.levels.length,
+      levels: getD().primary.levels.length + getD().middle.levels.length,
+      classes: (m.primaryClasses || 0) + (m.middleClasses || 0),
+      students: m.totalStudents || 0,
+      teachers: m.teachers || (getD().teachers || []).length,
+      primaryStudents: m.primaryStudents || 0,
+      middleStudents: m.middleStudents || 0,
     };
   }
 
@@ -104,7 +112,7 @@ const BBC_DATA = (() => {
 
   function listAllStudents() {
     const results = [];
-    for (const dept of departments) {
+    for (const dept of departments()) {
       for (const level of dept.levels) {
         for (const cls of level.classes) {
           for (const s of cls.students || []) {
@@ -117,7 +125,7 @@ const BBC_DATA = (() => {
   }
 
   function listAllTeachers() {
-    return (D.teachers || []).map((t) => ({
+    return (getD().teachers || []).map((t) => ({
       teacher: t,
       classes: (t.classIds || []).map(findClassById).filter(Boolean),
     }));
@@ -125,7 +133,7 @@ const BBC_DATA = (() => {
 
   function listClassOptions() {
     const opts = [];
-    for (const dept of departments) {
+    for (const dept of departments()) {
       for (const level of dept.levels) {
         for (const cls of level.classes) {
           opts.push({
@@ -143,26 +151,37 @@ const BBC_DATA = (() => {
 
   function listModules() {
     const set = new Set();
-    for (const t of D.teachers || []) {
+    for (const t of getD().teachers || []) {
       for (const m of t.modules || []) set.add(m);
     }
     return [...set].sort((a, b) => a.localeCompare(b));
   }
 
   function listIssues() {
-    return [...(D.operationsIssues || [])];
+    return [...(getD().operationsIssues || [])];
   }
 
   function getIssue(id) {
-    return (D.operationsIssues || []).find((x) => x.id === id) || null;
+    return (getD().operationsIssues || []).find((x) => x.id === id) || null;
   }
 
   return {
-    school: D.school,
-    departments,
-    teachers: D.teachers,
-    primary: D.primary,
-    middle: D.middle,
+    get school() {
+      return getD().school;
+    },
+    get departments() {
+      return departments();
+    },
+    get teachers() {
+      return getD().teachers;
+    },
+    get primary() {
+      return getD().primary;
+    },
+    get middle() {
+      return getD().middle;
+    },
+    setData,
     getDepartment,
     getLevel,
     getClass,

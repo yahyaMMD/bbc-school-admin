@@ -1,25 +1,5 @@
-# Local tooling
-.venv/
-.pydeps/
-__pycache__/
-*.pyc
+node_modules/
+server/node_modules/
+.env
+*.log
 .DS_Store
-
-# Generated / local scratch
-out.json
-create.json
-ghhome.txt
-data/_priority_cases.json
-data/_pdf_preview/
-reports/_pdf_preview/
-
-# Confidential exports (do not publish)
-reports/*.pdf
-*.pdf
-data/priority_cases_for_leadership.json
-data/previous_year_match_report.json
-
-# Keep JSON sources used by the app if needed; school-data.js is the runtime file
-# Optional large OCR intermediates
-data/rosters/
-data/_verify_ocr/

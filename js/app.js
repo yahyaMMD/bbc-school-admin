@@ -5,7 +5,7 @@
 
 (() => {
   const app = document.getElementById("app");
-  const state = { route: parseHash(), searchQuery: "" };
+  const state = { route: parseHash(), searchQuery: "", pendingRole: null };
 
   const icons = {
     users: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
@@ -94,7 +94,12 @@
               </div>
             </button>
             <div class="topbar-actions">
-              <span class="badge-year hide-md">${esc(school.academicYear)}</span>
+              <span class="badge-year hide-md">${esc(school.academicYear || "")}</span>
+              ${
+                Auth.isAdmin()
+                  ? `<button type="button" class="btn btn-ghost hide-sm" data-nav="#/manage">Manage</button>`
+                  : `<span class="badge-year hide-md">Director</span>`
+              }
               <button type="button" class="btn btn-ghost btn-logout" id="btn-logout" aria-label="Sign out">
                 <span class="hide-sm">Sign out</span>
                 <span class="show-sm-only" aria-hidden="true">Out</span>
@@ -125,26 +130,60 @@
     `;
   }
 
-  function viewLogin() {
+  function viewGate() {
+    return `
+      <div class="login-page">
+        <div class="login-card login-card-wide">
+          <div class="login-brand">
+            <img src="assets/logo.png?v=2" alt="Quality Education Algeria" width="88" height="88" />
+            <div>
+              <h1>BBC School</h1>
+              <p>Choose your access — each door has its own password</p>
+            </div>
+          </div>
+          <div class="gate-grid">
+            <button type="button" class="gate-card" data-gate="director">
+              <h2>Director view</h2>
+              <p>Browse rosters, teachers, students, and operations issues. Read-only live data.</p>
+              <span class="cta">Enter as Director →</span>
+            </button>
+            <button type="button" class="gate-card gate-card-admin" data-gate="admin">
+              <h2>Manage data</h2>
+              <p>Add, edit, and delete students, teachers, classes, and issues. Changes go live instantly.</p>
+              <span class="cta">Enter as Admin →</span>
+            </button>
+          </div>
+          <p class="login-meta">Bouchaoui 03, Cheraga, Algiers</p>
+        </div>
+      </div>
+    `;
+  }
+
+  function viewLogin(role) {
+    const title = role === "admin" ? "Manage data" : "Director view";
+    const hint =
+      role === "admin"
+        ? "Password for people who update school data"
+        : "Password for the Directrice / read-only access";
     return `
       <div class="login-page">
         <div class="login-card">
           <div class="login-brand">
             <img src="assets/logo.png?v=2" alt="Quality Education Algeria" width="88" height="88" />
             <div>
-              <h1>BBC School</h1>
-              <p>Administration access only — confidential information</p>
+              <h1>${esc(title)}</h1>
+              <p>${esc(hint)}</p>
             </div>
           </div>
-          <form class="login-form" id="login-form" autocomplete="off">
+          <form class="login-form" id="login-form" autocomplete="off" data-role="${esc(role)}">
             <div class="field">
               <label for="password">Password</label>
               <input id="password" name="password" type="password" placeholder="Enter password" required autofocus />
             </div>
             <div class="login-error" id="login-error" role="alert"></div>
             <button type="submit" class="btn btn-primary">Access interface</button>
+            <button type="button" class="btn btn-ghost" id="btn-back-gate" style="width:100%;margin-top:0.5rem">← Back to doors</button>
           </form>
-          <p class="login-meta">${esc(BBC_DATA.school.address)}</p>
         </div>
       </div>
     `;
@@ -966,8 +1005,25 @@
   }
 
   function resolveView() {
-    if (!Auth.isAuthenticated()) return viewLogin();
+    if (!Auth.isAuthenticated()) {
+      const role = state.pendingRole;
+      if (role === "director" || role === "admin") return viewLogin(role);
+      return viewGate();
+    }
     const { parts, params } = state.route;
+
+    if (Auth.isAdmin() && parts[0] === "manage") {
+      const html = AdminApp.resolve(parts);
+      if (html) {
+        return shell(`
+          ${crumb([
+            { label: "Manage", to: "#/manage" },
+            ...(parts[1] ? [{ label: parts[1], to: `#/manage/${parts[1]}` }] : []),
+          ])}
+          ${html}
+        `);
+      }
+    }
 
     if (parts[0] === "search") {
       const q = params.get("q") || state.searchQuery || "";
@@ -1006,22 +1062,47 @@
   }
 
   function bindEvents() {
-    document.getElementById("login-form")?.addEventListener("submit", (e) => {
+    document.querySelectorAll("[data-gate]").forEach((el) => {
+      el.addEventListener("click", () => {
+        state.pendingRole = el.getAttribute("data-gate");
+        render();
+      });
+    });
+
+    document.getElementById("btn-back-gate")?.addEventListener("click", () => {
+      state.pendingRole = null;
+      render();
+    });
+
+    document.getElementById("login-form")?.addEventListener("submit", async (e) => {
       e.preventDefault();
       const password = document.getElementById("password").value;
-      const result = Auth.login(password);
+      const role = e.target.getAttribute("data-role") || state.pendingRole || "director";
       const err = document.getElementById("login-error");
+      const result = await Auth.login(role, password);
       if (!result.ok) {
         err.textContent = result.error;
         err.classList.add("show");
         return;
       }
-      go("/home");
-      render();
+      try {
+        app.innerHTML = `<div class="login-page"><div class="login-card"><p>Loading live data…</p></div></div>`;
+        const data = await BBC_API.loadSchoolData();
+        BBC_DATA.setData(data);
+        state.pendingRole = null;
+        go(role === "admin" ? "/manage" : "/home");
+        render();
+      } catch (loadErr) {
+        Auth.logout();
+        err.textContent = loadErr.message || "Failed to load school data";
+        err.classList.add("show");
+        render();
+      }
     });
 
     document.getElementById("btn-logout")?.addEventListener("click", () => {
       Auth.logout();
+      state.pendingRole = null;
       go("/");
       render();
     });
@@ -1046,11 +1127,8 @@
         const qstr = qs.toString();
         go(qstr ? `/${dir}?${qstr}` : `/${dir}`);
       });
-      // Live filter on select change for faster mobile use
       dirFilter.querySelectorAll("select").forEach((sel) => {
-        sel.addEventListener("change", () => {
-          dirFilter.requestSubmit();
-        });
+        sel.addEventListener("change", () => dirFilter.requestSubmit());
       });
     }
 
@@ -1083,6 +1161,13 @@
       });
     }
 
+    if (Auth.isAdmin()) {
+      AdminApp.bind(app, (path) => {
+        go(path);
+        render();
+      });
+    }
+
     app.querySelectorAll("[data-nav]").forEach((el) => {
       el.addEventListener("click", (e) => {
         const target = el.getAttribute("data-nav");
@@ -1091,6 +1176,28 @@
         go(target.replace(/^#/, ""));
       });
     });
+  }
+
+  async function boot() {
+    state.route = parseHash();
+    if (Auth.isAuthenticated()) {
+      try {
+        app.innerHTML = `<div class="login-page"><div class="login-card"><p>Loading live data…</p></div></div>`;
+        const data = await BBC_API.loadSchoolData();
+        BBC_DATA.setData(data);
+      } catch (err) {
+        Auth.logout();
+        console.error(err);
+      }
+    }
+    if (!location.hash || location.hash === "#") {
+      location.hash = Auth.isAuthenticated()
+        ? Auth.isAdmin()
+          ? "#/manage"
+          : "#/home"
+        : "#/";
+    }
+    render();
   }
 
   function render() {
@@ -1104,10 +1211,5 @@
   }
 
   window.addEventListener("hashchange", render);
-
-  if (!location.hash || location.hash === "#") {
-    location.hash = Auth.isAuthenticated() ? "#/home" : "#/";
-  }
-
-  render();
+  boot();
 })();

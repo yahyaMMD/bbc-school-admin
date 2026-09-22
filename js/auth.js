@@ -1,45 +1,44 @@
 /**
- * Simple client-side gate for presentation / admin access.
- * Password is verified locally (no server).
- * Default password: BBCSchool2026
+ * Session gate — Director (read) or Admin (manage).
+ * Auth is verified by the API; token kept in sessionStorage.
  */
-
 const Auth = (() => {
-  const STORAGE_KEY = "bbc_admin_session";
-  // Change ADMIN_PASSWORD below if needed.
-  const ADMIN_PASSWORD = "BBCSchool2026";
-  const SESSION_TTL_MS = 8 * 60 * 60 * 1000; // 8 hours
-
   function isAuthenticated() {
-    try {
-      const raw = sessionStorage.getItem(STORAGE_KEY);
-      if (!raw) return false;
-      const data = JSON.parse(raw);
-      if (!data?.ok || !data?.exp) return false;
-      if (Date.now() > data.exp) {
-        sessionStorage.removeItem(STORAGE_KEY);
-        return false;
-      }
-      return true;
-    } catch {
-      return false;
-    }
+    return typeof BBC_API !== "undefined" && BBC_API.isAuthenticated();
   }
 
-  function login(password) {
-    if (typeof password !== "string" || password.trim() !== ADMIN_PASSWORD) {
-      return { ok: false, error: "Incorrect password" };
+  function role() {
+    return typeof BBC_API !== "undefined" ? BBC_API.getRole() : "";
+  }
+
+  function isAdmin() {
+    return role() === "admin";
+  }
+
+  function isDirector() {
+    return role() === "director";
+  }
+
+  async function login(selectedRole, password) {
+    try {
+      await BBC_API.login(selectedRole, password);
+      return { ok: true, role: selectedRole };
+    } catch (err) {
+      return { ok: false, error: err.message || "Incorrect password" };
     }
-    sessionStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({ ok: true, exp: Date.now() + SESSION_TTL_MS })
-    );
-    return { ok: true };
   }
 
   function logout() {
-    sessionStorage.removeItem(STORAGE_KEY);
+    if (typeof BBC_API !== "undefined") BBC_API.logout();
   }
 
-  return { isAuthenticated, login, logout, PASSWORD_HINT: "Contact administration" };
+  return {
+    isAuthenticated,
+    login,
+    logout,
+    role,
+    isAdmin,
+    isDirector,
+    PASSWORD_HINT: "Use the password for your access door",
+  };
 })();

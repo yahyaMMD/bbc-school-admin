@@ -1,0 +1,41 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: bbc_school
+      POSTGRES_USER: bbc
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-bbc_secure_change_me}
+    volumes:
+      - bbc_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bbc -d bbc_school"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  api:
+    build:
+      context: ./server
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://bbc:${POSTGRES_PASSWORD:-bbc_secure_change_me}@db:5432/bbc_school
+      JWT_SECRET: ${JWT_SECRET:-bbc-jwt-change-me-in-production}
+      DIRECTOR_PASSWORD: ${DIRECTOR_PASSWORD:-Director2026}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-AdminBBC2026}
+      PORT: "3000"
+      WEB_ROOT: /web
+      SEED_JSON: /seed/school_data.json
+    volumes:
+      - ./:/web:ro
+      - ./data/school_data.json:/seed/school_data.json:ro
+    ports:
+      - "${HOST_PORT:-8080}:3000"
+    command: >
+      sh -c "node scripts/seed.js && node src/index.js"
+
+volumes:
+  bbc_pgdata:
