@@ -544,6 +544,7 @@ router.get("/announcements/wa/groups", authRequired(["whatsapp"]), Announcements
 router.post("/announcements/generate-image", authRequired(["whatsapp"]), Announcements.generateImage);
 router.post("/announcements/upload-image", authRequired(["whatsapp"]), Announcements.uploadImage);
 router.post("/announcements/send", authRequired(["whatsapp"]), Announcements.sendAnnouncement);
+router.post("/announcements/:id/cancel", authRequired(["whatsapp"]), Announcements.cancelAnnouncement);
 router.get("/announcements/:id", authRequired(["whatsapp"]), Announcements.getAnnouncement);
 
 export default router;

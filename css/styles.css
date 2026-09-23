@@ -3189,6 +3189,60 @@ html[dir="rtl"] .home-icon-tile {
   color: var(--muted);
 }
 
+.ann-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.35rem;
+}
+
+.ann-schedule {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.65rem;
+}
+
+.ann-schedule-option {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.ann-schedule-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm, 10px);
+  background: rgba(18, 18, 18, 0.02);
+}
+
+.ann-schedule-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.ann-schedule-fields .admin-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.ann-schedule-fields input[type="datetime-local"] {
+  width: 100%;
+  max-width: 22rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xs, 8px);
+  font: inherit;
+}
+
 .ann-status-pill {
   display: inline-block;
   margin-top: 0.35rem;

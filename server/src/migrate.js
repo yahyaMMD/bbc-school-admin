@@ -106,8 +106,15 @@ export async function migrate() {
       status TEXT NOT NULL DEFAULT 'draft',
       send_results JSONB NOT NULL DEFAULT '[]'::jsonb,
       created_by TEXT NOT NULL DEFAULT 'admin',
-      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      scheduled_at TIMESTAMPTZ
     );
     CREATE INDEX IF NOT EXISTS idx_announcements_created ON announcements(created_at DESC);
   `);
+  await query(`ALTER TABLE announcements ADD COLUMN IF NOT EXISTS scheduled_at TIMESTAMPTZ`);
+  await query(
+    `CREATE INDEX IF NOT EXISTS idx_announcements_scheduled
+     ON announcements (scheduled_at)
+     WHERE status = 'scheduled' AND scheduled_at IS NOT NULL`
+  );
 }

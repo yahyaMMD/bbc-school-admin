@@ -55,9 +55,10 @@ const WhatsAppApp = (() => {
   }
 
   function announcementStatusClass(status) {
-    if (status === "sent") return "ok";
-    if (status === "partial") return "warn";
-    if (status === "failed") return "err";
+    const s = String(status || "").toLowerCase();
+    if (s === "sent") return "ok";
+    if (s === "partial" || s === "scheduled" || s === "sending") return "warn";
+    if (s === "failed" || s === "cancelled") return "err";
     return "";
   }
 
@@ -173,8 +174,36 @@ const WhatsAppApp = (() => {
           </div>
         </section>
 
+        <section class="admin-panel" style="margin-bottom:1rem">
+          <div class="admin-panel-label">${esc(I18n.t("scheduleTitle"))}</div>
+          <p class="admin-field-hint">${esc(I18n.t("scheduleHint"))}</p>
+          <div class="ann-schedule" data-ann-schedule>
+            <label class="ann-schedule-option">
+              <input type="radio" name="ann-schedule-mode" value="now" checked data-ann-sched-mode />
+              <span>${esc(I18n.t("sendNow"))}</span>
+            </label>
+            <label class="ann-schedule-option">
+              <input type="radio" name="ann-schedule-mode" value="later" data-ann-sched-mode />
+              <span>${esc(I18n.t("scheduleLater"))}</span>
+            </label>
+            <div class="ann-schedule-fields" data-ann-sched-fields hidden>
+              <div class="ann-schedule-presets">
+                <button type="button" class="btn btn-ghost btn-sm" data-ann-delay="5">+5 ${esc(I18n.t("minutesShort"))}</button>
+                <button type="button" class="btn btn-ghost btn-sm" data-ann-delay="15">+15 ${esc(I18n.t("minutesShort"))}</button>
+                <button type="button" class="btn btn-ghost btn-sm" data-ann-delay="30">+30 ${esc(I18n.t("minutesShort"))}</button>
+                <button type="button" class="btn btn-ghost btn-sm" data-ann-delay="60">+60 ${esc(I18n.t("minutesShort"))}</button>
+              </div>
+              <label class="admin-field">
+                <span>${esc(I18n.t("scheduleAt"))}</span>
+                <input type="datetime-local" data-ann-sched-at />
+              </label>
+            </div>
+          </div>
+        </section>
+
         <div class="ann-send-bar">
           <button type="button" class="btn btn-primary" data-ann-send disabled>${esc(I18n.t("sendAnnouncement"))}</button>
+          <p class="admin-field-hint">${esc(I18n.t("sendImageOnlyHint"))}</p>
           <p class="admin-field-hint">${esc(I18n.t("sendRequiresValidate"))}</p>
           <p class="ann-send-result" data-ann-send-result hidden></p>
         </div>
@@ -296,6 +325,14 @@ const WhatsAppApp = (() => {
               : (a.groupIds || []).length
                 ? `${(a.groupIds || []).length} groups`
                 : "—";
+            const when =
+              a.status === "scheduled" && a.scheduledAt
+                ? `${I18n.t("scheduledFor")}: ${formatAnnouncementTime(a.scheduledAt)}`
+                : formatAnnouncementTime(a.createdAt);
+            const cancelBtn =
+              a.status === "scheduled"
+                ? `<button type="button" class="btn btn-ghost btn-sm" data-ann-cancel="${esc(a.id)}">${esc(I18n.t("cancelSchedule"))}</button>`
+                : "";
             return `
               <article class="ann-card">
                 <div class="ann-card-thumb">
@@ -308,12 +345,29 @@ const WhatsAppApp = (() => {
                 <div class="ann-card-body">
                   <p class="ann-card-text">${esc(a.text || "—")}</p>
                   <p class="ann-card-meta">${esc(I18n.t("sentTo"))}: ${groupsLabel}</p>
-                  <p class="ann-card-meta">${esc(formatAnnouncementTime(a.createdAt))}</p>
-                  <span class="ann-status-pill ${announcementStatusClass(a.status)}">${esc(a.status || "—")}</span>
+                  <p class="ann-card-meta">${esc(when)}</p>
+                  <div class="ann-card-actions">
+                    <span class="ann-status-pill ${announcementStatusClass(a.status)}">${esc(a.status || "—")}</span>
+                    ${cancelBtn}
+                  </div>
                 </div>
               </article>`;
           })
           .join("");
+        historyEl.querySelectorAll("[data-ann-cancel]").forEach((btn) => {
+          btn.addEventListener("click", async () => {
+            const id = btn.getAttribute("data-ann-cancel");
+            if (!id) return;
+            btn.disabled = true;
+            try {
+              await BBC_API.post(`/announcements/${encodeURIComponent(id)}/cancel`, {});
+              bindHistory(root);
+            } catch (err) {
+              btn.disabled = false;
+              alert(err.message || "Cancel failed");
+            }
+          });
+        });
         if (window.QEAPhoto && typeof window.QEAPhoto.bind === "function") {
           window.QEAPhoto.bind(historyEl);
         }
@@ -343,6 +397,39 @@ const WhatsAppApp = (() => {
     const sendBtn = createRoot.querySelector("[data-ann-send]");
     const sendResultEl = createRoot.querySelector("[data-ann-send-result]");
     const searchEl = createRoot.querySelector("[data-ann-group-search]");
+    const schedFields = createRoot.querySelector("[data-ann-sched-fields]");
+    const schedAtEl = createRoot.querySelector("[data-ann-sched-at]");
+    const schedModes = createRoot.querySelectorAll("[data-ann-sched-mode]");
+
+    const toLocalInputValue = (date) => {
+      const pad = (n) => String(n).padStart(2, "0");
+      return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+    };
+
+    const syncScheduleUi = () => {
+      const mode = createRoot.querySelector("[data-ann-sched-mode]:checked")?.value || "now";
+      if (schedFields) schedFields.hidden = mode !== "later";
+      if (sendBtn) {
+        sendBtn.textContent =
+          mode === "later" ? I18n.t("scheduleAnnouncement") : I18n.t("sendAnnouncement");
+      }
+    };
+
+    schedModes.forEach((el) => el.addEventListener("change", syncScheduleUi));
+    createRoot.querySelectorAll("[data-ann-delay]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const mins = Number(btn.getAttribute("data-ann-delay") || 0);
+        const later = createRoot.querySelector('[data-ann-sched-mode][value="later"]');
+        if (later) {
+          later.checked = true;
+          syncScheduleUi();
+        }
+        if (schedAtEl && mins > 0) {
+          schedAtEl.value = toLocalInputValue(new Date(Date.now() + mins * 60_000));
+        }
+      });
+    });
+    syncScheduleUi();
 
     const setStatus = (msg, ok) => {
       if (!statusEl) return;
@@ -510,27 +597,53 @@ const WhatsAppApp = (() => {
       const groupIds = [...selected];
       const groupNames = groupIds.map((id) => groups.find((x) => x.id === id)?.name || id);
       if (!imageUrl || !groupIds.length) return;
+
+      const mode = createRoot.querySelector("[data-ann-sched-mode]:checked")?.value || "now";
+      const payload = {
+        text,
+        imageUrl,
+        groupIds,
+        groupNames,
+      };
+      if (mode === "later") {
+        const localVal = schedAtEl?.value || "";
+        if (!localVal) {
+          setStatus(I18n.t("scheduleTimeRequired"), false);
+          return;
+        }
+        const when = new Date(localVal);
+        if (Number.isNaN(when.getTime()) || when.getTime() <= Date.now() + 20_000) {
+          setStatus(I18n.t("scheduleTimeInvalid"), false);
+          return;
+        }
+        payload.scheduleAt = when.toISOString();
+      }
+
       sendBtn.disabled = true;
-      sendBtn.textContent = I18n.t("sendingAnnouncement");
+      sendBtn.textContent =
+        mode === "later" ? I18n.t("schedulingAnnouncement") : I18n.t("sendingAnnouncement");
       if (sendResultEl) {
         sendResultEl.hidden = false;
-        sendResultEl.textContent = I18n.t("sendingAnnouncement");
+        sendResultEl.textContent =
+          mode === "later" ? I18n.t("schedulingAnnouncement") : I18n.t("sendingAnnouncement");
         sendResultEl.classList.remove("is-err", "is-ok");
       }
       try {
-        const res = await BBC_API.post("/announcements/send", {
-          text,
-          imageUrl,
-          groupIds,
-          groupNames,
-          caption: text,
-        });
-        const sent = res.send?.sent ?? 0;
-        const failed = res.send?.failed ?? 0;
+        const res = await BBC_API.post("/announcements/send", payload);
         if (sendResultEl) {
-          sendResultEl.textContent = `Sent ${sent}, failed ${failed}`;
-          sendResultEl.classList.toggle("is-ok", failed === 0);
-          sendResultEl.classList.toggle("is-err", failed > 0 && sent === 0);
+          if (res.scheduled) {
+            sendResultEl.textContent = I18n.t("scheduledOk").replace(
+              "{time}",
+              formatAnnouncementTime(res.announcement?.scheduledAt)
+            );
+            sendResultEl.classList.add("is-ok");
+          } else {
+            const sent = res.send?.sent ?? 0;
+            const failed = res.send?.failed ?? 0;
+            sendResultEl.textContent = `Sent ${sent}, failed ${failed}`;
+            sendResultEl.classList.toggle("is-ok", failed === 0);
+            sendResultEl.classList.toggle("is-err", failed > 0 && sent === 0);
+          }
         }
         setTimeout(() => go("/whatsapp/announcements"), 1200);
       } catch (err) {
@@ -539,7 +652,7 @@ const WhatsAppApp = (() => {
           sendResultEl.classList.add("is-err");
         }
         updateSendEnabled();
-        sendBtn.textContent = I18n.t("sendAnnouncement");
+        syncScheduleUi();
       }
     });
 
