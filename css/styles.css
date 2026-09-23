@@ -3262,6 +3262,54 @@ html[dir="rtl"] .home-icon-tile {
   margin-bottom: 2rem;
 }
 
+.wa-nav-status {
+  margin-top: auto;
+  padding: 1rem 1.1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.wa-nav-phone {
+  font-size: 0.8rem;
+  color: var(--muted);
+  word-break: break-all;
+}
+
+.admin-nav-link.is-locked {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.wa-connect-panel {
+  max-width: 520px;
+}
+
+.wa-qr-block {
+  text-align: center;
+  padding: 0.5rem 0 0.25rem;
+}
+
+.wa-qr-title {
+  font-weight: 600;
+  margin: 0 0 0.85rem;
+}
+
+.wa-ready-block {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.wa-connect-actions {
+  margin-top: 1.15rem;
+}
+
+.btn-lg {
+  padding: 0.7rem 1.2rem;
+  font-size: 1.05rem;
+}
+
 @media (max-width: 640px) {
   .ann-card {
     grid-template-columns: 72px 1fr;
