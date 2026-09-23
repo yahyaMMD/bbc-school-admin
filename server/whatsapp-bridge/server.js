@@ -459,53 +459,68 @@ app.post("/debug-media", async (req, res) => {
           });
         }
 
-        // Fallback: addAndSendMsgToChat with already-processed media
+        // Fallback: addAndSendMsgToChat with already-processed media (toJSON only)
         if (mediaOptions) {
           try {
-            const { getMaybeMeLidUser, getMaybeMePnUser } = window.require(
-              "WAWebUserPrefsMeUser"
-            );
-            const lidUser = getMaybeMeLidUser();
-            const meUser = getMaybeMePnUser();
-            let from =
-              typeof chat.id?.isLid === "function" && chat.id.isLid()
-                ? lidUser
-                : meUser;
-            let participant;
-            if (typeof chat.id?.isGroup === "function" && chat.id.isGroup()) {
-              from =
-                chat.groupMetadata && chat.groupMetadata.isLidAddressingMode
-                  ? lidUser
-                  : meUser;
-              participant = window
-                .require("WAWebWidFactory")
-                .asUserWidOrThrow(from);
+            const MeUser = window.require("WAWebUserPrefsMeUser");
+            const WidFactory = window.require("WAWebWidFactory");
+            const MsgKey = window.require("WAWebMsgKey");
+            const lidUser = MeUser.getMaybeMeLidUser?.() || null;
+            const meUser = MeUser.getMaybeMePnUser?.() || null;
+            let deviceLid = null;
+            try {
+              deviceLid = MeUser.getMeDeviceLidOrThrow?.() || null;
+            } catch (_) {
+              deviceLid = null;
             }
-            const newId = await window.require("WAWebMsgKey").newId();
-            const newMsgKey = new (window.require("WAWebMsgKey"))({
-              from,
-              to: chat.id,
-              id: newId,
-              participant,
-              selfDir: "out",
-            });
+            const mediaJson =
+              typeof mediaOptions.toJSON === "function"
+                ? mediaOptions.toJSON()
+                : { ...mediaOptions };
+            const from = deviceLid || lidUser || meUser;
+            let participant = lidUser || meUser;
+            if (participant) {
+              try {
+                participant = WidFactory.asUserWidOrThrow(participant);
+              } catch (_) {
+                /* keep */
+              }
+            }
+            const newId = await MsgKey.newId();
+            let newMsgKey;
+            try {
+              newMsgKey = new MsgKey({
+                fromMe: true,
+                remote: chat.id,
+                id: newId,
+                participant,
+              });
+            } catch (_) {
+              newMsgKey = new MsgKey({
+                from,
+                to: chat.id,
+                id: newId,
+                participant,
+                selfDir: "out",
+              });
+            }
             const ephemeralFields = window
               .require("WAWebGetEphemeralFieldsMsgActionsUtils")
               .getEphemeralFields(chat);
             const message = {
               id: newMsgKey,
               ack: 0,
-              body: mediaOptions.preview,
+              body: mediaJson.preview,
               from,
               to: chat.id,
+              author: participant,
               local: true,
               self: "out",
               t: parseInt(new Date().getTime() / 1000, 10),
               isNewMsg: true,
               type: "chat",
               ...ephemeralFields,
-              ...mediaOptions,
-              ...(mediaOptions.toJSON ? mediaOptions.toJSON() : {}),
+              ...mediaJson,
               caption: "diag-fallback",
             };
             const [msgPromise, sendMsgResultPromise] = window
@@ -519,6 +534,8 @@ app.post("/debug-media", async (req, res) => {
             }
             step("addAndSendMsgToChat", true, {
               id: newMsgKey?._serialized || null,
+              from: from?._serialized || String(from),
+              deviceLid: deviceLid?._serialized || null,
             });
           } catch (e) {
             step("addAndSendMsgToChat", false, {
@@ -644,6 +661,13 @@ async function pageSendMedia(client, chatId, media, caption, asDocument) {
       });
       if (captionText) mediaOptions.caption = captionText;
 
+      // Critical: never spread the live MediaData model into the message —
+      // that breaks getSender/getValidatedSender (memoize id undefined).
+      const mediaJson =
+        typeof mediaOptions.toJSON === "function"
+          ? mediaOptions.toJSON()
+          : { ...mediaOptions };
+
       const MeUser = window.require("WAWebUserPrefsMeUser");
       const WidFactory = window.require("WAWebWidFactory");
       const MsgKey = window.require("WAWebMsgKey");
@@ -659,23 +683,39 @@ async function pageSendMedia(client, chatId, media, caption, asDocument) {
 
       const isGroup =
         typeof chat.id?.isGroup === "function" ? chat.id.isGroup() : false;
+      const lidMode = Boolean(chat.groupMetadata?.isLidAddressingMode);
 
-      // LID-era WhatsApp: media send validates sender via getSender().
-      // Group media needs device LID as `from` and user LID as `participant`/`author`.
-      let from = deviceLid || lidUser || meUser;
+      let from;
       let participant = null;
-      let author = null;
+      let author = undefined;
       if (isGroup) {
-        from = deviceLid || lidUser || meUser;
-        participant = lidUser || meUser;
-        if (participant) {
-          try {
-            participant = WidFactory.asUserWidOrThrow(participant);
-          } catch (_) {
-            /* keep as-is */
+        if (lidMode || lidUser) {
+          from = deviceLid || lidUser || meUser;
+          participant = lidUser || meUser;
+          if (participant) {
+            try {
+              participant = WidFactory.asUserWidOrThrow(participant);
+            } catch (_) {
+              /* keep */
+            }
           }
+          author = participant;
+        } else {
+          from = meUser || lidUser;
+          if (from) {
+            try {
+              participant = WidFactory.asUserWidOrThrow(from);
+            } catch (_) {
+              participant = from;
+            }
+          }
+          author = participant;
         }
-        author = participant;
+      } else {
+        from =
+          typeof chat.id?.isLid === "function" && chat.id.isLid()
+            ? lidUser || deviceLid || meUser
+            : meUser || lidUser;
       }
       if (!from) throw new Error("Unable to resolve sender identity (LID/PN)");
 
@@ -705,18 +745,18 @@ async function pageSendMedia(client, chatId, media, caption, asDocument) {
       const message = {
         id: newMsgKey,
         ack: 0,
-        body: mediaOptions.preview,
+        body: mediaJson.preview,
         from,
         to: chat.id,
-        author: author || undefined,
+        author,
         local: true,
         self: "out",
         t: parseInt(new Date().getTime() / 1000, 10),
         isNewMsg: true,
         type: "chat",
         ...ephemeralFields,
-        ...mediaOptions,
-        ...(mediaOptions.toJSON ? mediaOptions.toJSON() : {}),
+        ...mediaJson,
+        caption: captionText || mediaJson.caption || undefined,
       };
 
       const [msgPromise, sendMsgResultPromise] = window
@@ -732,6 +772,8 @@ async function pageSendMedia(client, chatId, media, caption, asDocument) {
       return {
         ok: true,
         id: newMsgKey?._serialized || null,
+        lidMode,
+        from: from?._serialized || String(from),
       };
     },
     chatId,
@@ -769,7 +811,23 @@ async function sendMediaToGroup(client, chatId, media, caption) {
     sendSeen: false,
   };
 
-  // Strategy 1: official client API
+  // Strategy 1: LID-aware page send (whatsapp-web.js Client API still uses PN sender)
+  try {
+    const sent = await pageSendMedia(client, chatId, payload, caption, false);
+    if (sent?.ok) return sent;
+  } catch (err) {
+    console.warn("pageSendMedia image failed:", err.message || err);
+  }
+
+  // Strategy 2: page send as document
+  try {
+    const sent = await pageSendMedia(client, chatId, payload, caption, true);
+    if (sent?.ok) return sent;
+  } catch (err) {
+    console.warn("pageSendMedia document failed:", err.message || err);
+  }
+
+  // Strategy 3: official client API (may fail on LID-era accounts)
   try {
     const sent = await client.sendMessage(chatId, mm, options);
     if (sent) return sent;
@@ -777,7 +835,6 @@ async function sendMediaToGroup(client, chatId, media, caption) {
     console.warn("client.sendMessage media failed:", err.message || err);
   }
 
-  // Strategy 2: as document via client API
   try {
     const sent = await client.sendMessage(chatId, mm, {
       ...options,
@@ -786,33 +843,6 @@ async function sendMediaToGroup(client, chatId, media, caption) {
     if (sent) return sent;
   } catch (err) {
     console.warn("client.sendMessage document failed:", err.message || err);
-  }
-
-  // Strategy 3: direct page send (skips buggy Msg.get after upload)
-  try {
-    const sent = await pageSendMedia(client, chatId, payload, caption, false);
-    if (sent?.ok) return sent;
-  } catch (err) {
-    console.warn("pageSendMedia image failed:", err.message || err);
-  }
-
-  // Strategy 4: page send as document
-  try {
-    const sent = await pageSendMedia(client, chatId, payload, caption, true);
-    if (sent?.ok) return sent;
-  } catch (err) {
-    console.warn("pageSendMedia document failed:", err.message || err);
-  }
-
-  // Strategy 5: correct WWebJS.sendMessage(chat, '', { media })
-  try {
-    const sent = await pageSend(client, chatId, "", {
-      media: payload,
-      caption: caption || undefined,
-    });
-    if (sent?.ok) return sent;
-  } catch (err) {
-    console.warn("pageSend media failed:", err.message || err);
   }
 
   throw new Error("Unable to send media to " + chatId);
