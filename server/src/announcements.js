@@ -216,6 +216,23 @@ export async function waGroups(_req, res) {
   }
 }
 
+export async function waLogout(_req, res) {
+  try {
+    const data = await bridgeFetch("/logout", {
+      method: "POST",
+      body: JSON.stringify({}),
+    });
+    res.json(data);
+  } catch (err) {
+    res.status(err.status || 503).json({
+      ok: false,
+      ready: false,
+      qrReady: false,
+      error: err.message || "Failed to disconnect WhatsApp",
+    });
+  }
+}
+
 export async function generateImage(req, res) {
   try {
     const text = String(req.body?.text || "").trim();

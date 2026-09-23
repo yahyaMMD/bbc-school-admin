@@ -3699,6 +3699,27 @@ html[dir="rtl"] .home-icon-tile {
   margin-top: 1.15rem;
 }
 
+.wa-connect-head-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.wa-disconnect-btn {
+  color: #a11;
+  border-color: #f0c0c0;
+}
+
+.wa-disconnect-btn:hover {
+  background: #fde8e8;
+  color: #8a0f0f;
+}
+
+.wa-ready-block .wa-disconnect-btn {
+  margin-top: 0.75rem;
+}
+
 .btn-lg {
   padding: 0.7rem 1.2rem;
   font-size: 1.05rem;

@@ -541,6 +541,7 @@ router.get("/announcements", authRequired(["whatsapp"]), Announcements.listAnnou
 router.get("/announcements/wa/status", authRequired(["whatsapp"]), Announcements.waStatus);
 router.get("/announcements/wa/qr", authRequired(["whatsapp"]), Announcements.waQr);
 router.get("/announcements/wa/groups", authRequired(["whatsapp"]), Announcements.waGroups);
+router.post("/announcements/wa/logout", authRequired(["whatsapp"]), Announcements.waLogout);
 router.post("/announcements/generate-image", authRequired(["whatsapp"]), Announcements.generateImage);
 router.post("/announcements/upload-image", authRequired(["whatsapp"]), Announcements.uploadImage);
 router.post("/announcements/send", authRequired(["whatsapp"]), Announcements.sendAnnouncement);

@@ -180,7 +180,10 @@ const WhatsAppApp = (() => {
       <section class="admin-panel wa-connect-panel">
         <div class="admin-panel-head">
           <div class="admin-panel-label">${esc(I18n.t("waConnectTitle"))}</div>
-          <button type="button" class="btn btn-ghost btn-sm" data-wa-refresh>${esc(I18n.t("waRefresh"))}</button>
+          <div class="wa-connect-head-actions">
+            <button type="button" class="btn btn-ghost btn-sm" data-wa-refresh>${esc(I18n.t("waRefresh"))}</button>
+            <button type="button" class="btn btn-ghost btn-sm wa-disconnect-btn" data-wa-disconnect hidden>${esc(I18n.t("waDisconnect"))}</button>
+          </div>
         </div>
         <p class="admin-field-hint">${esc(I18n.t("waConnectMandatory"))}</p>
         <div class="ann-wa wa-connect-body" data-wa-panel>
@@ -358,6 +361,7 @@ const WhatsAppApp = (() => {
   function bindConnectPanel(root) {
     const panel = root.querySelector("[data-wa-panel]");
     const actions = root.querySelector("[data-wa-connect-actions]");
+    const disconnectBtn = root.querySelector("[data-wa-disconnect]");
     if (!panel) return () => {};
 
     let qrObjectUrl = null;
@@ -372,6 +376,7 @@ const WhatsAppApp = (() => {
         }
         setNavStatus(root, st);
         setNavLocked(root, Boolean(st.ready));
+        if (disconnectBtn) disconnectBtn.hidden = !st.ready;
 
         if (st.ready) {
           panel.innerHTML = `
@@ -380,8 +385,10 @@ const WhatsAppApp = (() => {
               ${st.phone ? `<p class="ann-wa-phone">${esc(st.phone)}</p>` : ""}
               ${st.pushname ? `<p class="admin-field-hint">${esc(st.pushname)}</p>` : ""}
               <p class="admin-field-hint">${esc(I18n.t("waSessionHint"))}</p>
+              <button type="button" class="btn btn-ghost wa-disconnect-btn" data-wa-disconnect-inline>${esc(I18n.t("waDisconnect"))}</button>
             </div>`;
           if (actions) actions.hidden = false;
+          panel.querySelector("[data-wa-disconnect-inline]")?.addEventListener("click", () => doDisconnect());
         } else if (st.qrReady) {
           if (actions) actions.hidden = true;
           try {
@@ -400,13 +407,42 @@ const WhatsAppApp = (() => {
         }
       } catch (err) {
         if (actions) actions.hidden = true;
+        if (disconnectBtn) disconnectBtn.hidden = true;
         setNavStatus(root, { ready: false });
         setNavLocked(root, false);
         panel.innerHTML = `<p class="admin-empty is-err">${esc(err.message || I18n.t("waWaiting"))}</p>`;
       }
     };
 
+    const doDisconnect = async () => {
+      if (!window.confirm(I18n.t("waDisconnectConfirm"))) return;
+      const buttons = [
+        disconnectBtn,
+        ...root.querySelectorAll("[data-wa-disconnect-inline]"),
+      ].filter(Boolean);
+      buttons.forEach((b) => {
+        b.disabled = true;
+        b.textContent = I18n.t("waDisconnecting");
+      });
+      try {
+        await BBC_API.post("/announcements/wa/logout", {});
+        if (actions) actions.hidden = true;
+        if (disconnectBtn) disconnectBtn.hidden = true;
+        setNavLocked(root, false);
+        setNavStatus(root, { ready: false });
+        panel.innerHTML = `<p class="admin-empty">${esc(I18n.t("waDisconnected"))}</p>`;
+        await render();
+      } catch (err) {
+        alert(err.message || I18n.t("waDisconnect"));
+        buttons.forEach((b) => {
+          b.disabled = false;
+          b.textContent = I18n.t("waDisconnect");
+        });
+      }
+    };
+
     root.querySelector("[data-wa-refresh]")?.addEventListener("click", () => render());
+    disconnectBtn?.addEventListener("click", () => doDisconnect());
     render();
     pollTimer = setInterval(render, 3500);
 

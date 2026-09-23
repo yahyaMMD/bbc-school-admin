@@ -83,21 +83,173 @@ const chromePath =
         ? "/usr/bin/google-chrome-stable"
         : undefined);
 
-const client = new Client({
-  authStrategy: new LocalAuth({ dataPath: AUTH_DIR }),
-  puppeteer: {
-    headless: true,
-    executablePath: chromePath,
-    args: [
-      "--no-sandbox",
-      "--disable-setuid-sandbox",
-      "--disable-dev-shm-usage",
-      "--disable-gpu",
-      "--single-process",
-      "--no-zygote",
-    ],
-  },
-});
+let client = null;
+let logoutBusy = false;
+
+function clearSessionFiles() {
+  clearChromeLocks(AUTH_DIR);
+  try {
+    if (fs.existsSync(AUTH_DIR)) {
+      for (const name of fs.readdirSync(AUTH_DIR)) {
+        fs.rmSync(path.join(AUTH_DIR, name), { recursive: true, force: true });
+      }
+    }
+  } catch (err) {
+    console.warn("clearSessionFiles auth:", err.message || err);
+  }
+  try {
+    if (fs.existsSync(QR_FILE)) fs.unlinkSync(QR_FILE);
+  } catch {
+    /* ignore */
+  }
+  try {
+    fs.writeFileSync(
+      STATUS_FILE,
+      JSON.stringify(
+        {
+          ready: false,
+          qrReady: false,
+          authenticated: false,
+          phone: null,
+          pushname: null,
+          info: "Session cleared. Waiting for new QR…",
+          updatedAt: new Date().toISOString(),
+        },
+        null,
+        2
+      )
+    );
+  } catch {
+    /* ignore */
+  }
+}
+
+function createClient() {
+  const c = new Client({
+    authStrategy: new LocalAuth({ dataPath: AUTH_DIR }),
+    puppeteer: {
+      headless: true,
+      executablePath: chromePath,
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage",
+        "--disable-gpu",
+        "--single-process",
+        "--no-zygote",
+      ],
+    },
+  });
+
+  c.on("qr", async (qr) => {
+    try {
+      await qrcode.toFile(QR_FILE, qr, {
+        width: 420,
+        margin: 2,
+        errorCorrectionLevel: "M",
+      });
+      writeStatus({
+        ready: false,
+        qrReady: true,
+        authenticated: false,
+        phone: null,
+        pushname: null,
+        error: null,
+        info: "Scan this QR with WhatsApp → Linked devices → Link a device",
+      });
+      console.log("QR ready");
+    } catch (err) {
+      console.error("QR write failed:", err);
+      writeStatus({ ready: false, qrReady: false, error: String(err) });
+    }
+  });
+
+  c.on("authenticated", () => {
+    writeStatus({ authenticated: true, info: "Authenticated. Waiting for ready…" });
+    console.log("Authenticated");
+  });
+
+  c.on("ready", () => {
+    const wid = c.info?.wid?.user || null;
+    const pushname = c.info?.pushname || null;
+    writeStatus({
+      ready: true,
+      qrReady: false,
+      authenticated: true,
+      phone: wid,
+      pushname,
+      error: null,
+      info: `Connected as ${pushname || wid}`,
+    });
+    console.log("WhatsApp ready as", wid, pushname);
+  });
+
+  c.on("auth_failure", (msg) => {
+    writeStatus({ ready: false, authenticated: false, error: `Auth failure: ${msg}` });
+    console.error("Auth failure", msg);
+  });
+
+  c.on("disconnected", (reason) => {
+    if (logoutBusy) return;
+    writeStatus({ ready: false, qrReady: false, authenticated: false, info: `Disconnected: ${reason}` });
+    console.warn("Disconnected", reason);
+  });
+
+  return c;
+}
+
+async function startClient() {
+  writeStatus({
+    ready: false,
+    qrReady: false,
+    authenticated: false,
+    phone: null,
+    pushname: null,
+    info: "Starting WhatsApp client… Scan QR when ready.",
+  });
+  client = createClient();
+  await client.initialize();
+}
+
+async function logoutAndReset() {
+  if (logoutBusy) {
+    const err = new Error("Logout already in progress");
+    err.status = 409;
+    throw err;
+  }
+  logoutBusy = true;
+  writeStatus({
+    ready: false,
+    qrReady: false,
+    authenticated: false,
+    phone: null,
+    pushname: null,
+    info: "Disconnecting and clearing session…",
+  });
+  try {
+    if (client) {
+      try {
+        await client.logout();
+      } catch (err) {
+        console.warn("client.logout:", err.message || err);
+      }
+      try {
+        await client.destroy();
+      } catch (err) {
+        console.warn("client.destroy:", err.message || err);
+      }
+    }
+  } finally {
+    client = null;
+    clearSessionFiles();
+  }
+  try {
+    await startClient();
+  } finally {
+    logoutBusy = false;
+  }
+  return readStatus();
+}
 
 writeStatus({
   ready: false,
@@ -105,59 +257,25 @@ writeStatus({
   info: "Starting WhatsApp client… Scan QR when ready.",
 });
 
-client.on("qr", async (qr) => {
-  try {
-    await qrcode.toFile(QR_FILE, qr, {
-      width: 420,
-      margin: 2,
-      errorCorrectionLevel: "M",
-    });
-    writeStatus({
-      ready: false,
-      qrReady: true,
-      info: "Scan this QR with WhatsApp → Linked devices → Link a device",
-    });
-    console.log("QR ready");
-  } catch (err) {
-    console.error("QR write failed:", err);
-    writeStatus({ ready: false, qrReady: false, error: String(err) });
-  }
-});
-
-client.on("authenticated", () => {
-  writeStatus({ authenticated: true, info: "Authenticated. Waiting for ready…" });
-  console.log("Authenticated");
-});
-
-client.on("ready", () => {
-  const wid = client.info?.wid?.user || null;
-  const pushname = client.info?.pushname || null;
-  writeStatus({
-    ready: true,
-    qrReady: false,
-    authenticated: true,
-    phone: wid,
-    pushname,
-    info: `Connected as ${pushname || wid}`,
-  });
-  console.log("WhatsApp ready as", wid, pushname);
-});
-
-client.on("auth_failure", (msg) => {
-  writeStatus({ ready: false, authenticated: false, error: `Auth failure: ${msg}` });
-  console.error("Auth failure", msg);
-});
-
-client.on("disconnected", (reason) => {
-  writeStatus({ ready: false, qrReady: false, info: `Disconnected: ${reason}` });
-  console.warn("Disconnected", reason);
-});
-
 const app = express();
 app.use(express.json({ limit: "12mb" }));
 
 app.get("/health", (_req, res) => {
   res.json(readStatus());
+});
+
+app.post("/logout", async (_req, res) => {
+  try {
+    const status = await logoutAndReset();
+    res.json({ ok: true, ...status });
+  } catch (err) {
+    console.error("logout failed:", err);
+    res.status(err.status || 500).json({
+      ok: false,
+      error: err.message || "Logout failed",
+      ...readStatus(),
+    });
+  }
 });
 
 app.get("/qr", (_req, res) => {
@@ -169,7 +287,7 @@ app.get("/qr", (_req, res) => {
 
 app.get("/groups", async (_req, res) => {
   try {
-    if (!client.info) {
+    if (!client || !client.info) {
       return res.status(503).json({ ok: false, error: "WhatsApp not connected yet" });
     }
 
@@ -283,7 +401,7 @@ app.get("/groups", async (_req, res) => {
 
 app.post("/send-image", async (req, res) => {
   try {
-    if (!client.info) {
+    if (!client || !client.info) {
       return res.status(503).json({ ok: false, error: "WhatsApp not connected yet" });
     }
     const groupIds = Array.isArray(req.body.groupIds) ? req.body.groupIds : [];
@@ -346,7 +464,7 @@ app.post("/send-image", async (req, res) => {
 
 app.post("/send-text", async (req, res) => {
   try {
-    if (!client.info) {
+    if (!client || !client.info) {
       return res.status(503).json({ ok: false, error: "WhatsApp not connected yet" });
     }
     const groupIds = Array.isArray(req.body.groupIds) ? req.body.groupIds : [];
@@ -375,7 +493,7 @@ app.post("/send-text", async (req, res) => {
 /** Temporary diagnostic for media pipeline (safe to keep; returns step results only). */
 app.post("/debug-media", async (req, res) => {
   try {
-    if (!client.info || !client.pupPage) {
+    if (!client || !client.info || !client.pupPage) {
       return res.status(503).json({ ok: false, error: "WhatsApp not connected yet" });
     }
     const chatId = String(req.body.groupId || "").trim();
@@ -604,7 +722,7 @@ function normalizeMediaPayload(media) {
  * message was delivered, so we recover via addAndSendMsgToChat when needed.
  */
 async function pageSend(client, chatId, content, options = {}) {
-  if (!client.pupPage) throw new Error("WhatsApp page not ready");
+  if (!client || !client.pupPage) throw new Error("WhatsApp page not ready");
   return client.pupPage.evaluate(
     async (id, body, opts) => {
       if (!window.WWebJS?.getChat || !window.WWebJS?.sendMessage) {
@@ -649,7 +767,7 @@ async function pageSend(client, chatId, content, options = {}) {
 
 async function pageSendMedia(client, chatId, media, caption, asDocument) {
   const payload = normalizeMediaPayload(media);
-  if (!client.pupPage) throw new Error("WhatsApp page not ready");
+  if (!client || !client.pupPage) throw new Error("WhatsApp page not ready");
 
   return client.pupPage.evaluate(
     async (id, mediaObj, captionText, forceDocument) => {
@@ -853,7 +971,7 @@ app.listen(PORT, "0.0.0.0", () => {
   writeStatus({ server: `0.0.0.0:${PORT}` });
 });
 
-client.initialize().catch((err) => {
+startClient().catch((err) => {
   console.error("Initialize failed", err);
   writeStatus({ ready: false, error: String(err) });
 });
