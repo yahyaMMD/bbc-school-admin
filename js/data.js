@@ -114,11 +114,9 @@ const BBC_DATA = (() => {
     const ar = [t.firstName, t.lastName].filter(Boolean).join(" ").trim();
     const latin =
       (t.nameLatin || "").trim() ||
-      [t.firstNameLatin, t.lastNameLatin].filter(Boolean).join(" ").trim() ||
-      ar;
+      [t.firstNameLatin, t.lastNameLatin].filter(Boolean).join(" ").trim();
     if (useArabicNames()) {
-      const hasAr = /[\u0600-\u06FF]/.test(ar);
-      return (hasAr ? ar : "") || latin || "—";
+      return ar || latin || "—";
     }
     return latin || ar || "—";
   }

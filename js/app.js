@@ -19,6 +19,86 @@
 
   const DEPT_SHORT = { primary: "Primary", middle: "Middle School" };
 
+  const LEVEL_FR = {
+    "Year 1": "1re année",
+    "Year 2": "2e année",
+    "Year 3": "3e année",
+    "Year 4": "4e année",
+    "Year 5": "5e année",
+    "1st Year Middle": "1re année moyenne",
+    "2nd Year Middle": "2e année moyenne",
+    "3rd Year Middle": "3e année moyenne",
+    "4th Year Middle": "4e année moyenne",
+  };
+
+  function deptShortLabel(deptId) {
+    if (deptId === "primary") return I18n.t("primary");
+    if (deptId === "middle") return I18n.t("middle");
+    return DEPT_SHORT[deptId] || deptId;
+  }
+
+  function deptFullLabel(dept) {
+    if (!dept) return "—";
+    if (dept.id === "primary") return I18n.t("primaryDept");
+    if (dept.id === "middle") return I18n.t("middleDept");
+    return dept.label || dept.name || "—";
+  }
+
+  function levelDisplayName(level) {
+    if (!level) return "—";
+    const lang = I18n.getLang();
+    if (lang === "ar" && level.nameAr) return level.nameAr;
+    if (lang === "fr") return LEVEL_FR[level.name] || level.name;
+    return level.name;
+  }
+
+  function classDisplayCode(cls) {
+    if (!cls) return "—";
+    if (I18n.getLang() === "ar" && cls.nameAr) return cls.nameAr;
+    return cls.code || cls.name || "—";
+  }
+
+  function classDisplayExtra(cls) {
+    if (!cls) return "";
+    const parts = [];
+    if (I18n.getLang() !== "ar" && cls.nameAr && cls.nameAr !== (cls.code || cls.name)) {
+      parts.push(cls.nameAr);
+    }
+    if (I18n.getLang() === "ar" && cls.code && cls.nameAr && cls.code !== cls.nameAr) {
+      /* Arabic UI already shows nameAr as main */
+    }
+    if (cls.floor) {
+      const floor = String(cls.floor);
+      if (I18n.getLang() === "ar") {
+        parts.push(floor.replace(/^Floor\s*/i, I18n.t("floor") + " "));
+      } else if (I18n.getLang() === "fr") {
+        parts.push(floor.replace(/^Floor\s*/i, I18n.t("floor") + " "));
+      } else {
+        parts.push(floor);
+      }
+    }
+    return parts.filter(Boolean).join(" · ");
+  }
+
+  function moduleLabel(m) {
+    const key = "mod_" + String(m || "").replace(/\s+/g, "_");
+    const translated = I18n.t(key);
+    return translated === key ? m : translated;
+  }
+
+  function genderLabel(g) {
+    const s = String(g || "").trim();
+    if (!s) return "—";
+    if (/^(female|أنثى)$/i.test(s)) return I18n.t("female");
+    if (/^(male|ذكر)$/i.test(s)) return I18n.t("male");
+    return s;
+  }
+
+  function localizedClassPath(found) {
+    if (!found) return "—";
+    return `${deptFullLabel(found.dept)} · ${levelDisplayName(found.level)} · ${classDisplayCode(found.cls)}`;
+  }
+
   function parseHash() {
     const hash = location.hash || "#/";
     const withoutHash = hash.replace(/^#/, "");
@@ -140,9 +220,9 @@
     if (!raw) return `<span class="muted">Not on file</span>`;
     const wa = whatsappNumber(raw);
     const waBtn = wa
-      ? `<a class="btn-whatsapp" href="https://wa.me/${esc(wa)}" target="_blank" rel="noopener noreferrer" title="Open WhatsApp chat" aria-label="WhatsApp">
+      ? `<a class="btn-whatsapp" href="https://wa.me/${esc(wa)}" target="_blank" rel="noopener noreferrer" title="${esc(I18n.t("whatsapp"))}" aria-label="${esc(I18n.t("whatsapp"))}">
           <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-          WhatsApp
+          ${esc(I18n.t("whatsapp"))}
         </a>`
       : "";
     return `<span class="phone-with-wa"><span class="phone-num">${esc(raw)}</span>${waBtn}</span>`;
@@ -412,7 +492,7 @@
   function viewLevels(deptId) {
     const dept = BBC_DATA.getDepartment(deptId);
     if (!dept) return viewNotFound();
-    const short = DEPT_SHORT[deptId] || dept.name;
+    const short = deptShortLabel(deptId);
     const totalClasses = dept.levels.reduce((n, l) => n + l.classes.length, 0);
     const totalStudents = dept.levels.reduce(
       (n, l) => n + l.classes.reduce((a, c) => a + c.students.length, 0),
@@ -420,12 +500,18 @@
     );
     return shell(`
       ${crumb([
-        { label: "Departments", to: "#/home" },
+        { label: I18n.t("departments"), to: "#/home" },
         { label: short, to: `#/dept/${deptId}` },
       ])}
       <div class="page-header">
-        <h1>${esc(dept.name)}</h1>
-        <p class="lede">${dept.levels.length} year groups · ${totalClasses} classes · ${totalStudents} students</p>
+        <h1>${esc(deptFullLabel(dept))}</h1>
+        <p class="lede">${esc(
+          I18n.t("deptSummary", {
+            years: dept.levels.length,
+            classes: totalClasses,
+            students: totalStudents,
+          })
+        )}</p>
       </div>
       <div class="floor-grid" style="--cols: ${Math.min(dept.levels.length, 5)}">
         ${dept.levels
@@ -433,9 +519,9 @@
             (l, i) => `
           <button type="button" class="floor-card" style="--accent:${["#F26522","#E85A1A","#D94F14","#C94412","#B83A10"][i % 5]}" data-nav="#/dept/${deptId}/level/${l.id}">
             <span class="floor-num">${l.id === 99 ? "—" : l.id}</span>
-            <h3>${esc(l.name)}</h3>
-            <p>${esc(l.nameAr || l.subtitle || "")}</p>
-            <div class="floor-meta">${l.classes.length} classes</div>
+            <h3>${esc(levelDisplayName(l))}</h3>
+            <p>${esc(I18n.getLang() === "ar" ? l.name || "" : l.nameAr || l.subtitle || "")}</p>
+            <div class="floor-meta">${esc(I18n.t("classesCount", { n: l.classes.length }))}</div>
           </button>
         `
           )
@@ -448,16 +534,20 @@
     const dept = BBC_DATA.getDepartment(deptId);
     const level = BBC_DATA.getLevel(deptId, levelId);
     if (!dept || !level) return viewNotFound();
-    const short = DEPT_SHORT[deptId] || dept.name;
+    const short = deptShortLabel(deptId);
+    const sub =
+      I18n.getLang() === "ar"
+        ? level.name || ""
+        : level.nameAr || "";
     return shell(`
       ${crumb([
-        { label: "Departments", to: "#/home" },
+        { label: I18n.t("departments"), to: "#/home" },
         { label: short, to: `#/dept/${deptId}` },
-        { label: level.name, to: `#/dept/${deptId}/level/${level.id}` },
+        { label: levelDisplayName(level), to: `#/dept/${deptId}/level/${level.id}` },
       ])}
       <div class="page-header">
-        <h1>${esc(level.name)}</h1>
-        <p class="lede">${esc(level.nameAr || "")} — ${level.classes.length} classes</p>
+        <h1>${esc(levelDisplayName(level))}</h1>
+        <p class="lede">${esc([sub, I18n.t("classesCount", { n: level.classes.length })].filter(Boolean).join(" — "))}</p>
       </div>
       <div class="group-grid">
         ${level.classes
@@ -465,9 +555,14 @@
             (c) => `
           <button type="button" class="group-card" data-nav="#/dept/${deptId}/level/${level.id}/class/${c.id}">
             <div class="group-icon">${icons.users}</div>
-            <h3>${esc(c.code || c.name)}</h3>
-            <div class="code">${esc([c.nameAr && c.nameAr !== (c.code || c.name) ? c.nameAr : "", c.floor || ""].filter(Boolean).join(" · "))}</div>
-            <div class="hint">${c.students.length} students · ${(c.modules || []).length} modules</div>
+            <h3>${esc(classDisplayCode(c))}</h3>
+            <div class="code">${esc(classDisplayExtra(c))}</div>
+            <div class="hint">${esc(
+              I18n.t("studentsModulesCount", {
+                students: c.students.length,
+                modules: (c.modules || []).length,
+              })
+            )}</div>
           </button>
         `
           )
@@ -481,45 +576,45 @@
     const level = BBC_DATA.getLevel(deptId, levelId);
     const cls = BBC_DATA.getClass(deptId, levelId, classId);
     if (!dept || !level || !cls) return viewNotFound();
-    const short = DEPT_SHORT[deptId] || dept.name;
+    const short = deptShortLabel(deptId);
     const teachers = (cls.teacherIds || []).map((id) => BBC_DATA.getTeacher(id)).filter(Boolean);
     const females = cls.students.filter((s) => s.gender === "Female").length;
     const males = cls.students.filter((s) => s.gender === "Male").length;
 
     return shell(`
       ${crumb([
-        { label: "Departments", to: "#/home" },
+        { label: I18n.t("departments"), to: "#/home" },
         { label: short, to: `#/dept/${deptId}` },
-        { label: level.name, to: `#/dept/${deptId}/level/${level.id}` },
-        { label: cls.code || cls.name, to: `#/dept/${deptId}/level/${level.id}/class/${cls.id}` },
+        { label: levelDisplayName(level), to: `#/dept/${deptId}/level/${level.id}` },
+        { label: classDisplayCode(cls), to: `#/dept/${deptId}/level/${level.id}/class/${cls.id}` },
       ])}
       <div class="page-header">
-        <h1>${esc(cls.code || cls.name)}</h1>
-        <p class="lede">${esc([cls.nameAr && cls.nameAr !== (cls.code || cls.name) ? cls.nameAr : "", cls.floor || ""].filter(Boolean).join(" · "))}</p>
+        <h1>${esc(classDisplayCode(cls))}</h1>
+        <p class="lede">${esc(classDisplayExtra(cls))}</p>
       </div>
 
       <div class="detail-layout">
         <aside class="info-panel">
-          <div class="panel-label">Enrollment</div>
-          <div class="big-stat">${cls.students.length}<span>students on roster</span></div>
+          <div class="panel-label">${esc(I18n.t("enrollment"))}</div>
+          <div class="big-stat">${cls.students.length}<span>${esc(I18n.t("studentsOnRoster"))}</span></div>
           <div class="panel-divider"></div>
           <dl class="info-list">
-            <div><dt>Females</dt><dd>${cls.stats?.females ?? females}</dd></div>
-            <div><dt>Males</dt><dd>${cls.stats?.males ?? males}</dd></div>
-            <div><dt>Modules</dt><dd>${(cls.modules || []).length}</dd></div>
-            <div><dt>Teachers named</dt><dd>${teachers.length}</dd></div>
+            <div><dt>${esc(I18n.t("females"))}</dt><dd>${cls.stats?.females ?? females}</dd></div>
+            <div><dt>${esc(I18n.t("males"))}</dt><dd>${cls.stats?.males ?? males}</dd></div>
+            <div><dt>${esc(I18n.t("modules"))}</dt><dd>${(cls.modules || []).length}</dd></div>
+            <div><dt>${esc(I18n.t("teachersNamed"))}</dt><dd>${teachers.length}</dd></div>
           </dl>
           <div class="panel-divider"></div>
-          <div class="panel-label">Modules</div>
+          <div class="panel-label">${esc(I18n.t("modules"))}</div>
           <div class="chip-row" style="margin-top:0.6rem">
-            ${(cls.modules || []).map((m) => `<span class="chip">${esc(m)}</span>`).join("")}
+            ${(cls.modules || []).map((m) => `<span class="chip">${esc(moduleLabel(m))}</span>`).join("")}
           </div>
         </aside>
 
         <div class="stack-panels">
           <section class="info-panel">
             <div class="section-head">
-              <h2 class="section-title" style="margin:0">Teachers</h2>
+              <h2 class="section-title" style="margin:0">${esc(I18n.t("teachers"))}</h2>
             </div>
             ${
               teachers.length
@@ -535,9 +630,9 @@
                               <span class="teacher-phone">${esc(t.phone)}</span>
                               ${
                                 wa
-                                  ? `<a class="btn-whatsapp btn-whatsapp-sm" href="https://wa.me/${esc(wa)}" target="_blank" rel="noopener noreferrer" title="Open WhatsApp" aria-label="WhatsApp">
+                                  ? `<a class="btn-whatsapp btn-whatsapp-sm" href="https://wa.me/${esc(wa)}" target="_blank" rel="noopener noreferrer" title="${esc(I18n.t("whatsapp"))}" aria-label="${esc(I18n.t("whatsapp"))}">
                                       <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                                      WhatsApp
+                                      ${esc(I18n.t("whatsapp"))}
                                     </a>`
                                   : ""
                               }
@@ -548,8 +643,8 @@
                         <button type="button" class="teacher-row" data-nav="#/teacher/${t.id}?from=${from}">
                           ${profileAvatar(t, "teacher")}
                           <div class="meta">
-                            <strong>${esc(teacherLabel(t))}</strong>
-                            <span>${esc((t.modules || []).join(" · "))}</span>
+                            <strong dir="auto">${esc(teacherLabel(t))}</strong>
+                            <span>${esc((t.modules || []).map(moduleLabel).join(" · "))}</span>
                           </div>
                           <span class="chev">→</span>
                         </button>
@@ -564,9 +659,9 @@
 
           <section class="info-panel">
             <div class="section-head">
-              <h2 class="section-title" style="margin:0">Students</h2>
+              <h2 class="section-title" style="margin:0">${esc(I18n.t("students"))}</h2>
               <form class="inline-search" id="class-search" data-class-search="${esc(cls.id)}" autocomplete="off">
-                <input type="search" name="q" placeholder="Filter by name…" />
+                <input type="search" name="q" placeholder="${esc(I18n.t("filterByName"))}" />
               </form>
             </div>
             <div class="student-table-wrap" style="margin-top:0.85rem">
@@ -574,11 +669,11 @@
                 <thead>
                   <tr>
                     <th class="col-num">#</th>
-                    <th class="col-name-full hide-desktop">Student</th>
-                    <th class="col-last hide-mobile">Last name</th>
-                    <th class="col-first hide-mobile">First name</th>
-                    <th class="col-dob hide-mobile">Date of birth</th>
-                    <th class="col-gender hide-sm">Gender</th>
+                    <th class="col-name-full hide-desktop">${esc(I18n.t("student"))}</th>
+                    <th class="col-last hide-mobile">${esc(I18n.t("lastName"))}</th>
+                    <th class="col-first hide-mobile">${esc(I18n.t("firstName"))}</th>
+                    <th class="col-dob hide-mobile">${esc(I18n.t("dob"))}</th>
+                    <th class="col-gender hide-sm">${esc(I18n.t("gender"))}</th>
                     <th class="col-action"></th>
                   </tr>
                 </thead>
@@ -588,12 +683,12 @@
                       (s) => `
                     <tr data-search="${esc((s.searchName || s.fullName || s.fullNameLatin || "").toLowerCase())}">
                       <td class="col-num" data-label="#">${s.number ?? ""}</td>
-                      <td class="col-name-full hide-desktop" data-label="Student">${esc(BBC_DATA.studentFullName(s))}</td>
-                      <td class="col-last hide-mobile" data-label="Last name">${esc(BBC_DATA.studentLastName(s))}</td>
-                      <td class="col-first hide-mobile" data-label="First name">${esc(BBC_DATA.studentFirstName(s))}</td>
-                      <td class="col-dob hide-mobile" data-label="DOB">${esc(s.dateOfBirth || "—")}</td>
-                      <td class="col-gender hide-sm" data-label="Gender">${esc(s.gender || "—")}</td>
-                      <td class="col-action" data-label=""><button type="button" class="link-btn" data-nav="#/student/${s.id}">View</button></td>
+                      <td class="col-name-full hide-desktop" data-label="${esc(I18n.t("student"))}">${esc(BBC_DATA.studentFullName(s))}</td>
+                      <td class="col-last hide-mobile" data-label="${esc(I18n.t("lastName"))}">${esc(BBC_DATA.studentLastName(s))}</td>
+                      <td class="col-first hide-mobile" data-label="${esc(I18n.t("firstName"))}">${esc(BBC_DATA.studentFirstName(s))}</td>
+                      <td class="col-dob hide-mobile" data-label="${esc(I18n.t("dob"))}">${esc(s.dateOfBirth || "—")}</td>
+                      <td class="col-gender hide-sm" data-label="${esc(I18n.t("gender"))}">${esc(genderLabel(s.gender))}</td>
+                      <td class="col-action" data-label=""><button type="button" class="link-btn" data-nav="#/student/${s.id}">${esc(I18n.t("view"))}</button></td>
                     </tr>`
                     )
                     .join("")}
@@ -645,11 +740,11 @@
     return `
       <div class="info-panel student-more-panel" style="margin-top:1rem">
         <button type="button" class="btn btn-primary" id="btn-more-details" aria-expanded="false">
-          More details
+          ${esc(I18n.t("moreDetails"))}
         </button>
         <div id="student-more-details" class="student-more-details" hidden>
           <div class="prev-year-banner">
-            <div class="panel-label">Previous year record</div>
+            <div class="panel-label">${esc(I18n.t("previousYearRecord"))}</div>
             <p class="prev-year-title">
               ${esc(yearLabel)}${yearAr ? ` · ${esc(yearAr)}` : ""}${esc(classLabel)}
             </p>
@@ -664,31 +759,35 @@
     const found = BBC_DATA.getStudent(studentId);
     if (!found) return viewNotFound();
     const { student: s, dept, level, cls } = found;
-    const short = DEPT_SHORT[dept.id] || dept.name;
+    const short = deptShortLabel(dept.id);
     const classBack = `#/dept/${dept.id}/level/${level.id}/class/${cls.id}`;
     const back = from || classBack;
     const hasPrev = !!s.previousYearDetails;
+    const noPrevMsg =
+      level.name && /year\s*1/i.test(level.name)
+        ? I18n.t("noPreviousYearYear1")
+        : I18n.t("noPreviousYear");
 
     return shell(`
       ${crumb([
-        { label: "Home", to: "#/home" },
+        { label: I18n.t("home"), to: "#/home" },
         ...(from && from.includes("/students")
-          ? [{ label: "Students", to: "#/students" }]
+          ? [{ label: I18n.t("students"), to: "#/students" }]
           : [
               { label: short, to: `#/dept/${dept.id}` },
-              { label: level.name, to: `#/dept/${dept.id}/level/${level.id}` },
-              { label: cls.code || cls.name, to: classBack },
+              { label: levelDisplayName(level), to: `#/dept/${dept.id}/level/${level.id}` },
+              { label: classDisplayCode(cls), to: classBack },
             ]),
         { label: BBC_DATA.studentFullName(s), to: `#/student/${s.id}` },
       ])}
       <div class="page-header" style="margin-bottom:1rem">
-        <button type="button" class="btn btn-ghost" data-nav="${esc(back)}" style="margin-bottom:0.75rem;padding-left:0">← Back</button>
+        <button type="button" class="btn btn-ghost" data-nav="${esc(back)}" style="margin-bottom:0.75rem;padding-left:0">${esc(I18n.t("backTo"))}</button>
       </div>
       <div class="teacher-hero">
         ${profileAvatar(s, "student", "avatar-lg")}
         <div>
           <h1 dir="auto">${esc(BBC_DATA.studentFullName(s))}</h1>
-          <p class="role">Student · ${esc(cls.code)} · ${esc(level.name)} · ${esc(short)}</p>
+          <p class="role">${esc(I18n.t("student"))} · ${esc(classDisplayCode(cls))} · ${esc(levelDisplayName(level))} · ${esc(short)}</p>
         </div>
       </div>
       <div class="facts-grid">
@@ -698,30 +797,28 @@
         <div class="fact-card"><div class="k">${esc(I18n.t("firstNameAr"))}</div><div class="v" dir="auto">${esc(s.firstName || "—")}</div></div>
         <div class="fact-card"><div class="k">${esc(I18n.t("lastNameLatin"))}</div><div class="v" dir="auto">${esc(s.lastNameLatin || "—")}</div></div>
         <div class="fact-card"><div class="k">${esc(I18n.t("firstNameLatin"))}</div><div class="v" dir="auto">${esc(s.firstNameLatin || "—")}</div></div>
-        <div class="fact-card"><div class="k">Date of birth</div><div class="v">${esc(s.dateOfBirth || "Not on file")}</div></div>
-        <div class="fact-card"><div class="k">Gender</div><div class="v">${esc(s.gender || "—")}</div></div>
-        <div class="fact-card"><div class="k">Roster #</div><div class="v">${s.number ?? "—"}</div></div>
-        <div class="fact-card"><div class="k">Department</div><div class="v">${esc(dept.name)}</div></div>
-        <div class="fact-card"><div class="k">Year</div><div class="v">${esc(level.name)}</div></div>
-        <div class="fact-card"><div class="k">Class</div><div class="v"><button type="button" class="link-btn" data-nav="${esc(classBack)}">${esc(cls.code || cls.name)}${cls.nameAr && cls.nameAr !== (cls.code || cls.name) ? " · " + esc(cls.nameAr) : ""}</button></div></div>
-        <div class="fact-card"><div class="k">Student ID</div><div class="v">${esc(s.id)}</div></div>
+        <div class="fact-card"><div class="k">${esc(I18n.t("dob"))}</div><div class="v">${esc(s.dateOfBirth || I18n.t("notOnFile"))}</div></div>
+        <div class="fact-card"><div class="k">${esc(I18n.t("gender"))}</div><div class="v">${esc(genderLabel(s.gender))}</div></div>
+        <div class="fact-card"><div class="k">${esc(I18n.t("rosterNumber"))}</div><div class="v">${s.number ?? "—"}</div></div>
+        <div class="fact-card"><div class="k">${esc(I18n.t("department"))}</div><div class="v">${esc(deptFullLabel(dept))}</div></div>
+        <div class="fact-card"><div class="k">${esc(I18n.t("year"))}</div><div class="v">${esc(levelDisplayName(level))}</div></div>
+        <div class="fact-card"><div class="k">${esc(I18n.t("class"))}</div><div class="v"><button type="button" class="link-btn" data-nav="${esc(classBack)}">${esc(classDisplayCode(cls))}${cls.nameAr && cls.nameAr !== (cls.code || cls.name) && I18n.getLang() !== "ar" ? " · " + esc(cls.nameAr) : ""}</button></div></div>
+        <div class="fact-card"><div class="k">${esc(I18n.t("studentId"))}</div><div class="v">${esc(s.id)}</div></div>
       </div>
       ${
         s.notes
-          ? `<div class="info-panel"><div class="panel-label">Notes</div><p style="margin-top:0.5rem">${esc(s.notes)}</p></div>`
+          ? `<div class="info-panel"><div class="panel-label">${esc(I18n.t("notes"))}</div><p style="margin-top:0.5rem">${esc(s.notes)}</p></div>`
           : ""
       }
       ${
         hasPrev
           ? renderPreviousYearDetails(s.previousYearDetails)
-          : `<div class="info-panel" style="margin-top:1rem"><div class="panel-label">Previous year</div><p style="margin-top:0.5rem;color:var(--muted)">No prior-year follow-up file matched for this student${
-              level.name && /year\s*1/i.test(level.name) ? " (many Year 1 students are new this year)" : ""
-            }.</p></div>`
+          : `<div class="info-panel" style="margin-top:1rem"><div class="panel-label">${esc(I18n.t("previousYear"))}</div><p style="margin-top:0.5rem;color:var(--muted)">${esc(noPrevMsg)}</p></div>`
       }
       <div class="info-panel" style="margin-top:1rem">
-        <div class="panel-label">Class modules</div>
+        <div class="panel-label">${esc(I18n.t("classModules"))}</div>
         <div class="chip-row" style="margin-top:0.6rem">
-          ${(cls.modules || []).map((m) => `<span class="chip">${esc(m)}</span>`).join("")}
+          ${(cls.modules || []).map((m) => `<span class="chip">${esc(moduleLabel(m))}</span>`).join("")}
         </div>
       </div>
     `);
@@ -758,7 +855,7 @@
                       ({ student: s, dept, level, cls }) => `
                     <tr>
                       <td data-label="Name"><strong dir="auto">${esc(BBC_DATA.studentFullName(s))}</strong></td>
-                      <td class="hide-sm" data-label="Department">${esc(DEPT_SHORT[dept.id] || dept.name)}</td>
+                      <td class="hide-sm" data-label="Department">${esc(deptShortLabel(dept.id))}</td>
                       <td class="hide-mobile" data-label="Year">${esc(level.name)}</td>
                       <td data-label="Class">${esc(cls.code)}</td>
                       <td class="hide-sm" data-label="Gender">${esc(s.gender || "—")}</td>
@@ -844,7 +941,7 @@
           filtered.length
             ? filtered
                 .map(({ teacher: t, classes }) => {
-                  const depts = (t.departments || []).map((d) => DEPT_SHORT[d] || d).join(" · ");
+                  const depts = (t.departments || []).map((d) => deptShortLabel(d)).join(" · ");
                   const classCodes = classes.map((x) => x.cls.code).join(", ") || "—";
                   return `
               <button type="button" class="dir-card" data-nav="#/teacher/${t.id}?from=${encodeURIComponent("#/teachers")}">
@@ -880,7 +977,7 @@
       for (const l of d.levels) {
         yearOptions.push({
           value: `${d.id}:${l.id}`,
-          label: `${DEPT_SHORT[d.id] || d.name} · ${l.name}`,
+          label: `${deptShortLabel(d.id)} · ${levelDisplayName(l)}`,
         });
       }
     }
@@ -964,7 +1061,7 @@
                 ${profileAvatar(s, "student")}
                 <div class="dir-card-body">
                   <strong dir="auto">${esc(BBC_DATA.studentFullName(s))}</strong>
-                  <span class="dir-meta">${esc(DEPT_SHORT[d.id] || d.name)} · ${esc(level.name)} · ${esc(cls.code)}</span>
+                  <span class="dir-meta">${esc(deptShortLabel(d.id))} · ${esc(levelDisplayName(level))} · ${esc(classDisplayCode(cls))}</span>
                   <span class="dir-meta hide-sm">ID ${esc(s.id)}${s.dateOfBirth ? ` · DOB ${esc(s.dateOfBirth)}` : ""}</span>
                   <span class="dir-meta">${esc(s.gender || "—")}</span>
                 </div>
@@ -982,67 +1079,67 @@
     if (!t) return viewNotFound();
     const back = from || "#/teachers";
     const classes = (t.classIds || [])
-      .map((cid) => BBC_DATA.getClassLabel(cid))
+      .map((cid) => BBC_DATA.findClassById(cid))
       .filter(Boolean);
     const depts = (t.departments || []).map((d) => {
       const dept = BBC_DATA.getDepartment(d);
-      return dept ? dept.name : d;
+      return dept ? deptFullLabel(dept) : d;
     });
+    const arName = [t.firstName, t.lastName].filter(Boolean).join(" ").trim();
+    const latinName = teacherLatin(t);
+    const secondaryName = I18n.useArabicNames() ? latinName : arName;
 
     return shell(`
       ${crumb([
-        { label: "Home", to: "#/home" },
-        { label: "Teachers", to: "#/teachers" },
+        { label: I18n.t("home"), to: "#/home" },
+        { label: I18n.t("teachers"), to: "#/teachers" },
         { label: teacherLabel(t), to: `#/teacher/${t.id}` },
       ])}
       <div class="page-header" style="margin-bottom:1rem">
-        <button type="button" class="btn btn-ghost" data-nav="${esc(back)}" style="margin-bottom:0.75rem;padding-left:0">← Back</button>
+        <button type="button" class="btn btn-ghost" data-nav="${esc(back)}" style="margin-bottom:0.75rem;padding-left:0">${esc(I18n.t("backTo"))}</button>
       </div>
       <div class="teacher-hero">
         ${profileAvatar(t, "teacher", "avatar-lg")}
         <div>
           <h1 dir="auto">${esc(teacherLabel(t))}</h1>
-          <p class="role">Teacher · ${esc(depts.join(" · ") || "BBC School")}${teacherLatin(t) ? ` · ${esc(teacherLatin(t))}` : ""}</p>
+          <p class="role">${esc(I18n.t("teacher"))} · ${esc(depts.join(" · ") || I18n.t("brand"))}${secondaryName ? ` · ${esc(secondaryName)}` : ""}</p>
         </div>
       </div>
       <div class="facts-grid">
-        <div class="fact-card"><div class="k">First name</div><div class="v" dir="auto">${esc(dash(t.firstName))}</div></div>
-        <div class="fact-card"><div class="k">Last name</div><div class="v" dir="auto">${esc(dash(t.lastName))}</div></div>
-        ${teacherLatin(t) ? `<div class="fact-card"><div class="k">Latin name</div><div class="v">${esc(teacherLatin(t))}</div></div>` : ""}
-        <div class="fact-card"><div class="k">Phone</div><div class="v">${phoneWithWhatsApp(t.phone)}</div></div>
-        <div class="fact-card"><div class="k">Department</div><div class="v">${esc(depts.join(" · ") || "—")}</div></div>
-        <div class="fact-card"><div class="k">Wilaya</div><div class="v">${esc(dash(t.wilaya))}</div></div>
-        <div class="fact-card"><div class="k">Commune</div><div class="v">${esc(dash(t.commune))}</div></div>
-        <div class="fact-card"><div class="k">ID</div><div class="v">${esc(t.id)}</div></div>
-        <div class="fact-card"><div class="k">Classes assigned</div><div class="v">${classes.length}</div></div>
+        <div class="fact-card"><div class="k">${esc(I18n.t("firstName"))}</div><div class="v" dir="auto">${esc(dash(I18n.useArabicNames() ? t.firstName : t.firstNameLatin || t.firstName))}</div></div>
+        <div class="fact-card"><div class="k">${esc(I18n.t("lastName"))}</div><div class="v" dir="auto">${esc(dash(I18n.useArabicNames() ? t.lastName : t.lastNameLatin || t.lastName))}</div></div>
+        ${latinName ? `<div class="fact-card"><div class="k">${esc(I18n.t("latinName"))}</div><div class="v">${esc(latinName)}</div></div>` : ""}
+        <div class="fact-card"><div class="k">${esc(I18n.t("phone"))}</div><div class="v">${phoneWithWhatsApp(t.phone)}</div></div>
+        <div class="fact-card"><div class="k">${esc(I18n.t("department"))}</div><div class="v">${esc(depts.join(" · ") || "—")}</div></div>
+        <div class="fact-card"><div class="k">${esc(I18n.t("wilaya"))}</div><div class="v">${esc(dash(t.wilaya))}</div></div>
+        <div class="fact-card"><div class="k">${esc(I18n.t("commune"))}</div><div class="v">${esc(dash(t.commune))}</div></div>
+        <div class="fact-card"><div class="k">${esc(I18n.t("teacherId"))}</div><div class="v">${esc(t.id)}</div></div>
+        <div class="fact-card"><div class="k">${esc(I18n.t("classesAssigned"))}</div><div class="v">${classes.length}</div></div>
       </div>
       <div class="detail-layout">
         <aside class="info-panel">
-          <div class="panel-label">Subjects / modules</div>
+          <div class="panel-label">${esc(I18n.t("subjectsModules"))}</div>
           <div class="chip-row" style="margin-top:0.75rem">
             ${(t.modules || []).length
-              ? (t.modules || []).map((m) => `<span class="chip">${esc(m)}</span>`).join("")
-              : `<span class="muted">None listed</span>`}
+              ? (t.modules || []).map((m) => `<span class="chip">${esc(moduleLabel(m))}</span>`).join("")
+              : `<span class="muted">${esc(I18n.t("noneListed"))}</span>`}
           </div>
         </aside>
         <section class="info-panel">
-          <div class="panel-label">Assigned classes</div>
+          <div class="panel-label">${esc(I18n.t("assignedClasses"))}</div>
           <div class="group-links" style="margin-top:0.85rem">
             ${
               classes.length
                 ? classes
-                    .map((item) => {
-                      const found = BBC_DATA.findClassById(item.class.id);
-                      const href = found
-                        ? `#/dept/${found.dept.id}/level/${found.level.id}/class/${found.cls.id}`
-                        : "#/home";
+                    .map((found) => {
+                      const href = `#/dept/${found.dept.id}/level/${found.level.id}/class/${found.cls.id}`;
                       return `<button type="button" class="group-link" data-nav="${esc(href)}">
-                        <span>${esc(item.path)}</span>
-                        <span class="chip neutral">${item.class.students.length} students</span>
+                        <span>${esc(localizedClassPath(found))}</span>
+                        <span class="chip neutral">${esc(I18n.t("studentsCount", { n: (found.cls.students || []).length }))}</span>
                       </button>`;
                     })
                     .join("")
-                : `<p class="muted">No classes linked.</p>`
+                : `<p class="muted">${esc(I18n.t("noClassesLinked"))}</p>`
             }
           </div>
         </section>
