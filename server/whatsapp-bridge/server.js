@@ -192,14 +192,19 @@ app.get("/groups", async (_req, res) => {
     if (!groups.length && client.pupPage) {
       try {
         await client.pupPage.waitForFunction(
-          () => Boolean(window.Store?.Chat || window.WWebJS?.getChats),
+          () =>
+            Boolean(
+              window.require?.("WAWebCollections")?.Chat ||
+                window.Store?.Chat ||
+                window.WWebJS?.getChat
+            ),
           { timeout: 15000 }
         );
       } catch {
         /* continue anyway */
       }
 
-      const fromStore = await client.pupPage.evaluate(async () => {
+      const fromStore = await client.pupPage.evaluate(() => {
         const out = [];
         const seen = new Set();
         const push = (id, name) => {
@@ -209,27 +214,38 @@ app.get("/groups", async (_req, res) => {
           out.push({ id: sid, name: String(name || sid) });
         };
 
-        // Prefer WWebJS helper if present, but only keep plain fields
-        try {
-          if (window.WWebJS && typeof window.WWebJS.getChats === "function") {
-            const chats = await window.WWebJS.getChats();
-            for (const c of chats || []) {
-              const id = c?.id?._serialized || c?.id || "";
+        const readModels = (models) => {
+          for (const c of models || []) {
+            try {
+              const id =
+                c?.id?._serialized ||
+                (typeof c?.id === "string" ? c.id : "") ||
+                "";
               const isGroup =
                 Boolean(c?.isGroup) ||
-                String(id).endsWith("@g.us") ||
-                c?.id?.server === "g.us";
+                c?.id?.server === "g.us" ||
+                (typeof c?.id?.isGroup === "function" && c.id.isGroup()) ||
+                String(id).endsWith("@g.us");
               if (!isGroup) continue;
-              push(id, c.name || c.formattedTitle || c.contact?.name);
+              push(
+                id,
+                c.name || c.formattedTitle || c.contact?.name || c.id?.user
+              );
+            } catch (_) {
+              /* skip one */
             }
           }
+        };
+
+        try {
+          const coll = window.require?.("WAWebCollections")?.Chat;
+          if (coll?.getModelsArray) readModels(coll.getModelsArray());
         } catch (_) {
           /* next */
         }
 
         try {
-          const Store = window.Store;
-          const collection = Store?.Chat;
+          const collection = window.Store?.Chat;
           const models =
             (collection?.getModelsArray && collection.getModelsArray()) ||
             (typeof collection?.map === "function"
@@ -238,15 +254,7 @@ app.get("/groups", async (_req, res) => {
             collection?.models ||
             collection?._models ||
             [];
-          for (const c of models || []) {
-            const id = c?.id?._serialized || "";
-            const isGroup =
-              Boolean(c?.isGroup) ||
-              c?.id?.server === "g.us" ||
-              String(id).endsWith("@g.us");
-            if (!isGroup) continue;
-            push(id, c.name || c.formattedTitle || c.contact?.name || c.id?.user);
-          }
+          readModels(models);
         } catch (_) {
           /* next */
         }
@@ -395,6 +403,153 @@ async function ensureChat(client, chatId) {
   }
 }
 
+function normalizeMediaPayload(media) {
+  let data = String(media?.data || "").replace(/\s/g, "");
+  if (data.includes(",")) data = data.split(",").pop();
+  const mimetype = media?.mimetype || "image/png";
+  const filename =
+    media?.filename ||
+    `announcement.${String(mimetype).split("/")[1] || "png"}`;
+  if (!data) throw new Error("Empty media data");
+  return { mimetype, data, filename };
+}
+
+/**
+ * whatsapp-web.js ≥1.34: WWebJS.sendMessage(chatObject, content, options)
+ * Media must be in options.media — not as content / not a chatId string.
+ * Msg.get(newMsgKey) after send can throw the memoize error even when the
+ * message was delivered, so we recover via addAndSendMsgToChat when needed.
+ */
+async function pageSend(client, chatId, content, options = {}) {
+  if (!client.pupPage) throw new Error("WhatsApp page not ready");
+  return client.pupPage.evaluate(
+    async (id, body, opts) => {
+      if (!window.WWebJS?.getChat || !window.WWebJS?.sendMessage) {
+        throw new Error("WWebJS helpers missing");
+      }
+      let chat = await window.WWebJS.getChat(id, { getAsModel: false });
+      if (!chat) {
+        try {
+          const wid = window.require("WAWebWidFactory").createWid(id);
+          chat =
+            (
+              await window
+                .require("WAWebFindChatAction")
+                .findOrCreateLatestChat(wid)
+            )?.chat || null;
+        } catch (_) {
+          /* ignore */
+        }
+      }
+      if (!chat) throw new Error("Chat not found: " + id);
+
+      try {
+        const sent = await window.WWebJS.sendMessage(chat, body, { ...opts });
+        return {
+          ok: true,
+          id: sent?.id?._serialized || sent?.id || null,
+        };
+      } catch (err) {
+        const msg = String(err?.message || err || "");
+        // Message often lands; only the post-send Msg.get lookup fails.
+        if (/memoize|id property/i.test(msg) && !opts?.media) {
+          return { ok: true, id: null, note: "memoize_after_text" };
+        }
+        throw err;
+      }
+    },
+    chatId,
+    content,
+    options
+  );
+}
+
+async function pageSendMedia(client, chatId, media, caption, asDocument) {
+  const payload = normalizeMediaPayload(media);
+  if (!client.pupPage) throw new Error("WhatsApp page not ready");
+
+  return client.pupPage.evaluate(
+    async (id, mediaObj, captionText, forceDocument) => {
+      const chat = await window.WWebJS.getChat(id, { getAsModel: false });
+      if (!chat) throw new Error("Chat not found: " + id);
+
+      const mediaOptions = await window.WWebJS.processMediaData(mediaObj, {
+        forceDocument: Boolean(forceDocument),
+      });
+      if (captionText) mediaOptions.caption = captionText;
+
+      const { getMaybeMeLidUser, getMaybeMePnUser } = window.require(
+        "WAWebUserPrefsMeUser"
+      );
+      const lidUser = getMaybeMeLidUser();
+      const meUser = getMaybeMePnUser();
+      let from = typeof chat.id?.isLid === "function" && chat.id.isLid()
+        ? lidUser
+        : meUser;
+      let participant;
+      if (typeof chat.id?.isGroup === "function" && chat.id.isGroup()) {
+        from =
+          chat.groupMetadata && chat.groupMetadata.isLidAddressingMode
+            ? lidUser
+            : meUser;
+        if (!from) throw new Error("Unable to resolve sender identity");
+        participant = window
+          .require("WAWebWidFactory")
+          .asUserWidOrThrow(from);
+      }
+      if (!from) throw new Error("Unable to resolve sender identity");
+
+      const newId = await window.require("WAWebMsgKey").newId();
+      const newMsgKey = new (window.require("WAWebMsgKey"))({
+        from,
+        to: chat.id,
+        id: newId,
+        participant,
+        selfDir: "out",
+      });
+
+      const ephemeralFields = window
+        .require("WAWebGetEphemeralFieldsMsgActionsUtils")
+        .getEphemeralFields(chat);
+
+      const message = {
+        id: newMsgKey,
+        ack: 0,
+        body: mediaOptions.preview,
+        from,
+        to: chat.id,
+        local: true,
+        self: "out",
+        t: parseInt(new Date().getTime() / 1000, 10),
+        isNewMsg: true,
+        type: "chat",
+        ...ephemeralFields,
+        ...mediaOptions,
+        ...(mediaOptions.toJSON ? mediaOptions.toJSON() : {}),
+      };
+
+      const [msgPromise, sendMsgResultPromise] = window
+        .require("WAWebSendMsgChatAction")
+        .addAndSendMsgToChat(chat, message);
+      await msgPromise;
+      try {
+        await sendMsgResultPromise;
+      } catch (_) {
+        /* delivery ack optional */
+      }
+
+      return {
+        ok: true,
+        id: newMsgKey?._serialized || null,
+      };
+    },
+    chatId,
+    payload,
+    caption || "",
+    Boolean(asDocument)
+  );
+}
+
 async function sendTextToGroup(client, chatId, text) {
   const chat = await ensureChat(client, chatId);
   if (chat) {
@@ -405,64 +560,71 @@ async function sendTextToGroup(client, chatId, text) {
     }
   }
   try {
-    return await client.sendMessage(chatId, text);
+    const sent = await client.sendMessage(chatId, text, { sendSeen: false });
+    if (sent) return sent;
   } catch (err) {
     console.warn("client.sendMessage text failed:", err.message || err);
   }
-  if (!client.pupPage) throw new Error("Unable to send text");
-  const ok = await client.pupPage.evaluate(async (id, body) => {
-    if (!window.WWebJS?.sendMessage) throw new Error("WWebJS.sendMessage missing");
-    const sent = await window.WWebJS.sendMessage(id, body, {}, true);
-    return { id: sent?.id?._serialized || null };
-  }, chatId, text);
+  const ok = await pageSend(client, chatId, text, {});
+  if (!ok?.ok) throw new Error("Unable to send text");
   return ok;
 }
 
 async function sendMediaToGroup(client, chatId, media, caption) {
-  const options = caption ? { caption } : {};
+  const payload = normalizeMediaPayload(media);
+  const mm = new MessageMedia(payload.mimetype, payload.data, payload.filename);
+  const options = {
+    caption: caption || undefined,
+    sendSeen: false,
+  };
 
-  // Strategy 1: resolve chat model then send (avoids memoize id errors)
-  const chat = await ensureChat(client, chatId);
-  if (chat) {
-    try {
-      return await chat.sendMessage(media, options);
-    } catch (err) {
-      console.warn("chat.sendMessage media failed:", err.message || err);
-    }
-    try {
-      return await chat.sendMessage(media, { ...options, sendMediaAsDocument: true });
-    } catch (err) {
-      console.warn("chat.sendMessage as document failed:", err.message || err);
-    }
-  }
-
-  // Strategy 2: client.sendMessage with chat id string
+  // Strategy 1: official client API
   try {
-    return await client.sendMessage(chatId, media, options);
+    const sent = await client.sendMessage(chatId, mm, options);
+    if (sent) return sent;
   } catch (err) {
     console.warn("client.sendMessage media failed:", err.message || err);
   }
 
-  // Strategy 3: page-level WWebJS send with plain base64 payload
-  if (!client.pupPage) throw new Error("Unable to send media");
-  const payload = {
-    mimetype: media.mimetype,
-    data: media.data,
-    filename: media.filename || "announcement.jpg",
-  };
-  const ok = await client.pupPage.evaluate(
-    async (id, mediaObj, captionText) => {
-      if (!window.WWebJS?.sendMessage) throw new Error("WWebJS.sendMessage missing");
-      const opts = {};
-      if (captionText) opts.caption = captionText;
-      const sent = await window.WWebJS.sendMessage(id, mediaObj, opts, true);
-      return { id: sent?.id?._serialized || null };
-    },
-    chatId,
-    payload,
-    caption || ""
-  );
-  return ok;
+  // Strategy 2: as document via client API
+  try {
+    const sent = await client.sendMessage(chatId, mm, {
+      ...options,
+      sendMediaAsDocument: true,
+    });
+    if (sent) return sent;
+  } catch (err) {
+    console.warn("client.sendMessage document failed:", err.message || err);
+  }
+
+  // Strategy 3: direct page send (skips buggy Msg.get after upload)
+  try {
+    const sent = await pageSendMedia(client, chatId, payload, caption, false);
+    if (sent?.ok) return sent;
+  } catch (err) {
+    console.warn("pageSendMedia image failed:", err.message || err);
+  }
+
+  // Strategy 4: page send as document
+  try {
+    const sent = await pageSendMedia(client, chatId, payload, caption, true);
+    if (sent?.ok) return sent;
+  } catch (err) {
+    console.warn("pageSendMedia document failed:", err.message || err);
+  }
+
+  // Strategy 5: correct WWebJS.sendMessage(chat, '', { media })
+  try {
+    const sent = await pageSend(client, chatId, "", {
+      media: payload,
+      caption: caption || undefined,
+    });
+    if (sent?.ok) return sent;
+  } catch (err) {
+    console.warn("pageSend media failed:", err.message || err);
+  }
+
+  throw new Error("Unable to send media to " + chatId);
 }
 
 app.listen(PORT, "0.0.0.0", () => {

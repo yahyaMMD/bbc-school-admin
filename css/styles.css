@@ -3440,4 +3440,31 @@ html[dir="rtl"] .home-icon-tile {
     width: 72px;
     height: 72px;
   }
+
+  .wa-shell .page-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.65rem;
+  }
+
+  .wa-shell .page-header .btn,
+  .wa-connect-actions .btn {
+    width: 100%;
+  }
+
+  .wa-qr-block img,
+  .wa-qr-block canvas,
+  .ann-qr img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .ann-wizard-steps {
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .ann-history {
+    overflow-x: auto;
+  }
 }

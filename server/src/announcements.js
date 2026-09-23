@@ -6,7 +6,7 @@ import { saveAnnouncementImage, absoluteUploadPath } from "./uploads.js";
 const WA_BRIDGE_URL = (process.env.WA_BRIDGE_URL || "http://127.0.0.1:3847").replace(/\/$/, "");
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY || "";
 const OPENROUTER_IMAGE_MODEL =
-  process.env.OPENROUTER_IMAGE_MODEL || "sourceful/riverflow-v2-fast";
+  process.env.OPENROUTER_IMAGE_MODEL || "black-forest-labs/flux.2-klein-4b";
 
 function sid(prefix = "ANN") {
   return prefix + crypto.randomBytes(5).toString("hex").toUpperCase();
@@ -133,9 +133,10 @@ export async function generateImage(req, res) {
     // Prefer fast models first; fall back if a model is unavailable on the key
     const models = [
       OPENROUTER_IMAGE_MODEL,
+      "black-forest-labs/flux.2-klein-4b",
       "sourceful/riverflow-v2-fast",
       "google/gemini-2.5-flash-image",
-      "black-forest-labs/flux.2-flex",
+      "bytedance-seed/seedream-4.5",
     ].filter((m, i, arr) => m && arr.indexOf(m) === i);
 
     let imageItem = null;
