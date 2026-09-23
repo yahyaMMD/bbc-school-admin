@@ -170,7 +170,6 @@
             <img src="assets/logo.png?v=2" alt="${esc(I18n.t("brand"))}" width="88" height="88" />
             <div>
               <h1>${esc(I18n.t("brand"))}</h1>
-              <p>${esc(I18n.t("loginHint"))}</p>
             </div>
           </div>
           <form class="login-form" id="login-form" autocomplete="off">
