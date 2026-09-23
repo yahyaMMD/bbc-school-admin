@@ -18,5 +18,5 @@ fi
 docker compose up -d --build
 docker compose ps
 echo
-echo "Updated. Open http://72.62.42.122/ → Admin door → Manage"
+echo "Updated. Open http://72.62.42.122/ — Staff console can upload student/teacher photos."
 curl -sS -m 5 -o /dev/null -w "HTTP %{http_code}\n" http://127.0.0.1:8080/ || true
