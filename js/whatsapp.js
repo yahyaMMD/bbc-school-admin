@@ -147,8 +147,14 @@ const WhatsAppApp = (() => {
           <p class="ann-status" data-ann-status hidden></p>
           <div class="ann-preview" data-ann-preview hidden>
             <img alt="" data-ann-preview-img />
+            <div class="ann-preview-actions">
+              <button type="button" class="btn btn-primary" data-ann-validate disabled>${esc(I18n.t("validateImage"))}</button>
+              <button type="button" class="btn btn-ghost" data-ann-regen>${esc(I18n.t("regenerateImage"))}</button>
+            </div>
+            <p class="ann-validate-hint" data-ann-validate-hint hidden>${esc(I18n.t("imageValidated"))}</p>
           </div>
           <input type="hidden" data-ann-image-url value="" />
+          <input type="hidden" data-ann-image-validated value="0" />
         </section>
 
         <section class="admin-panel" style="margin-bottom:1rem">
@@ -160,6 +166,7 @@ const WhatsAppApp = (() => {
             <input type="search" class="ann-group-search" data-ann-group-search placeholder="${esc(I18n.t("searchGroups"))}" />
             <button type="button" class="btn btn-ghost btn-sm" data-ann-select-all>${esc(I18n.t("selectAllGroups"))}</button>
             <button type="button" class="btn btn-ghost btn-sm" data-ann-clear-groups>${esc(I18n.t("clearGroups"))}</button>
+            <button type="button" class="btn btn-ghost btn-sm" data-ann-groups-refresh>${esc(I18n.t("waRefresh"))}</button>
           </div>
           <div class="ann-groups" data-ann-groups>
             <div class="admin-empty">${esc(I18n.t("loading"))}</div>
@@ -168,6 +175,7 @@ const WhatsAppApp = (() => {
 
         <div class="ann-send-bar">
           <button type="button" class="btn btn-primary" data-ann-send disabled>${esc(I18n.t("sendAnnouncement"))}</button>
+          <p class="admin-field-hint">${esc(I18n.t("sendRequiresValidate"))}</p>
           <p class="ann-send-result" data-ann-send-result hidden></p>
         </div>
       </div>
@@ -327,6 +335,9 @@ const WhatsAppApp = (() => {
     const previewWrap = createRoot.querySelector("[data-ann-preview]");
     const previewImg = createRoot.querySelector("[data-ann-preview-img]");
     const imageUrlEl = createRoot.querySelector("[data-ann-image-url]");
+    const validatedEl = createRoot.querySelector("[data-ann-image-validated]");
+    const validateBtn = createRoot.querySelector("[data-ann-validate]");
+    const validateHint = createRoot.querySelector("[data-ann-validate-hint]");
     const groupsEl = createRoot.querySelector("[data-ann-groups]");
     const groupCountEl = createRoot.querySelector("[data-ann-group-count]");
     const sendBtn = createRoot.querySelector("[data-ann-send]");
@@ -341,24 +352,39 @@ const WhatsAppApp = (() => {
       statusEl.classList.toggle("is-err", Boolean(!ok && msg));
     };
 
-    const setImage = (url) => {
+    const setValidated = (ok) => {
+      if (validatedEl) validatedEl.value = ok ? "1" : "0";
+      if (validateHint) validateHint.hidden = !ok;
+      if (validateBtn) {
+        validateBtn.disabled = !imageUrlEl?.value || ok;
+        validateBtn.textContent = ok ? I18n.t("imageValidated") : I18n.t("validateImage");
+      }
+      updateSendEnabled();
+    };
+
+    const setImage = (url, { needsValidation = true } = {}) => {
       if (imageUrlEl) imageUrlEl.value = url || "";
       if (previewWrap && previewImg) {
         if (url) {
           previewWrap.hidden = false;
-          previewImg.src = url;
+          previewImg.src = `${url}${url.includes("?") ? "&" : "?"}t=${Date.now()}`;
         } else {
           previewWrap.hidden = true;
           previewImg.removeAttribute("src");
         }
       }
-      updateSendEnabled();
+      setValidated(url ? !needsValidation : false);
+      if (url && needsValidation && validateBtn) {
+        validateBtn.disabled = false;
+        validateBtn.textContent = I18n.t("validateImage");
+      }
     };
 
     const updateSendEnabled = () => {
       const hasImage = Boolean(imageUrlEl?.value);
+      const validated = validatedEl?.value === "1";
       const hasGroups = selected.size > 0;
-      if (sendBtn) sendBtn.disabled = !(hasImage && hasGroups);
+      if (sendBtn) sendBtn.disabled = !(hasImage && validated && hasGroups);
       if (groupCountEl) {
         groupCountEl.textContent = I18n.t("groupsSelected").replace("{n}", String(selected.size));
       }
@@ -398,9 +424,15 @@ const WhatsAppApp = (() => {
     };
 
     const loadGroups = async () => {
+      groupsEl.innerHTML = `<div class="admin-empty">${esc(I18n.t("loading"))}</div>`;
       try {
         const data = await BBC_API.get("/announcements/wa/groups");
         groups = Array.isArray(data?.groups) ? data.groups : Array.isArray(data) ? data : [];
+        if (!groups.length) {
+          groupsEl.innerHTML = `<div class="admin-empty">${esc(I18n.t("noGroups"))}</div>`;
+          updateSendEnabled();
+          return;
+        }
         renderGroups();
       } catch (err) {
         groups = [];
@@ -416,30 +448,45 @@ const WhatsAppApp = (() => {
         return;
       }
       setStatus(I18n.t("generatingImage"), true);
+      setValidated(false);
       try {
         const res = await BBC_API.post("/announcements/generate-image", { text });
-        setImage(res.url);
-        setStatus("Image ready", true);
+        setImage(res.url, { needsValidation: true });
+        setStatus(I18n.t("imageReadyValidate"), true);
       } catch (err) {
         setStatus(err.message || "Generation failed", false);
       }
+    });
+
+    createRoot.querySelector("[data-ann-regen]")?.addEventListener("click", () => {
+      createRoot.querySelector("[data-ann-generate]")?.click();
+    });
+
+    validateBtn?.addEventListener("click", () => {
+      if (!imageUrlEl?.value) return;
+      setValidated(true);
+      setStatus(I18n.t("imageValidated"), true);
     });
 
     createRoot.querySelector("[data-ann-file]")?.addEventListener("change", async (e) => {
       const file = e.target.files && e.target.files[0];
       if (!file) return;
       setStatus(I18n.t("photoUploading") || "Uploading…", true);
+      setValidated(false);
       try {
         const dataUrl = await BBC_API.readFileAsDataUrl(file);
         const res = await BBC_API.post("/announcements/upload-image", { dataUrl });
-        setImage(res.url);
-        setStatus("Image ready", true);
+        setImage(res.url, { needsValidation: true });
+        setStatus(I18n.t("imageReadyValidate"), true);
       } catch (err) {
         setStatus(err.message || "Upload failed", false);
       }
       e.target.value = "";
     });
 
+    createRoot.querySelector("[data-ann-groups-refresh]")?.addEventListener("click", () => {
+      loadGroups();
+    });
     searchEl?.addEventListener("input", () => renderGroups());
     createRoot.querySelector("[data-ann-select-all]")?.addEventListener("click", () => {
       const q = (searchEl?.value || "").trim().toLowerCase();
@@ -456,6 +503,10 @@ const WhatsAppApp = (() => {
     sendBtn?.addEventListener("click", async () => {
       const text = (textEl?.value || "").trim();
       const imageUrl = imageUrlEl?.value || "";
+      if (validatedEl?.value !== "1") {
+        setStatus(I18n.t("sendRequiresValidate"), false);
+        return;
+      }
       const groupIds = [...selected];
       const groupNames = groupIds.map((id) => groups.find((x) => x.id === id)?.name || id);
       if (!imageUrl || !groupIds.length) return;

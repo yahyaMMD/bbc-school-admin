@@ -3156,16 +3156,33 @@ html[dir="rtl"] .home-icon-tile {
 
 .ann-preview {
   margin-top: 0.75rem;
-  max-width: 320px;
+  max-width: 360px;
   border-radius: 14px;
   overflow: hidden;
   border: 1px solid var(--line);
+  background: #fff;
 }
 
 .ann-preview img {
   display: block;
   width: 100%;
   height: auto;
+}
+
+.ann-preview-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-top: 1px solid var(--line);
+}
+
+.ann-validate-hint {
+  margin: 0;
+  padding: 0 0.75rem 0.75rem;
+  font-size: 0.85rem;
+  color: #1b6b34;
+  font-weight: 600;
 }
 
 .ann-wa-ready {

@@ -141,19 +141,89 @@ app.get("/groups", async (_req, res) => {
     if (!client.info) {
       return res.status(503).json({ ok: false, error: "WhatsApp not connected yet" });
     }
-    const chats = await client.getChats();
-    const groups = chats
-      .filter((c) => c.isGroup)
-      .map((c) => ({
-        id: c.id._serialized,
-        name: c.name || c.id.user || "Group",
-        participants: c.participants?.length || null,
-      }))
-      .sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: "base" }));
-    res.json({ ok: true, groups });
+
+    let groups = [];
+
+    // Primary: library API
+    try {
+      const chats = await client.getChats();
+      groups = (chats || [])
+        .filter((c) => c && (c.isGroup || String(c.id?._serialized || "").endsWith("@g.us")))
+        .map((c) => ({
+          id: c.id._serialized,
+          name: c.name || c.id?.user || "Group",
+        }));
+    } catch (err) {
+      console.warn("getChats failed, using Store fallback:", err?.message || err);
+    }
+
+    // Fallback: read groups from WhatsApp Web Store (survives WA webpack flips)
+    if (!groups.length && client.pupPage) {
+      const fromStore = await client.pupPage.evaluate(() => {
+        const out = [];
+        const seen = new Set();
+        const push = (id, name) => {
+          if (!id || !String(id).endsWith("@g.us") || seen.has(id)) return;
+          seen.add(id);
+          out.push({ id: String(id), name: String(name || id) });
+        };
+
+        try {
+          const Store = window.Store;
+          const arr =
+            (Store?.Chat?.getModelsArray && Store.Chat.getModelsArray()) ||
+            Store?.Chat?.models ||
+            [];
+          for (const c of arr) {
+            const id = c?.id?._serialized || "";
+            const isGroup =
+              Boolean(c?.isGroup) ||
+              c?.id?.server === "g.us" ||
+              String(id).endsWith("@g.us");
+            if (!isGroup) continue;
+            push(id, c.name || c.formattedTitle || c.contact?.name || c.id?.user);
+          }
+        } catch (_) {
+          /* try next */
+        }
+
+        try {
+          const mod =
+            window.require &&
+            (window.require("WAWebChatCollection") || window.require("WAWebCollections"));
+          const chats = mod?.ChatCollection || mod?.Chat || mod;
+          const models =
+            (chats?.getModelsArray && chats.getModelsArray()) || chats?.models || [];
+          for (const c of models) {
+            const id = c?.id?._serialized || "";
+            if (!String(id).endsWith("@g.us")) continue;
+            push(id, c.name || c.formattedTitle || c.id?.user);
+          }
+        } catch (_) {
+          /* ignore */
+        }
+
+        return out;
+      });
+
+      if (Array.isArray(fromStore)) {
+        groups = fromStore;
+      } else if (fromStore?.error) {
+        throw new Error(fromStore.error);
+      }
+    }
+
+    groups.sort((a, b) =>
+      String(a.name).localeCompare(String(b.name), undefined, { sensitivity: "base" })
+    );
+
+    res.json({ ok: true, groups, count: groups.length });
   } catch (err) {
     console.error("groups failed", err);
-    res.status(500).json({ ok: false, error: err.message || String(err) });
+    res.status(500).json({
+      ok: false,
+      error: err?.message || String(err),
+    });
   }
 });
 

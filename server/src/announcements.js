@@ -127,33 +127,65 @@ export async function generateImage(req, res) {
       text,
     ].join("\n");
 
-    const oa = await fetch("https://api.openai.com/v1/images/generations", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${OPENAI_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "dall-e-3",
+    // dall-e-3 retired May 2026 — use GPT Image models (try newest first)
+    const models = ["gpt-image-2", "gpt-image-1.5", "gpt-image-1", "gpt-image-1-mini"];
+    let oaData = null;
+    let usedModel = null;
+    let lastError = "";
+
+    for (const model of models) {
+      const body = {
+        model,
         prompt: prompt.slice(0, 3900),
         size: "1024x1024",
-        quality: "standard",
         n: 1,
-      }),
-    });
-    const oaText = await oa.text();
-    let oaData = null;
-    try {
-      oaData = JSON.parse(oaText);
-    } catch {
-      oaData = null;
+      };
+      // gpt-image-* uses low|medium|high|auto — not DALL·E quality enums
+      if (model.startsWith("gpt-image")) {
+        body.quality = "medium";
+      }
+
+      const oa = await fetch("https://api.openai.com/v1/images/generations", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${OPENAI_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
+      const oaText = await oa.text();
+      let parsed = null;
+      try {
+        parsed = JSON.parse(oaText);
+      } catch {
+        parsed = null;
+      }
+      if (oa.ok && parsed) {
+        oaData = parsed;
+        usedModel = model;
+        break;
+      }
+      lastError =
+        parsed?.error?.message ||
+        parsed?.error ||
+        `OpenAI image generation failed (${oa.status}) for ${model}`;
+      // Try next model if this one is missing / unauthorized for org
+      const msg = String(lastError).toLowerCase();
+      if (
+        msg.includes("does not exist") ||
+        msg.includes("not found") ||
+        msg.includes("not available") ||
+        msg.includes("model_not_found") ||
+        oa.status === 404
+      ) {
+        continue;
+      }
+      // Other errors (billing, moderation, etc.) — stop
+      break;
     }
-    if (!oa.ok) {
-      const msg =
-        oaData?.error?.message ||
-        oaData?.error ||
-        `OpenAI image generation failed (${oa.status})`;
-      return res.status(502).json({ error: String(msg) });
+
+    if (!oaData) {
+      return res.status(502).json({ error: String(lastError || "Image generation failed") });
     }
 
     const b64 = oaData?.data?.[0]?.b64_json;
@@ -180,7 +212,7 @@ export async function generateImage(req, res) {
       mime,
       id: sid("IMG"),
     });
-    res.json({ ok: true, url: saved.url, text });
+    res.json({ ok: true, url: saved.url, text, model: usedModel });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message || "Image generation failed" });
