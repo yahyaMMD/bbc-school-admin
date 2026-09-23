@@ -73,7 +73,6 @@ const AdminApp = (() => {
       { id: "students", href: "#/manage/students", label: I18n.t("allStudents") },
       { id: "teachers", href: "#/manage/teachers", label: I18n.t("teachers") },
       { id: "incomplete", href: "#/manage/incomplete", label: I18n.t("missingInfo") },
-      { id: "browse", href: "#/home", label: I18n.t("directorView") },
     ];
     return `
       <div class="admin-shell">

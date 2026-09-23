@@ -244,7 +244,6 @@
       </div>
 
       <div class="stats-row home-stats">
-        <div class="stat-card"><div class="label">${esc(I18n.t("yearGroups"))}</div><div class="value"><em>${stats.levels}</em></div></div>
         <div class="stat-card"><div class="label">${esc(I18n.t("classes"))}</div><div class="value">${stats.classes}</div></div>
         <div class="stat-card"><div class="label">${esc(I18n.t("students"))}</div><div class="value">${stats.students.toLocaleString(loc)}</div></div>
         <div class="stat-card"><div class="label">${esc(I18n.t("teachersListed"))}</div><div class="value">${stats.teachers}</div></div>
