@@ -52,8 +52,19 @@
     return level.name;
   }
 
+  function classOrdinal(cls) {
+    if (!cls) return null;
+    const idMatch = String(cls.id || "").match(/C0*(\d+)\s*$/i);
+    if (idMatch) return Number(idMatch[1]);
+    const codeMatch = String(cls.code || cls.name || "").match(/(\d+)\s*$/);
+    if (codeMatch) return Number(codeMatch[1]);
+    return null;
+  }
+
   function classDisplayCode(cls) {
     if (!cls) return "—";
+    const n = classOrdinal(cls);
+    if (n != null && Number.isFinite(n)) return I18n.t("classN", { n });
     if (I18n.getLang() === "ar" && cls.nameAr) return cls.nameAr;
     return cls.code || cls.name || "—";
   }
@@ -61,23 +72,23 @@
   function classDisplayExtra(cls) {
     if (!cls) return "";
     const parts = [];
-    if (I18n.getLang() !== "ar" && cls.nameAr && cls.nameAr !== (cls.code || cls.name)) {
-      parts.push(cls.nameAr);
-    }
-    if (I18n.getLang() === "ar" && cls.code && cls.nameAr && cls.code !== cls.nameAr) {
-      /* Arabic UI already shows nameAr as main */
-    }
     if (cls.floor) {
       const floor = String(cls.floor);
-      if (I18n.getLang() === "ar") {
-        parts.push(floor.replace(/^Floor\s*/i, I18n.t("floor") + " "));
-      } else if (I18n.getLang() === "fr") {
+      if (I18n.getLang() === "ar" || I18n.getLang() === "fr") {
         parts.push(floor.replace(/^Floor\s*/i, I18n.t("floor") + " "));
       } else {
         parts.push(floor);
       }
     }
     return parts.filter(Boolean).join(" · ");
+  }
+
+  function classOptionLabel(opt) {
+    if (!opt) return "—";
+    const found = BBC_DATA.findClassById(opt.id);
+    const cls = found ? found.cls : null;
+    const name = cls ? classDisplayCode(cls) : opt.code || opt.id;
+    return `${deptShortLabel(opt.departmentId)} · ${name}`;
   }
 
   function moduleLabel(m) {
@@ -347,14 +358,14 @@
         ${BBC_DATA.departments
           .map((d) => {
             const label = d.id === "primary" ? I18n.t("primary") : I18n.t("middle");
+            const desc = d.id === "primary" ? I18n.t("primaryDesc") : I18n.t("middleDesc");
             return `
           <button type="button" class="dept-card" data-nav="#/dept/${d.id}">
             <img src="${esc(d.image)}" alt="" loading="eager" />
             <div class="overlay"></div>
             <div class="content">
-              <span class="eyebrow">${esc(label)}</span>
               <h2>${esc(label)}</h2>
-              <p>${esc(d.description)}</p>
+              <p>${esc(desc)}</p>
               <span class="cta">${esc(I18n.t("openDepartment"))}</span>
             </div>
           </button>
@@ -526,7 +537,11 @@
           <button type="button" class="floor-card" style="--accent:${["#F26522","#E85A1A","#D94F14","#C94412","#B83A10"][i % 5]}" data-nav="#/dept/${deptId}/level/${l.id}">
             <span class="floor-num">${l.id === 99 ? "—" : l.id}</span>
             <h3>${esc(levelDisplayName(l))}</h3>
-            <p>${esc(I18n.getLang() === "ar" ? l.name || "" : l.nameAr || l.subtitle || "")}</p>
+            ${
+              I18n.getLang() !== "ar" && (l.nameAr || l.subtitle)
+                ? `<p>${esc(l.nameAr || l.subtitle || "")}</p>`
+                : ""
+            }
             <div class="floor-meta">${esc(I18n.t("classesCount", { n: l.classes.length }))}</div>
           </button>
         `
@@ -541,10 +556,7 @@
     const level = BBC_DATA.getLevel(deptId, levelId);
     if (!dept || !level) return viewNotFound();
     const short = deptShortLabel(deptId);
-    const sub =
-      I18n.getLang() === "ar"
-        ? level.name || ""
-        : level.nameAr || "";
+    const sub = I18n.getLang() === "ar" ? "" : level.nameAr || "";
     return shell(`
       ${crumb([
         { label: I18n.t("departments"), to: "#/home" },
@@ -808,7 +820,7 @@
         <div class="fact-card"><div class="k">${esc(I18n.t("rosterNumber"))}</div><div class="v">${s.number ?? "—"}</div></div>
         <div class="fact-card"><div class="k">${esc(I18n.t("department"))}</div><div class="v">${esc(deptFullLabel(dept))}</div></div>
         <div class="fact-card"><div class="k">${esc(I18n.t("year"))}</div><div class="v">${esc(levelDisplayName(level))}</div></div>
-        <div class="fact-card"><div class="k">${esc(I18n.t("class"))}</div><div class="v"><button type="button" class="link-btn" data-nav="${esc(classBack)}">${esc(classDisplayCode(cls))}${cls.nameAr && cls.nameAr !== (cls.code || cls.name) && I18n.getLang() !== "ar" ? " · " + esc(cls.nameAr) : ""}</button></div></div>
+        <div class="fact-card"><div class="k">${esc(I18n.t("class"))}</div><div class="v"><button type="button" class="link-btn" data-nav="${esc(classBack)}">${esc(classDisplayCode(cls))}</button></div></div>
         <div class="fact-card"><div class="k">${esc(I18n.t("studentId"))}</div><div class="v">${esc(s.id)}</div></div>
       </div>
       ${
@@ -863,7 +875,7 @@
                       <td data-label="Name"><strong dir="auto">${esc(BBC_DATA.studentFullName(s))}</strong></td>
                       <td class="hide-sm" data-label="Department">${esc(deptShortLabel(dept.id))}</td>
                       <td class="hide-mobile" data-label="Year">${esc(level.name)}</td>
-                      <td data-label="Class">${esc(cls.code)}</td>
+                      <td data-label="Class">${esc(classDisplayCode(cls))}</td>
                       <td class="hide-sm" data-label="Gender">${esc(s.gender || "—")}</td>
                       <td data-label=""><button type="button" class="link-btn" data-nav="#/student/${s.id}">View</button></td>
                     </tr>`
@@ -915,25 +927,25 @@
             <input type="search" name="q" value="${esc(params.get("q") || "")}" placeholder="Search…" />
           </label>
           <label class="filter-field">
-            <span>Department</span>
+            <span>${esc(I18n.t("department"))}</span>
             <select name="dept">
-              <option value="">All</option>
-              <option value="primary"${dept === "primary" ? " selected" : ""}>Primary</option>
-              <option value="middle"${dept === "middle" ? " selected" : ""}>Middle School</option>
+              <option value="">${esc(I18n.t("all"))}</option>
+              <option value="primary"${dept === "primary" ? " selected" : ""}>${esc(I18n.t("primary"))}</option>
+              <option value="middle"${dept === "middle" ? " selected" : ""}>${esc(I18n.t("middle"))}</option>
             </select>
           </label>
           <label class="filter-field">
             <span>Subject</span>
             <select name="module">
-              <option value="">All</option>
+              <option value="">${esc(I18n.t("all"))}</option>
               ${modules.map((m) => `<option value="${esc(m)}"${module === m ? " selected" : ""}>${esc(m)}</option>`).join("")}
             </select>
           </label>
           <label class="filter-field">
-            <span>Class</span>
+            <span>${esc(I18n.t("class"))}</span>
             <select name="class">
-              <option value="">All</option>
-              ${classOpts.map((o) => `<option value="${esc(o.id)}"${classId === o.id ? " selected" : ""}>${esc(o.label)}</option>`).join("")}
+              <option value="">${esc(I18n.t("all"))}</option>
+              ${classOpts.map((o) => `<option value="${esc(o.id)}"${classId === o.id ? " selected" : ""}>${esc(classOptionLabel(o))}</option>`).join("")}
             </select>
           </label>
         </div>
@@ -948,7 +960,7 @@
             ? filtered
                 .map(({ teacher: t, classes }) => {
                   const depts = (t.departments || []).map((d) => deptShortLabel(d)).join(" · ");
-                  const classCodes = classes.map((x) => x.cls.code).join(", ") || "—";
+                  const classCodes = classes.map((x) => classDisplayCode(x.cls)).join(", ") || "—";
                   return `
               <button type="button" class="dir-card" data-nav="#/teacher/${t.id}?from=${encodeURIComponent("#/teachers")}">
                 ${profileAvatar(t, "teacher")}
@@ -1023,33 +1035,33 @@
             <input type="search" name="q" value="${esc(params.get("q") || "")}" placeholder="Search…" />
           </label>
           <label class="filter-field">
-            <span>Department</span>
+            <span>${esc(I18n.t("department"))}</span>
             <select name="dept">
-              <option value="">All</option>
-              <option value="primary"${dept === "primary" ? " selected" : ""}>Primary</option>
-              <option value="middle"${dept === "middle" ? " selected" : ""}>Middle School</option>
+              <option value="">${esc(I18n.t("all"))}</option>
+              <option value="primary"${dept === "primary" ? " selected" : ""}>${esc(I18n.t("primary"))}</option>
+              <option value="middle"${dept === "middle" ? " selected" : ""}>${esc(I18n.t("middle"))}</option>
             </select>
           </label>
           <label class="filter-field">
-            <span>Year</span>
+            <span>${esc(I18n.t("year"))}</span>
             <select name="year">
-              <option value="">All</option>
+              <option value="">${esc(I18n.t("all"))}</option>
               ${yearOptions.map((o) => `<option value="${esc(o.value)}"${year === o.value ? " selected" : ""}>${esc(o.label)}</option>`).join("")}
             </select>
           </label>
           <label class="filter-field">
-            <span>Class</span>
+            <span>${esc(I18n.t("class"))}</span>
             <select name="class">
-              <option value="">All</option>
-              ${classOpts.map((o) => `<option value="${esc(o.id)}"${classId === o.id ? " selected" : ""}>${esc(o.label)}</option>`).join("")}
+              <option value="">${esc(I18n.t("all"))}</option>
+              ${classOpts.map((o) => `<option value="${esc(o.id)}"${classId === o.id ? " selected" : ""}>${esc(classOptionLabel(o))}</option>`).join("")}
             </select>
           </label>
           <label class="filter-field">
-            <span>Gender</span>
+            <span>${esc(I18n.t("gender"))}</span>
             <select name="gender">
-              <option value="">All</option>
-              <option value="Male"${gender === "Male" ? " selected" : ""}>Male</option>
-              <option value="Female"${gender === "Female" ? " selected" : ""}>Female</option>
+              <option value="">${esc(I18n.t("all"))}</option>
+              <option value="Male"${gender === "Male" ? " selected" : ""}>${esc(I18n.t("male"))}</option>
+              <option value="Female"${gender === "Female" ? " selected" : ""}>${esc(I18n.t("female"))}</option>
             </select>
           </label>
         </div>

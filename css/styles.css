@@ -67,6 +67,8 @@ a {
 /* ——— Atmosphere ——— */
 .app-shell {
   min-height: 100vh;
+  max-width: 100vw;
+  overflow-x: hidden;
   background:
     radial-gradient(ellipse 80% 50% at 100% -10%, var(--orange-glow), transparent 55%),
     radial-gradient(ellipse 60% 40% at 0% 100%, rgba(242, 101, 34, 0.08), transparent 50%),
@@ -370,10 +372,12 @@ a {
 
 /* ——— Layout ——— */
 .page {
-  width: min(1120px, calc(100% - 2.5rem));
+  width: 100%;
+  max-width: 1120px;
   margin: 0 auto;
-  padding: 2rem 0 3.5rem;
+  padding: 2rem 1.25rem 3.5rem;
   animation: rise 0.45s var(--ease) both;
+  box-sizing: border-box;
 }
 
 .page-header {
@@ -468,8 +472,10 @@ a {
 /* ——— Department cards ——— */
 .dept-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1.5rem;
+  width: 100%;
+  max-width: 100%;
 }
 
 /* ——— Home directories ——— */
@@ -1688,8 +1694,9 @@ a {
   }
 
   .page {
-    width: calc(100% - 1.25rem);
-    padding: 1.1rem 0 2.5rem;
+    width: 100%;
+    max-width: 100%;
+    padding: 1.1rem 0.65rem 2.5rem;
   }
 
   .page-header {
@@ -1922,7 +1929,8 @@ a {
 
 @media (min-width: 1200px) {
   .page {
-    width: min(1180px, calc(100% - 3rem));
+    max-width: 1180px;
+    padding-inline: 1.5rem;
   }
 }
 
@@ -1946,8 +1954,19 @@ a {
   max-width: 100%;
 }
 
-body {
+html, body {
+  max-width: 100%;
   overflow-x: hidden;
+}
+
+.page,
+.app-shell,
+.home-shortcuts-wrap,
+.home-icon-strip,
+.dept-grid,
+.stats-row {
+  max-width: 100%;
+  min-width: 0;
 }
 
 /* ——— Dual gate ——— */
@@ -3078,18 +3097,19 @@ html[dir="rtl"] .chev {
 }
 
 .home-icon-strip {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.85rem;
-  overflow-x: auto;
-  padding: 0.15rem 0.1rem 0.65rem;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
+  padding: 0.15rem 0;
+  overflow: visible;
+  scroll-snap-type: none;
+  width: 100%;
 }
 
 .home-icon-tile {
-  flex: 0 0 auto;
-  width: min(220px, 72vw);
-  scroll-snap-align: start;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -3102,6 +3122,7 @@ html[dir="rtl"] .chev {
   cursor: pointer;
   box-shadow: var(--shadow-sm);
   transition: border-color 0.2s, transform 0.2s;
+  box-sizing: border-box;
 }
 
 .home-icon-tile:hover {
@@ -3114,6 +3135,7 @@ html[dir="rtl"] .chev {
   height: 56px;
   border-radius: 14px;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .home-icon-pic img {
@@ -3125,6 +3147,12 @@ html[dir="rtl"] .chev {
 .home-icon-tile strong {
   font-family: var(--font-display);
   font-size: 1.05rem;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.home-icon-tile .muted {
+  max-width: 100%;
 }
 
 .home-stats {
@@ -3134,6 +3162,20 @@ html[dir="rtl"] .chev {
 html[dir="rtl"] .home-icon-tile {
   text-align: right;
   align-items: flex-end;
+}
+
+@media (max-width: 420px) {
+  .home-icon-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .home-icon-tile {
+    align-items: flex-start;
+  }
+
+  html[dir="rtl"] .home-icon-tile {
+    align-items: flex-end;
+  }
 }
 
 /* Announcements */
