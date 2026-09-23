@@ -349,7 +349,10 @@ router.put("/students/:id", authRequired(["admin"]), async (req, res) => {
       gender = COALESCE($12, gender),
       notes = COALESCE($13, notes),
       search_name = $14,
-      previous_year_details = COALESCE($15::jsonb, previous_year_details),
+      previous_year_details = CASE
+        WHEN $17::boolean THEN $15::jsonb
+        ELSE previous_year_details
+      END,
       photo = COALESCE($16, photo)
      WHERE id = $1 RETURNING *`,
     [
@@ -367,8 +370,13 @@ router.put("/students/:id", authRequired(["admin"]), async (req, res) => {
       b.gender,
       b.notes,
       searchName,
-      b.previousYearDetails != null ? JSON.stringify(b.previousYearDetails) : null,
+      Object.prototype.hasOwnProperty.call(b, "previousYearDetails")
+        ? b.previousYearDetails
+          ? JSON.stringify(b.previousYearDetails)
+          : null
+        : null,
       b.photo != null ? b.photo : null,
+      Object.prototype.hasOwnProperty.call(b, "previousYearDetails"),
     ]
   );
   for (const cid of new Set([old.class_id, newClassId])) {

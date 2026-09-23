@@ -111,35 +111,36 @@
     } catch (_) {
       /* data not loaded yet */
     }
+    const isStaff = Auth.isAdmin();
+    const homeNav = isStaff ? "#/manage" : "#/home";
     return `
-      <div class="app-shell">
+      <div class="app-shell${isStaff ? " app-shell-staff" : ""}">
         <header class="topbar">
           <div class="topbar-main">
-            <button type="button" class="topbar-brand" data-nav="#/home" aria-label="${esc(I18n.t("home"))}">
+            <button type="button" class="topbar-brand" data-nav="${homeNav}" aria-label="${esc(I18n.t("home"))}">
               <img src="assets/logo.png?v=2" alt="${esc(I18n.t("brand"))}" width="44" height="44" />
               <div class="topbar-brand-text">
                 <strong>${esc(brand)}</strong>
-                <span class="hide-sm">${esc(I18n.t("portal"))}</span>
+                <span class="hide-sm">${esc(isStaff ? I18n.t("adminConsole") : I18n.t("portal"))}</span>
               </div>
             </button>
             <div class="topbar-actions">
               ${I18n.langSwitcher("lang-switch-top")}
               <span class="badge-year hide-md">${esc(year)}</span>
-              ${
-                Auth.isAdmin()
-                  ? `<button type="button" class="btn btn-ghost hide-sm" data-nav="#/manage">${esc(I18n.t("manage"))}</button>`
-                  : ""
-              }
               <button type="button" class="btn btn-ghost btn-logout" id="btn-logout" aria-label="${esc(I18n.t("signOut"))}">
                 <span class="hide-sm">${esc(I18n.t("signOut"))}</span>
                 <span class="show-sm-only" aria-hidden="true">⎋</span>
               </button>
             </div>
           </div>
-          <form class="top-search" id="global-search" autocomplete="off">
+          ${
+            isStaff
+              ? ""
+              : `<form class="top-search" id="global-search" autocomplete="off">
             <input type="search" name="q" placeholder="${esc(I18n.t("searchPlaceholder"))}" value="${esc(state.searchQuery)}" />
             <button type="submit" class="btn btn-primary btn-search" aria-label="${esc(I18n.t("search"))}">${icons.search}</button>
-          </form>
+          </form>`
+          }
         </header>
         <main class="page">${content}</main>
       </div>
@@ -1009,8 +1010,20 @@
       return viewLogin();
     }
     const { parts, params } = state.route;
+    const path0 = parts[0] || "home";
 
-    if (Auth.isAdmin() && parts[0] === "manage") {
+    // Keep Director and Staff sides fully separated
+    if (Auth.isDirector() && path0 === "manage") {
+      go("/home");
+      return viewHome();
+    }
+    if (Auth.isAdmin() && path0 !== "manage") {
+      go("/manage");
+      const html = AdminApp.resolve(["manage"], new URLSearchParams());
+      return shell(html || "");
+    }
+
+    if (Auth.isAdmin() && path0 === "manage") {
       const html = AdminApp.resolve(parts, params);
       if (html) return shell(html);
     }
