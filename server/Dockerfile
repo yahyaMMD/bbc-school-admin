@@ -17,7 +17,9 @@ COPY data/school_data.json ./seed/school_data.json
 ENV NODE_ENV=production
 ENV WEB_ROOT=/app/web
 ENV SEED_JSON=/app/seed/school_data.json
+ENV UPLOAD_DIR=/data/uploads
 ENV PORT=3000
+RUN mkdir -p /data/uploads/students /data/uploads/teachers
 EXPOSE 3000
 
 CMD ["sh", "-c", "node scripts/seed.js && node src/index.js"]

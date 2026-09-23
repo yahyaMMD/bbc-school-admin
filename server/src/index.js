@@ -6,6 +6,7 @@ import { fileURLToPath } from "url";
 import { migrate } from "./migrate.js";
 import { loginHandler } from "./auth.js";
 import apiRoutes from "./routes.js";
+import { ensureUploadDir, getUploadDir } from "./uploads.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT || 3000);
@@ -33,9 +34,12 @@ async function main() {
   console.log("index.html exists=", fs.existsSync(indexPath));
   console.log("js/app.js exists=", fs.existsSync(appJs));
 
+  const uploadDir = ensureUploadDir();
+  console.log("UPLOAD_DIR=", uploadDir);
+
   const app = express();
   app.use(cors());
-  app.use(express.json({ limit: "2mb" }));
+  app.use(express.json({ limit: "6mb" }));
 
   app.get("/api/health", (_req, res) =>
     res.json({
@@ -44,10 +48,23 @@ async function main() {
       webRoot: WEB_ROOT,
       hasIndex: fs.existsSync(indexPath),
       hasAppJs: fs.existsSync(appJs),
+      uploadDir: getUploadDir(),
     })
   );
   app.post("/api/auth/login", loginHandler);
   app.use("/api", apiRoutes);
+
+  // Profile photos hosted on the VPS (Docker volume)
+  app.use(
+    "/uploads",
+    express.static(uploadDir, {
+      fallthrough: false,
+      maxAge: "7d",
+      setHeaders(res) {
+        res.setHeader("Cache-Control", "public, max-age=604800");
+      },
+    })
+  );
 
   app.use(
     express.static(WEB_ROOT, {
@@ -66,6 +83,7 @@ async function main() {
   // SPA fallback ONLY for extension-less routes (never for .js/.css/.png…)
   app.get("*", (req, res, next) => {
     if (req.path.startsWith("/api")) return next();
+    if (req.path.startsWith("/uploads")) return next();
     if (path.extname(req.path)) {
       return res.status(404).type("text").send(`Not found: ${req.path}`);
     }

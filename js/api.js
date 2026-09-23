@@ -67,6 +67,38 @@ const BBC_API = (() => {
     return request("/school-data");
   }
 
+  function readFileAsDataUrl(file) {
+    return new Promise((resolve, reject) => {
+      if (!file) return reject(new Error("No file selected"));
+      if (!/^image\/(jpeg|jpg|png|webp|gif)$/i.test(file.type)) {
+        return reject(new Error("Use JPG, PNG, WEBP or GIF"));
+      }
+      if (file.size > 4 * 1024 * 1024) {
+        return reject(new Error("Image must be under 4 MB"));
+      }
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(new Error("Could not read image"));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  /** Upload profile photo to VPS and save URL on the student/teacher record. */
+  async function uploadPhoto({ entity, id, file }) {
+    const dataUrl = await readFileAsDataUrl(file);
+    return request("/uploads/photo", {
+      method: "POST",
+      body: JSON.stringify({ entity, id, dataUrl }),
+    });
+  }
+
+  async function removePhoto({ entity, id }) {
+    return request("/uploads/photo", {
+      method: "DELETE",
+      body: JSON.stringify({ entity, id }),
+    });
+  }
+
   return {
     getToken,
     getRole,
@@ -74,6 +106,9 @@ const BBC_API = (() => {
     logout,
     isAuthenticated,
     loadSchoolData,
+    uploadPhoto,
+    removePhoto,
+    readFileAsDataUrl,
     request,
     get: (p) => request(p),
     post: (p, body) => request(p, { method: "POST", body: JSON.stringify(body) }),

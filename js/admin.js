@@ -175,6 +175,36 @@ const AdminApp = (() => {
     return `<span class="avatar ${roleCls} avatar-sm"><img src="${esc(src)}" alt="" loading="lazy" onerror="this.onerror=null;this.src='${esc(fallback)}'" /></span>`;
   }
 
+  function photoUploader({ entity, id = "", photo = "", kind = "student" }) {
+    const fallback =
+      kind === "teacher" ? "assets/avatars/teacher.svg" : "assets/avatars/student.svg";
+    const src = photo || fallback;
+    const hasPhoto = Boolean(String(photo || "").trim());
+    const hasId = Boolean(id);
+    return `
+      <div class="admin-photo-uploader admin-field-full" data-entity="${esc(entity)}" data-id="${esc(id)}" data-kind="${esc(kind)}">
+        <span class="admin-photo-label">${esc(I18n.t("photo"))}</span>
+        <div class="admin-photo-row">
+          <img class="admin-photo-preview" src="${esc(src)}" alt="" data-fallback="${esc(fallback)}" />
+          <div class="admin-photo-actions">
+            <label class="btn btn-primary btn-sm admin-photo-pick">
+              <span class="admin-photo-pick-text">${esc(hasPhoto ? I18n.t("photoChange") : I18n.t("photoUpload"))}</span>
+              <input type="file" accept="image/jpeg,image/png,image/webp,image/gif,.jpg,.jpeg,.png,.webp,.gif" hidden />
+            </label>
+            ${
+              hasId && hasPhoto
+                ? `<button type="button" class="btn btn-ghost btn-sm admin-photo-remove">${esc(I18n.t("photoRemove"))}</button>`
+                : ""
+            }
+            <p class="admin-field-hint">${esc(I18n.t("photoHint"))}</p>
+            <p class="admin-photo-status" hidden></p>
+            <input type="hidden" name="photo" value="${esc(photo || "")}" />
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
   function layout(active, title, lede, body) {
     const nav = [
       { id: "home", href: "#/manage", label: I18n.t("overview"), icon: "◆" },
@@ -218,6 +248,12 @@ const AdminApp = (() => {
       ${field("firstName", I18n.t("firstNameAr"), s.firstName || "", { required: true })}
       ${field("lastNameLatin", I18n.t("lastNameLatin"), s.lastNameLatin || "")}
       ${field("firstNameLatin", I18n.t("firstNameLatin"), s.firstNameLatin || "")}
+      ${photoUploader({
+        entity: "students",
+        id: s.id || "",
+        photo: s.photo || "",
+        kind: "student",
+      })}
       ${sectionTitle("Class & status")}
       ${field("number", "Roster #", s.number ?? "", { type: "number", min: 0 })}
       ${field("gender", "Gender", s.gender || "", { type: "select", options: GENDER_OPTS })}
@@ -227,7 +263,6 @@ const AdminApp = (() => {
         options: classOpts.map((o) => ({ value: o.id, label: o.label })),
       })}
       ${field("notes", "Notes", s.notes || "", { type: "textarea", full: true })}
-      ${field("photo", I18n.t("photo"), s.photo || "", { full: true, hint: I18n.t("photoHint") })}
     `;
   }
 
@@ -753,6 +788,12 @@ const AdminApp = (() => {
       ${field("firstName", "First name", t.firstName || "")}
       ${field("lastName", "Last name", t.lastName || "")}
       ${field("nameLatin", "Latin name", t.nameLatin || "")}
+      ${photoUploader({
+        entity: "teachers",
+        id: t.id || "",
+        photo: t.photo || "",
+        kind: "teacher",
+      })}
       ${field("phone", "Phone", t.phone || "", { placeholder: "05…" })}
       ${field("wilaya", "Wilaya", t.wilaya || "Algiers", {
         type: "select",
@@ -782,7 +823,6 @@ const AdminApp = (() => {
             })
           : ""
       }
-      ${field("photo", I18n.t("photo"), t.photo || "", { full: true, hint: I18n.t("photoHint") })}
     `;
   }
 
@@ -1012,6 +1052,79 @@ const AdminApp = (() => {
       }
     };
 
+    const bindPhotoUploaders = () => {
+      root.querySelectorAll(".admin-photo-uploader").forEach((box) => {
+        const input = box.querySelector('input[type="file"]');
+        const preview = box.querySelector(".admin-photo-preview");
+        const status = box.querySelector(".admin-photo-status");
+        const hidden = box.querySelector('input[name="photo"]');
+        const entity = box.getAttribute("data-entity");
+        const id = box.getAttribute("data-id") || "";
+        const fallback = preview?.getAttribute("data-fallback") || "";
+
+        const setStatus = (msg, ok) => {
+          if (!status) return;
+          status.hidden = !msg;
+          status.textContent = msg || "";
+          status.classList.toggle("is-ok", Boolean(ok && msg));
+          status.classList.toggle("is-err", Boolean(!ok && msg));
+        };
+
+        input?.addEventListener("change", async () => {
+          const file = input.files && input.files[0];
+          if (!file) return;
+          try {
+            const dataUrl = await BBC_API.readFileAsDataUrl(file);
+            if (preview) preview.src = dataUrl;
+          } catch (err) {
+            setStatus(err.message || "Invalid image", false);
+            input.value = "";
+            return;
+          }
+
+          if (!id) {
+            box._pendingFile = file;
+            setStatus("Selected — will upload when you create this profile.", true);
+            return;
+          }
+
+          setStatus(I18n.t("photoUploading"), true);
+          try {
+            const res = await BBC_API.uploadPhoto({ entity, id, file });
+            if (hidden) hidden.value = res.url || res.photo || "";
+            if (preview) preview.src = `${res.url || res.photo}?t=${Date.now()}`;
+            box._pendingFile = null;
+            const pickText = box.querySelector(".admin-photo-pick-text");
+            if (pickText) pickText.textContent = I18n.t("photoChange");
+            await refreshData();
+            setStatus(I18n.t("photoSaved"), true);
+          } catch (err) {
+            setStatus(err.message || "Upload failed", false);
+            if (preview) preview.src = fallback;
+          }
+          input.value = "";
+        });
+
+        box.querySelector(".admin-photo-remove")?.addEventListener("click", async () => {
+          if (!id) return;
+          if (!confirm("Remove this photo?")) return;
+          try {
+            await BBC_API.removePhoto({ entity, id });
+            if (hidden) hidden.value = "";
+            if (preview) preview.src = fallback;
+            box._pendingFile = null;
+            await refreshData();
+            setStatus("Photo removed", true);
+            const path = (location.hash || "#/manage").replace(/^#/, "") || "/manage";
+            go(path);
+          } catch (err) {
+            setStatus(err.message || "Remove failed", false);
+          }
+        });
+      });
+    };
+    bindPhotoUploaders();
+
     root.querySelector("#admin-class-filter")?.addEventListener("submit", (e) => {
       e.preventDefault();
       const b = formData(e.target);
@@ -1069,8 +1182,12 @@ const AdminApp = (() => {
         alert("Select a class");
         return;
       }
+      const pending = e.target.querySelector(".admin-photo-uploader")?._pendingFile;
       flash(async () => {
-        await BBC_API.post("/students", studentPayload(b, { departmentId: cls.dept.id }));
+        const created = await BBC_API.post("/students", studentPayload(b, { departmentId: cls.dept.id }));
+        if (pending && created?.id) {
+          await BBC_API.uploadPhoto({ entity: "students", id: created.id, file: pending });
+        }
       }, `/manage/classes/${b.classId}`);
     });
 
@@ -1121,8 +1238,9 @@ const AdminApp = (() => {
     root.querySelector("#admin-teacher-create")?.addEventListener("submit", (e) => {
       e.preventDefault();
       const b = formData(e.target);
+      const pending = e.target.querySelector(".admin-photo-uploader")?._pendingFile;
       flash(async () => {
-        await BBC_API.post("/teachers", {
+        const created = await BBC_API.post("/teachers", {
           firstName: b.firstName,
           lastName: b.lastName,
           nameLatin: b.nameLatin,
@@ -1134,6 +1252,9 @@ const AdminApp = (() => {
           classIds: [],
           photo: b.photo || "",
         });
+        if (pending && created?.id) {
+          await BBC_API.uploadPhoto({ entity: "teachers", id: created.id, file: pending });
+        }
       }, "/manage/teachers");
     });
 

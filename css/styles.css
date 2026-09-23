@@ -2691,6 +2691,63 @@ body {
   flex-shrink: 0;
 }
 
+/* ——— Profile photo upload ——— */
+.admin-photo-uploader {
+  margin-top: 0.25rem;
+}
+
+.admin-photo-label {
+  display: block;
+  font-size: 0.88rem;
+  color: var(--muted);
+  margin-bottom: 0.45rem;
+}
+
+.admin-photo-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.admin-photo-preview {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  border-radius: 18px;
+  border: 1.5px solid var(--line);
+  background: #f3f1ee;
+  flex-shrink: 0;
+}
+
+.admin-photo-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.45rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.admin-photo-pick {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+}
+
+.admin-photo-status {
+  font-size: 0.82rem;
+  margin: 0;
+}
+
+.admin-photo-status.is-ok {
+  color: #1f7a3f;
+}
+
+.admin-photo-status.is-err {
+  color: #b42318;
+}
+
 @media (max-width: 900px) {
   .admin-shell,
   .admin-split,

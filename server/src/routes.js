@@ -3,6 +3,7 @@ import crypto from "crypto";
 import { query } from "./db.js";
 import { authRequired } from "./auth.js";
 import { buildSchoolData, mapTeacher, mapStudent, mapClass, mapIssue } from "./schoolData.js";
+import { saveProfilePhoto, deleteProfilePhoto } from "./uploads.js";
 
 const router = Router();
 
@@ -480,6 +481,58 @@ router.delete("/issues/:id", authRequired(["admin"]), async (req, res) => {
   ]);
   if (!r.rows.length) return res.status(404).json({ error: "Not found" });
   res.json({ ok: true });
+});
+
+// ——— Profile photo uploads (stored on VPS volume) ———
+router.post("/uploads/photo", authRequired(["admin"]), async (req, res) => {
+  try {
+    const entity = String(req.body?.entity || "").trim(); // students | teachers
+    const id = String(req.body?.id || "").trim();
+    const dataUrl = req.body?.dataUrl;
+    if (!entity || !id || !dataUrl) {
+      return res.status(400).json({ error: "entity, id and dataUrl required" });
+    }
+
+    if (entity === "students") {
+      const found = await query("SELECT id FROM students WHERE id = $1", [id]);
+      if (!found.rows.length) return res.status(404).json({ error: "Student not found" });
+    } else if (entity === "teachers") {
+      const found = await query("SELECT id FROM teachers WHERE id = $1", [id]);
+      if (!found.rows.length) return res.status(404).json({ error: "Teacher not found" });
+    } else {
+      return res.status(400).json({ error: "entity must be students or teachers" });
+    }
+
+    const url = saveProfilePhoto({ entity, id, dataUrl });
+    const table = entity === "students" ? "students" : "teachers";
+    await query(`UPDATE ${table} SET photo = $2 WHERE id = $1`, [id, url]);
+    res.json({ ok: true, url, photo: url });
+  } catch (err) {
+    console.error(err);
+    res.status(err.status || 500).json({ error: err.message || "Upload failed" });
+  }
+});
+
+router.delete("/uploads/photo", authRequired(["admin"]), async (req, res) => {
+  try {
+    const entity = String(req.body?.entity || "").trim();
+    const id = String(req.body?.id || "").trim();
+    if (!entity || !id) {
+      return res.status(400).json({ error: "entity and id required" });
+    }
+    if (entity !== "students" && entity !== "teachers") {
+      return res.status(400).json({ error: "entity must be students or teachers" });
+    }
+    const table = entity === "students" ? "students" : "teachers";
+    const found = await query(`SELECT id, photo FROM ${table} WHERE id = $1`, [id]);
+    if (!found.rows.length) return res.status(404).json({ error: "Not found" });
+    deleteProfilePhoto(entity, id);
+    await query(`UPDATE ${table} SET photo = '' WHERE id = $1`, [id]);
+    res.json({ ok: true, photo: "" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message || "Remove failed" });
+  }
 });
 
 export default router;

@@ -30,8 +30,12 @@ services:
       PORT: "3000"
       WEB_ROOT: /app/web
       SEED_JSON: /app/seed/school_data.json
+      UPLOAD_DIR: /data/uploads
+    volumes:
+      - bbc_uploads:/data/uploads
     ports:
       - "127.0.0.1:${HOST_PORT:-8080}:3000"
 
 volumes:
   bbc_pgdata:
+  bbc_uploads:

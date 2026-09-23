@@ -3,3 +3,6 @@ server/node_modules/
 .env
 *.log
 .DS_Store
+
+# Profile photos (stored on VPS volume)
+data/uploads/
