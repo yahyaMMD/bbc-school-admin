@@ -10,8 +10,10 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 async function seedUsers() {
   const directorPass = process.env.DIRECTOR_PASSWORD || "Director2026";
   const adminPass = process.env.ADMIN_PASSWORD || "AdminBBC2026";
+  const whatsappPass = process.env.WHATSAPP_PASSWORD || "WhatsApp2026";
   const directorHash = await bcrypt.hash(directorPass, 10);
   const adminHash = await bcrypt.hash(adminPass, 10);
+  const whatsappHash = await bcrypt.hash(whatsappPass, 10);
   await query(
     `INSERT INTO app_users (role, password_hash) VALUES ($1, $2)
      ON CONFLICT (role) DO UPDATE SET password_hash = EXCLUDED.password_hash, updated_at = NOW()`,
@@ -22,7 +24,12 @@ async function seedUsers() {
      ON CONFLICT (role) DO UPDATE SET password_hash = EXCLUDED.password_hash, updated_at = NOW()`,
     ["admin", adminHash]
   );
-  console.log("Users seeded (director / admin)");
+  await query(
+    `INSERT INTO app_users (role, password_hash) VALUES ($1, $2)
+     ON CONFLICT (role) DO UPDATE SET password_hash = EXCLUDED.password_hash, updated_at = NOW()`,
+    ["whatsapp", whatsappHash]
+  );
+  console.log("Users seeded (director / admin / whatsapp)");
 }
 
 async function seedFromJson(filePath) {

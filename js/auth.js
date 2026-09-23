@@ -1,5 +1,5 @@
 /**
- * Session — password alone selects Director (read) or Staff/admin (manage).
+ * Session — password alone selects Director, Staff/admin, or WhatsApp.
  */
 const Auth = (() => {
   function isAuthenticated() {
@@ -16,6 +16,16 @@ const Auth = (() => {
 
   function isDirector() {
     return role() === "director";
+  }
+
+  function isWhatsApp() {
+    return role() === "whatsapp";
+  }
+
+  function homePath() {
+    if (isAdmin()) return "/manage";
+    if (isWhatsApp()) return "/whatsapp";
+    return "/home";
   }
 
   async function login(password) {
@@ -40,5 +50,7 @@ const Auth = (() => {
     role,
     isAdmin,
     isDirector,
+    isWhatsApp,
+    homePath,
   };
 })();

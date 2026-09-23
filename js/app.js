@@ -248,16 +248,22 @@
       /* data not loaded yet */
     }
     const isStaff = Auth.isAdmin();
-    const homeNav = isStaff ? "#/manage" : "#/home";
+    const isWa = Auth.isWhatsApp();
+    const homeNav = isStaff ? "#/manage" : isWa ? "#/whatsapp" : "#/home";
+    const subtitle = isStaff
+      ? I18n.t("adminConsole")
+      : isWa
+        ? I18n.t("whatsappConsole")
+        : I18n.t("portal");
     return `
-      <div class="app-shell${isStaff ? " app-shell-staff" : ""}">
+      <div class="app-shell${isStaff || isWa ? " app-shell-staff" : ""}">
         <header class="topbar">
           <div class="topbar-main">
             <button type="button" class="topbar-brand" data-nav="${homeNav}" aria-label="${esc(I18n.t("home"))}">
               <img src="assets/logo.png?v=2" alt="${esc(I18n.t("brand"))}" width="44" height="44" />
               <div class="topbar-brand-text">
                 <strong>${esc(brand)}</strong>
-                <span class="hide-sm">${esc(isStaff ? I18n.t("adminConsole") : I18n.t("portal"))}</span>
+                <span class="hide-sm">${esc(subtitle)}</span>
               </div>
             </button>
             <div class="topbar-actions">
@@ -270,7 +276,7 @@
             </div>
           </div>
           ${
-            isStaff
+            isStaff || isWa
               ? ""
               : `<form class="top-search" id="global-search" autocomplete="off">
             <input type="search" name="q" placeholder="${esc(I18n.t("searchPlaceholder"))}" value="${esc(state.searchQuery)}" />
@@ -1164,8 +1170,8 @@
     const { parts, params } = state.route;
     const path0 = parts[0] || "home";
 
-    // Keep Director and Staff sides fully separated
-    if (Auth.isDirector() && path0 === "manage") {
+    // Keep Director, Staff, and WhatsApp sides fully separated
+    if (Auth.isDirector() && (path0 === "manage" || path0 === "whatsapp")) {
       go("/home");
       return viewHome();
     }
@@ -1174,9 +1180,19 @@
       const html = AdminApp.resolve(["manage"], new URLSearchParams());
       return shell(html || "");
     }
+    if (Auth.isWhatsApp() && path0 !== "whatsapp") {
+      go("/whatsapp");
+      const html = WhatsAppApp.resolve(["whatsapp"]);
+      return shell(html || "");
+    }
 
     if (Auth.isAdmin() && path0 === "manage") {
       const html = AdminApp.resolve(parts, params);
+      if (html) return shell(html);
+    }
+
+    if (Auth.isWhatsApp() && path0 === "whatsapp") {
+      const html = WhatsAppApp.resolve(parts);
       if (html) return shell(html);
     }
 
@@ -1228,9 +1244,11 @@
       }
       try {
         app.innerHTML = `<div class="login-page"><div class="login-card"><p>${esc(I18n.t("loading"))}</p></div></div>`;
-        const data = await BBC_API.loadSchoolData();
-        BBC_DATA.setData(data);
-        go(result.role === "admin" ? "/manage" : "/home");
+        if (result.role !== "whatsapp") {
+          const data = await BBC_API.loadSchoolData();
+          BBC_DATA.setData(data);
+        }
+        go(Auth.homePath());
         render();
       } catch (loadErr) {
         Auth.logout();
@@ -1307,6 +1325,13 @@
       });
     }
 
+    if (Auth.isWhatsApp()) {
+      WhatsAppApp.bind(app, (path) => {
+        go(path);
+        render();
+      });
+    }
+
     app.querySelectorAll("[data-nav]").forEach((el) => {
       el.addEventListener("click", (e) => {
         const target = el.getAttribute("data-nav");
@@ -1322,19 +1347,17 @@
     if (Auth.isAuthenticated()) {
       try {
         app.innerHTML = `<div class="login-page"><div class="login-card"><p>${typeof I18n !== "undefined" ? I18n.t("loading") : "Loading…"}</p></div></div>`;
-        const data = await BBC_API.loadSchoolData();
-        BBC_DATA.setData(data);
+        if (!Auth.isWhatsApp()) {
+          const data = await BBC_API.loadSchoolData();
+          BBC_DATA.setData(data);
+        }
       } catch (err) {
         Auth.logout();
         console.error(err);
       }
     }
     if (!location.hash || location.hash === "#") {
-      location.hash = Auth.isAuthenticated()
-        ? Auth.isAdmin()
-          ? "#/manage"
-          : "#/home"
-        : "#/";
+      location.hash = Auth.isAuthenticated() ? `#${Auth.homePath()}` : "#/";
     }
     render();
   }

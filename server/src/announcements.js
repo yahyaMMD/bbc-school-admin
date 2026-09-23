@@ -239,7 +239,7 @@ export async function sendAnnouncement(req, res) {
         JSON.stringify(groupNames),
         status,
         JSON.stringify(bridgeResult.results || []),
-        req.user?.role || "admin",
+        req.user?.role || "whatsapp",
       ]
     );
 

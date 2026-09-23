@@ -35,9 +35,9 @@ export async function loginHandler(req, res) {
   // Optional role for backward compatibility; if omitted, password alone decides access.
   const roleHint = String(req.body?.role || "").trim();
   const rolesToTry =
-    roleHint && ["director", "admin"].includes(roleHint)
+    roleHint && ["director", "admin", "whatsapp"].includes(roleHint)
       ? [roleHint]
-      : ["admin", "director"];
+      : ["admin", "director", "whatsapp"];
 
   for (const role of rolesToTry) {
     const result = await query("SELECT password_hash FROM app_users WHERE role = $1", [role]);

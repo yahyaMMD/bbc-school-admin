@@ -48,6 +48,7 @@ services:
       JWT_SECRET: ${JWT_SECRET:-bbc-jwt-change-me-in-production}
       DIRECTOR_PASSWORD: ${DIRECTOR_PASSWORD:-Director2026}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-AdminBBC2026}
+      WHATSAPP_PASSWORD: ${WHATSAPP_PASSWORD:-WhatsApp2026}
       PORT: "3000"
       WEB_ROOT: /app/web
       SEED_JSON: /app/seed/school_data.json
