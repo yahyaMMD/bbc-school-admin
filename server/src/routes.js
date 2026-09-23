@@ -53,6 +53,9 @@ router.post("/teachers", authRequired(["admin"]), async (req, res) => {
 
 router.put("/teachers/:id", authRequired(["admin"]), async (req, res) => {
   const b = req.body || {};
+  const old = await query("SELECT class_ids FROM teachers WHERE id = $1", [req.params.id]);
+  if (!old.rows.length) return res.status(404).json({ error: "Not found" });
+
   const r = await query(
     `UPDATE teachers SET
       first_name = COALESCE($2, first_name),
@@ -78,8 +81,63 @@ router.put("/teachers/:id", authRequired(["admin"]), async (req, res) => {
       b.classIds != null ? JSON.stringify(b.classIds) : null,
     ]
   );
-  if (!r.rows.length) return res.status(404).json({ error: "Not found" });
+
+  // Keep class.teacher_ids in sync when classIds are updated
+  if (b.classIds != null) {
+    const tid = req.params.id;
+    const next = new Set(b.classIds || []);
+    const prev = new Set(old.rows[0].class_ids || []);
+    for (const cid of prev) {
+      if (!next.has(cid)) {
+        await query(
+          `UPDATE classes SET teacher_ids = (
+             SELECT COALESCE(jsonb_agg(x), '[]'::jsonb)
+             FROM jsonb_array_elements_text(teacher_ids) AS x
+             WHERE x <> $2
+           ) WHERE id = $1`,
+          [cid, tid]
+        );
+      }
+    }
+    for (const cid of next) {
+      if (!prev.has(cid)) {
+        await query(
+          `UPDATE classes SET teacher_ids = (
+             CASE WHEN teacher_ids ? $2 THEN teacher_ids
+             ELSE COALESCE(teacher_ids, '[]'::jsonb) || to_jsonb($2::text) END
+           ) WHERE id = $1`,
+          [cid, tid]
+        );
+      }
+    }
+  }
+
   res.json(mapTeacher(r.rows[0]));
+});
+
+router.post("/students/:id/transfer", authRequired(["admin"]), async (req, res) => {
+  const classId = req.body?.classId;
+  if (!classId) return res.status(400).json({ error: "classId required" });
+  const cls = await query("SELECT id, department_id FROM classes WHERE id = $1", [classId]);
+  if (!cls.rows.length) return res.status(404).json({ error: "Target class not found" });
+  const existing = await query("SELECT * FROM students WHERE id = $1", [req.params.id]);
+  if (!existing.rows.length) return res.status(404).json({ error: "Student not found" });
+  const oldClassId = existing.rows[0].class_id;
+  const number = req.body?.number != null ? Number(req.body.number) : existing.rows[0].number;
+  const r = await query(
+    `UPDATE students SET class_id = $2, department_id = $3, number = $4 WHERE id = $1 RETURNING *`,
+    [req.params.id, classId, cls.rows[0].department_id, number]
+  );
+  for (const cid of new Set([oldClassId, classId])) {
+    await query(
+      `UPDATE classes SET stats = jsonb_set(
+         COALESCE(stats, '{}'::jsonb), '{total}',
+         to_jsonb((SELECT COUNT(*)::int FROM students WHERE class_id = $1))
+       ) WHERE id = $1`,
+      [cid]
+    );
+  }
+  res.json(mapStudent(r.rows[0]));
 });
 
 router.delete("/teachers/:id", authRequired(["admin"]), async (req, res) => {

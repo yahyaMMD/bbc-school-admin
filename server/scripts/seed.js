@@ -28,12 +28,7 @@ async function seedUsers() {
 async function seedFromJson(filePath) {
   const raw = JSON.parse(fs.readFileSync(filePath, "utf8"));
 
-  await query("DELETE FROM students");
-  await query("DELETE FROM classes");
-  await query("DELETE FROM teachers");
-  await query("DELETE FROM operations_issues");
-  await query("DELETE FROM school_meta");
-
+  await query("TRUNCATE students, classes, teachers, operations_issues, school_meta RESTART IDENTITY CASCADE");
   await query(
     `INSERT INTO school_meta (id, data) VALUES (1, $1::jsonb)`,
     [

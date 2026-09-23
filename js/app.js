@@ -155,12 +155,12 @@
           <div class="gate-grid">
             <button type="button" class="gate-card" data-gate="director">
               <h2>Director view</h2>
-              <p>Browse rosters, teachers, students, and operations issues. Read-only live data.</p>
+              <p>Browse rosters, teachers, students, and departments. Read-only live data.</p>
               <span class="cta">Enter as Director →</span>
             </button>
             <button type="button" class="gate-card gate-card-admin" data-gate="admin">
               <h2>Manage data</h2>
-              <p>Add, edit, and delete students, teachers, classes, and issues. Changes go live instantly.</p>
+              <p>Add, edit, transfer students and teachers, fill missing info, and update classes. Changes go live instantly.</p>
               <span class="cta">Enter as Admin →</span>
             </button>
           </div>
@@ -202,8 +202,6 @@
 
   function viewHome() {
     const stats = BBC_DATA.stats();
-    const issues = BBC_DATA.listIssues();
-    const openIssues = issues.filter((i) => i.status === "open").length;
     return shell(`
       ${crumb([{ label: "Home", to: "#/home" }])}
       <div class="page-header">
@@ -232,14 +230,6 @@
             <p>${stats.students.toLocaleString("en-US")} students — filter by name, ID, department, year, class, or gender.</p>
           </div>
           <span class="cta">Browse students →</span>
-        </button>
-        <button type="button" class="dir-home-card dir-home-card-wide" data-nav="#/issues">
-          <div class="dir-home-icon" aria-hidden="true">${icons.alert}</div>
-          <div>
-            <h3>Operations issues</h3>
-            <p>${openIssues} open — pickup calls, loudspeaker (مكبر الصوت), and other school-day problems to fix.</p>
-          </div>
-          <span class="cta">Review issues →</span>
         </button>
       </div>
       <div class="page-header" style="margin-bottom:0.85rem">
@@ -1024,16 +1014,8 @@
     const { parts, params } = state.route;
 
     if (Auth.isAdmin() && parts[0] === "manage") {
-      const html = AdminApp.resolve(parts);
-      if (html) {
-        return shell(`
-          ${crumb([
-            { label: "Manage", to: "#/manage" },
-            ...(parts[1] ? [{ label: parts[1], to: `#/manage/${parts[1]}` }] : []),
-          ])}
-          ${html}
-        `);
-      }
+      const html = AdminApp.resolve(parts, params);
+      if (html) return shell(html);
     }
 
     if (parts[0] === "search") {
@@ -1046,10 +1028,6 @@
 
     if (parts[0] === "teachers") return viewTeachersDirectory(params);
     if (parts[0] === "students") return viewStudentsDirectory(params);
-    if (parts[0] === "issues") {
-      if (parts[1]) return viewIssueDetail(parts[1]);
-      return viewIssues();
-    }
 
     if (parts[0] === "dept" && (parts[1] === "primary" || parts[1] === "middle")) {
       const deptId = parts[1];
