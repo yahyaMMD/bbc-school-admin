@@ -47,7 +47,11 @@ const AdminApp = (() => {
   }
 
   function teacherName(t) {
-    return [t.firstName, t.lastName].filter(Boolean).join(" ").trim() || t.nameLatin || t.id;
+    return BBC_DATA.teacherDisplayName(t) || t.id;
+  }
+
+  function studentName(s) {
+    return BBC_DATA.studentFullName(s);
   }
 
   function incompleteStudents() {
@@ -64,17 +68,17 @@ const AdminApp = (() => {
 
   function layout(active, title, lede, body) {
     const nav = [
-      { id: "home", href: "#/manage", label: "Overview" },
-      { id: "classes", href: "#/manage/classes", label: "Classes & rosters" },
-      { id: "students", href: "#/manage/students", label: "All students" },
-      { id: "teachers", href: "#/manage/teachers", label: "Teachers" },
-      { id: "incomplete", href: "#/manage/incomplete", label: "Missing info" },
-      { id: "browse", href: "#/home", label: "Director view →" },
+      { id: "home", href: "#/manage", label: I18n.t("overview") },
+      { id: "classes", href: "#/manage/classes", label: I18n.t("classesRosters") },
+      { id: "students", href: "#/manage/students", label: I18n.t("allStudents") },
+      { id: "teachers", href: "#/manage/teachers", label: I18n.t("teachers") },
+      { id: "incomplete", href: "#/manage/incomplete", label: I18n.t("missingInfo") },
+      { id: "browse", href: "#/home", label: I18n.t("directorView") },
     ];
     return `
       <div class="admin-shell">
         <aside class="admin-nav">
-          <div class="admin-nav-brand">Admin console</div>
+          <div class="admin-nav-brand">${esc(I18n.t("adminConsole"))}</div>
           ${nav
             .map(
               (n) =>
@@ -99,8 +103,8 @@ const AdminApp = (() => {
     const missT = incompleteTeachers().length;
     return layout(
       "home",
-      "Data management",
-      "Live database — every save updates the Director view immediately.",
+      I18n.t("dataManagement"),
+      I18n.t("dataManagementLede"),
       `
       <div class="stats-row">
         <div class="stat-card"><div class="label">Students</div><div class="value">${stats.students}</div></div>
@@ -181,8 +185,10 @@ const AdminApp = (() => {
         <section class="info-panel">
           <div class="panel-label">Students in ${esc(cls.code)}</div>
           <form id="admin-add-to-class" class="admin-form compact" data-class-id="${esc(cls.id)}" data-dept="${esc(dept.id)}">
-            ${field("lastName", "Last name", "", { required: true })}
-            ${field("firstName", "First name", "", { required: true })}
+            ${field("lastName", I18n.t("lastNameAr"), "", { required: true })}
+            ${field("firstName", I18n.t("firstNameAr"), "", { required: true })}
+            ${field("lastNameLatin", I18n.t("lastNameLatin"), "")}
+            ${field("firstNameLatin", I18n.t("firstNameLatin"), "")}
             ${field("number", "No.", String((students.at(-1)?.number || 0) + 1), { type: "number" })}
             ${field("gender", "Gender", "", {
               type: "select",
@@ -205,12 +211,12 @@ const AdminApp = (() => {
                         .map(
                           (s) => `<tr class="${!s.dateOfBirth || !s.gender ? "row-warn" : ""}">
                           <td>${esc(s.number)}</td>
-                          <td dir="auto">${esc(s.fullName)}</td>
+                          <td dir="auto">${esc(studentName(s))}</td>
                           <td>${esc(s.gender || "—")}</td>
                           <td>${esc(s.dateOfBirth || "—")}</td>
                           <td class="admin-actions">
                             <button type="button" class="btn btn-ghost btn-sm" data-nav="#/manage/students/${esc(s.id)}">Edit</button>
-                            <button type="button" class="btn btn-ghost btn-sm admin-transfer-btn" data-id="${esc(s.id)}" data-name="${esc(s.fullName)}" data-from="${esc(cls.code)}">Transfer</button>
+                            <button type="button" class="btn btn-ghost btn-sm admin-transfer-btn" data-id="${esc(s.id)}" data-name="${esc(studentName(s))}" data-from="${esc(cls.code)}">Transfer</button>
                             <button type="button" class="btn btn-ghost btn-sm admin-del-student" data-id="${esc(s.id)}" data-back="#/manage/classes/${esc(cls.id)}">Remove</button>
                           </td>
                         </tr>`
@@ -318,7 +324,7 @@ const AdminApp = (() => {
     let rows = BBC_DATA.listAllStudents();
     if (q) {
       rows = rows.filter(({ student: s, cls }) =>
-        `${s.fullName} ${s.id} ${cls.code}`.toLowerCase().includes(q)
+        `${s.searchName || ""} ${s.fullName || ""} ${s.fullNameLatin || ""} ${s.id} ${cls.code}`.toLowerCase().includes(q)
       );
     }
     if (filter === "incomplete") {
@@ -342,8 +348,10 @@ const AdminApp = (() => {
       <details class="info-panel" style="margin-bottom:1rem">
         <summary class="panel-label" style="cursor:pointer">Add new student</summary>
         <form id="admin-student-create" class="admin-form" style="margin-top:0.75rem">
-          ${field("lastName", "Last name", "", { required: true })}
-          ${field("firstName", "First name", "", { required: true })}
+          ${field("lastName", I18n.t("lastNameAr"), "", { required: true })}
+          ${field("firstName", I18n.t("firstNameAr"), "", { required: true })}
+          ${field("lastNameLatin", I18n.t("lastNameLatin"), "")}
+          ${field("firstNameLatin", I18n.t("firstNameLatin"), "")}
           ${field("number", "Number", "1", { type: "number" })}
           ${field("gender", "Gender", "", {
             type: "select",
@@ -373,13 +381,13 @@ const AdminApp = (() => {
                 const warn = !s.dateOfBirth || !s.gender;
                 return `<tr class="${warn ? "row-warn" : ""}">
                   <td>${esc(s.number)}</td>
-                  <td dir="auto">${esc(s.fullName)}</td>
+                  <td dir="auto">${esc(studentName(s))}</td>
                   <td>${esc(cls.code)}</td>
                   <td>${esc(s.gender || "—")}</td>
                   <td>${esc(s.dateOfBirth || "—")}</td>
                   <td class="admin-actions">
                     <button type="button" class="btn btn-ghost btn-sm" data-nav="#/manage/students/${esc(s.id)}">Edit</button>
-                    <button type="button" class="btn btn-ghost btn-sm admin-transfer-btn" data-id="${esc(s.id)}" data-name="${esc(s.fullName)}" data-from="${esc(cls.code)}">Transfer</button>
+                    <button type="button" class="btn btn-ghost btn-sm admin-transfer-btn" data-id="${esc(s.id)}" data-name="${esc(studentName(s))}" data-from="${esc(cls.code)}">Transfer</button>
                     <button type="button" class="btn btn-ghost btn-sm admin-del-student" data-id="${esc(s.id)}" data-back="#/manage/students">Delete</button>
                   </td>
                 </tr>`;
@@ -420,12 +428,14 @@ const AdminApp = (() => {
     const classOpts = classOptions();
     return layout(
       "students",
-      s.fullName,
+      BBC_DATA.studentFullName(s),
       `Edit profile · current class ${esc(found.cls.code)}`,
       `
       <form id="admin-student-edit" class="admin-form info-panel" data-id="${esc(s.id)}">
-        ${field("lastName", "Last name", s.lastName)}
-        ${field("firstName", "First name", s.firstName)}
+        ${field("lastName", I18n.t("lastNameAr"), s.lastName)}
+        ${field("firstName", I18n.t("firstNameAr"), s.firstName)}
+        ${field("lastNameLatin", I18n.t("lastNameLatin"), s.lastNameLatin || "")}
+        ${field("firstNameLatin", I18n.t("firstNameLatin"), s.firstNameLatin || "")}
         ${field("number", "Number in class", s.number, { type: "number" })}
         ${field("gender", "Gender", s.gender || "", {
           type: "select",
@@ -678,6 +688,7 @@ const AdminApp = (() => {
           number: Number(b.number) || 0,
           departmentId: cls.dept.id,
           fullName: `${b.lastName} ${b.firstName}`.trim(),
+          fullNameLatin: `${b.firstNameLatin || ""} ${b.lastNameLatin || ""}`.trim(),
         });
       }, `/manage/classes/${b.classId}`);
     });
@@ -694,6 +705,7 @@ const AdminApp = (() => {
           departmentId: dept,
           number: Number(b.number) || 0,
           fullName: `${b.lastName} ${b.firstName}`.trim(),
+          fullNameLatin: `${b.firstNameLatin || ""} ${b.lastNameLatin || ""}`.trim(),
         });
       }, `/manage/classes/${classId}`);
     });
@@ -709,6 +721,7 @@ const AdminApp = (() => {
           number: Number(b.number) || 0,
           departmentId: cls?.dept.id,
           fullName: `${b.lastName} ${b.firstName}`.trim(),
+          fullNameLatin: `${b.firstNameLatin || ""} ${b.lastNameLatin || ""}`.trim(),
         });
       }, `/manage/classes/${b.classId}`);
     });

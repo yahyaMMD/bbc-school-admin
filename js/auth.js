@@ -1,6 +1,5 @@
 /**
- * Session gate — Director (read) or Admin (manage).
- * Auth is verified by the API; token kept in sessionStorage.
+ * Session — password alone selects Director (read) or Staff/admin (manage).
  */
 const Auth = (() => {
   function isAuthenticated() {
@@ -19,12 +18,14 @@ const Auth = (() => {
     return role() === "director";
   }
 
-  async function login(selectedRole, password) {
+  async function login(password) {
     try {
-      await BBC_API.login(selectedRole, password);
-      return { ok: true, role: selectedRole };
+      const data = await BBC_API.login(password);
+      return { ok: true, role: data.role };
     } catch (err) {
-      return { ok: false, error: err.message || "Incorrect password" };
+      const msg =
+        typeof I18n !== "undefined" ? I18n.t("loginError") : "Incorrect password";
+      return { ok: false, error: err.message || msg };
     }
   }
 
@@ -39,6 +40,5 @@ const Auth = (() => {
     role,
     isAdmin,
     isDirector,
-    PASSWORD_HINT: "Use the password for your access door",
   };
 })();

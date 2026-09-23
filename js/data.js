@@ -70,13 +70,64 @@ const BBC_DATA = (() => {
       for (const level of dept.levels) {
         for (const cls of level.classes) {
           for (const s of cls.students) {
-            const hay = `${s.fullName || ""} ${s.firstName || ""} ${s.lastName || ""}`.toLowerCase();
+            const hay = `${s.searchName || ""} ${s.fullName || ""} ${s.fullNameLatin || ""} ${s.firstName || ""} ${s.firstNameLatin || ""} ${s.lastName || ""} ${s.lastNameLatin || ""}`.toLowerCase();
             if (hay.includes(q)) results.push({ student: s, dept, level, cls });
           }
         }
       }
     }
     return results;
+  }
+
+  function useArabicNames() {
+    return typeof I18n !== "undefined" ? I18n.useArabicNames() : true;
+  }
+
+  function studentFullName(s) {
+    if (!s) return "—";
+    if (useArabicNames()) {
+      return s.fullName || `${s.lastName || ""} ${s.firstName || ""}`.trim() || s.fullNameLatin || "—";
+    }
+    return (
+      s.fullNameLatin ||
+      `${s.firstNameLatin || ""} ${s.lastNameLatin || ""}`.trim() ||
+      s.fullName ||
+      `${s.lastName || ""} ${s.firstName || ""}`.trim() ||
+      "—"
+    );
+  }
+
+  function studentFirstName(s) {
+    if (!s) return "—";
+    if (useArabicNames()) return s.firstName || s.firstNameLatin || "—";
+    return s.firstNameLatin || s.firstName || "—";
+  }
+
+  function studentLastName(s) {
+    if (!s) return "—";
+    if (useArabicNames()) return s.lastName || s.lastNameLatin || "—";
+    return s.lastNameLatin || s.lastName || "—";
+  }
+
+  function teacherDisplayName(t) {
+    if (!t) return "—";
+    const ar = [t.firstName, t.lastName].filter(Boolean).join(" ").trim();
+    const latin = (t.nameLatin || "").trim() || ar;
+    if (useArabicNames()) {
+      // Prefer Arabic script if present
+      const hasAr = /[\u0600-\u06FF]/.test(ar);
+      return hasAr ? ar || latin : ar || latin || "—";
+    }
+    return latin || ar || "—";
+  }
+
+  function brandName() {
+    try {
+      const s = getD().school;
+      return s?.name || (typeof I18n !== "undefined" ? I18n.t("brand") : "Quality education Algerie (Q.E.A)");
+    } catch {
+      return typeof I18n !== "undefined" ? I18n.t("brand") : "Quality education Algerie (Q.E.A)";
+    }
   }
 
   function stats() {
@@ -189,6 +240,11 @@ const BBC_DATA = (() => {
     getTeacher,
     getStudent,
     searchStudents,
+    studentFullName,
+    studentFirstName,
+    studentLastName,
+    teacherDisplayName,
+    brandName,
     classCode,
     getClassLabel,
     listAllStudents,

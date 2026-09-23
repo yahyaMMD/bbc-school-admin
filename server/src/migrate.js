@@ -55,6 +55,9 @@ export async function migrate() {
       first_name TEXT NOT NULL DEFAULT '',
       last_name TEXT NOT NULL DEFAULT '',
       full_name TEXT NOT NULL DEFAULT '',
+      first_name_latin TEXT NOT NULL DEFAULT '',
+      last_name_latin TEXT NOT NULL DEFAULT '',
+      full_name_latin TEXT NOT NULL DEFAULT '',
       date_of_birth TEXT NOT NULL DEFAULT '',
       gender TEXT NOT NULL DEFAULT '',
       notes TEXT NOT NULL DEFAULT '',
@@ -81,4 +84,9 @@ export async function migrate() {
       notes TEXT NOT NULL DEFAULT ''
     );
   `);
+
+  // Additive columns for existing databases
+  await query(`ALTER TABLE students ADD COLUMN IF NOT EXISTS first_name_latin TEXT NOT NULL DEFAULT ''`);
+  await query(`ALTER TABLE students ADD COLUMN IF NOT EXISTS last_name_latin TEXT NOT NULL DEFAULT ''`);
+  await query(`ALTER TABLE students ADD COLUMN IF NOT EXISTS full_name_latin TEXT NOT NULL DEFAULT ''`);
 }

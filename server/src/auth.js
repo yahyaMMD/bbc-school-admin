@@ -27,17 +27,26 @@ export function authRequired(roles = []) {
 }
 
 export async function loginHandler(req, res) {
-  const role = String(req.body?.role || "").trim();
   const password = String(req.body?.password || "");
-  if (!["director", "admin"].includes(role) || !password) {
-    return res.status(400).json({ error: "role and password required" });
+  if (!password) {
+    return res.status(400).json({ error: "password required" });
   }
-  const result = await query("SELECT password_hash FROM app_users WHERE role = $1", [role]);
-  if (!result.rows.length) {
-    return res.status(401).json({ error: "Invalid credentials" });
+
+  // Optional role for backward compatibility; if omitted, password alone decides access.
+  const roleHint = String(req.body?.role || "").trim();
+  const rolesToTry =
+    roleHint && ["director", "admin"].includes(roleHint)
+      ? [roleHint]
+      : ["admin", "director"];
+
+  for (const role of rolesToTry) {
+    const result = await query("SELECT password_hash FROM app_users WHERE role = $1", [role]);
+    if (!result.rows.length) continue;
+    const ok = await bcrypt.compare(password, result.rows[0].password_hash);
+    if (ok) {
+      const token = signToken({ role });
+      return res.json({ token, role });
+    }
   }
-  const ok = await bcrypt.compare(password, result.rows[0].password_hash);
-  if (!ok) return res.status(401).json({ error: "Invalid credentials" });
-  const token = signToken({ role });
-  return res.json({ token, role });
+  return res.status(401).json({ error: "Invalid credentials" });
 }

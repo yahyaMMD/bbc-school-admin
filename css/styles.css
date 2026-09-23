@@ -2320,3 +2320,64 @@ body {
     flex-wrap: wrap;
   }
 }
+
+/* ——— Language switcher & RTL ——— */
+.lang-switch {
+  display: inline-flex;
+  gap: 0.2rem;
+  background: rgba(18, 18, 18, 0.04);
+  border-radius: var(--radius-xs);
+  padding: 0.2rem;
+}
+
+.lang-btn {
+  border: 0;
+  background: transparent;
+  padding: 0.35rem 0.55rem;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  color: var(--muted);
+}
+
+.lang-btn.active {
+  background: var(--white);
+  color: var(--orange-deep);
+  box-shadow: var(--shadow-sm);
+}
+
+.lang-switch-top {
+  margin-inline-end: 0.35rem;
+}
+
+.login-lang {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.75rem;
+}
+
+html[dir="rtl"] body {
+  font-family: "Cairo", "Source Sans 3", sans-serif;
+}
+
+html[dir="rtl"] .topbar-brand-text,
+html[dir="rtl"] .page-header h1,
+html[dir="rtl"] .admin-nav-brand,
+html[dir="rtl"] .dir-home-card h3 {
+  font-family: "Cairo", var(--font-display), sans-serif;
+}
+
+html[dir="rtl"] .breadcrumb .sep {
+  transform: scaleX(-1);
+}
+
+html[dir="rtl"] .chev {
+  transform: scaleX(-1);
+}
+
+.topbar-brand-text strong {
+  font-size: clamp(0.82rem, 1.6vw, 0.95rem);
+  line-height: 1.2;
+  max-width: 16rem;
+}

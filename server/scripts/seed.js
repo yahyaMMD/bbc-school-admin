@@ -118,8 +118,9 @@ async function seedFromJson(filePath) {
           await query(
             `INSERT INTO students (
               id, class_id, department_id, number, first_name, last_name, full_name,
+              first_name_latin, last_name_latin, full_name_latin,
               date_of_birth, gender, notes, search_name, previous_year_details
-            ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12::jsonb)`,
+            ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15::jsonb)`,
             [
               s.id,
               c.id,
@@ -128,6 +129,9 @@ async function seedFromJson(filePath) {
               s.firstName || "",
               s.lastName || "",
               s.fullName || "",
+              s.firstNameLatin || "",
+              s.lastNameLatin || "",
+              s.fullNameLatin || "",
               s.dateOfBirth || "",
               s.gender || "",
               s.notes || "",
@@ -171,6 +175,57 @@ async function seedFromJson(filePath) {
   );
 }
 
+/** Fill Latin name columns from seed JSON without wiping other edits. */
+async function backfillLatinNames(filePath) {
+  const missing = await query(
+    `SELECT COUNT(*)::int AS n FROM students
+     WHERE COALESCE(full_name_latin, '') = '' OR COALESCE(first_name_latin, '') = ''`
+  );
+  if (!missing.rows[0].n) {
+    console.log("Latin names already present — skip backfill");
+    return;
+  }
+  const raw = JSON.parse(fs.readFileSync(filePath, "utf8"));
+  let updated = 0;
+  for (const dept of [raw.primary, raw.middle]) {
+    for (const level of dept?.levels || []) {
+      for (const c of level.classes || []) {
+        for (const s of c.students || []) {
+          if (!s.fullNameLatin && !s.firstNameLatin) continue;
+          const r = await query(
+            `UPDATE students SET
+              first_name_latin = COALESCE(NULLIF($2, ''), first_name_latin),
+              last_name_latin = COALESCE(NULLIF($3, ''), last_name_latin),
+              full_name_latin = COALESCE(NULLIF($4, ''), full_name_latin),
+              search_name = COALESCE(NULLIF($5, ''), search_name)
+             WHERE id = $1
+               AND (COALESCE(full_name_latin, '') = '' OR COALESCE(first_name_latin, '') = '')`,
+            [
+              s.id,
+              s.firstNameLatin || "",
+              s.lastNameLatin || "",
+              s.fullNameLatin || "",
+              s.searchName || "",
+            ]
+          );
+          updated += r.rowCount || 0;
+        }
+      }
+    }
+  }
+  // Also refresh school display name in meta
+  if (raw.school) {
+    await query(
+      `UPDATE school_meta SET data = jsonb_set(
+         COALESCE(data, '{}'::jsonb), '{school}',
+         COALESCE(data->'school', '{}'::jsonb) || $1::jsonb
+       ) WHERE id = 1`,
+      [JSON.stringify({ name: raw.school.name, nameShort: raw.school.nameShort || "Q.E.A" })]
+    );
+  }
+  console.log(`Backfilled Latin names on ${updated} students`);
+}
+
 async function main() {
   const dataPath =
     process.env.SEED_JSON ||
@@ -181,6 +236,7 @@ async function main() {
   const count = await query("SELECT COUNT(*)::int AS n FROM students");
   if (!force && count.rows[0].n > 0) {
     console.log(`DB already has ${count.rows[0].n} students — skip roster seed`);
+    if (fs.existsSync(dataPath)) await backfillLatinNames(dataPath);
   } else if (fs.existsSync(dataPath)) {
     await seedFromJson(dataPath);
   } else {

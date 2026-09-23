@@ -9,7 +9,7 @@
     document.body.innerHTML = "<p style='padding:2rem;font-family:sans-serif'>App root #app missing.</p>";
     return;
   }
-  const state = { route: parseHash(), searchQuery: "", pendingRole: null };
+  const state = { route: parseHash(), searchQuery: "" };
 
   const icons = {
     users: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
@@ -45,8 +45,7 @@
   }
 
   function teacherLabel(t) {
-    const parts = [t.firstName, t.lastName].map((p) => String(p || "").trim()).filter(Boolean);
-    return parts.length ? parts.join(" ") : "—";
+    return BBC_DATA.teacherDisplayName(t);
   }
 
   function teacherLatin(t) {
@@ -85,9 +84,13 @@
   }
 
   function shell(content) {
-    let school = { name: "BBC School", academicYear: "2026 — 2027" };
+    const brand =
+      typeof BBC_DATA !== "undefined" && BBC_DATA.brandName
+        ? BBC_DATA.brandName()
+        : I18n.t("brand");
+    let year = "2026 — 2027";
     try {
-      school = BBC_DATA.school || school;
+      year = BBC_DATA.school?.academicYear || year;
     } catch (_) {
       /* data not loaded yet */
     }
@@ -95,31 +98,30 @@
       <div class="app-shell">
         <header class="topbar">
           <div class="topbar-main">
-            <button type="button" class="topbar-brand" data-nav="#/home" aria-label="Home">
-              <img src="assets/logo.png?v=2" alt="Quality Education Algeria" width="44" height="44" />
+            <button type="button" class="topbar-brand" data-nav="#/home" aria-label="${esc(I18n.t("home"))}">
+              <img src="assets/logo.png?v=2" alt="${esc(I18n.t("brand"))}" width="44" height="44" />
               <div class="topbar-brand-text">
-                <strong>${esc(school.name)}</strong>
-                <span class="hide-sm">Administration Portal</span>
+                <strong>${esc(brand)}</strong>
+                <span class="hide-sm">${esc(I18n.t("portal"))}</span>
               </div>
             </button>
             <div class="topbar-actions">
-              <span class="badge-year hide-md">${esc(school.academicYear || "")}</span>
+              ${I18n.langSwitcher("lang-switch-top")}
+              <span class="badge-year hide-md">${esc(year)}</span>
               ${
                 Auth.isAdmin()
-                  ? `<button type="button" class="btn btn-ghost hide-sm" data-nav="#/manage">Manage</button>`
-                  : Auth.isDirector()
-                    ? `<span class="badge-year hide-md">Director</span>`
-                    : ""
+                  ? `<button type="button" class="btn btn-ghost hide-sm" data-nav="#/manage">${esc(I18n.t("manage"))}</button>`
+                  : ""
               }
-              <button type="button" class="btn btn-ghost btn-logout" id="btn-logout" aria-label="Sign out">
-                <span class="hide-sm">Sign out</span>
-                <span class="show-sm-only" aria-hidden="true">Out</span>
+              <button type="button" class="btn btn-ghost btn-logout" id="btn-logout" aria-label="${esc(I18n.t("signOut"))}">
+                <span class="hide-sm">${esc(I18n.t("signOut"))}</span>
+                <span class="show-sm-only" aria-hidden="true">⎋</span>
               </button>
             </div>
           </div>
           <form class="top-search" id="global-search" autocomplete="off">
-            <input type="search" name="q" placeholder="Search student or go to directories…" value="${esc(state.searchQuery)}" />
-            <button type="submit" class="btn btn-primary btn-search" aria-label="Search">${icons.search}</button>
+            <input type="search" name="q" placeholder="${esc(I18n.t("searchPlaceholder"))}" value="${esc(state.searchQuery)}" />
+            <button type="submit" class="btn btn-primary btn-search" aria-label="${esc(I18n.t("search"))}">${icons.search}</button>
           </form>
         </header>
         <main class="page">${content}</main>
@@ -129,7 +131,7 @@
 
   function crumb(items) {
     return `
-      <nav class="breadcrumb" aria-label="Breadcrumb">
+      <nav class="breadcrumb" aria-label="${esc(I18n.t("breadcrumb"))}">
         ${items
           .map((item, i) => {
             const isLast = i === items.length - 1;
@@ -141,60 +143,27 @@
     `;
   }
 
-  function viewGate() {
-    return `
-      <div class="login-page">
-        <div class="login-card login-card-wide">
-          <div class="login-brand">
-            <img src="assets/logo.png?v=2" alt="Quality Education Algeria" width="88" height="88" />
-            <div>
-              <h1>BBC School</h1>
-              <p>Choose your access — each door has its own password</p>
-            </div>
-          </div>
-          <div class="gate-grid">
-            <button type="button" class="gate-card" data-gate="director">
-              <h2>Director view</h2>
-              <p>Browse rosters, teachers, students, and departments. Read-only live data.</p>
-              <span class="cta">Enter as Director →</span>
-            </button>
-            <button type="button" class="gate-card gate-card-admin" data-gate="admin">
-              <h2>Manage data</h2>
-              <p>Add, edit, transfer students and teachers, fill missing info, and update classes. Changes go live instantly.</p>
-              <span class="cta">Enter as Admin →</span>
-            </button>
-          </div>
-          <p class="login-meta">Bouchaoui 03, Cheraga, Algiers</p>
-        </div>
-      </div>
-    `;
-  }
-
-  function viewLogin(role) {
-    const title = role === "admin" ? "Manage data" : "Director view";
-    const hint =
-      role === "admin"
-        ? "Password for people who update school data"
-        : "Password for the Directrice / read-only access";
+  function viewLogin() {
     return `
       <div class="login-page">
         <div class="login-card">
+          <div class="login-lang">${I18n.langSwitcher()}</div>
           <div class="login-brand">
-            <img src="assets/logo.png?v=2" alt="Quality Education Algeria" width="88" height="88" />
+            <img src="assets/logo.png?v=2" alt="${esc(I18n.t("brand"))}" width="88" height="88" />
             <div>
-              <h1>${esc(title)}</h1>
-              <p>${esc(hint)}</p>
+              <h1>${esc(I18n.t("brand"))}</h1>
+              <p>${esc(I18n.t("loginHint"))}</p>
             </div>
           </div>
-          <form class="login-form" id="login-form" autocomplete="off" data-role="${esc(role)}">
+          <form class="login-form" id="login-form" autocomplete="off">
             <div class="field">
-              <label for="password">Password</label>
-              <input id="password" name="password" type="password" placeholder="Enter password" required autofocus />
+              <label for="password">${esc(I18n.t("password"))}</label>
+              <input id="password" name="password" type="password" placeholder="${esc(I18n.t("passwordPlaceholder"))}" required autofocus />
             </div>
             <div class="login-error" id="login-error" role="alert"></div>
-            <button type="submit" class="btn btn-primary">Access interface</button>
-            <button type="button" class="btn btn-ghost" id="btn-back-gate" style="width:100%;margin-top:0.5rem">← Back to doors</button>
+            <button type="submit" class="btn btn-primary">${esc(I18n.t("access"))}</button>
           </form>
+          <p class="login-meta">${esc(I18n.t("welcomeAddress"))}</p>
         </div>
       </div>
     `;
@@ -202,55 +171,57 @@
 
   function viewHome() {
     const stats = BBC_DATA.stats();
+    const year = BBC_DATA.school.academicYear;
     return shell(`
-      ${crumb([{ label: "Home", to: "#/home" }])}
+      ${crumb([{ label: I18n.t("home"), to: "#/home" }])}
       <div class="page-header">
-        <h1>Dashboard</h1>
-        <p class="lede">Official rosters — academic year ${esc(BBC_DATA.school.academicYear)}.</p>
+        <h1>${esc(I18n.t("dashboard"))}</h1>
+        <p class="lede">${esc(I18n.t("dashboardLede", { year }))}</p>
       </div>
       <div class="stats-row">
-        <div class="stat-card"><div class="label">Year groups</div><div class="value"><em>${stats.levels}</em></div></div>
-        <div class="stat-card"><div class="label">Classes</div><div class="value">${stats.classes}</div></div>
-        <div class="stat-card"><div class="label">Students</div><div class="value">${stats.students.toLocaleString("en-US")}</div></div>
-        <div class="stat-card"><div class="label">Teachers listed</div><div class="value">${stats.teachers}</div></div>
+        <div class="stat-card"><div class="label">${esc(I18n.t("yearGroups"))}</div><div class="value"><em>${stats.levels}</em></div></div>
+        <div class="stat-card"><div class="label">${esc(I18n.t("classes"))}</div><div class="value">${stats.classes}</div></div>
+        <div class="stat-card"><div class="label">${esc(I18n.t("students"))}</div><div class="value">${stats.students.toLocaleString(I18n.getLang() === "ar" ? "ar" : I18n.getLang() === "fr" ? "fr-FR" : "en-US")}</div></div>
+        <div class="stat-card"><div class="label">${esc(I18n.t("teachersListed"))}</div><div class="value">${stats.teachers}</div></div>
       </div>
       <div class="dir-home-grid" style="margin-bottom:1.5rem">
         <button type="button" class="dir-home-card" data-nav="#/teachers">
           <div class="dir-home-icon" aria-hidden="true">${icons.users}</div>
           <div>
-            <h3>Our teachers</h3>
-            <p>${stats.teachers} teachers — filter by name, ID, department, subject, or class.</p>
+            <h3>${esc(I18n.t("ourTeachers"))}</h3>
+            <p>${esc(I18n.t("ourTeachersDesc", { n: stats.teachers }))}</p>
           </div>
-          <span class="cta">Browse teachers →</span>
+          <span class="cta">${esc(I18n.t("browseTeachers"))}</span>
         </button>
         <button type="button" class="dir-home-card" data-nav="#/students">
           <div class="dir-home-icon" aria-hidden="true">${icons.users}</div>
           <div>
-            <h3>Our students</h3>
-            <p>${stats.students.toLocaleString("en-US")} students — filter by name, ID, department, year, class, or gender.</p>
+            <h3>${esc(I18n.t("ourStudents"))}</h3>
+            <p>${esc(I18n.t("ourStudentsDesc", { n: stats.students.toLocaleString(I18n.getLang() === "fr" ? "fr-FR" : "en-US") }))}</p>
           </div>
-          <span class="cta">Browse students →</span>
+          <span class="cta">${esc(I18n.t("browseStudents"))}</span>
         </button>
       </div>
       <div class="page-header" style="margin-bottom:0.85rem">
-        <h2 class="section-title" style="margin:0">Departments</h2>
+        <h2 class="section-title" style="margin:0">${esc(I18n.t("departments"))}</h2>
       </div>
       <div class="dept-grid">
         ${BBC_DATA.departments
-          .map(
-            (d) => `
+          .map((d) => {
+            const label = d.id === "primary" ? I18n.t("primary") : I18n.t("middle");
+            return `
           <button type="button" class="dept-card" data-nav="#/dept/${d.id}">
             <img src="${esc(d.image)}" alt="" loading="eager" />
             <div class="overlay"></div>
             <div class="content">
-              <span class="eyebrow">${esc(d.label)}</span>
-              <h2>${esc(d.name)}</h2>
+              <span class="eyebrow">${esc(label)}</span>
+              <h2>${esc(label)}</h2>
               <p>${esc(d.description)}</p>
-              <span class="cta">Open department</span>
+              <span class="cta">${esc(I18n.t("openDepartment"))}</span>
             </div>
           </button>
-        `
-          )
+        `;
+          })
           .join("")}
       </div>
     `);
@@ -535,11 +506,11 @@
                   ${cls.students
                     .map(
                       (s) => `
-                    <tr data-search="${esc((s.searchName || s.fullName || "").toLowerCase())}">
+                    <tr data-search="${esc((s.searchName || s.fullName || s.fullNameLatin || "").toLowerCase())}">
                       <td class="col-num" data-label="#">${s.number ?? ""}</td>
-                      <td class="col-name-full hide-desktop" data-label="Student">${esc(s.fullName || `${s.lastName} ${s.firstName}`)}</td>
-                      <td class="col-last hide-mobile" data-label="Last name">${esc(s.lastName)}</td>
-                      <td class="col-first hide-mobile" data-label="First name">${esc(s.firstName)}</td>
+                      <td class="col-name-full hide-desktop" data-label="Student">${esc(BBC_DATA.studentFullName(s))}</td>
+                      <td class="col-last hide-mobile" data-label="Last name">${esc(BBC_DATA.studentLastName(s))}</td>
+                      <td class="col-first hide-mobile" data-label="First name">${esc(BBC_DATA.studentFirstName(s))}</td>
                       <td class="col-dob hide-mobile" data-label="DOB">${esc(s.dateOfBirth || "—")}</td>
                       <td class="col-gender hide-sm" data-label="Gender">${esc(s.gender || "—")}</td>
                       <td class="col-action" data-label=""><button type="button" class="link-btn" data-nav="#/student/${s.id}">View</button></td>
@@ -628,21 +599,25 @@
               { label: level.name, to: `#/dept/${dept.id}/level/${level.id}` },
               { label: cls.code || cls.name, to: classBack },
             ]),
-        { label: s.fullName || "Student", to: `#/student/${s.id}` },
+        { label: BBC_DATA.studentFullName(s), to: `#/student/${s.id}` },
       ])}
       <div class="page-header" style="margin-bottom:1rem">
         <button type="button" class="btn btn-ghost" data-nav="${esc(back)}" style="margin-bottom:0.75rem;padding-left:0">← Back</button>
       </div>
       <div class="teacher-hero">
-        <div class="avatar avatar-lg">${esc(initials(s.firstName || s.fullName, s.lastName || ""))}</div>
+        <div class="avatar avatar-lg">${esc(initials(BBC_DATA.studentFirstName(s), BBC_DATA.studentLastName(s)))}</div>
         <div>
-          <h1 dir="auto">${esc(s.fullName || `${s.lastName} ${s.firstName}`)}</h1>
+          <h1 dir="auto">${esc(BBC_DATA.studentFullName(s))}</h1>
           <p class="role">Student · ${esc(cls.code)} · ${esc(level.name)} · ${esc(short)}</p>
         </div>
       </div>
       <div class="facts-grid">
-        <div class="fact-card"><div class="k">Last name</div><div class="v" dir="auto">${esc(s.lastName || "—")}</div></div>
-        <div class="fact-card"><div class="k">First name</div><div class="v" dir="auto">${esc(s.firstName || "—")}</div></div>
+        <div class="fact-card"><div class="k">${esc(I18n.t("lastName"))}</div><div class="v" dir="auto">${esc(BBC_DATA.studentLastName(s))}</div></div>
+        <div class="fact-card"><div class="k">${esc(I18n.t("firstName"))}</div><div class="v" dir="auto">${esc(BBC_DATA.studentFirstName(s))}</div></div>
+        <div class="fact-card"><div class="k">${esc(I18n.t("lastNameAr"))}</div><div class="v" dir="auto">${esc(s.lastName || "—")}</div></div>
+        <div class="fact-card"><div class="k">${esc(I18n.t("firstNameAr"))}</div><div class="v" dir="auto">${esc(s.firstName || "—")}</div></div>
+        <div class="fact-card"><div class="k">${esc(I18n.t("lastNameLatin"))}</div><div class="v" dir="auto">${esc(s.lastNameLatin || "—")}</div></div>
+        <div class="fact-card"><div class="k">${esc(I18n.t("firstNameLatin"))}</div><div class="v" dir="auto">${esc(s.firstNameLatin || "—")}</div></div>
         <div class="fact-card"><div class="k">Date of birth</div><div class="v">${esc(s.dateOfBirth || "Not on file")}</div></div>
         <div class="fact-card"><div class="k">Gender</div><div class="v">${esc(s.gender || "—")}</div></div>
         <div class="fact-card"><div class="k">Roster #</div><div class="v">${s.number ?? "—"}</div></div>
@@ -702,7 +677,7 @@
                     .map(
                       ({ student: s, dept, level, cls }) => `
                     <tr>
-                      <td data-label="Name"><strong dir="auto">${esc(s.fullName)}</strong></td>
+                      <td data-label="Name"><strong dir="auto">${esc(BBC_DATA.studentFullName(s))}</strong></td>
                       <td class="hide-sm" data-label="Department">${esc(DEPT_SHORT[dept.id] || dept.name)}</td>
                       <td class="hide-mobile" data-label="Year">${esc(level.name)}</td>
                       <td data-label="Class">${esc(cls.code)}</td>
@@ -739,7 +714,7 @@
       return true;
     });
 
-    filtered.sort((a, b) => teacherLabel(a.teacher).localeCompare(teacherLabel(b.teacher), "ar"));
+    filtered.sort((a, b) => teacherLabel(a.teacher).localeCompare(teacherLabel(b.teacher), I18n.getLang() === "ar" ? "ar" : I18n.getLang() === "fr" ? "fr" : "en"));
 
     return shell(`
       ${crumb([
@@ -839,14 +814,14 @@
         if (d.id !== yd || String(level.id) !== String(yl)) return false;
       }
       if (q) {
-        const hay = `${s.id} ${s.fullName || ""} ${s.firstName || ""} ${s.lastName || ""} ${cls.code}`.toLowerCase();
+        const hay = `${s.id} ${s.searchName || ""} ${s.fullName || ""} ${s.fullNameLatin || ""} ${s.firstName || ""} ${s.firstNameLatin || ""} ${s.lastName || ""} ${s.lastNameLatin || ""} ${cls.code}`.toLowerCase();
         if (!hay.includes(q)) return false;
       }
       return true;
     });
 
     filtered.sort((a, b) =>
-      (a.student.fullName || "").localeCompare(b.student.fullName || "", "ar")
+      BBC_DATA.studentFullName(a.student).localeCompare(BBC_DATA.studentFullName(b.student), I18n.getLang() === "ar" ? "ar" : "en")
     );
 
     return shell(`
@@ -906,9 +881,9 @@
             ? filtered
                 .map(({ student: s, dept: d, level, cls }) => `
               <button type="button" class="dir-card" data-nav="#/student/${s.id}?from=${encodeURIComponent("#/students")}">
-                <div class="avatar">${esc(initials(s.firstName || s.fullName, s.lastName || ""))}</div>
+                <div class="avatar">${esc(initials(BBC_DATA.studentFirstName(s), BBC_DATA.studentLastName(s)))}</div>
                 <div class="dir-card-body">
-                  <strong dir="auto">${esc(s.fullName || `${s.lastName} ${s.firstName}`)}</strong>
+                  <strong dir="auto">${esc(BBC_DATA.studentFullName(s))}</strong>
                   <span class="dir-meta">${esc(DEPT_SHORT[d.id] || d.name)} · ${esc(level.name)} · ${esc(cls.code)}</span>
                   <span class="dir-meta hide-sm">ID ${esc(s.id)}${s.dateOfBirth ? ` · DOB ${esc(s.dateOfBirth)}` : ""}</span>
                   <span class="dir-meta">${esc(s.gender || "—")}</span>
@@ -1007,9 +982,7 @@
 
   function resolveView() {
     if (!Auth.isAuthenticated()) {
-      const role = state.pendingRole;
-      if (role === "director" || role === "admin") return viewLogin(role);
-      return viewGate();
+      return viewLogin();
     }
     const { parts, params } = state.route;
 
@@ -1051,35 +1024,23 @@
   }
 
   function bindEvents() {
-    document.querySelectorAll("[data-gate]").forEach((el) => {
-      el.addEventListener("click", () => {
-        state.pendingRole = el.getAttribute("data-gate");
-        render();
-      });
-    });
-
-    document.getElementById("btn-back-gate")?.addEventListener("click", () => {
-      state.pendingRole = null;
-      render();
-    });
+    I18n.bind(app, () => render());
 
     document.getElementById("login-form")?.addEventListener("submit", async (e) => {
       e.preventDefault();
       const password = document.getElementById("password").value;
-      const role = e.target.getAttribute("data-role") || state.pendingRole || "director";
       const err = document.getElementById("login-error");
-      const result = await Auth.login(role, password);
+      const result = await Auth.login(password);
       if (!result.ok) {
-        err.textContent = result.error;
+        err.textContent = result.error || I18n.t("loginError");
         err.classList.add("show");
         return;
       }
       try {
-        app.innerHTML = `<div class="login-page"><div class="login-card"><p>Loading live data…</p></div></div>`;
+        app.innerHTML = `<div class="login-page"><div class="login-card"><p>${esc(I18n.t("loading"))}</p></div></div>`;
         const data = await BBC_API.loadSchoolData();
         BBC_DATA.setData(data);
-        state.pendingRole = null;
-        go(role === "admin" ? "/manage" : "/home");
+        go(result.role === "admin" ? "/manage" : "/home");
         render();
       } catch (loadErr) {
         Auth.logout();
@@ -1091,7 +1052,6 @@
 
     document.getElementById("btn-logout")?.addEventListener("click", () => {
       Auth.logout();
-      state.pendingRole = null;
       go("/");
       render();
     });
@@ -1171,7 +1131,7 @@
     state.route = parseHash();
     if (Auth.isAuthenticated()) {
       try {
-        app.innerHTML = `<div class="login-page"><div class="login-card"><p>Loading live data…</p></div></div>`;
+        app.innerHTML = `<div class="login-page"><div class="login-card"><p>${typeof I18n !== "undefined" ? I18n.t("loading") : "Loading…"}</p></div></div>`;
         const data = await BBC_API.loadSchoolData();
         BBC_DATA.setData(data);
       } catch (err) {

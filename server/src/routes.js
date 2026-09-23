@@ -272,12 +272,16 @@ router.post("/students", authRequired(["admin"]), async (req, res) => {
   }
   const fullName =
     b.fullName || `${b.lastName || ""} ${b.firstName || ""}`.trim();
+  const fullNameLatin =
+    b.fullNameLatin ||
+    `${b.firstNameLatin || ""} ${b.lastNameLatin || ""}`.trim();
   const id = b.id || sid("S");
   await query(
     `INSERT INTO students (
       id, class_id, department_id, number, first_name, last_name, full_name,
+      first_name_latin, last_name_latin, full_name_latin,
       date_of_birth, gender, notes, search_name, previous_year_details
-    ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12::jsonb)`,
+    ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15::jsonb)`,
     [
       id,
       b.classId,
@@ -286,10 +290,13 @@ router.post("/students", authRequired(["admin"]), async (req, res) => {
       b.firstName || "",
       b.lastName || "",
       fullName,
+      b.firstNameLatin || "",
+      b.lastNameLatin || "",
+      fullNameLatin,
       b.dateOfBirth || "",
       b.gender || "",
       b.notes || "",
-      b.searchName || fullName,
+      b.searchName || `${fullName} ${fullNameLatin}`.trim(),
       b.previousYearDetails ? JSON.stringify(b.previousYearDetails) : null,
     ]
   );
@@ -315,7 +322,14 @@ router.put("/students/:id", authRequired(["admin"]), async (req, res) => {
       : `${b.lastName != null ? b.lastName : old.last_name} ${
           b.firstName != null ? b.firstName : old.first_name
         }`.trim();
+  const fullNameLatin =
+    b.fullNameLatin != null
+      ? b.fullNameLatin
+      : `${b.firstNameLatin != null ? b.firstNameLatin : old.first_name_latin || ""} ${
+          b.lastNameLatin != null ? b.lastNameLatin : old.last_name_latin || ""
+        }`.trim();
   const newClassId = b.classId || old.class_id;
+  const searchName = `${fullName} ${fullNameLatin}`.trim();
   const r = await query(
     `UPDATE students SET
       class_id = $2,
@@ -324,11 +338,14 @@ router.put("/students/:id", authRequired(["admin"]), async (req, res) => {
       first_name = COALESCE($5, first_name),
       last_name = COALESCE($6, last_name),
       full_name = $7,
-      date_of_birth = COALESCE($8, date_of_birth),
-      gender = COALESCE($9, gender),
-      notes = COALESCE($10, notes),
-      search_name = $7,
-      previous_year_details = COALESCE($11::jsonb, previous_year_details)
+      first_name_latin = COALESCE($8, first_name_latin),
+      last_name_latin = COALESCE($9, last_name_latin),
+      full_name_latin = COALESCE($10, full_name_latin),
+      date_of_birth = COALESCE($11, date_of_birth),
+      gender = COALESCE($12, gender),
+      notes = COALESCE($13, notes),
+      search_name = $14,
+      previous_year_details = COALESCE($15::jsonb, previous_year_details)
      WHERE id = $1 RETURNING *`,
     [
       req.params.id,
@@ -338,9 +355,13 @@ router.put("/students/:id", authRequired(["admin"]), async (req, res) => {
       b.firstName,
       b.lastName,
       fullName,
+      b.firstNameLatin,
+      b.lastNameLatin,
+      fullNameLatin || null,
       b.dateOfBirth,
       b.gender,
       b.notes,
+      searchName,
       b.previousYearDetails != null ? JSON.stringify(b.previousYearDetails) : null,
     ]
   );
