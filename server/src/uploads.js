@@ -18,6 +18,7 @@ export function ensureUploadDir() {
   fs.mkdirSync(UPLOAD_DIR, { recursive: true });
   fs.mkdirSync(path.join(UPLOAD_DIR, "students"), { recursive: true });
   fs.mkdirSync(path.join(UPLOAD_DIR, "teachers"), { recursive: true });
+  fs.mkdirSync(path.join(UPLOAD_DIR, "announcements"), { recursive: true });
   return UPLOAD_DIR;
 }
 
@@ -95,3 +96,50 @@ export function deleteProfilePhoto(entity, id) {
   ensureUploadDir();
   clearEntityFiles(entity, cleanId);
 }
+
+/**
+ * Save an announcement image (from data URL or raw buffer). Returns public URL path.
+ */
+export function saveAnnouncementImage({ dataUrl, buffer, mime, id }) {
+  ensureUploadDir();
+  const cleanId = safeId(id) || `ann-${Date.now()}`;
+  let parsed = null;
+  if (dataUrl) {
+    parsed = parseDataUrl(dataUrl);
+    if (!parsed) {
+      throw Object.assign(
+        new Error("Invalid image. Use JPG, PNG, WEBP or GIF under 4 MB."),
+        { status: 400 }
+      );
+    }
+  } else if (buffer && mime) {
+    const ext = MIME_EXT[mime.toLowerCase()];
+    if (!ext) {
+      throw Object.assign(new Error("Unsupported image type"), { status: 400 });
+    }
+    if (!buffer.length || buffer.length > MAX_BYTES * 2) {
+      throw Object.assign(new Error("Image too large"), { status: 400 });
+    }
+    parsed = { buffer, ext, mime };
+  } else {
+    throw Object.assign(new Error("No image provided"), { status: 400 });
+  }
+
+  const stamp = crypto.randomBytes(3).toString("hex");
+  const filename = `${cleanId}-${stamp}.${parsed.ext}`;
+  const abs = path.join(UPLOAD_DIR, "announcements", filename);
+  fs.writeFileSync(abs, parsed.buffer);
+  return {
+    url: `/uploads/announcements/${filename}`,
+    absPath: abs,
+    filename,
+  };
+}
+
+export function absoluteUploadPath(publicUrl) {
+  const rel = String(publicUrl || "").replace(/^\/uploads\//, "");
+  if (!rel || rel.includes("..")) return null;
+  return path.join(UPLOAD_DIR, rel);
+}
+
+export { parseDataUrl };

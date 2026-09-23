@@ -95,4 +95,19 @@ export async function migrate() {
   await query(`ALTER TABLE teachers ADD COLUMN IF NOT EXISTS photo TEXT NOT NULL DEFAULT ''`);
   await query(`ALTER TABLE teachers ADD COLUMN IF NOT EXISTS first_name_latin TEXT NOT NULL DEFAULT ''`);
   await query(`ALTER TABLE teachers ADD COLUMN IF NOT EXISTS last_name_latin TEXT NOT NULL DEFAULT ''`);
+
+  await query(`
+    CREATE TABLE IF NOT EXISTS announcements (
+      id TEXT PRIMARY KEY,
+      text TEXT NOT NULL DEFAULT '',
+      image_path TEXT NOT NULL DEFAULT '',
+      group_ids JSONB NOT NULL DEFAULT '[]'::jsonb,
+      group_names JSONB NOT NULL DEFAULT '[]'::jsonb,
+      status TEXT NOT NULL DEFAULT 'draft',
+      send_results JSONB NOT NULL DEFAULT '[]'::jsonb,
+      created_by TEXT NOT NULL DEFAULT 'admin',
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+    CREATE INDEX IF NOT EXISTS idx_announcements_created ON announcements(created_at DESC);
+  `);
 }

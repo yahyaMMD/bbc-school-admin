@@ -19,7 +19,7 @@ ENV WEB_ROOT=/app/web
 ENV SEED_JSON=/app/seed/school_data.json
 ENV UPLOAD_DIR=/data/uploads
 ENV PORT=3000
-RUN mkdir -p /data/uploads/students /data/uploads/teachers
+RUN mkdir -p /data/uploads/students /data/uploads/teachers /data/uploads/announcements
 EXPOSE 3000
 
 CMD ["sh", "-c", "node scripts/seed.js && node src/index.js"]

@@ -99,6 +99,27 @@ const BBC_API = (() => {
     });
   }
 
+  /** Fetch binary (e.g. WhatsApp QR PNG) with auth; returns an object URL. */
+  async function getBlobUrl(path) {
+    const headers = {};
+    const token = getToken();
+    if (token) headers.Authorization = `Bearer ${token}`;
+    const res = await fetch(`/api${path}`, { headers });
+    if (!res.ok) {
+      const text = await res.text();
+      let msg = res.statusText || "Request failed";
+      try {
+        const data = text ? JSON.parse(text) : null;
+        if (data && data.error) msg = data.error;
+      } catch {
+        /* ignore */
+      }
+      throw new Error(msg);
+    }
+    const blob = await res.blob();
+    return URL.createObjectURL(blob);
+  }
+
   return {
     getToken,
     getRole,
@@ -109,6 +130,7 @@ const BBC_API = (() => {
     uploadPhoto,
     removePhoto,
     readFileAsDataUrl,
+    getBlobUrl,
     request,
     get: (p) => request(p),
     post: (p, body) => request(p, { method: "POST", body: JSON.stringify(body) }),

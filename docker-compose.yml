@@ -14,6 +14,25 @@ services:
       timeout: 5s
       retries: 20
 
+  whatsapp:
+    build:
+      context: ./server/whatsapp-bridge
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      WA_BRIDGE_PORT: "3847"
+      CHROME_PATH: /usr/bin/chromium
+      WA_AUTH_DIR: /data/wa-auth
+      WA_DATA_DIR: /data/wa-data
+      WA_SEND_DELAY_MS: "2500"
+    volumes:
+      - bbc_wa_auth:/data/wa-auth
+      - bbc_wa_data:/data/wa-data
+      - bbc_uploads:/data/uploads:ro
+    # Bridge is internal only — API proxies it
+    expose:
+      - "3847"
+
   api:
     build:
       context: .
@@ -22,6 +41,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      whatsapp:
+        condition: service_started
     environment:
       DATABASE_URL: postgres://bbc:${POSTGRES_PASSWORD:-bbc_secure_change_me}@db:5432/bbc_school
       JWT_SECRET: ${JWT_SECRET:-bbc-jwt-change-me-in-production}
@@ -31,6 +52,8 @@ services:
       WEB_ROOT: /app/web
       SEED_JSON: /app/seed/school_data.json
       UPLOAD_DIR: /data/uploads
+      WA_BRIDGE_URL: ${WA_BRIDGE_URL:-http://whatsapp:3847}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
     volumes:
       - bbc_uploads:/data/uploads
     ports:
@@ -39,3 +62,5 @@ services:
 volumes:
   bbc_pgdata:
   bbc_uploads:
+  bbc_wa_auth:
+  bbc_wa_data:

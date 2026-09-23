@@ -6,3 +6,9 @@ server/node_modules/
 
 # Profile photos (stored on VPS volume)
 data/uploads/
+
+# WhatsApp bridge local session
+server/whatsapp-bridge/.auth/
+server/whatsapp-bridge/.data/
+server/whatsapp-bridge/node_modules/
+

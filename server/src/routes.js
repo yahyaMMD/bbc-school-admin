@@ -4,6 +4,7 @@ import { query } from "./db.js";
 import { authRequired } from "./auth.js";
 import { buildSchoolData, mapTeacher, mapStudent, mapClass, mapIssue } from "./schoolData.js";
 import { saveProfilePhoto, deleteProfilePhoto } from "./uploads.js";
+import * as Announcements from "./announcements.js";
 
 const router = Router();
 
@@ -534,5 +535,15 @@ router.delete("/uploads/photo", authRequired(["admin"]), async (req, res) => {
     res.status(500).json({ error: err.message || "Remove failed" });
   }
 });
+
+// ——— Announcements (Staff) ———
+router.get("/announcements", authRequired(["admin"]), Announcements.listAnnouncements);
+router.get("/announcements/wa/status", authRequired(["admin"]), Announcements.waStatus);
+router.get("/announcements/wa/qr", authRequired(["admin"]), Announcements.waQr);
+router.get("/announcements/wa/groups", authRequired(["admin"]), Announcements.waGroups);
+router.post("/announcements/generate-image", authRequired(["admin"]), Announcements.generateImage);
+router.post("/announcements/upload-image", authRequired(["admin"]), Announcements.uploadImage);
+router.post("/announcements/send", authRequired(["admin"]), Announcements.sendAnnouncement);
+router.get("/announcements/:id", authRequired(["admin"]), Announcements.getAnnouncement);
 
 export default router;
