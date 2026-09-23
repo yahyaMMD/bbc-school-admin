@@ -2,20 +2,10 @@ import crypto from "crypto";
 import fs from "fs";
 import { query } from "./db.js";
 import { saveAnnouncementImage, absoluteUploadPath } from "./uploads.js";
+import { generatePosterFromText } from "./posterHtml.js";
 
 const WA_BRIDGE_URL = (process.env.WA_BRIDGE_URL || "http://127.0.0.1:3847").replace(/\/$/, "");
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY || "";
-const OPENROUTER_IMAGE_MODEL =
-  process.env.OPENROUTER_IMAGE_MODEL || "bytedance-seed/seedream-5-0-pro";
-
-/** Prefer models strong at Arabic / multilingual in-image text. */
-const IMAGE_MODEL_FALLBACKS = [
-  "bytedance-seed/seedream-5-0-pro",
-  "bytedance-seed/seedream-4.5",
-  "openai/gpt-image-1",
-  "google/gemini-3-pro-image",
-  "google/gemini-2.5-flash-image",
-];
 
 let schedulerStarted = false;
 let schedulerBusy = false;
@@ -26,30 +16,6 @@ function sid(prefix = "ANN") {
 
 function hasArabic(text) {
   return /[\u0600-\u06FF]/.test(String(text || ""));
-}
-
-function buildPosterPrompt(text) {
-  const body = String(text || "").trim();
-  const arabic = hasArabic(body);
-  const lines = [
-    "Create a single professional school announcement POSTER image (not a photo of a poster on a wall).",
-    "Brand: Quality Education Algérie (Q.E.A) — warm orange accent (#F26522), clean white/cream background, modern layout.",
-    "Composition: clear hierarchy, generous margins, high contrast, suitable for WhatsApp sharing.",
-    "Typography must be sharp and fully readable. No blurry, cut-off, or overlapping letters.",
-    "Do NOT invent extra sentences, slogans, phone numbers, websites, QR codes, watermarks, or logos beyond a simple Q.E.A wordmark if needed.",
-    "Do NOT paraphrase the announcement — render the provided copy as the poster content.",
-  ];
-  if (arabic) {
-    lines.push(
-      "The announcement includes Arabic. Render Arabic RIGHT-TO-LEFT with correct letter joining and spacing.",
-      "Keep any French/English lines LEFT-TO-RIGHT. Preserve digits and punctuation exactly.",
-      "Quote blocks below are the EXACT strings to paint on the poster (letter-perfect):"
-    );
-  } else {
-    lines.push("Paint the EXACT announcement text below on the poster (letter-perfect):");
-  }
-  lines.push('"""', body, '"""');
-  return lines.join("\n");
 }
 
 function mapAnnouncement(r) {
@@ -256,116 +222,24 @@ export async function generateImage(req, res) {
       return res.status(500).json({ error: "OPENROUTER_API_KEY not configured on server" });
     }
 
-    const prompt = buildPosterPrompt(text);
-    const models = [OPENROUTER_IMAGE_MODEL, ...IMAGE_MODEL_FALLBACKS].filter(
-      (m, i, arr) => m && arr.indexOf(m) === i
-    );
-
-    let imageItem = null;
-    let usedModel = null;
-    let lastError = "";
-
-    for (const model of models) {
-      const payload = {
-        model,
-        prompt: prompt.slice(0, 3900),
-        aspect_ratio: "4:5",
-        output_format: "png",
-        quality: "high",
-      };
-      // Seedream / some providers accept resolution tiers
-      if (/seedream|flux|riverflow/i.test(model)) {
-        payload.resolution = "2K";
-      }
-
-      const orRes = await fetch("https://openrouter.ai/api/v1/images", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${OPENROUTER_API_KEY}`,
-          "Content-Type": "application/json",
-          "HTTP-Referer": process.env.OPENROUTER_SITE_URL || "https://qea.local",
-          "X-Title": process.env.OPENROUTER_APP_NAME || "QEA Announcements",
-        },
-        body: JSON.stringify(payload),
-      });
-      const orText = await orRes.text();
-      let parsed = null;
-      try {
-        parsed = JSON.parse(orText);
-      } catch {
-        parsed = null;
-      }
-      if (orRes.ok && parsed?.data?.[0]) {
-        imageItem = parsed.data[0];
-        usedModel = model;
-        break;
-      }
-      lastError =
-        parsed?.error?.message ||
-        parsed?.error ||
-        `OpenRouter image generation failed (${orRes.status}) for ${model}`;
-      const msg = String(lastError).toLowerCase();
-      if (
-        msg.includes("not found") ||
-        msg.includes("no endpoints") ||
-        msg.includes("does not exist") ||
-        msg.includes("not available") ||
-        orRes.status === 404 ||
-        orRes.status === 402
-      ) {
-        continue;
-      }
-      // Try next model on provider-specific failures too
-      continue;
-    }
-
-    if (!imageItem) {
-      return res.status(502).json({ error: String(lastError || "Image generation failed") });
-    }
-
-    let buffer = null;
-    let mime = imageItem.media_type || "image/png";
-    const b64 = imageItem.b64_json;
-    const remoteUrl = imageItem.url;
-
-    if (b64) {
-      const raw = String(b64).includes(",") ? String(b64).split(",").pop() : String(b64);
-      buffer = Buffer.from(raw, "base64");
-    } else if (remoteUrl) {
-      if (String(remoteUrl).startsWith("data:")) {
-        const m = String(remoteUrl).match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/);
-        if (!m) return res.status(502).json({ error: "Invalid data URL from OpenRouter" });
-        mime = m[1];
-        buffer = Buffer.from(m[2], "base64");
-      } else {
-        const imgRes = await fetch(remoteUrl);
-        if (!imgRes.ok) {
-          return res.status(502).json({ error: "Failed to download generated image" });
-        }
-        buffer = Buffer.from(await imgRes.arrayBuffer());
-        const ct = imgRes.headers.get("content-type") || mime;
-        mime = ct.split(";")[0].trim();
-      }
-    } else {
-      return res.status(502).json({ error: "No image in OpenRouter response" });
-    }
-
+    const poster = await generatePosterFromText(text);
     const saved = saveAnnouncementImage({
-      buffer,
-      mime,
+      buffer: poster.buffer,
+      mime: poster.mime,
       id: sid("IMG"),
     });
     res.json({
       ok: true,
       url: saved.url,
       text,
-      model: usedModel,
-      provider: "openrouter",
-      arabic: hasArabic(text),
+      model: poster.model,
+      method: poster.method,
+      provider: "openrouter+html",
+      arabic: poster.arabic,
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: err.message || "Image generation failed" });
+    res.status(err.status || 500).json({ error: err.message || "Image generation failed" });
   }
 }
 
