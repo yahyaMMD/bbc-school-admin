@@ -28,6 +28,7 @@ function mapAnnouncement(r) {
     status: r.status || "draft",
     sendResults: r.send_results || [],
     scheduledAt: r.scheduled_at || null,
+    sentAt: r.sent_at || null,
     createdBy: r.created_by || "admin",
     createdAt: r.created_at,
   };
@@ -118,7 +119,8 @@ async function deliverImageToGroups({ imageUrl, groupIds, groupNames, text, crea
       `UPDATE announcements
        SET status = $2,
            send_results = $3::jsonb,
-           scheduled_at = NULL
+           scheduled_at = NULL,
+           sent_at = NOW()
        WHERE id = $1`,
       [announcementId, status, JSON.stringify(bridgeResult.results || [])]
     );
@@ -129,8 +131,8 @@ async function deliverImageToGroups({ imageUrl, groupIds, groupNames, text, crea
   const id = sid("ANN");
   await query(
     `INSERT INTO announcements (
-      id, text, image_path, group_ids, group_names, status, send_results, created_by, scheduled_at
-    ) VALUES ($1,$2,$3,$4::jsonb,$5::jsonb,$6,$7::jsonb,$8,NULL)`,
+      id, text, image_path, group_ids, group_names, status, send_results, created_by, scheduled_at, sent_at
+    ) VALUES ($1,$2,$3,$4::jsonb,$5::jsonb,$6,$7::jsonb,$8,NULL,NOW())`,
     [
       id,
       text || "",

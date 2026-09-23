@@ -112,6 +112,7 @@ export async function migrate() {
     CREATE INDEX IF NOT EXISTS idx_announcements_created ON announcements(created_at DESC);
   `);
   await query(`ALTER TABLE announcements ADD COLUMN IF NOT EXISTS scheduled_at TIMESTAMPTZ`);
+  await query(`ALTER TABLE announcements ADD COLUMN IF NOT EXISTS sent_at TIMESTAMPTZ`);
   await query(
     `CREATE INDEX IF NOT EXISTS idx_announcements_scheduled
      ON announcements (scheduled_at)

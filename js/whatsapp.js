@@ -62,6 +62,115 @@ const WhatsAppApp = (() => {
     return "";
   }
 
+  function ensureAnnDetailModal() {
+    let overlay = document.getElementById("ann-detail-modal");
+    if (overlay) return overlay;
+    overlay = document.createElement("div");
+    overlay.id = "ann-detail-modal";
+    overlay.className = "ann-detail-modal";
+    overlay.hidden = true;
+    overlay.innerHTML = `
+      <div class="ann-detail-card" role="dialog" aria-modal="true" aria-labelledby="ann-detail-title">
+        <button type="button" class="ann-detail-close" data-ann-detail-close aria-label="${esc(I18n.t("close"))}">×</button>
+        <h2 id="ann-detail-title" class="ann-detail-title">${esc(I18n.t("annDetails"))}</h2>
+        <div class="ann-detail-body" data-ann-detail-body></div>
+      </div>`;
+    document.body.appendChild(overlay);
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay || e.target.closest("[data-ann-detail-close]")) {
+        overlay.hidden = true;
+      }
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !overlay.hidden) overlay.hidden = true;
+    });
+    return overlay;
+  }
+
+  function openAnnDetail(a) {
+    const overlay = ensureAnnDetailModal();
+    const body = overlay.querySelector("[data-ann-detail-body]");
+    const names = (a.groupNames || []).filter(Boolean);
+    const ids = a.groupIds || [];
+    const groupLines = names.length
+      ? names
+          .map(
+            (n, i) =>
+              `<li><strong dir="auto">${esc(n)}</strong>${
+                ids[i] ? `<span class="muted"> · ${esc(ids[i])}</span>` : ""
+              }</li>`
+          )
+          .join("")
+      : ids.length
+        ? ids.map((id) => `<li><code>${esc(id)}</code></li>`).join("")
+        : `<li>—</li>`;
+
+    const results = Array.isArray(a.sendResults) ? a.sendResults : [];
+    const resultRows = results.length
+      ? results
+          .map((r) => {
+            const idx = (a.groupIds || []).indexOf(r.groupId);
+            const label = (a.groupNames || [])[idx] || r.groupId || "—";
+            const ok = !!r.ok;
+            return `<li>
+              <span dir="auto">${esc(label)}</span>
+              <span class="ann-status-pill ${ok ? "ok" : "err"}">${esc(
+                ok ? I18n.t("annDeliveryOk") : I18n.t("annDeliveryFail")
+              )}${r.error ? ` — ${esc(r.error)}` : ""}</span>
+            </li>`;
+          })
+          .join("")
+      : "";
+
+    const sentDisplay = a.sentAt
+      ? formatAnnouncementTime(a.sentAt)
+      : ["sent", "partial", "failed"].includes(String(a.status || "").toLowerCase())
+        ? formatAnnouncementTime(a.createdAt)
+        : "—";
+
+    body.innerHTML = `
+      <div class="ann-detail-grid">
+        ${
+          a.imagePath
+            ? `<button type="button" class="ann-detail-thumb" data-photo-view="${esc(a.imagePath)}" data-photo-label="${esc(I18n.t("annImage"))}">
+                <img src="${esc(a.imagePath)}" alt="" />
+              </button>`
+            : ""
+        }
+        <dl class="ann-detail-facts">
+          <div><dt>${esc(I18n.t("announcementStatus"))}</dt><dd><span class="ann-status-pill ${announcementStatusClass(a.status)}">${esc(a.status || "—")}</span></dd></div>
+          <div><dt>${esc(I18n.t("annCreatedAt"))}</dt><dd>${esc(formatAnnouncementTime(a.createdAt))}</dd></div>
+          ${
+            a.scheduledAt
+              ? `<div><dt>${esc(I18n.t("scheduledFor"))}</dt><dd>${esc(formatAnnouncementTime(a.scheduledAt))}</dd></div>`
+              : ""
+          }
+          <div><dt>${esc(I18n.t("annSentAt"))}</dt><dd>${esc(sentDisplay)}</dd></div>
+        </dl>
+      </div>
+      <section class="ann-detail-section">
+        <h3>${esc(I18n.t("annGroups"))}</h3>
+        <ul class="ann-detail-list">${groupLines}</ul>
+      </section>
+      ${
+        resultRows
+          ? `<section class="ann-detail-section">
+              <h3>${esc(I18n.t("annSendResults"))}</h3>
+              <ul class="ann-detail-list ann-detail-delivery">${resultRows}</ul>
+            </section>`
+          : ""
+      }
+      <section class="ann-detail-section">
+        <h3>${esc(I18n.t("annMessageText"))}</h3>
+        <pre class="ann-detail-text" dir="auto">${esc(a.text || "—")}</pre>
+      </section>
+    `;
+    overlay.hidden = false;
+    if (window.QEAPhoto && typeof window.QEAPhoto.bind === "function") {
+      window.QEAPhoto.bind(body);
+    }
+  }
+
   function viewConnect() {
     return layout(
       "connect",
@@ -318,23 +427,25 @@ const WhatsAppApp = (() => {
           return;
         }
         historyEl.innerHTML = list
-          .map((a) => {
+          .map((a, idx) => {
             const names = (a.groupNames || []).filter(Boolean);
             const groupsLabel = names.length
               ? names.slice(0, 6).map(esc).join(", ") + (names.length > 6 ? ` +${names.length - 6}` : "")
               : (a.groupIds || []).length
-                ? `${(a.groupIds || []).length} groups`
+                ? `${(a.groupIds || []).length}`
                 : "—";
             const when =
               a.status === "scheduled" && a.scheduledAt
                 ? `${I18n.t("scheduledFor")}: ${formatAnnouncementTime(a.scheduledAt)}`
-                : formatAnnouncementTime(a.createdAt);
+                : a.sentAt
+                  ? `${I18n.t("annSentAt")}: ${formatAnnouncementTime(a.sentAt)}`
+                  : formatAnnouncementTime(a.createdAt);
             const cancelBtn =
               a.status === "scheduled"
                 ? `<button type="button" class="btn btn-ghost btn-sm" data-ann-cancel="${esc(a.id)}">${esc(I18n.t("cancelSchedule"))}</button>`
                 : "";
             return `
-              <article class="ann-card">
+              <article class="ann-card" data-ann-open="${idx}" tabindex="0" role="button" aria-label="${esc(I18n.t("annViewDetails"))}">
                 <div class="ann-card-thumb">
                   ${
                     a.imagePath
@@ -348,14 +459,44 @@ const WhatsAppApp = (() => {
                   <p class="ann-card-meta">${esc(when)}</p>
                   <div class="ann-card-actions">
                     <span class="ann-status-pill ${announcementStatusClass(a.status)}">${esc(a.status || "—")}</span>
+                    <button type="button" class="btn btn-ghost btn-sm" data-ann-details="${idx}">${esc(I18n.t("annViewDetails"))}</button>
                     ${cancelBtn}
                   </div>
                 </div>
               </article>`;
           })
           .join("");
+
+        const openFromIdx = (raw) => {
+          const idx = Number(raw);
+          if (!Number.isFinite(idx) || !list[idx]) return;
+          openAnnDetail(list[idx]);
+        };
+
+        historyEl.querySelectorAll(".ann-card[data-ann-open]").forEach((card) => {
+          card.addEventListener("click", (e) => {
+            if (e.target.closest("[data-ann-cancel]") || e.target.closest("[data-photo-view]")) return;
+            openFromIdx(card.getAttribute("data-ann-open"));
+          });
+          card.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              if (e.target.closest("[data-ann-cancel]")) return;
+              e.preventDefault();
+              openFromIdx(card.getAttribute("data-ann-open"));
+            }
+          });
+        });
+
+        historyEl.querySelectorAll("[data-ann-details]").forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            openFromIdx(btn.getAttribute("data-ann-details"));
+          });
+        });
+
         historyEl.querySelectorAll("[data-ann-cancel]").forEach((btn) => {
-          btn.addEventListener("click", async () => {
+          btn.addEventListener("click", async (e) => {
+            e.stopPropagation();
             const id = btn.getAttribute("data-ann-cancel");
             if (!id) return;
             btn.disabled = true;

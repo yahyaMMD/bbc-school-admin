@@ -56,6 +56,9 @@ Rules:
 - If the text is RTL Arabic, keep Arabic strings as-is.
 - Detect schedule/table data even when columns are listed vertically or jumbled; rebuild logical rows.
 - Typical schedule columns (RTL display order): الأقسام المعنية | اليوم | التوقيت — put headers in the order that reads correctly right-to-left when rendered.
+- If times are split across lines (e.g. "من 08:30 إلى" then "12:00"), join them into one cell: "من 08:30 إلى 12:00".
+- Put the orange banner/title FIRST even if it appears later in the pasted text (e.g. "خاص بأقسام الإبتدائي").
+- intro = the paragraph starting with في إطار / يسرنا / etc.
 - If there is no table, set "table" to null and put remaining body into intro and/or notes.
 - No logos, icons, school names, phone numbers, or QR unless present in the source text.
 - title should be the orange banner line (e.g. خاص بأقسام الإبتدائي) when present.
