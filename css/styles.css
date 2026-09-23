@@ -1174,7 +1174,7 @@ a {
 .avatar {
   width: 44px;
   height: 44px;
-  border-radius: 12px;
+  border-radius: 50%;
   background: linear-gradient(135deg, var(--orange), var(--orange-deep));
   color: var(--white);
   font-family: var(--font-display);
@@ -3083,7 +3083,7 @@ html[dir="rtl"] .chev {
 .avatar-lg {
   width: 80px;
   height: 80px;
-  border-radius: 20px;
+  border-radius: 50%;
 }
 
 /* ——— Home: departments first, then icon strip ——— */
