@@ -1,0 +1,110 @@
+Students updated: 1424
+Teachers updated: 131
+
+=== Unknown Arabic tokens (fallback letter-map used) ===
+  16  عبد
+  11  الله
+   9  الدين
+   6  الرزاق
+   5  حميدي
+   4  بريكي
+   4  بوعلام
+   4  شريف
+   4  رحاب
+   4  رابحي
+   4  شرقي
+   4  صلاح
+   4  ميساء
+   4  مليسا
+   4  صهيب
+   3  الينا
+   3  بوزيد
+   3  ليانا
+   3  حيطاشي
+   3  تيم
+   3  مسعود
+   3  عويسي
+   3  دينة
+   3  لقمان
+   3  بوعاش
+   3  اميليا
+   3  واري
+   3  لطيفي
+   3  فلاح
+   3  لعبيدي
+   3  الرحمان
+   3  سلامي
+   3  جدو
+   3  رايس
+   3  حنين
+   3  صافي
+   3  خيدر
+   3  سالم
+   3  حساين
+   3  حبيلة
+   3  مصطفى
+   3  مصباح
+   3  بوصبيع
+   3  برابية
+   3  رامي
+   3  أميليا
+   3  لجرم
+   3  فهد
+   3  أبو
+   3  بوبلاطة
+   3  منال
+   3  بلحوت
+   3  سعيداني
+   3  رقية
+   3  سعيدات
+   3  كنزاري
+   3  مشدان
+   3  بوداعة
+   3  ماتن
+   3  عطاف
+   3  حماش
+   3  ميلودي
+   3  ليان
+   3  علاوة
+   3  حمو
+   3  لجين
+   3  بلعزوق
+   3  عبيدي
+   3  عشاب
+   3  فريال
+   3  مداني
+   3  نورسين
+   3  خلف
+   3  سويسي
+   3  كلاش
+   3  بوعلي
+   3  شاهين
+   3  منصف
+   3  ما
+   3  خليفة
+
+=== Unknown Latin tokens (Arabic left as Latin source) ===
+
+=== Student samples ===
+عيد محمد امير  ↔  Mohamed Amir Aid
+عاشور انس  ↔  Anes Achour
+حليمي جواد  ↔  Djouad Halimi
+بوشابو سامي  ↔  Sami Bouchabou
+جوادي زياد امير  ↔  Ziad Amir Djouadi
+عمران لياس  ↔  Ilyas Omrane
+حاج عيسى ابراهيم  ↔  Aissa Ibrahim Hadj
+سعداوي محمد  ↔  Mohamed Saadaoui
+
+=== Teacher samples ===
+AR: أيمن   |  LAT: Aimen
+AR: ماريا   |  LAT: Maria
+AR: مرينا   |  LAT: Mrina
+AR: ياسمين   |  LAT: Yasmine
+AR: زهور   |  LAT: Zhour
+AR:  عدة  |  LAT: Ada
+AR:  آيت عمر  |  LAT: Ait Omar
+AR:  عماري  |  LAT: Ammari
+AR: فلة باش  |  LAT: Fla Bach
+AR: منال بشاري  |  LAT: Mnel Bchari
+AR: عاشور بركة  |  LAT: Achour Brka
+AR: ليندا بلعيدي  |  LAT: Linda Blaidi

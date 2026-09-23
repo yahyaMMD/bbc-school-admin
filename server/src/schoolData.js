@@ -6,6 +6,8 @@ function mapTeacher(r) {
     firstName: r.first_name,
     lastName: r.last_name,
     nameLatin: r.name_latin || "",
+    firstNameLatin: r.first_name_latin || "",
+    lastNameLatin: r.last_name_latin || "",
     phone: r.phone,
     wilaya: r.wilaya,
     commune: r.commune,

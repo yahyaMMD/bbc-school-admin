@@ -69,13 +69,15 @@ async function seedFromJson(filePath) {
 
   for (const t of raw.teachers || []) {
     await query(
-      `INSERT INTO teachers (id, first_name, last_name, name_latin, phone, wilaya, commune, modules, departments, class_ids)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8::jsonb,$9::jsonb,$10::jsonb)`,
+      `INSERT INTO teachers (id, first_name, last_name, name_latin, first_name_latin, last_name_latin, phone, wilaya, commune, modules, departments, class_ids)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10::jsonb,$11::jsonb,$12::jsonb)`,
       [
         t.id,
         t.firstName || "",
         t.lastName || "",
         t.nameLatin || "",
+        t.firstNameLatin || "",
+        t.lastNameLatin || "",
         t.phone || "",
         t.wilaya || "",
         t.commune || "",
@@ -175,45 +177,61 @@ async function seedFromJson(filePath) {
   );
 }
 
-/** Fill Latin name columns from seed JSON without wiping other edits. */
+/** Refresh bilingual names from seed JSON without wiping other edits. */
 async function backfillLatinNames(filePath) {
-  const missing = await query(
-    `SELECT COUNT(*)::int AS n FROM students
-     WHERE COALESCE(full_name_latin, '') = '' OR COALESCE(first_name_latin, '') = ''`
-  );
-  if (!missing.rows[0].n) {
-    console.log("Latin names already present — skip backfill");
-    return;
-  }
   const raw = JSON.parse(fs.readFileSync(filePath, "utf8"));
-  let updated = 0;
+  let updatedStudents = 0;
+  let updatedTeachers = 0;
   for (const dept of [raw.primary, raw.middle]) {
     for (const level of dept?.levels || []) {
       for (const c of level.classes || []) {
         for (const s of c.students || []) {
-          if (!s.fullNameLatin && !s.firstNameLatin) continue;
           const r = await query(
             `UPDATE students SET
-              first_name_latin = COALESCE(NULLIF($2, ''), first_name_latin),
-              last_name_latin = COALESCE(NULLIF($3, ''), last_name_latin),
-              full_name_latin = COALESCE(NULLIF($4, ''), full_name_latin),
-              search_name = COALESCE(NULLIF($5, ''), search_name)
-             WHERE id = $1
-               AND (COALESCE(full_name_latin, '') = '' OR COALESCE(first_name_latin, '') = '')`,
+              first_name = COALESCE(NULLIF($2, ''), first_name),
+              last_name = COALESCE(NULLIF($3, ''), last_name),
+              full_name = COALESCE(NULLIF($4, ''), full_name),
+              first_name_latin = COALESCE(NULLIF($5, ''), first_name_latin),
+              last_name_latin = COALESCE(NULLIF($6, ''), last_name_latin),
+              full_name_latin = COALESCE(NULLIF($7, ''), full_name_latin),
+              search_name = COALESCE(NULLIF($8, ''), search_name)
+             WHERE id = $1`,
             [
               s.id,
+              s.firstName || "",
+              s.lastName || "",
+              s.fullName || "",
               s.firstNameLatin || "",
               s.lastNameLatin || "",
               s.fullNameLatin || "",
               s.searchName || "",
             ]
           );
-          updated += r.rowCount || 0;
+          updatedStudents += r.rowCount || 0;
         }
       }
     }
   }
-  // Also refresh school display name in meta
+  for (const t of raw.teachers || []) {
+    const r = await query(
+      `UPDATE teachers SET
+        first_name = COALESCE(NULLIF($2, ''), first_name),
+        last_name = COALESCE(NULLIF($3, ''), last_name),
+        name_latin = COALESCE(NULLIF($4, ''), name_latin),
+        first_name_latin = COALESCE(NULLIF($5, ''), first_name_latin),
+        last_name_latin = COALESCE(NULLIF($6, ''), last_name_latin)
+       WHERE id = $1`,
+      [
+        t.id,
+        (t.firstName || "").trim(),
+        (t.lastName || "").trim(),
+        t.nameLatin || "",
+        t.firstNameLatin || "",
+        t.lastNameLatin || "",
+      ]
+    );
+    updatedTeachers += r.rowCount || 0;
+  }
   if (raw.school) {
     await query(
       `UPDATE school_meta SET data = jsonb_set(
@@ -223,7 +241,9 @@ async function backfillLatinNames(filePath) {
       [JSON.stringify({ name: raw.school.name, nameShort: raw.school.nameShort || "Q.E.A" })]
     );
   }
-  console.log(`Backfilled Latin names on ${updated} students`);
+  console.log(
+    `Refreshed bilingual names: students=${updatedStudents} teachers=${updatedTeachers}`
+  );
 }
 
 async function main() {

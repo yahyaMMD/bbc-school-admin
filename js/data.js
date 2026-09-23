@@ -112,11 +112,13 @@ const BBC_DATA = (() => {
   function teacherDisplayName(t) {
     if (!t) return "—";
     const ar = [t.firstName, t.lastName].filter(Boolean).join(" ").trim();
-    const latin = (t.nameLatin || "").trim() || ar;
+    const latin =
+      (t.nameLatin || "").trim() ||
+      [t.firstNameLatin, t.lastNameLatin].filter(Boolean).join(" ").trim() ||
+      ar;
     if (useArabicNames()) {
-      // Prefer Arabic script if present
       const hasAr = /[\u0600-\u06FF]/.test(ar);
-      return hasAr ? ar || latin : ar || latin || "—";
+      return (hasAr ? ar : "") || latin || "—";
     }
     return latin || ar || "—";
   }
