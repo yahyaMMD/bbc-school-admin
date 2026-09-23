@@ -142,7 +142,7 @@
       role === "teacher"
         ? BBC_DATA.teacherDisplayName(person)
         : BBC_DATA.studentFullName(person);
-    return `<span role="button" tabindex="0" class="avatar ${roleCls}${sizeCls} avatar-clickable" data-photo-view="${esc(src)}" data-photo-label="${esc(label)}" title="${esc(label)}" aria-label="View photo">
+    return `<span role="button" tabindex="0" class="avatar ${roleCls}${sizeCls} avatar-clickable" data-photo-view="${esc(src)}" data-photo-label="${esc(label)}" title="${esc(label)}" aria-label="${esc(I18n.t("viewPhoto"))}">
       <img src="${esc(src)}" alt="" loading="lazy" onerror="this.onerror=null;this.src='${esc(fallback)}'" />
     </span>`;
   }
@@ -155,8 +155,8 @@
     overlay.className = "photo-lightbox";
     overlay.hidden = true;
     overlay.innerHTML = `
-      <div class="photo-lightbox-card" role="dialog" aria-modal="true" aria-label="Photo">
-        <button type="button" class="photo-lightbox-close" data-photo-close aria-label="Close">×</button>
+      <div class="photo-lightbox-card" role="dialog" aria-modal="true" aria-label="${esc(I18n.t("photoCaption"))}">
+        <button type="button" class="photo-lightbox-close" data-photo-close aria-label="${esc(I18n.t("close"))}">×</button>
         <img class="photo-lightbox-img" alt="" />
         <p class="photo-lightbox-caption"></p>
       </div>`;
@@ -178,7 +178,7 @@
     const img = overlay.querySelector(".photo-lightbox-img");
     const caption = overlay.querySelector(".photo-lightbox-caption");
     img.src = src;
-    img.alt = label || "Photo";
+    img.alt = label || I18n.t("photoCaption");
     caption.textContent = label || "";
     caption.hidden = !label;
     overlay.hidden = false;
@@ -228,7 +228,7 @@
 
   function phoneWithWhatsApp(phone) {
     const raw = String(phone || "").trim();
-    if (!raw) return `<span class="muted">Not on file</span>`;
+    if (!raw) return `<span class="muted">${esc(I18n.t("notOnFile"))}</span>`;
     const wa = whatsappNumber(raw);
     const waBtn = wa
       ? `<a class="btn-whatsapp" href="https://wa.me/${esc(wa)}" target="_blank" rel="noopener noreferrer" title="${esc(I18n.t("whatsapp"))}" aria-label="${esc(I18n.t("whatsapp"))}">
@@ -407,25 +407,35 @@
   function severityBadge(sev) {
     const s = String(sev || "").toLowerCase();
     const cls = s === "high" ? "sev-high" : s === "medium" ? "sev-medium" : "sev-low";
-    return `<span class="issue-badge ${cls}">${esc((sev || "—").toUpperCase())}</span>`;
+    const label =
+      s === "high"
+        ? I18n.t("severityHigh")
+        : s === "medium"
+          ? I18n.t("severityMedium")
+          : s === "low"
+            ? I18n.t("severityLow")
+            : sev || "—";
+    return `<span class="issue-badge ${cls}">${esc(label)}</span>`;
   }
 
   function statusBadge(status) {
     const s = String(status || "").toLowerCase();
     const cls = s === "open" ? "status-open" : s === "resolved" ? "status-resolved" : "status-other";
-    return `<span class="issue-badge ${cls}">${esc(status || "—")}</span>`;
+    const label =
+      s === "open" ? I18n.t("statusOpen") : s === "resolved" ? I18n.t("statusResolved") : status || "—";
+    return `<span class="issue-badge ${cls}">${esc(label)}</span>`;
   }
 
   function viewIssues() {
     const issues = BBC_DATA.listIssues();
     return shell(`
       ${crumb([
-        { label: "Home", to: "#/home" },
-        { label: "Operations issues", to: "#/issues" },
+        { label: I18n.t("home"), to: "#/home" },
+        { label: I18n.t("operationsIssues"), to: "#/issues" },
       ])}
       <div class="page-header">
-        <h1>Operations issues</h1>
-        <p class="lede">School-day problems for leadership and admin — current process, impact, and what should change.</p>
+        <h1>${esc(I18n.t("operationsIssues"))}</h1>
+        <p class="lede">${esc(I18n.t("operationsIssuesLede"))}</p>
       </div>
       <div class="issue-list">
         ${
@@ -439,14 +449,14 @@
               ${severityBadge(issue.severity)}
               <span class="issue-area">${esc(issue.area || "")}</span>
             </div>
-            <h3>${esc(issue.title)}</h3>
-            ${issue.titleAr ? `<p class="issue-ar" dir="rtl">${esc(issue.titleAr)}</p>` : ""}
+            <h3>${esc(I18n.getLang() === "ar" && issue.titleAr ? issue.titleAr : issue.title)}</h3>
+            ${issue.titleAr && I18n.getLang() !== "ar" ? `<p class="issue-ar" dir="rtl">${esc(issue.titleAr)}</p>` : ""}
             <p>${esc(issue.summary || "")}</p>
-            <span class="cta">Open issue →</span>
+            <span class="cta">${esc(I18n.t("openIssue"))}</span>
           </button>`
                 )
                 .join("")
-            : `<div class="empty-state"><p>No issues recorded yet.</p></div>`
+            : `<div class="empty-state"><p>${esc(I18n.t("noIssuesYet"))}</p></div>`
         }
       </div>
     `);
@@ -459,49 +469,50 @@
       (arr || []).length
         ? `<ul class="issue-bullets">${arr.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>`
         : `<p class="muted">—</p>`;
+    const title = I18n.getLang() === "ar" && issue.titleAr ? issue.titleAr : issue.title;
     return shell(`
       ${crumb([
-        { label: "Home", to: "#/home" },
-        { label: "Operations issues", to: "#/issues" },
-        { label: issue.title, to: `#/issues/${issue.id}` },
+        { label: I18n.t("home"), to: "#/home" },
+        { label: I18n.t("operationsIssues"), to: "#/issues" },
+        { label: title, to: `#/issues/${issue.id}` },
       ])}
       <div class="page-header">
         <div class="issue-card-top" style="margin-bottom:0.75rem">
           ${statusBadge(issue.status)}
           ${severityBadge(issue.severity)}
           <span class="issue-area">${esc(issue.area || "")}</span>
-          ${issue.updated ? `<span class="issue-area">Updated ${esc(issue.updated)}</span>` : ""}
+          ${issue.updated ? `<span class="issue-area">${esc(I18n.t("updatedOn", { date: issue.updated }))}</span>` : ""}
         </div>
-        <h1>${esc(issue.title)}</h1>
-        ${issue.titleAr ? `<p class="lede issue-ar" dir="rtl">${esc(issue.titleAr)}</p>` : ""}
+        <h1>${esc(title)}</h1>
+        ${issue.titleAr && I18n.getLang() !== "ar" ? `<p class="lede issue-ar" dir="rtl">${esc(issue.titleAr)}</p>` : ""}
         <p class="lede">${esc(issue.summary || "")}</p>
       </div>
       <div class="detail-layout">
         <section class="info-panel">
-          <div class="panel-label">Current process</div>
+          <div class="panel-label">${esc(I18n.t("currentProcess"))}</div>
           ${list(issue.currentProcess)}
         </section>
         <section class="info-panel">
-          <div class="panel-label">Impact</div>
+          <div class="panel-label">${esc(I18n.t("impact"))}</div>
           ${list(issue.impact)}
         </section>
       </div>
       <div class="info-panel" style="margin-top:1rem">
-        <div class="panel-label">Goal</div>
+        <div class="panel-label">${esc(I18n.t("goal"))}</div>
         <p style="margin-top:0.65rem">${esc(issue.goal || "—")}</p>
       </div>
       ${
         issue.notes
           ? `<div class="info-panel" style="margin-top:1rem">
-              <div class="panel-label">Notes</div>
+              <div class="panel-label">${esc(I18n.t("notes"))}</div>
               <p style="margin-top:0.65rem">${esc(issue.notes)}</p>
             </div>`
           : ""
       }
       <div class="info-panel" style="margin-top:1rem">
-        <div class="panel-label">Quick lookup while fixing this</div>
-        <p style="margin-top:0.65rem;margin-bottom:0.85rem">Find the student’s class code (e.g. <strong>4P10</strong>, <strong>1M1</strong>) and contact that room — avoid school-wide مكبر الصوت calls when possible.</p>
-        <button type="button" class="btn btn-primary" data-nav="#/students">Open student directory</button>
+        <div class="panel-label">${esc(I18n.t("quickLookup"))}</div>
+        <p style="margin-top:0.65rem;margin-bottom:0.85rem">${esc(I18n.t("quickLookupLede"))}</p>
+        <button type="button" class="btn btn-primary" data-nav="#/students">${esc(I18n.t("openStudentDirectory"))}</button>
       </div>
     `);
   }
@@ -671,7 +682,7 @@
                       })
                       .join("")}
                   </div>`
-                : `<p class="muted" style="margin-top:0.75rem">Teacher names not yet filled on the official form for this class. Modules are listed; names can be added later.</p>`
+                : `<p class="muted" style="margin-top:0.75rem">${esc(I18n.t("teachersUnnamed"))}</p>`
             }
           </section>
 
@@ -720,36 +731,35 @@
   }
 
   const PREV_YEAR_FIELDS = [
-    { key: "number", labelAr: "الرقم", labelEn: "No." },
-    { key: "matchedName", labelAr: "اسم الطالب", labelEn: "Full name" },
-    { key: "dateOfBirth", labelAr: "تاريخ الميلاد", labelEn: "Date of birth" },
-    { key: "age", labelAr: "العمر", labelEn: "Age" },
-    { key: "annualAverage", labelAr: "المعدل السنوي", labelEn: "Annual average" },
-    { key: "socialStatus", labelAr: "الحالة الإجتماعية", labelEn: "Social status" },
-    { key: "healthStatus", labelAr: "الحالة الصحية", labelEn: "Health status" },
-    { key: "strengths", labelAr: "نقاط القوة", labelEn: "Strengths" },
-    { key: "weaknesses", labelAr: "نقاط الضعف", labelEn: "Weaknesses" },
-    { key: "behavioralPerformance", labelAr: "الأداء السلوكي", labelEn: "Behavioral" },
-    { key: "academicPerformance", labelAr: "الأداء التحصيلي", labelEn: "Academic" },
-    { key: "talents", labelAr: "المواهب (إن وجدت)", labelEn: "Talents" },
-    { key: "additionalNotes", labelAr: "ملاحظات إضافية", labelEn: "Additional notes" },
-    { key: "actionPlan", labelAr: "خطة العمل", labelEn: "Action plan" },
-    { key: "generalNote", labelAr: "ملاحظة عامة", labelEn: "General note" },
+    { key: "number", labelKey: "pyNo" },
+    { key: "matchedName", labelKey: "fullName" },
+    { key: "dateOfBirth", labelKey: "dob" },
+    { key: "age", labelKey: "pyAge" },
+    { key: "annualAverage", labelKey: "pyAnnualAverage" },
+    { key: "socialStatus", labelKey: "pySocialStatus" },
+    { key: "healthStatus", labelKey: "pyHealthStatus" },
+    { key: "strengths", labelKey: "pyStrengths" },
+    { key: "weaknesses", labelKey: "pyWeaknesses" },
+    { key: "behavioralPerformance", labelKey: "pyBehavioral" },
+    { key: "academicPerformance", labelKey: "pyAcademic" },
+    { key: "talents", labelKey: "pyTalents" },
+    { key: "additionalNotes", labelKey: "pyAdditionalNotes" },
+    { key: "actionPlan", labelKey: "pyActionPlan" },
+    { key: "generalNote", labelKey: "pyGeneralNote" },
   ];
 
   function renderPreviousYearDetails(details) {
     if (!details) return "";
-    const yearLabel = details.previousYear || "previous year";
+    const yearLabel = details.previousYear || I18n.t("previousYear");
     const yearAr = details.previousYearAr || "";
     const classLabel = details.previousClass ? ` · ${details.previousClass}` : "";
-    const rows = PREV_YEAR_FIELDS.map(({ key, labelAr, labelEn }) => {
+    const rows = PREV_YEAR_FIELDS.map(({ key, labelKey }) => {
       const val = (details[key] || "").toString().trim();
       if (!val) return "";
       return `
         <div class="detail-row">
           <div class="detail-label">
-            <span class="ar" dir="rtl">${esc(labelAr)}</span>
-            <span class="en">${esc(labelEn)}</span>
+            <span>${esc(I18n.t(labelKey))}</span>
           </div>
           <div class="detail-value" dir="auto">${esc(val)}</div>
         </div>`;
@@ -764,11 +774,11 @@
           <div class="prev-year-banner">
             <div class="panel-label">${esc(I18n.t("previousYearRecord"))}</div>
             <p class="prev-year-title">
-              ${esc(yearLabel)}${yearAr ? ` · ${esc(yearAr)}` : ""}${esc(classLabel)}
+              ${esc(I18n.getLang() === "ar" && yearAr ? yearAr : yearLabel)}${esc(classLabel)}
             </p>
-            <p class="prev-year-hint">Follow-up file from last academic year (matched by full name).</p>
+            <p class="prev-year-hint">${esc(I18n.t("prevYearHint"))}</p>
           </div>
-          <div class="detail-rows" dir="rtl">${rows || `<p class="empty-details">No extra fields on file for this student.</p>`}</div>
+          <div class="detail-rows">${rows || `<p class="empty-details">${esc(I18n.t("noExtraFields"))}</p>`}</div>
         </div>
       </div>`;
   }
@@ -846,12 +856,12 @@
     const results = BBC_DATA.searchStudents(query);
     return shell(`
       ${crumb([
-        { label: "Departments", to: "#/home" },
-        { label: "Search", to: `#/search?q=${encodeURIComponent(query)}` },
+        { label: I18n.t("departments"), to: "#/home" },
+        { label: I18n.t("search"), to: `#/search?q=${encodeURIComponent(query)}` },
       ])}
       <div class="page-header">
-        <h1>Search results</h1>
-        <p class="lede">${results.length} student${results.length === 1 ? "" : "s"} matching “${esc(query)}”</p>
+        <h1>${esc(I18n.t("searchResults"))}</h1>
+        <p class="lede">${esc(I18n.t("studentsMatching", { n: results.length, q: query }))}</p>
       </div>
       ${
         results.length
@@ -859,11 +869,11 @@
               <table class="student-table student-table-search">
                 <thead>
                   <tr>
-                    <th>Name</th>
-                    <th class="hide-sm">Department</th>
-                    <th class="hide-mobile">Year</th>
-                    <th>Class</th>
-                    <th class="hide-sm">Gender</th>
+                    <th>${esc(I18n.t("fullName"))}</th>
+                    <th class="hide-sm">${esc(I18n.t("department"))}</th>
+                    <th class="hide-mobile">${esc(I18n.t("year"))}</th>
+                    <th>${esc(I18n.t("class"))}</th>
+                    <th class="hide-sm">${esc(I18n.t("gender"))}</th>
                     <th></th>
                   </tr>
                 </thead>
@@ -872,19 +882,19 @@
                     .map(
                       ({ student: s, dept, level, cls }) => `
                     <tr>
-                      <td data-label="Name"><strong dir="auto">${esc(BBC_DATA.studentFullName(s))}</strong></td>
-                      <td class="hide-sm" data-label="Department">${esc(deptShortLabel(dept.id))}</td>
-                      <td class="hide-mobile" data-label="Year">${esc(level.name)}</td>
-                      <td data-label="Class">${esc(classDisplayCode(cls))}</td>
-                      <td class="hide-sm" data-label="Gender">${esc(s.gender || "—")}</td>
-                      <td data-label=""><button type="button" class="link-btn" data-nav="#/student/${s.id}">View</button></td>
+                      <td data-label="${esc(I18n.t("fullName"))}"><strong dir="auto">${esc(BBC_DATA.studentFullName(s))}</strong></td>
+                      <td class="hide-sm" data-label="${esc(I18n.t("department"))}">${esc(deptShortLabel(dept.id))}</td>
+                      <td class="hide-mobile" data-label="${esc(I18n.t("year"))}">${esc(levelDisplayName(level))}</td>
+                      <td data-label="${esc(I18n.t("class"))}">${esc(classDisplayCode(cls))}</td>
+                      <td class="hide-sm" data-label="${esc(I18n.t("gender"))}">${esc(genderLabel(s.gender))}</td>
+                      <td data-label=""><button type="button" class="link-btn" data-nav="#/student/${s.id}">${esc(I18n.t("view"))}</button></td>
                     </tr>`
                     )
                     .join("")}
                 </tbody>
               </table>
             </div>`
-          : `<div class="empty-state"><h2>No students found</h2><p>Try another spelling (Arabic or Latin).</p></div>`
+          : `<div class="empty-state"><h2>${esc(I18n.t("noStudentsFound"))}</h2><p>${esc(I18n.t("tryOtherSpelling"))}</p></div>`
       }
     `);
   }
@@ -913,18 +923,18 @@
 
     return shell(`
       ${crumb([
-        { label: "Home", to: "#/home" },
-        { label: "Teachers", to: "#/teachers" },
+        { label: I18n.t("home"), to: "#/home" },
+        { label: I18n.t("teachers"), to: "#/teachers" },
       ])}
       <div class="page-header">
-        <h1>Our teachers</h1>
-        <p class="lede">${filtered.length} of ${all.length} teachers</p>
+        <h1>${esc(I18n.t("ourTeachers"))}</h1>
+        <p class="lede">${esc(I18n.t("ofCount", { shown: filtered.length, total: all.length }))} ${esc(I18n.t("teachers"))}</p>
       </div>
       <form class="filter-panel" id="dir-filter" data-dir="teachers" autocomplete="off">
         <div class="filter-grid">
           <label class="filter-field">
-            <span>Name / ID / phone</span>
-            <input type="search" name="q" value="${esc(params.get("q") || "")}" placeholder="Search…" />
+            <span>${esc(I18n.t("nameIdPhone"))}</span>
+            <input type="search" name="q" value="${esc(params.get("q") || "")}" placeholder="${esc(I18n.t("searchEllipsis"))}" />
           </label>
           <label class="filter-field">
             <span>${esc(I18n.t("department"))}</span>
@@ -935,10 +945,10 @@
             </select>
           </label>
           <label class="filter-field">
-            <span>Subject</span>
+            <span>${esc(I18n.t("subject"))}</span>
             <select name="module">
               <option value="">${esc(I18n.t("all"))}</option>
-              ${modules.map((m) => `<option value="${esc(m)}"${module === m ? " selected" : ""}>${esc(m)}</option>`).join("")}
+              ${modules.map((m) => `<option value="${esc(m)}"${module === m ? " selected" : ""}>${esc(moduleLabel(m))}</option>`).join("")}
             </select>
           </label>
           <label class="filter-field">
@@ -950,8 +960,8 @@
           </label>
         </div>
         <div class="filter-actions">
-          <button type="submit" class="btn btn-primary">Apply filters</button>
-          <button type="button" class="btn btn-ghost" data-nav="#/teachers">Clear</button>
+          <button type="submit" class="btn btn-primary">${esc(I18n.t("applyFilters"))}</button>
+          <button type="button" class="btn btn-ghost" data-nav="#/teachers">${esc(I18n.t("clearFilters"))}</button>
         </div>
       </form>
       <div class="dir-list" id="dir-list">
@@ -961,21 +971,22 @@
                 .map(({ teacher: t, classes }) => {
                   const depts = (t.departments || []).map((d) => deptShortLabel(d)).join(" · ");
                   const classCodes = classes.map((x) => classDisplayCode(x.cls)).join(", ") || "—";
+                  const mods = (t.modules || []).map(moduleLabel).join(", ") || "—";
                   return `
               <button type="button" class="dir-card" data-nav="#/teacher/${t.id}?from=${encodeURIComponent("#/teachers")}">
                 ${profileAvatar(t, "teacher")}
                 <div class="dir-card-body">
                   <strong dir="auto">${esc(teacherLabel(t))}</strong>
                   ${teacherLatin(t) ? `<span class="dir-meta">${esc(teacherLatin(t))}</span>` : ""}
-                  <span class="dir-meta">${esc(depts || "—")} · ${esc((t.modules || []).join(", ") || "—")}</span>
-                  <span class="dir-meta hide-sm">ID ${esc(t.id)} · Classes: ${esc(classCodes)}</span>
-                  <span class="dir-meta">${t.phone ? esc(t.phone) : "No phone"}</span>
+                  <span class="dir-meta">${esc(depts || "—")} · ${esc(mods)}</span>
+                  <span class="dir-meta hide-sm">${esc(I18n.t("idPrefix"))} ${esc(t.id)} · ${esc(I18n.t("classesColon"))}: ${esc(classCodes)}</span>
+                  <span class="dir-meta">${t.phone ? esc(t.phone) : esc(I18n.t("noPhone"))}</span>
                 </div>
                 <span class="chev">→</span>
               </button>`;
                 })
                 .join("")
-            : `<div class="empty-state"><h2>No teachers match</h2><p>Try clearing some filters.</p></div>`
+            : `<div class="empty-state"><h2>${esc(I18n.t("noTeachersMatch"))}</h2><p>${esc(I18n.t("tryClearFilters"))}</p></div>`
         }
       </div>
     `);
@@ -1021,18 +1032,18 @@
 
     return shell(`
       ${crumb([
-        { label: "Home", to: "#/home" },
-        { label: "Students", to: "#/students" },
+        { label: I18n.t("home"), to: "#/home" },
+        { label: I18n.t("students"), to: "#/students" },
       ])}
       <div class="page-header">
-        <h1>Our students</h1>
-        <p class="lede">${filtered.length} of ${all.length} students</p>
+        <h1>${esc(I18n.t("ourStudents"))}</h1>
+        <p class="lede">${esc(I18n.t("ofCount", { shown: filtered.length, total: all.length }))} ${esc(I18n.t("students"))}</p>
       </div>
       <form class="filter-panel" id="dir-filter" data-dir="students" autocomplete="off">
         <div class="filter-grid">
           <label class="filter-field">
-            <span>Name / ID</span>
-            <input type="search" name="q" value="${esc(params.get("q") || "")}" placeholder="Search…" />
+            <span>${esc(I18n.t("nameId"))}</span>
+            <input type="search" name="q" value="${esc(params.get("q") || "")}" placeholder="${esc(I18n.t("searchEllipsis"))}" />
           </label>
           <label class="filter-field">
             <span>${esc(I18n.t("department"))}</span>
@@ -1066,8 +1077,8 @@
           </label>
         </div>
         <div class="filter-actions">
-          <button type="submit" class="btn btn-primary">Apply filters</button>
-          <button type="button" class="btn btn-ghost" data-nav="#/students">Clear</button>
+          <button type="submit" class="btn btn-primary">${esc(I18n.t("applyFilters"))}</button>
+          <button type="button" class="btn btn-ghost" data-nav="#/students">${esc(I18n.t("clearFilters"))}</button>
         </div>
       </form>
       <div class="dir-list" id="dir-list">
@@ -1080,13 +1091,13 @@
                 <div class="dir-card-body">
                   <strong dir="auto">${esc(BBC_DATA.studentFullName(s))}</strong>
                   <span class="dir-meta">${esc(deptShortLabel(d.id))} · ${esc(levelDisplayName(level))} · ${esc(classDisplayCode(cls))}</span>
-                  <span class="dir-meta hide-sm">ID ${esc(s.id)}${s.dateOfBirth ? ` · DOB ${esc(s.dateOfBirth)}` : ""}</span>
-                  <span class="dir-meta">${esc(s.gender || "—")}</span>
+                  <span class="dir-meta hide-sm">${esc(I18n.t("idPrefix"))} ${esc(s.id)}${s.dateOfBirth ? ` · ${esc(I18n.t("dobShort"))} ${esc(s.dateOfBirth)}` : ""}</span>
+                  <span class="dir-meta">${esc(genderLabel(s.gender))}</span>
                 </div>
                 <span class="chev">→</span>
               </button>`)
                 .join("")
-            : `<div class="empty-state"><h2>No students match</h2><p>Try clearing some filters.</p></div>`
+            : `<div class="empty-state"><h2>${esc(I18n.t("noStudentsMatch"))}</h2><p>${esc(I18n.t("tryClearFilters"))}</p></div>`
         }
       </div>
     `);
@@ -1168,9 +1179,9 @@
   function viewNotFound() {
     return shell(`
       <div class="empty-state">
-        <h2>Page not found</h2>
-        <p>The requested content does not exist in the local data.</p>
-        <button type="button" class="btn btn-primary" style="margin-top:1.25rem" data-nav="#/home">Back</button>
+        <h2>${esc(I18n.t("pageNotFound"))}</h2>
+        <p>${esc(I18n.t("pageNotFoundLede"))}</p>
+        <button type="button" class="btn btn-primary" style="margin-top:1.25rem" data-nav="#/home">${esc(I18n.t("back"))}</button>
       </div>
     `);
   }
@@ -1264,7 +1275,7 @@
         render();
       } catch (loadErr) {
         Auth.logout();
-        err.textContent = loadErr.message || "Failed to load school data";
+        err.textContent = loadErr.message || I18n.t("failedLoad");
         err.classList.add("show");
         render();
       }
@@ -1321,7 +1332,7 @@
         if (open) {
           morePanel.removeAttribute("hidden");
           moreBtn.setAttribute("aria-expanded", "true");
-          moreBtn.textContent = I18n.getLang() === "ar" ? "إخفاء التفاصيل" : I18n.getLang() === "fr" ? "Masquer les détails" : "Hide details";
+          moreBtn.textContent = I18n.t("hideDetails");
         } else {
           morePanel.setAttribute("hidden", "");
           moreBtn.setAttribute("aria-expanded", "false");
@@ -1384,7 +1395,7 @@
       bindEvents();
     } catch (err) {
       console.error(err);
-      app.innerHTML = `<div class="login-page"><div class="login-card"><h1>Display error</h1><p>${esc(err.message || err)}</p><button type="button" class="btn btn-primary" id="btn-reload">Reload</button></div></div>`;
+      app.innerHTML = `<div class="login-page"><div class="login-card"><h1>${esc(I18n.t("displayError"))}</h1><p>${esc(err.message || err)}</p><button type="button" class="btn btn-primary" id="btn-reload">${esc(I18n.t("reload"))}</button></div></div>`;
       document.getElementById("btn-reload")?.addEventListener("click", () => location.reload());
     }
     window.scrollTo(0, 0);

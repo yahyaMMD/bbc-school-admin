@@ -2,11 +2,13 @@
  * Staff / manager console — clean lists, filters, complete student profiles.
  */
 const AdminApp = (() => {
-  const GENDER_OPTS = [
-    { value: "", label: "—" },
-    { value: "Female", label: "Female" },
-    { value: "Male", label: "Male" },
-  ];
+  function genderOpts() {
+    return [
+      { value: "", label: "—" },
+      { value: "Female", label: I18n.t("female") },
+      { value: "Male", label: I18n.t("male") },
+    ];
+  }
 
   const WILAYA_OPTS = [
     "Algiers",
@@ -110,21 +112,42 @@ const AdminApp = (() => {
     return [...new Set([...fromSchool, ...fromTeachers])].sort((a, b) => a.localeCompare(b));
   }
 
+  function adminClassLabel(cls) {
+    if (!cls) return "—";
+    const idMatch = String(cls.id || "").match(/C0*(\d+)\s*$/i);
+    if (idMatch) return I18n.t("classN", { n: Number(idMatch[1]) });
+    return cls.code || cls.name || "—";
+  }
+
+  function adminDeptLabel(deptOrId) {
+    const id = typeof deptOrId === "string" ? deptOrId : deptOrId?.id;
+    if (id === "primary") return I18n.t("primary");
+    if (id === "middle") return I18n.t("middle");
+    if (deptOrId && typeof deptOrId === "object") return deptOrId.label || deptOrId.name || id || "—";
+    return id || "—";
+  }
+
+  function adminLevelLabel(level) {
+    if (!level) return "—";
+    if (I18n.getLang() === "ar" && level.nameAr) return level.nameAr;
+    return level.name || "—";
+  }
+
   function deptOptions() {
     return (BBC_DATA.departments || []).map((d) => ({
       value: d.id,
-      label: d.label || d.name || d.id,
+      label: adminDeptLabel(d),
     }));
   }
 
   function levelOptions(deptId) {
-    const opts = [{ value: "", label: "All years" }];
+    const opts = [{ value: "", label: I18n.t("all") }];
     for (const dept of BBC_DATA.departments || []) {
       if (deptId && dept.id !== deptId) continue;
       for (const lv of dept.levels || []) {
         opts.push({
           value: `${dept.id}:${lv.id}`,
-          label: deptId ? lv.name : `${dept.label || dept.name} · ${lv.name}`,
+          label: deptId ? adminLevelLabel(lv) : `${adminDeptLabel(dept)} · ${adminLevelLabel(lv)}`,
         });
       }
     }
@@ -132,14 +155,18 @@ const AdminApp = (() => {
   }
 
   function classSelectOptions(deptId, levelKey) {
-    const opts = [{ value: "", label: "All classes" }];
+    const opts = [{ value: "", label: I18n.t("all") }];
     for (const o of classOptions()) {
       if (deptId && o.departmentId && o.departmentId !== deptId) continue;
       if (levelKey) {
         const [d, l] = levelKey.split(":");
-        if (o.departmentId !== d || o.levelId !== l) continue;
+        if (o.departmentId !== d || String(o.levelId) !== String(l)) continue;
       }
-      opts.push({ value: o.id, label: o.label });
+      const found = BBC_DATA.findClassById(o.id);
+      const label = found
+        ? `${adminDeptLabel(found.dept)} · ${adminClassLabel(found.cls)}`
+        : o.label;
+      opts.push({ value: o.id, label });
     }
     return opts;
   }
@@ -259,14 +286,14 @@ const AdminApp = (() => {
         kind: "student",
       })}
       ${sectionTitle("Class & status")}
-      ${field("number", "Roster #", s.number ?? "", { type: "number", min: 0 })}
-      ${field("gender", "Gender", s.gender || "", { type: "select", options: GENDER_OPTS })}
-      ${field("dateOfBirth", "Date of birth", s.dateOfBirth || "", { placeholder: "e.g. 12/03/2015" })}
-      ${field("classId", "Class", classId || s.classId || classOpts[0]?.id || "", {
+      ${field("number", I18n.t("rosterNumber"), s.number ?? "", { type: "number", min: 0 })}
+      ${field("gender", I18n.t("gender"), s.gender || "", { type: "select", options: genderOpts() })}
+      ${field("dateOfBirth", I18n.t("dob"), s.dateOfBirth || "", { placeholder: "e.g. 12/03/2015" })}
+      ${field("classId", I18n.t("class"), classId || s.classId || classOpts[0]?.id || "", {
         type: "select",
         options: classOpts.map((o) => ({ value: o.id, label: o.label })),
       })}
-      ${field("notes", "Notes", s.notes || "", { type: "textarea", full: true })}
+      ${field("notes", I18n.t("notes"), s.notes || "", { type: "textarea", full: true })}
     `;
   }
 
@@ -370,35 +397,35 @@ const AdminApp = (() => {
       I18n.t("dataManagementLede"),
       `
       <div class="admin-stat-row">
-        <div class="admin-stat"><span class="k">Students</span><span class="v">${stats.students}</span></div>
-        <div class="admin-stat"><span class="k">Teachers</span><span class="v">${stats.teachers}</span></div>
-        <div class="admin-stat"><span class="k">Classes</span><span class="v">${stats.classes}</span></div>
-        <div class="admin-stat${missS + missT ? " warn" : ""}"><span class="k">Missing fields</span><span class="v">${missS + missT}</span></div>
+        <div class="admin-stat"><span class="k">${esc(I18n.t("students"))}</span><span class="v">${stats.students}</span></div>
+        <div class="admin-stat"><span class="k">${esc(I18n.t("teachers"))}</span><span class="v">${stats.teachers}</span></div>
+        <div class="admin-stat"><span class="k">${esc(I18n.t("classes"))}</span><span class="v">${stats.classes}</span></div>
+        <div class="admin-stat${missS + missT ? " warn" : ""}"><span class="k">${esc(I18n.t("missingFields"))}</span><span class="v">${missS + missT}</span></div>
       </div>
       <div class="admin-action-grid">
         <button type="button" class="admin-action-card" data-nav="#/manage/classes">
-          <span class="admin-action-tag">Rosters</span>
-          <h3>Classes &amp; rosters</h3>
-          <p>Open a class, manage students and teachers, add or transfer members.</p>
-          <span class="cta">Open classes →</span>
+          <span class="admin-action-tag">${esc(I18n.t("adminRostersTag"))}</span>
+          <h3>${esc(I18n.t("classesRosters"))}</h3>
+          <p>${esc(I18n.t("adminClassesLede"))}</p>
+          <span class="cta">${esc(I18n.t("adminOpenClasses"))}</span>
         </button>
         <button type="button" class="admin-action-card" data-nav="#/manage/students">
-          <span class="admin-action-tag">People</span>
-          <h3>Students</h3>
-          <p>Search, filter by department / year / gender, edit full profiles including previous-year details.</p>
-          <span class="cta">Manage students →</span>
+          <span class="admin-action-tag">${esc(I18n.t("adminPeopleTag"))}</span>
+          <h3>${esc(I18n.t("students"))}</h3>
+          <p>${esc(I18n.t("adminStudentsLede"))}</p>
+          <span class="cta">${esc(I18n.t("adminManageStudents"))}</span>
         </button>
         <button type="button" class="admin-action-card" data-nav="#/manage/teachers">
-          <span class="admin-action-tag">Staff</span>
-          <h3>Teachers</h3>
-          <p>Update contacts, subjects, departments, and class assignments with simple selects.</p>
-          <span class="cta">Manage teachers →</span>
+          <span class="admin-action-tag">${esc(I18n.t("adminStaffTag"))}</span>
+          <h3>${esc(I18n.t("teachers"))}</h3>
+          <p>${esc(I18n.t("adminTeachersLede"))}</p>
+          <span class="cta">${esc(I18n.t("adminManageTeachers"))}</span>
         </button>
         <button type="button" class="admin-action-card${missS + missT ? " warn" : ""}" data-nav="#/manage/incomplete">
-          <span class="admin-action-tag">Quality</span>
-          <h3>Missing information</h3>
-          <p>${missS} students and ${missT} teachers still need DOB, gender, phone, or name fields.</p>
-          <span class="cta">Fill gaps →</span>
+          <span class="admin-action-tag">${esc(I18n.t("adminQualityTag"))}</span>
+          <h3>${esc(I18n.t("adminMissingInfo"))}</h3>
+          <p>${esc(I18n.t("adminMissingLede", { students: missS, teachers: missT }))}</p>
+          <span class="cta">${esc(I18n.t("adminFillGaps"))}</span>
         </button>
       </div>
     `
@@ -416,44 +443,44 @@ const AdminApp = (() => {
             const cards = (lv.classes || [])
               .filter((c) => {
                 if (!q) return true;
-                return `${c.code} ${c.name || ""} ${c.nameAr || ""}`.toLowerCase().includes(q);
+                return `${c.code} ${c.name || ""} ${c.nameAr || ""} ${adminClassLabel(c)}`.toLowerCase().includes(q);
               })
               .map(
                 (c) => `
               <button type="button" class="admin-class-pill" data-nav="#/manage/classes/${esc(c.id)}">
-                <strong>${esc(c.code)}</strong>
-                <span>${(c.students || []).length} students</span>
-                <span>${(c.teacherIds || []).length} teachers</span>
+                <strong>${esc(adminClassLabel(c))}</strong>
+                <span>${esc(I18n.t("adminStudentsShort", { n: (c.students || []).length }))}</span>
+                <span>${esc(I18n.t("adminTeachersShort", { n: (c.teacherIds || []).length }))}</span>
               </button>`
               )
               .join("");
             if (!cards) return "";
-            return `<div class="admin-level-block"><h3>${esc(lv.name)}</h3><div class="admin-class-pills">${cards}</div></div>`;
+            return `<div class="admin-level-block"><h3>${esc(adminLevelLabel(lv))}</h3><div class="admin-class-pills">${cards}</div></div>`;
           })
           .filter(Boolean)
           .join("");
         if (!levels) return "";
-        return `<section class="admin-panel admin-dept-block"><div class="admin-panel-label">${esc(dept.label || dept.name)}</div>${levels}</section>`;
+        return `<section class="admin-panel admin-dept-block"><div class="admin-panel-label">${esc(adminDeptLabel(dept))}</div>${levels}</section>`;
       })
       .filter(Boolean)
       .join("");
 
     return layout(
       "classes",
-      "Classes & rosters",
-      "Pick a class to manage its students and assigned teachers.",
+      I18n.t("classesRosters"),
+      I18n.t("adminPickClass"),
       `
       <form id="admin-class-filter" class="admin-filter-bar">
-        <input type="search" name="q" placeholder="Find class code…" value="${esc(params?.get("q") || "")}" />
+        <input type="search" name="q" placeholder="${esc(I18n.t("adminFindClass"))}" value="${esc(params?.get("q") || "")}" />
         <select name="dept">
-          <option value="">All departments</option>
+          <option value="">${esc(I18n.t("adminAllDepartments"))}</option>
           ${deptOptions()
             .map((o) => `<option value="${esc(o.value)}"${o.value === deptId ? " selected" : ""}>${esc(o.label)}</option>`)
             .join("")}
         </select>
-        <button type="submit" class="btn btn-primary btn-sm">Filter</button>
+        <button type="submit" class="btn btn-primary btn-sm">${esc(I18n.t("adminFilter"))}</button>
       </form>
-      ${blocks || `<div class="admin-empty">No classes match your filters.</div>`}
+      ${blocks || `<div class="admin-empty">${esc(I18n.t("adminNoClassesMatch"))}</div>`}
     `
     );
   }
