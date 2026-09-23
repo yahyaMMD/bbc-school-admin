@@ -644,36 +644,59 @@ async function pageSendMedia(client, chatId, media, caption, asDocument) {
       });
       if (captionText) mediaOptions.caption = captionText;
 
-      const { getMaybeMeLidUser, getMaybeMePnUser, getMeDeviceLidOrThrow } =
-        window.require("WAWebUserPrefsMeUser");
-      const lidUser = getMaybeMeLidUser();
-      const meUser = getMaybeMePnUser();
+      const MeUser = window.require("WAWebUserPrefsMeUser");
+      const WidFactory = window.require("WAWebWidFactory");
+      const MsgKey = window.require("WAWebMsgKey");
+
+      const lidUser = MeUser.getMaybeMeLidUser?.() || null;
+      const meUser = MeUser.getMaybeMePnUser?.() || null;
       let deviceLid = null;
       try {
-        deviceLid = getMeDeviceLidOrThrow?.() || null;
+        deviceLid = MeUser.getMeDeviceLidOrThrow?.() || null;
       } catch (_) {
         deviceLid = null;
       }
-      // LID-era WhatsApp: prefer LID WIDs for media (PN @c.us often throws memoize errors)
-      let from = lidUser || deviceLid || meUser;
-      let participant;
-      if (typeof chat.id?.isGroup === "function" && chat.id.isGroup()) {
-        from = lidUser || deviceLid || meUser;
-        if (!from) throw new Error("Unable to resolve sender identity");
-        participant = window
-          .require("WAWebWidFactory")
-          .asUserWidOrThrow(from);
-      }
-      if (!from) throw new Error("Unable to resolve sender identity");
 
-      const newId = await window.require("WAWebMsgKey").newId();
-      const newMsgKey = new (window.require("WAWebMsgKey"))({
-        from,
-        to: chat.id,
-        id: newId,
-        participant,
-        selfDir: "out",
-      });
+      const isGroup =
+        typeof chat.id?.isGroup === "function" ? chat.id.isGroup() : false;
+
+      // LID-era WhatsApp: media send validates sender via getSender().
+      // Group media needs device LID as `from` and user LID as `participant`/`author`.
+      let from = deviceLid || lidUser || meUser;
+      let participant = null;
+      let author = null;
+      if (isGroup) {
+        from = deviceLid || lidUser || meUser;
+        participant = lidUser || meUser;
+        if (participant) {
+          try {
+            participant = WidFactory.asUserWidOrThrow(participant);
+          } catch (_) {
+            /* keep as-is */
+          }
+        }
+        author = participant;
+      }
+      if (!from) throw new Error("Unable to resolve sender identity (LID/PN)");
+
+      const newId = await MsgKey.newId();
+      let newMsgKey;
+      try {
+        newMsgKey = new MsgKey({
+          fromMe: true,
+          remote: chat.id,
+          id: newId,
+          participant: participant || undefined,
+        });
+      } catch (_) {
+        newMsgKey = new MsgKey({
+          from,
+          to: chat.id,
+          id: newId,
+          participant: participant || undefined,
+          selfDir: "out",
+        });
+      }
 
       const ephemeralFields = window
         .require("WAWebGetEphemeralFieldsMsgActionsUtils")
@@ -685,6 +708,7 @@ async function pageSendMedia(client, chatId, media, caption, asDocument) {
         body: mediaOptions.preview,
         from,
         to: chat.id,
+        author: author || undefined,
         local: true,
         self: "out",
         t: parseInt(new Date().getTime() / 1000, 10),
