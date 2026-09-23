@@ -2691,6 +2691,99 @@ body {
   flex-shrink: 0;
 }
 
+.avatar-clickable,
+.admin-photo-preview-btn {
+  cursor: zoom-in;
+  border: 0;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s var(--ease), box-shadow 0.15s;
+}
+
+.avatar-clickable:hover,
+.admin-photo-preview-btn:hover {
+  transform: scale(1.04);
+  box-shadow: 0 0 0 3px var(--orange-glow);
+}
+
+.admin-photo-preview-btn {
+  background: transparent;
+  border-radius: 18px;
+  overflow: hidden;
+  line-height: 0;
+}
+
+/* ——— Full-size photo viewer ——— */
+.photo-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(12, 10, 8, 0.82);
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+  backdrop-filter: blur(4px);
+}
+
+.photo-lightbox[hidden] {
+  display: none !important;
+}
+
+.photo-lightbox-card {
+  position: relative;
+  max-width: min(920px, 96vw);
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.photo-lightbox-img {
+  display: block;
+  max-width: 96vw;
+  max-height: calc(92vh - 3rem);
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 16px;
+  background: #1a1614;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+}
+
+.photo-lightbox-caption {
+  margin: 0;
+  color: #f5f0eb;
+  font-weight: 600;
+  font-size: 1rem;
+  text-align: center;
+  max-width: 90vw;
+}
+
+.photo-lightbox-close {
+  position: absolute;
+  top: -0.35rem;
+  right: -0.35rem;
+  width: 2.4rem;
+  height: 2.4rem;
+  border: 0;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--ink);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  z-index: 1;
+}
+
+.photo-lightbox-close:hover {
+  background: var(--orange-soft);
+  color: var(--orange-deep);
+}
+
 /* ——— Profile photo upload ——— */
 .admin-photo-uploader {
   margin-top: 0.25rem;

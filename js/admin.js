@@ -172,7 +172,8 @@ const AdminApp = (() => {
       kind === "teacher" ? "assets/avatars/teacher.svg" : "assets/avatars/student.svg";
     const src = photo || fallback;
     const roleCls = kind === "teacher" ? "avatar-teacher" : "avatar-student";
-    return `<span class="avatar ${roleCls} avatar-sm"><img src="${esc(src)}" alt="" loading="lazy" onerror="this.onerror=null;this.src='${esc(fallback)}'" /></span>`;
+    const label = kind === "teacher" ? teacherName(person) : studentName(person);
+    return `<span role="button" tabindex="0" class="avatar ${roleCls} avatar-sm avatar-clickable" data-photo-view="${esc(src)}" data-photo-label="${esc(label)}" title="${esc(label)}" aria-label="View photo"><img src="${esc(src)}" alt="" loading="lazy" onerror="this.onerror=null;this.src='${esc(fallback)}'" /></span>`;
   }
 
   function photoUploader({ entity, id = "", photo = "", kind = "student" }) {
@@ -181,11 +182,14 @@ const AdminApp = (() => {
     const src = photo || fallback;
     const hasPhoto = Boolean(String(photo || "").trim());
     const hasId = Boolean(id);
+    const label = kind === "teacher" ? "Teacher photo" : "Student photo";
     return `
       <div class="admin-photo-uploader admin-field-full" data-entity="${esc(entity)}" data-id="${esc(id)}" data-kind="${esc(kind)}">
         <span class="admin-photo-label">${esc(I18n.t("photo"))}</span>
         <div class="admin-photo-row">
-          <img class="admin-photo-preview" src="${esc(src)}" alt="" data-fallback="${esc(fallback)}" />
+          <button type="button" class="admin-photo-preview-btn" data-photo-view="${esc(src)}" data-photo-label="${esc(label)}" aria-label="View photo">
+            <img class="admin-photo-preview" src="${esc(src)}" alt="" data-fallback="${esc(fallback)}" />
+          </button>
           <div class="admin-photo-actions">
             <label class="btn btn-primary btn-sm admin-photo-pick">
               <span class="admin-photo-pick-text">${esc(hasPhoto ? I18n.t("photoChange") : I18n.t("photoUpload"))}</span>
@@ -1056,11 +1060,23 @@ const AdminApp = (() => {
       root.querySelectorAll(".admin-photo-uploader").forEach((box) => {
         const input = box.querySelector('input[type="file"]');
         const preview = box.querySelector(".admin-photo-preview");
+        const previewBtn = box.querySelector(".admin-photo-preview-btn");
         const status = box.querySelector(".admin-photo-status");
         const hidden = box.querySelector('input[name="photo"]');
         const entity = box.getAttribute("data-entity");
         const id = box.getAttribute("data-id") || "";
         const fallback = preview?.getAttribute("data-fallback") || "";
+
+        const setPreview = (url) => {
+          if (preview) preview.src = url;
+          if (previewBtn) {
+            previewBtn.setAttribute("data-photo-view", url);
+            previewBtn.dataset.photoBound = "";
+          }
+          if (window.QEAPhoto && typeof window.QEAPhoto.bind === "function") {
+            window.QEAPhoto.bind(box);
+          }
+        };
 
         const setStatus = (msg, ok) => {
           if (!status) return;
@@ -1075,7 +1091,7 @@ const AdminApp = (() => {
           if (!file) return;
           try {
             const dataUrl = await BBC_API.readFileAsDataUrl(file);
-            if (preview) preview.src = dataUrl;
+            setPreview(dataUrl);
           } catch (err) {
             setStatus(err.message || "Invalid image", false);
             input.value = "";
@@ -1092,7 +1108,7 @@ const AdminApp = (() => {
           try {
             const res = await BBC_API.uploadPhoto({ entity, id, file });
             if (hidden) hidden.value = res.url || res.photo || "";
-            if (preview) preview.src = `${res.url || res.photo}?t=${Date.now()}`;
+            setPreview(`${res.url || res.photo}?t=${Date.now()}`);
             box._pendingFile = null;
             const pickText = box.querySelector(".admin-photo-pick-text");
             if (pickText) pickText.textContent = I18n.t("photoChange");
@@ -1100,7 +1116,7 @@ const AdminApp = (() => {
             setStatus(I18n.t("photoSaved"), true);
           } catch (err) {
             setStatus(err.message || "Upload failed", false);
-            if (preview) preview.src = fallback;
+            setPreview(fallback);
           }
           input.value = "";
         });
@@ -1111,7 +1127,7 @@ const AdminApp = (() => {
           try {
             await BBC_API.removePhoto({ entity, id });
             if (hidden) hidden.value = "";
-            if (preview) preview.src = fallback;
+            setPreview(fallback);
             box._pendingFile = null;
             await refreshData();
             setStatus("Photo removed", true);
@@ -1124,6 +1140,9 @@ const AdminApp = (() => {
       });
     };
     bindPhotoUploaders();
+    if (window.QEAPhoto && typeof window.QEAPhoto.bind === "function") {
+      window.QEAPhoto.bind(root);
+    }
 
     root.querySelector("#admin-class-filter")?.addEventListener("submit", (e) => {
       e.preventDefault();

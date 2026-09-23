@@ -39,7 +39,7 @@
     return `${(x[0] || "")}${(y[0] || "")}`.toUpperCase() || "?";
   }
 
-  /** Profile picture: real photo when set, else student/teacher icon placeholder. */
+  /** Profile picture: real photo when set, else student/teacher icon placeholder. Click to enlarge. */
   function profileAvatar(person, role, size = "") {
     const photo = String(person?.photo || "").trim();
     const sizeCls = size ? ` ${size}` : "";
@@ -51,10 +51,66 @@
       role === "teacher"
         ? BBC_DATA.teacherDisplayName(person)
         : BBC_DATA.studentFullName(person);
-    return `<span class="avatar ${roleCls}${sizeCls}" title="${esc(label)}">
+    return `<span role="button" tabindex="0" class="avatar ${roleCls}${sizeCls} avatar-clickable" data-photo-view="${esc(src)}" data-photo-label="${esc(label)}" title="${esc(label)}" aria-label="View photo">
       <img src="${esc(src)}" alt="" loading="lazy" onerror="this.onerror=null;this.src='${esc(fallback)}'" />
     </span>`;
   }
+
+  function ensurePhotoLightbox() {
+    let overlay = document.getElementById("photo-lightbox");
+    if (overlay) return overlay;
+    overlay = document.createElement("div");
+    overlay.id = "photo-lightbox";
+    overlay.className = "photo-lightbox";
+    overlay.hidden = true;
+    overlay.innerHTML = `
+      <div class="photo-lightbox-card" role="dialog" aria-modal="true" aria-label="Photo">
+        <button type="button" class="photo-lightbox-close" data-photo-close aria-label="Close">×</button>
+        <img class="photo-lightbox-img" alt="" />
+        <p class="photo-lightbox-caption"></p>
+      </div>`;
+    document.body.appendChild(overlay);
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay || e.target.closest("[data-photo-close]")) {
+        overlay.hidden = true;
+      }
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !overlay.hidden) overlay.hidden = true;
+    });
+    return overlay;
+  }
+
+  function openPhotoLightbox(src, label = "") {
+    if (!src) return;
+    const overlay = ensurePhotoLightbox();
+    const img = overlay.querySelector(".photo-lightbox-img");
+    const caption = overlay.querySelector(".photo-lightbox-caption");
+    img.src = src;
+    img.alt = label || "Photo";
+    caption.textContent = label || "";
+    caption.hidden = !label;
+    overlay.hidden = false;
+  }
+
+  function bindPhotoViewer(root) {
+    (root || document).querySelectorAll("[data-photo-view]").forEach((el) => {
+      if (el.dataset.photoBound === "1") return;
+      el.dataset.photoBound = "1";
+      const open = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        openPhotoLightbox(el.getAttribute("data-photo-view"), el.getAttribute("data-photo-label") || "");
+      };
+      el.addEventListener("click", open);
+      el.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") open(e);
+      });
+    });
+  }
+
+  // Shared with Staff console
+  window.QEAPhoto = { open: openPhotoLightbox, bind: bindPhotoViewer };
 
   function dash(v) {
     const s = String(v ?? "").trim();
@@ -1061,6 +1117,7 @@
 
   function bindEvents() {
     I18n.bind(app, () => render());
+    bindPhotoViewer(app);
 
     document.getElementById("login-form")?.addEventListener("submit", async (e) => {
       e.preventDefault();
