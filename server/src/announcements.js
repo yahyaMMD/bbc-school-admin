@@ -4,7 +4,9 @@ import { query } from "./db.js";
 import { saveAnnouncementImage, absoluteUploadPath } from "./uploads.js";
 
 const WA_BRIDGE_URL = (process.env.WA_BRIDGE_URL || "http://127.0.0.1:3847").replace(/\/$/, "");
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY || "";
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY || "";
+const OPENROUTER_IMAGE_MODEL =
+  process.env.OPENROUTER_IMAGE_MODEL || "sourceful/riverflow-v2-fast";
 
 function sid(prefix = "ANN") {
   return prefix + crypto.randomBytes(5).toString("hex").toUpperCase();
@@ -115,96 +117,105 @@ export async function generateImage(req, res) {
   try {
     const text = String(req.body?.text || "").trim();
     if (!text) return res.status(400).json({ error: "text required" });
-    if (!OPENAI_API_KEY) {
-      return res.status(500).json({ error: "OPENAI_API_KEY not configured on server" });
+    if (!OPENROUTER_API_KEY) {
+      return res.status(500).json({ error: "OPENROUTER_API_KEY not configured on server" });
     }
 
     const prompt = [
       "Create a clean, professional school announcement poster image.",
       "Brand: Quality education Algerie (Q.E.A), orange accent, modern, readable typography.",
+      "Arabic and/or French text on the poster when the announcement is in those languages.",
       "No QR codes, no watermarks, no extra logos unless simple.",
       "Announcement content:",
       text,
     ].join("\n");
 
-    // dall-e-3 retired May 2026 — use GPT Image models (try newest first)
-    const models = ["gpt-image-2", "gpt-image-1.5", "gpt-image-1", "gpt-image-1-mini"];
-    let oaData = null;
+    // Prefer fast models first; fall back if a model is unavailable on the key
+    const models = [
+      OPENROUTER_IMAGE_MODEL,
+      "sourceful/riverflow-v2-fast",
+      "google/gemini-2.5-flash-image",
+      "black-forest-labs/flux.2-flex",
+    ].filter((m, i, arr) => m && arr.indexOf(m) === i);
+
+    let imageItem = null;
     let usedModel = null;
     let lastError = "";
 
     for (const model of models) {
-      const body = {
-        model,
-        prompt: prompt.slice(0, 3900),
-        size: "1024x1024",
-        n: 1,
-      };
-      // gpt-image-* uses low|medium|high|auto — not DALL·E quality enums
-      if (model.startsWith("gpt-image")) {
-        body.quality = "medium";
-      }
-
-      const oa = await fetch("https://api.openai.com/v1/images/generations", {
+      const orRes = await fetch("https://openrouter.ai/api/v1/images", {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${OPENAI_API_KEY}`,
+          Authorization: `Bearer ${OPENROUTER_API_KEY}`,
           "Content-Type": "application/json",
+          "HTTP-Referer": process.env.OPENROUTER_SITE_URL || "https://qea.local",
+          "X-Title": process.env.OPENROUTER_APP_NAME || "QEA Announcements",
         },
-        body: JSON.stringify(body),
+        body: JSON.stringify({
+          model,
+          prompt: prompt.slice(0, 3900),
+          aspect_ratio: "1:1",
+          output_format: "png",
+        }),
       });
-      const oaText = await oa.text();
+      const orText = await orRes.text();
       let parsed = null;
       try {
-        parsed = JSON.parse(oaText);
+        parsed = JSON.parse(orText);
       } catch {
         parsed = null;
       }
-      if (oa.ok && parsed) {
-        oaData = parsed;
+      if (orRes.ok && parsed?.data?.[0]) {
+        imageItem = parsed.data[0];
         usedModel = model;
         break;
       }
       lastError =
         parsed?.error?.message ||
         parsed?.error ||
-        `OpenAI image generation failed (${oa.status}) for ${model}`;
-      // Try next model if this one is missing / unauthorized for org
+        `OpenRouter image generation failed (${orRes.status}) for ${model}`;
       const msg = String(lastError).toLowerCase();
       if (
-        msg.includes("does not exist") ||
         msg.includes("not found") ||
-        msg.includes("not available") ||
-        msg.includes("model_not_found") ||
-        oa.status === 404
+        msg.includes("no endpoints") ||
+        msg.includes("does not exist") ||
+        orRes.status === 404
       ) {
         continue;
       }
-      // Other errors (billing, moderation, etc.) — stop
       break;
     }
 
-    if (!oaData) {
+    if (!imageItem) {
       return res.status(502).json({ error: String(lastError || "Image generation failed") });
     }
 
-    const b64 = oaData?.data?.[0]?.b64_json;
-    const remoteUrl = oaData?.data?.[0]?.url;
     let buffer = null;
-    let mime = "image/png";
+    let mime = imageItem.media_type || "image/png";
+    const b64 = imageItem.b64_json;
+    const remoteUrl = imageItem.url;
 
     if (b64) {
-      buffer = Buffer.from(b64, "base64");
+      // OpenRouter may return raw base64 or a data URL
+      const raw = String(b64).includes(",") ? String(b64).split(",").pop() : String(b64);
+      buffer = Buffer.from(raw, "base64");
     } else if (remoteUrl) {
-      const imgRes = await fetch(remoteUrl);
-      if (!imgRes.ok) {
-        return res.status(502).json({ error: "Failed to download generated image" });
+      if (String(remoteUrl).startsWith("data:")) {
+        const m = String(remoteUrl).match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/);
+        if (!m) return res.status(502).json({ error: "Invalid data URL from OpenRouter" });
+        mime = m[1];
+        buffer = Buffer.from(m[2], "base64");
+      } else {
+        const imgRes = await fetch(remoteUrl);
+        if (!imgRes.ok) {
+          return res.status(502).json({ error: "Failed to download generated image" });
+        }
+        buffer = Buffer.from(await imgRes.arrayBuffer());
+        const ct = imgRes.headers.get("content-type") || mime;
+        mime = ct.split(";")[0].trim();
       }
-      buffer = Buffer.from(await imgRes.arrayBuffer());
-      const ct = imgRes.headers.get("content-type") || "image/png";
-      mime = ct.split(";")[0].trim();
     } else {
-      return res.status(502).json({ error: "No image in OpenAI response" });
+      return res.status(502).json({ error: "No image in OpenRouter response" });
     }
 
     const saved = saveAnnouncementImage({
@@ -212,7 +223,7 @@ export async function generateImage(req, res) {
       mime,
       id: sid("IMG"),
     });
-    res.json({ ok: true, url: saved.url, text, model: usedModel });
+    res.json({ ok: true, url: saved.url, text, model: usedModel, provider: "openrouter" });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message || "Image generation failed" });
@@ -236,7 +247,7 @@ export async function sendAnnouncement(req, res) {
     const imageUrl = String(req.body?.imageUrl || "").trim();
     const groupIds = Array.isArray(req.body?.groupIds) ? req.body.groupIds.filter(Boolean) : [];
     const groupNames = Array.isArray(req.body?.groupNames) ? req.body.groupNames : [];
-    const caption = String(req.body?.caption || "").trim();
+    const caption = String(req.body?.caption || text || "").trim();
 
     if (!imageUrl) return res.status(400).json({ error: "imageUrl required" });
     if (!groupIds.length) return res.status(400).json({ error: "Select at least one group" });
@@ -246,11 +257,26 @@ export async function sendAnnouncement(req, res) {
       return res.status(400).json({ error: "Image file not found on server" });
     }
 
+    // Pass base64 to the bridge — more reliable than cross-container file paths
+    // with current whatsapp-web.js media send bugs.
+    const buffer = fs.readFileSync(abs);
+    const ext = String(abs).split(".").pop()?.toLowerCase() || "png";
+    const mime =
+      ext === "jpg" || ext === "jpeg"
+        ? "image/jpeg"
+        : ext === "webp"
+          ? "image/webp"
+          : ext === "gif"
+            ? "image/gif"
+            : "image/png";
+
     const bridgeResult = await bridgeFetch("/send-image", {
       method: "POST",
       body: JSON.stringify({
         groupIds,
-        imagePath: abs,
+        base64: buffer.toString("base64"),
+        mime,
+        filename: `announcement.${ext}`,
         caption: caption || undefined,
       }),
     });
@@ -283,6 +309,9 @@ export async function sendAnnouncement(req, res) {
     });
   } catch (err) {
     console.error(err);
-    res.status(err.status || 500).json({ error: err.message || "Send failed" });
+    res.status(err.status || 500).json({
+      error: err.message || "Send failed",
+      details: err.data || undefined,
+    });
   }
 }

@@ -54,7 +54,8 @@ services:
       SEED_JSON: /app/seed/school_data.json
       UPLOAD_DIR: /data/uploads
       WA_BRIDGE_URL: ${WA_BRIDGE_URL:-http://whatsapp:3847}
-      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      OPENROUTER_IMAGE_MODEL: ${OPENROUTER_IMAGE_MODEL:-sourceful/riverflow-v2-fast}
     volumes:
       - bbc_uploads:/data/uploads
     ports:
