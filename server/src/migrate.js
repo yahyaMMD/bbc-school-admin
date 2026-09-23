@@ -23,7 +23,8 @@ export async function migrate() {
       commune TEXT NOT NULL DEFAULT '',
       modules JSONB NOT NULL DEFAULT '[]'::jsonb,
       departments JSONB NOT NULL DEFAULT '[]'::jsonb,
-      class_ids JSONB NOT NULL DEFAULT '[]'::jsonb
+      class_ids JSONB NOT NULL DEFAULT '[]'::jsonb,
+      photo TEXT NOT NULL DEFAULT ''
     );
 
     CREATE TABLE IF NOT EXISTS classes (
@@ -62,6 +63,7 @@ export async function migrate() {
       gender TEXT NOT NULL DEFAULT '',
       notes TEXT NOT NULL DEFAULT '',
       search_name TEXT NOT NULL DEFAULT '',
+      photo TEXT NOT NULL DEFAULT '',
       previous_year_details JSONB
     );
 
@@ -89,4 +91,6 @@ export async function migrate() {
   await query(`ALTER TABLE students ADD COLUMN IF NOT EXISTS first_name_latin TEXT NOT NULL DEFAULT ''`);
   await query(`ALTER TABLE students ADD COLUMN IF NOT EXISTS last_name_latin TEXT NOT NULL DEFAULT ''`);
   await query(`ALTER TABLE students ADD COLUMN IF NOT EXISTS full_name_latin TEXT NOT NULL DEFAULT ''`);
+  await query(`ALTER TABLE students ADD COLUMN IF NOT EXISTS photo TEXT NOT NULL DEFAULT ''`);
+  await query(`ALTER TABLE teachers ADD COLUMN IF NOT EXISTS photo TEXT NOT NULL DEFAULT ''`);
 }

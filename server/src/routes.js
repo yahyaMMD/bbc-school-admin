@@ -32,8 +32,8 @@ router.post("/teachers", authRequired(["admin"]), async (req, res) => {
   const b = req.body || {};
   const id = b.id || sid("T");
   await query(
-    `INSERT INTO teachers (id, first_name, last_name, name_latin, phone, wilaya, commune, modules, departments, class_ids)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8::jsonb,$9::jsonb,$10::jsonb)`,
+    `INSERT INTO teachers (id, first_name, last_name, name_latin, phone, wilaya, commune, modules, departments, class_ids, photo)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8::jsonb,$9::jsonb,$10::jsonb,$11)`,
     [
       id,
       b.firstName || "",
@@ -45,6 +45,7 @@ router.post("/teachers", authRequired(["admin"]), async (req, res) => {
       JSON.stringify(b.modules || []),
       JSON.stringify(b.departments || []),
       JSON.stringify(b.classIds || []),
+      b.photo || "",
     ]
   );
   const r = await query("SELECT * FROM teachers WHERE id = $1", [id]);
@@ -66,7 +67,8 @@ router.put("/teachers/:id", authRequired(["admin"]), async (req, res) => {
       commune = COALESCE($7, commune),
       modules = COALESCE($8::jsonb, modules),
       departments = COALESCE($9::jsonb, departments),
-      class_ids = COALESCE($10::jsonb, class_ids)
+      class_ids = COALESCE($10::jsonb, class_ids),
+      photo = COALESCE($11, photo)
      WHERE id = $1 RETURNING *`,
     [
       req.params.id,
@@ -79,6 +81,7 @@ router.put("/teachers/:id", authRequired(["admin"]), async (req, res) => {
       b.modules != null ? JSON.stringify(b.modules) : null,
       b.departments != null ? JSON.stringify(b.departments) : null,
       b.classIds != null ? JSON.stringify(b.classIds) : null,
+      b.photo != null ? b.photo : null,
     ]
   );
 
@@ -280,8 +283,8 @@ router.post("/students", authRequired(["admin"]), async (req, res) => {
     `INSERT INTO students (
       id, class_id, department_id, number, first_name, last_name, full_name,
       first_name_latin, last_name_latin, full_name_latin,
-      date_of_birth, gender, notes, search_name, previous_year_details
-    ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15::jsonb)`,
+      date_of_birth, gender, notes, search_name, previous_year_details, photo
+    ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15::jsonb,$16)`,
     [
       id,
       b.classId,
@@ -298,6 +301,7 @@ router.post("/students", authRequired(["admin"]), async (req, res) => {
       b.notes || "",
       b.searchName || `${fullName} ${fullNameLatin}`.trim(),
       b.previousYearDetails ? JSON.stringify(b.previousYearDetails) : null,
+      b.photo || "",
     ]
   );
   await query(
@@ -345,7 +349,8 @@ router.put("/students/:id", authRequired(["admin"]), async (req, res) => {
       gender = COALESCE($12, gender),
       notes = COALESCE($13, notes),
       search_name = $14,
-      previous_year_details = COALESCE($15::jsonb, previous_year_details)
+      previous_year_details = COALESCE($15::jsonb, previous_year_details),
+      photo = COALESCE($16, photo)
      WHERE id = $1 RETURNING *`,
     [
       req.params.id,
@@ -363,6 +368,7 @@ router.put("/students/:id", authRequired(["admin"]), async (req, res) => {
       b.notes,
       searchName,
       b.previousYearDetails != null ? JSON.stringify(b.previousYearDetails) : null,
+      b.photo != null ? b.photo : null,
     ]
   );
   for (const cid of new Set([old.class_id, newClassId])) {

@@ -451,6 +451,8 @@ const AdminApp = (() => {
           options: classOpts.map((o) => ({ value: o.id, label: o.label })),
         })}
         ${field("notes", "Notes", s.notes || "", { type: "textarea", full: true })}
+        ${field("photo", I18n.t("photo"), s.photo || "", { full: true })}
+        <p class="muted" style="grid-column:1/-1;margin:0">${esc(I18n.t("photoHint"))}</p>
         <div class="admin-form-actions">
           <button type="submit" class="btn btn-primary">Save changes</button>
           <button type="button" class="btn btn-ghost" data-nav="#/manage/classes/${esc(s.classId)}">Open class roster</button>
@@ -543,6 +545,8 @@ const AdminApp = (() => {
           values: t.classIds || [],
           options: opts.map((o) => ({ value: o.id, label: o.label })),
         })}
+        ${field("photo", I18n.t("photo"), t.photo || "", { full: true })}
+        <p class="muted" style="grid-column:1/-1;margin:0">${esc(I18n.t("photoHint"))}</p>
         <div class="admin-form-actions">
           <button type="submit" class="btn btn-primary">Save teacher</button>
           <button type="button" class="btn btn-ghost" data-nav="#/manage/teachers">Back</button>
@@ -787,6 +791,7 @@ const AdminApp = (() => {
           modules: csvList(b.modules),
           departments: csvList(b.departments),
           classIds: Array.isArray(b.classIds) ? b.classIds : b.classIds ? [b.classIds] : [],
+          photo: b.photo || "",
         });
       }, "/manage/teachers");
     });

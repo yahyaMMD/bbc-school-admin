@@ -12,6 +12,7 @@ function mapTeacher(r) {
     modules: r.modules || [],
     departments: r.departments || [],
     classIds: r.class_ids || [],
+    photo: r.photo || "",
   };
 }
 
@@ -31,6 +32,7 @@ function mapStudent(r) {
     classId: r.class_id,
     departmentId: r.department_id,
     searchName: r.search_name || r.full_name,
+    photo: r.photo || "",
   };
   if (r.previous_year_details) s.previousYearDetails = r.previous_year_details;
   return s;

@@ -39,6 +39,23 @@
     return `${(x[0] || "")}${(y[0] || "")}`.toUpperCase() || "?";
   }
 
+  /** Profile picture: real photo when set, else student/teacher icon placeholder. */
+  function profileAvatar(person, role, size = "") {
+    const photo = String(person?.photo || "").trim();
+    const sizeCls = size ? ` ${size}` : "";
+    const roleCls = role === "teacher" ? "avatar-teacher" : "avatar-student";
+    const fallback =
+      role === "teacher" ? "assets/avatars/teacher.svg" : "assets/avatars/student.svg";
+    const src = photo || fallback;
+    const label =
+      role === "teacher"
+        ? BBC_DATA.teacherDisplayName(person)
+        : BBC_DATA.studentFullName(person);
+    return `<span class="avatar ${roleCls}${sizeCls}" title="${esc(label)}">
+      <img src="${esc(src)}" alt="" loading="lazy" onerror="this.onerror=null;this.src='${esc(fallback)}'" />
+    </span>`;
+  }
+
   function dash(v) {
     const s = String(v ?? "").trim();
     return s || "—";
@@ -172,36 +189,15 @@
   function viewHome() {
     const stats = BBC_DATA.stats();
     const year = BBC_DATA.school.academicYear;
+    const loc =
+      I18n.getLang() === "ar" ? "ar" : I18n.getLang() === "fr" ? "fr-FR" : "en-US";
     return shell(`
       ${crumb([{ label: I18n.t("home"), to: "#/home" }])}
-      <div class="page-header">
+      <div class="page-header home-header">
         <h1>${esc(I18n.t("dashboard"))}</h1>
         <p class="lede">${esc(I18n.t("dashboardLede", { year }))}</p>
       </div>
-      <div class="stats-row">
-        <div class="stat-card"><div class="label">${esc(I18n.t("yearGroups"))}</div><div class="value"><em>${stats.levels}</em></div></div>
-        <div class="stat-card"><div class="label">${esc(I18n.t("classes"))}</div><div class="value">${stats.classes}</div></div>
-        <div class="stat-card"><div class="label">${esc(I18n.t("students"))}</div><div class="value">${stats.students.toLocaleString(I18n.getLang() === "ar" ? "ar" : I18n.getLang() === "fr" ? "fr-FR" : "en-US")}</div></div>
-        <div class="stat-card"><div class="label">${esc(I18n.t("teachersListed"))}</div><div class="value">${stats.teachers}</div></div>
-      </div>
-      <div class="dir-home-grid" style="margin-bottom:1.5rem">
-        <button type="button" class="dir-home-card" data-nav="#/teachers">
-          <div class="dir-home-icon" aria-hidden="true">${icons.users}</div>
-          <div>
-            <h3>${esc(I18n.t("ourTeachers"))}</h3>
-            <p>${esc(I18n.t("ourTeachersDesc", { n: stats.teachers }))}</p>
-          </div>
-          <span class="cta">${esc(I18n.t("browseTeachers"))}</span>
-        </button>
-        <button type="button" class="dir-home-card" data-nav="#/students">
-          <div class="dir-home-icon" aria-hidden="true">${icons.users}</div>
-          <div>
-            <h3>${esc(I18n.t("ourStudents"))}</h3>
-            <p>${esc(I18n.t("ourStudentsDesc", { n: stats.students.toLocaleString(I18n.getLang() === "fr" ? "fr-FR" : "en-US") }))}</p>
-          </div>
-          <span class="cta">${esc(I18n.t("browseStudents"))}</span>
-        </button>
-      </div>
+
       <div class="page-header" style="margin-bottom:0.85rem">
         <h2 class="section-title" style="margin:0">${esc(I18n.t("departments"))}</h2>
       </div>
@@ -223,6 +219,35 @@
         `;
           })
           .join("")}
+      </div>
+
+      <div class="home-shortcuts-wrap">
+        <div class="page-header" style="margin-bottom:0.65rem">
+          <h2 class="section-title" style="margin:0">${esc(I18n.t("directories"))}</h2>
+        </div>
+        <div class="home-icon-strip" role="navigation" aria-label="${esc(I18n.t("directories"))}">
+          <button type="button" class="home-icon-tile" data-nav="#/teachers">
+            <span class="home-icon-pic" aria-hidden="true">
+              <img src="assets/avatars/teacher.svg" alt="" />
+            </span>
+            <strong>${esc(I18n.t("ourTeachers"))}</strong>
+            <span class="muted">${stats.teachers}</span>
+          </button>
+          <button type="button" class="home-icon-tile" data-nav="#/students">
+            <span class="home-icon-pic" aria-hidden="true">
+              <img src="assets/avatars/student.svg" alt="" />
+            </span>
+            <strong>${esc(I18n.t("ourStudents"))}</strong>
+            <span class="muted">${stats.students.toLocaleString(loc)}</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="stats-row home-stats">
+        <div class="stat-card"><div class="label">${esc(I18n.t("yearGroups"))}</div><div class="value"><em>${stats.levels}</em></div></div>
+        <div class="stat-card"><div class="label">${esc(I18n.t("classes"))}</div><div class="value">${stats.classes}</div></div>
+        <div class="stat-card"><div class="label">${esc(I18n.t("students"))}</div><div class="value">${stats.students.toLocaleString(loc)}</div></div>
+        <div class="stat-card"><div class="label">${esc(I18n.t("teachersListed"))}</div><div class="value">${stats.teachers}</div></div>
       </div>
     `);
   }
@@ -466,7 +491,7 @@
                         return `
                       <div class="teacher-row-wrap">
                         <button type="button" class="teacher-row" data-nav="#/teacher/${t.id}?from=${from}">
-                          <div class="avatar">${esc(initials(t.firstName, t.lastName))}</div>
+                          ${profileAvatar(t, "teacher")}
                           <div class="meta">
                             <strong>${esc(teacherLabel(t))}</strong>
                             <span>${esc((t.modules || []).join(" · "))}</span>
@@ -605,7 +630,7 @@
         <button type="button" class="btn btn-ghost" data-nav="${esc(back)}" style="margin-bottom:0.75rem;padding-left:0">← Back</button>
       </div>
       <div class="teacher-hero">
-        <div class="avatar avatar-lg">${esc(initials(BBC_DATA.studentFirstName(s), BBC_DATA.studentLastName(s)))}</div>
+        ${profileAvatar(s, "student", "avatar-lg")}
         <div>
           <h1 dir="auto">${esc(BBC_DATA.studentFullName(s))}</h1>
           <p class="role">Student · ${esc(cls.code)} · ${esc(level.name)} · ${esc(short)}</p>
@@ -768,7 +793,7 @@
                   const classCodes = classes.map((x) => x.cls.code).join(", ") || "—";
                   return `
               <button type="button" class="dir-card" data-nav="#/teacher/${t.id}?from=${encodeURIComponent("#/teachers")}">
-                <div class="avatar">${esc(initials(t.firstName, t.lastName))}</div>
+                ${profileAvatar(t, "teacher")}
                 <div class="dir-card-body">
                   <strong dir="auto">${esc(teacherLabel(t))}</strong>
                   ${teacherLatin(t) ? `<span class="dir-meta">${esc(teacherLatin(t))}</span>` : ""}
@@ -881,7 +906,7 @@
             ? filtered
                 .map(({ student: s, dept: d, level, cls }) => `
               <button type="button" class="dir-card" data-nav="#/student/${s.id}?from=${encodeURIComponent("#/students")}">
-                <div class="avatar">${esc(initials(BBC_DATA.studentFirstName(s), BBC_DATA.studentLastName(s)))}</div>
+                ${profileAvatar(s, "student")}
                 <div class="dir-card-body">
                   <strong dir="auto">${esc(BBC_DATA.studentFullName(s))}</strong>
                   <span class="dir-meta">${esc(DEPT_SHORT[d.id] || d.name)} · ${esc(level.name)} · ${esc(cls.code)}</span>
@@ -919,7 +944,7 @@
         <button type="button" class="btn btn-ghost" data-nav="${esc(back)}" style="margin-bottom:0.75rem;padding-left:0">← Back</button>
       </div>
       <div class="teacher-hero">
-        <div class="avatar avatar-lg">${esc(initials(t.firstName, t.lastName))}</div>
+        ${profileAvatar(t, "teacher", "avatar-lg")}
         <div>
           <h1 dir="auto">${esc(teacherLabel(t))}</h1>
           <p class="role">Teacher · ${esc(depts.join(" · ") || "BBC School")}${teacherLatin(t) ? ` · ${esc(teacherLatin(t))}` : ""}</p>

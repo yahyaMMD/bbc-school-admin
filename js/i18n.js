@@ -75,6 +75,9 @@ const I18n = (() => {
       dataManagement: "Data management",
       dataManagementLede: "Live database — every save updates the browse view immediately.",
       missingFields: "Missing fields",
+      directories: "Directories",
+      photo: "Profile photo URL",
+      photoHint: "Paste an image link for now — file upload comes later.",
     },
     fr: {
       brand: "Quality education Algerie (Q.E.A)",
@@ -144,6 +147,9 @@ const I18n = (() => {
       dataManagement: "Gestion des données",
       dataManagementLede: "Base en direct — chaque enregistrement met à jour la vue consultation.",
       missingFields: "Champs manquants",
+      directories: "Annuaires",
+      photo: "URL de la photo",
+      photoHint: "Collez un lien d’image pour l’instant — l’envoi de fichier viendra plus tard.",
     },
     ar: {
       brand: "جودة التعليم الجزائر (Q.E.A)",
@@ -213,6 +219,9 @@ const I18n = (() => {
       dataManagement: "إدارة البيانات",
       dataManagementLede: "قاعدة مباشرة — كل حفظ يحدّث عرض الاستشارة فورًا.",
       missingFields: "حقول ناقصة",
+      directories: "الأدلة",
+      photo: "رابط صورة الملف",
+      photoHint: "الصق رابط الصورة الآن — رفع الملفات لاحقًا.",
     },
   };
 
