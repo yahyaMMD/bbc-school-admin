@@ -1291,11 +1291,11 @@
         if (open) {
           morePanel.removeAttribute("hidden");
           moreBtn.setAttribute("aria-expanded", "true");
-          moreBtn.textContent = "Hide details";
+          moreBtn.textContent = I18n.getLang() === "ar" ? "إخفاء التفاصيل" : I18n.getLang() === "fr" ? "Masquer les détails" : "Hide details";
         } else {
           morePanel.setAttribute("hidden", "");
           moreBtn.setAttribute("aria-expanded", "false");
-          moreBtn.textContent = "More details";
+          moreBtn.textContent = I18n.t("moreDetails");
         }
       });
     }
