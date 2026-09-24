@@ -405,23 +405,42 @@ app.get("/contacts", async (_req, res) => {
       return res.status(503).json({ ok: false, error: "WhatsApp not connected yet" });
     }
 
-    const MAX = 500;
-    const seen = new Set();
-    const contacts = [];
+    const byId = new Map();
 
-    const push = (id, name, phone) => {
+    const isPersonalId = (sid) => {
+      if (!sid || !String(sid).includes("@")) return false;
+      const id = String(sid);
+      if (id.endsWith("@g.us") || id.endsWith("@broadcast") || id.endsWith("@newsletter")) {
+        return false;
+      }
+      return true;
+    };
+
+    const pushOrUpgrade = (id, name, phone) => {
       const sid = id == null ? "" : String(id);
-      if (!sid || seen.has(sid)) return;
-      if (sid.endsWith("@g.us") || sid.endsWith("@broadcast")) return;
-      // Accept classic @c.us and LID-era user chats
-      if (!sid.includes("@")) return;
-      seen.add(sid);
-      const label = String(name || phone || sid).trim() || sid;
-      contacts.push({
-        id: sid,
-        name: label,
-        phone: phone ? String(phone) : null,
-      });
+      if (!isPersonalId(sid)) return;
+      const nextName = String(name || "").trim();
+      const nextPhone = phone != null && String(phone).trim() ? String(phone).trim() : null;
+      const existing = byId.get(sid);
+      if (!existing) {
+        byId.set(sid, {
+          id: sid,
+          name: nextName || nextPhone || sid,
+          phone: nextPhone,
+        });
+        return;
+      }
+      if (nextPhone && !existing.phone) existing.phone = nextPhone;
+      if (
+        nextName &&
+        nextName !== sid &&
+        nextName !== existing.phone &&
+        (existing.name === sid ||
+          existing.name === existing.phone ||
+          existing.name.length < nextName.length)
+      ) {
+        existing.name = nextName;
+      }
     };
 
     try {
@@ -430,38 +449,41 @@ app.get("/contacts", async (_req, res) => {
         try {
           if (c?.isGroup || c?.isMe) continue;
           const id = c?.id?._serialized || "";
-          if (!id || id.endsWith("@g.us")) continue;
+          if (!id) continue;
           const name =
-            c.pushname ||
             c.name ||
+            c.pushname ||
             c.shortName ||
             c.verifiedName ||
             c.number ||
             "";
-          push(id, name, c.number || c.id?.user || null);
+          pushOrUpgrade(id, name, c.number || c.id?.user || null);
         } catch {
           /* skip one */
         }
       }
     } catch (err) {
-      console.warn("getContacts failed, using chat fallback:", err?.message || err);
+      console.warn("getContacts failed:", err?.message || err);
     }
 
-    if (!contacts.length) {
-      try {
-        const chats = await client.getChats();
-        for (const c of chats || []) {
+    // Always merge 1:1 chats — catches people missing from Contact store
+    try {
+      const chats = await client.getChats();
+      for (const c of chats || []) {
+        try {
           if (c?.isGroup) continue;
           const id = c?.id?._serialized || "";
-          if (!id || id.endsWith("@g.us")) continue;
-          push(id, c.name || c.id?.user, c.id?.user || null);
+          if (!id) continue;
+          pushOrUpgrade(id, c.name || c.id?.user, c.id?.user || null);
+        } catch {
+          /* skip */
         }
-      } catch (err) {
-        console.warn("getChats contact fallback failed:", err?.message || err);
       }
+    } catch (err) {
+      console.warn("getChats contact merge failed:", err?.message || err);
     }
 
-    if (!contacts.length && client.pupPage) {
+    if (client.pupPage) {
       try {
         const fromStore = await client.pupPage.evaluate(() => {
           const out = [];
@@ -469,7 +491,13 @@ app.get("/contacts", async (_req, res) => {
           const pushLocal = (id, name, phone) => {
             const sid = id == null ? "" : String(id);
             if (!sid || seenLocal.has(sid)) return;
-            if (sid.endsWith("@g.us") || sid.endsWith("@broadcast")) return;
+            if (
+              sid.endsWith("@g.us") ||
+              sid.endsWith("@broadcast") ||
+              sid.endsWith("@newsletter")
+            ) {
+              return;
+            }
             if (!sid.includes("@")) return;
             seenLocal.add(sid);
             out.push({
@@ -486,7 +514,25 @@ app.get("/contacts", async (_req, res) => {
               if (!id || c?.isGroup || c?.isMe) continue;
               pushLocal(
                 id,
-                c.pushname || c.name || c.shortName || c.verifiedName,
+                c.name || c.pushname || c.shortName || c.verifiedName,
+                c.number || c.id?.user
+              );
+            }
+          } catch (_) {
+            /* next */
+          }
+          try {
+            const storeContact = window.Store?.Contact;
+            const models =
+              (storeContact?.getModelsArray && storeContact.getModelsArray()) ||
+              storeContact?.models ||
+              [];
+            for (const c of models) {
+              const id = c?.id?._serialized || "";
+              if (!id || c?.isGroup || c?.isMe) continue;
+              pushLocal(
+                id,
+                c.name || c.pushname || c.shortName || c.verifiedName,
                 c.number || c.id?.user
               );
             }
@@ -509,23 +555,23 @@ app.get("/contacts", async (_req, res) => {
           return out;
         });
         if (Array.isArray(fromStore)) {
-          for (const c of fromStore) push(c.id, c.name, c.phone);
+          for (const c of fromStore) pushOrUpgrade(c.id, c.name, c.phone);
         }
       } catch (err) {
-        console.warn("contacts store fallback failed:", err?.message || err);
+        console.warn("contacts store merge failed:", err?.message || err);
       }
     }
 
+    const contacts = Array.from(byId.values());
     contacts.sort((a, b) =>
       String(a.name).localeCompare(String(b.name), undefined, { sensitivity: "base" })
     );
 
-    const limited = contacts.slice(0, MAX);
     res.json({
       ok: true,
-      contacts: limited,
-      count: limited.length,
-      truncated: contacts.length > MAX,
+      contacts,
+      count: contacts.length,
+      truncated: false,
     });
   } catch (err) {
     console.error("contacts failed", err);

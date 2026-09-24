@@ -701,7 +701,13 @@ const WhatsAppApp = (() => {
     const matchQ = (item, q) => {
       if (!q) return true;
       const hay = `${item.name || ""} ${item.phone || ""} ${item.id || ""}`.toLowerCase();
-      return hay.includes(q);
+      if (hay.includes(q)) return true;
+      const qDigits = q.replace(/\D+/g, "");
+      if (qDigits.length >= 3) {
+        const phoneDigits = `${item.phone || ""} ${item.id || ""}`.replace(/\D+/g, "");
+        if (phoneDigits.includes(qDigits)) return true;
+      }
+      return false;
     };
 
     const renderRecipients = () => {
