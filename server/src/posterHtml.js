@@ -1,6 +1,6 @@
 /**
  * Announcement posters via structured AI understanding → trusted HTML/CSS → JPEG.
- * Exact Arabic text, no logos/icons — matches the clean Q.E.A school style.
+ * Category-themed brand frames; exact source text; no logos/icons unless in source.
  */
 import crypto from "crypto";
 import puppeteer from "puppeteer-core";
@@ -14,6 +14,82 @@ const TEXT_MODEL_FALLBACKS = [
   "anthropic/claude-sonnet-4",
 ];
 const CHROME_PATH = process.env.CHROME_PATH || "/usr/bin/chromium";
+
+export const POSTER_CATEGORIES = {
+  announcement: {
+    id: "announcement",
+    labelAr: "اعلان",
+    labelEn: "Announcement",
+    labelFr: "Annonce",
+    accent: "#f26522",
+    accentDeep: "#d94f14",
+    soft: "#fff3ec",
+    canvas: "#fff8f3",
+    ink: "#111111",
+  },
+  important: {
+    id: "important",
+    labelAr: "هام",
+    labelEn: "Important",
+    labelFr: "Important",
+    accent: "#c62828",
+    accentDeep: "#8e1b1b",
+    soft: "#fdecea",
+    canvas: "#fff5f4",
+    ink: "#1a1010",
+  },
+  notice: {
+    id: "notice",
+    labelAr: "تبليغ",
+    labelEn: "Notice",
+    labelFr: "Avis",
+    accent: "#e6a100",
+    accentDeep: "#b87d00",
+    soft: "#fff8e6",
+    canvas: "#fffbf0",
+    ink: "#1a1608",
+  },
+  instruction: {
+    id: "instruction",
+    labelAr: "تعليمة",
+    labelEn: "Instruction",
+    labelFr: "Instruction",
+    accent: "#0d7a6f",
+    accentDeep: "#085850",
+    soft: "#e8f6f4",
+    canvas: "#f2faf9",
+    ink: "#0c1a18",
+  },
+  reminder: {
+    id: "reminder",
+    labelAr: "تذكير",
+    labelEn: "Reminder",
+    labelFr: "Rappel",
+    accent: "#c9a227",
+    accentDeep: "#9a7a12",
+    soft: "#fff9e8",
+    canvas: "#fffcef",
+    ink: "#1a160a",
+  },
+  info: {
+    id: "info",
+    labelAr: "اعلام",
+    labelEn: "Information",
+    labelFr: "Information",
+    accent: "#455a64",
+    accentDeep: "#2e3d44",
+    soft: "#eceff1",
+    canvas: "#f5f7f8",
+    ink: "#12181b",
+  },
+};
+
+export function resolveCategory(raw) {
+  const key = String(raw || "announcement")
+    .trim()
+    .toLowerCase();
+  return POSTER_CATEGORIES[key] || POSTER_CATEGORIES.announcement;
+}
 
 function hasArabic(text) {
   return /[\u0600-\u06FF]/.test(String(text || ""));
@@ -36,13 +112,17 @@ function openRouterHeaders() {
   };
 }
 
-function buildStructurePrompt(text) {
+function buildStructurePrompt(text, category) {
+  const cat = resolveCategory(category);
   return `You convert a school announcement into a clean JSON layout for a printable poster.
+
+Category selected by staff: ${cat.id} (${cat.labelAr} / ${cat.labelEn}).
+Do NOT invent a category label in the JSON — the template already shows it.
 
 Return ONLY valid JSON (no markdown fences) with this shape:
 {
-  "title": "string — short orange headline",
-  "intro": "string — introductory paragraph (empty if none)",
+  "title": "string — short orange headline from the source (empty if none)",
+  "intro": "string — main body / introductory paragraph",
   "table": {
     "headers": ["col1","col2","col3"],
     "rows": [["c1","c2","c3"], ...]
@@ -53,15 +133,17 @@ Return ONLY valid JSON (no markdown fences) with this shape:
 
 Rules:
 - Preserve EVERY Arabic/French/English word and digit EXACTLY from the source (letter-perfect). Do not invent content.
+- Never translate: if the source is English, keep English; if Arabic, keep Arabic.
 - If the text is RTL Arabic, keep Arabic strings as-is.
 - Detect schedule/table data even when columns are listed vertically or jumbled; rebuild logical rows.
 - Typical schedule columns (RTL display order): الأقسام المعنية | اليوم | التوقيت — put headers in the order that reads correctly right-to-left when rendered.
 - If times are split across lines (e.g. "من 08:30 إلى" then "12:00"), join them into one cell: "من 08:30 إلى 12:00".
 - Put the orange banner/title FIRST even if it appears later in the pasted text (e.g. "خاص بأقسام الإبتدائي").
-- intro = the paragraph starting with في إطار / يسرنا / etc.
+- intro = the paragraph starting with في إطار / يسرنا / etc., OR the full short notice body.
+- Short free-text notices (1–3 sentences, no schedule): set "title" to "" (empty) and put the whole message in "intro". Do not invent a headline.
 - If there is no table, set "table" to null and put remaining body into intro and/or notes.
 - No logos, icons, school names, phone numbers, or QR unless present in the source text.
-- title should be the orange banner line (e.g. خاص بأقسام الإبتدائي) when present.
+- title should be the orange banner line (e.g. خاص بأقسام الإبتدائي) when present in the source.
 
 SOURCE ANNOUNCEMENT:
 """
@@ -149,7 +231,7 @@ function heuristicSpec(text) {
     .filter(Boolean);
 
   const titleIdx = lines.findIndex((l) => /خاص|إعلان|annonce|notice/i.test(l) && l.length < 80);
-  const title = titleIdx >= 0 ? lines[titleIdx] : lines[0] || "";
+  const title = titleIdx >= 0 ? lines[titleIdx] : "";
   const notesTitleIdx = lines.findIndex((l) => /ملاحظات|notes/i.test(l));
   const notes =
     notesTitleIdx >= 0
@@ -160,11 +242,9 @@ function heuristicSpec(text) {
       : [];
   const notesTitle = notesTitleIdx >= 0 ? lines[notesTitleIdx].replace(/[:：]\s*$/, "") + ":" : "";
 
-  // Try to detect 3-column schedule blocks: time / day / classes repeating
   const bodyLines = lines.filter(
     (l, i) => i !== titleIdx && (notesTitleIdx < 0 || i < notesTitleIdx)
   );
-  // Detect schedule rows even when time spans two lines: "من 08:30 إلى" + "12:00"
   const introParts = [];
   const tableRows = [];
   let i = 0;
@@ -200,13 +280,16 @@ function heuristicSpec(text) {
     i += 1;
   }
 
+  // Short single-block notices: no invented title
+  const introJoined = introParts
+    .filter((l) => !/^(التوقيت|اليوم|الأقسام المعنية)$/.test(l))
+    .join(hasArabic(text) ? " " : " ")
+    .trim();
+
   return normalizeSpec(
     {
-      title,
-      intro: introParts
-        .filter((l) => !/^(التوقيت|اليوم|الأقسام المعنية)$/.test(l))
-        .join(" ")
-        .trim(),
+      title: tableRows.length ? title : title || "",
+      intro: introJoined || (!tableRows.length && !notes.length ? String(text || "").trim() : ""),
       table: tableRows.length
         ? {
             headers: ["الأقسام المعنية", "اليوم", "التوقيت"],
@@ -241,7 +324,7 @@ async function chatJson(prompt) {
           {
             role: "system",
             content:
-              "You are a careful school-office assistant. Output only JSON. Never invent announcement text.",
+              "You are a careful school-office assistant. Output only JSON. Never invent announcement text. Never translate languages.",
           },
           { role: "user", content: prompt },
         ],
@@ -274,14 +357,18 @@ async function chatJson(prompt) {
   throw err;
 }
 
-export function buildPosterHtml(specInput, sourceText = "") {
+export function buildPosterHtml(specInput, sourceText = "", categoryInput = "announcement") {
   const spec = normalizeSpec(specInput, sourceText);
+  const theme = resolveCategory(categoryInput);
   const rtl = hasArabic(
     [spec.title, spec.intro, spec.notesTitle, ...(spec.notes || [])]
       .concat(spec.table ? [...(spec.table.headers || []), ...(spec.table.rows || []).flat()] : [])
       .join("\n")
-  );
+  ) || hasArabic(theme.labelAr);
   const dir = rtl ? "rtl" : "ltr";
+  const pillLabel = rtl ? theme.labelAr : theme.labelEn;
+
+  const isShortNotice = !spec.table && !spec.notes?.length && !spec.title && Boolean(spec.intro);
 
   const tableHtml = spec.table
     ? `<table class="sched" dir="${dir}">
@@ -304,15 +391,12 @@ export function buildPosterHtml(specInput, sourceText = "") {
       ? `<section class="notes">
           ${spec.notesTitle ? `<h2>${escHtml(spec.notesTitle)}</h2>` : ""}
           <ul>
-            ${spec.notes
-              .map((n) => {
-                // Soft-highlight day names already in the text without inventing markup from AI
-                return `<li>${escHtml(n)}</li>`;
-              })
-              .join("")}
+            ${spec.notes.map((n) => `<li>${escHtml(n)}</li>`).join("")}
           </ul>
         </section>`
       : "";
+
+  const bodyClass = isShortNotice ? "intro intro-hero" : "intro";
 
   return `<!DOCTYPE html>
 <html lang="${rtl ? "ar" : "en"}" dir="${dir}">
@@ -324,45 +408,109 @@ export function buildPosterHtml(specInput, sourceText = "") {
   html, body {
     margin: 0;
     padding: 0;
-    background: #ffffff;
+    background: ${theme.canvas};
   }
   body {
     font-family: "Noto Naskh Arabic", "Noto Sans Arabic", "Amiri", "DejaVu Sans", "Liberation Sans", Arial, sans-serif;
-    color: #111111;
+    color: ${theme.ink};
   }
   #poster {
     width: 1080px;
     min-height: 1080px;
-    padding: 72px 64px 80px;
+    padding: 48px;
+    background:
+      radial-gradient(ellipse 90% 60% at 50% -10%, ${theme.soft} 0%, transparent 55%),
+      linear-gradient(180deg, ${theme.canvas} 0%, #ffffff 42%, ${theme.canvas} 100%);
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+  }
+  .card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
     background: #ffffff;
+    border: 3px solid ${theme.accent};
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: 0 18px 48px rgba(17, 17, 17, 0.08);
+    position: relative;
+  }
+  .card::before {
+    content: "";
+    display: block;
+    height: 14px;
+    background: linear-gradient(90deg, ${theme.accentDeep}, ${theme.accent}, ${theme.accentDeep});
+  }
+  .card-inner {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 40px 52px 52px;
+  }
+  .pill-row {
+    display: flex;
+    justify-content: center;
+    margin: 0 0 28px;
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 28px;
+    border-radius: 999px;
+    background: ${theme.soft};
+    border: 2px solid ${theme.accent};
+    color: ${theme.accentDeep};
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+  }
+  .pill-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: ${theme.accent};
   }
   h1 {
-    margin: 0 0 28px;
+    margin: 0 0 26px;
     text-align: center;
-    color: #f26522;
-    font-size: 54px;
+    color: ${theme.accent};
+    font-size: 52px;
     font-weight: 800;
-    line-height: 1.25;
-    letter-spacing: 0;
+    line-height: 1.3;
   }
   .intro {
-    margin: 0 0 36px;
+    margin: 0 0 32px;
     text-align: center;
     font-size: 28px;
     font-weight: 700;
     line-height: 1.75;
-    color: #111;
+    color: ${theme.ink};
+  }
+  .intro-hero {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 12px 0 8px;
+    padding: 36px 28px;
+    font-size: 36px;
+    line-height: 1.7;
+    background: ${theme.soft};
+    border-radius: 20px;
+    border: 1px solid ${theme.accent}33;
   }
   table.sched {
     width: 100%;
     border-collapse: collapse;
-    margin: 0 0 40px;
+    margin: 0 0 36px;
     table-layout: fixed;
   }
   table.sched th,
   table.sched td {
     border: 2px solid #1a1a1a;
-    padding: 18px 14px;
+    padding: 16px 12px;
     text-align: center;
     vertical-align: middle;
     font-size: 24px;
@@ -371,16 +519,17 @@ export function buildPosterHtml(specInput, sourceText = "") {
     word-wrap: break-word;
   }
   table.sched th {
-    background: #fff3ec;
+    background: ${theme.soft};
+    color: ${theme.accentDeep};
     font-size: 26px;
   }
   .notes h2 {
     margin: 0 0 18px;
-    color: #f26522;
+    color: ${theme.accent};
     font-size: 30px;
     font-weight: 800;
     display: inline-block;
-    border-bottom: 3px solid #f26522;
+    border-bottom: 3px solid ${theme.accent};
     padding-bottom: 4px;
   }
   .notes ul {
@@ -404,16 +553,37 @@ export function buildPosterHtml(specInput, sourceText = "") {
     width: 0.55em;
     height: 0.55em;
     border-radius: 50%;
-    background: #f26522;
+    background: ${theme.accent};
+  }
+  .footer-rule {
+    margin-top: auto;
+    padding-top: 28px;
+    display: flex;
+    justify-content: center;
+  }
+  .footer-rule span {
+    width: 120px;
+    height: 4px;
+    border-radius: 4px;
+    background: ${theme.accent};
+    opacity: 0.55;
   }
 </style>
 </head>
 <body>
   <div id="poster">
-    ${spec.title ? `<h1>${escHtml(spec.title)}</h1>` : ""}
-    ${spec.intro ? `<p class="intro">${escHtml(spec.intro)}</p>` : ""}
-    ${tableHtml}
-    ${notesHtml}
+    <div class="card">
+      <div class="card-inner">
+        <div class="pill-row">
+          <span class="pill"><span class="pill-dot"></span>${escHtml(pillLabel)}</span>
+        </div>
+        ${spec.title ? `<h1>${escHtml(spec.title)}</h1>` : ""}
+        ${spec.intro ? `<p class="${bodyClass}">${escHtml(spec.intro).replace(/\n/g, "<br/>")}</p>` : ""}
+        ${tableHtml}
+        ${notesHtml}
+        <div class="footer-rule"><span></span></div>
+      </div>
+    </div>
   </div>
 </body>
 </html>`;
@@ -451,8 +621,9 @@ export async function renderHtmlToJpeg(html) {
   }
 }
 
-export async function generatePosterFromText(text) {
+export async function generatePosterFromText(text, options = {}) {
   const source = String(text || "").trim();
+  const category = resolveCategory(options.category).id;
   if (!source) {
     const err = new Error("text required");
     err.status = 400;
@@ -462,7 +633,7 @@ export async function generatePosterFromText(text) {
   let model = "heuristic";
   let spec;
   try {
-    const structured = await chatJson(buildStructurePrompt(source));
+    const structured = await chatJson(buildStructurePrompt(source, category));
     model = structured.model;
     spec = normalizeSpec(structured.json, source);
   } catch (err) {
@@ -470,13 +641,12 @@ export async function generatePosterFromText(text) {
     spec = heuristicSpec(source);
   }
 
-  // If AI returned almost empty, merge heuristic
   if (!spec.title && !spec.table && !spec.notes.length && spec.intro === source) {
     const h = heuristicSpec(source);
     if (h.table || h.notes.length) spec = h;
   }
 
-  const html = buildPosterHtml(spec, source);
+  const html = buildPosterHtml(spec, source, category);
   const buffer = await renderHtmlToJpeg(html);
   return {
     buffer,
@@ -484,6 +654,7 @@ export async function generatePosterFromText(text) {
     model,
     method: "html-css",
     arabic: hasArabic(source),
+    category,
     spec,
     htmlPreviewId: crypto.randomBytes(3).toString("hex"),
   };

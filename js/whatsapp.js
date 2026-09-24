@@ -249,6 +249,16 @@ const WhatsAppApp = (() => {
         <section class="admin-panel" style="margin-bottom:1rem">
           <div class="admin-panel-label">${esc(I18n.t("announcementText"))}</div>
           <p class="admin-field-hint">${esc(I18n.t("announcementTextHint"))}</p>
+          <div class="ann-cat-label">${esc(I18n.t("announcementCategory"))}</div>
+          <div class="ann-cat-chips" data-ann-categories role="radiogroup" aria-label="${esc(I18n.t("announcementCategory"))}">
+            <button type="button" class="ann-cat-chip is-active" data-ann-cat="announcement" aria-pressed="true">${esc(I18n.t("catAnnouncement"))}</button>
+            <button type="button" class="ann-cat-chip" data-ann-cat="important" aria-pressed="false">${esc(I18n.t("catImportant"))}</button>
+            <button type="button" class="ann-cat-chip" data-ann-cat="notice" aria-pressed="false">${esc(I18n.t("catNotice"))}</button>
+            <button type="button" class="ann-cat-chip" data-ann-cat="instruction" aria-pressed="false">${esc(I18n.t("catInstruction"))}</button>
+            <button type="button" class="ann-cat-chip" data-ann-cat="reminder" aria-pressed="false">${esc(I18n.t("catReminder"))}</button>
+            <button type="button" class="ann-cat-chip" data-ann-cat="info" aria-pressed="false">${esc(I18n.t("catInfo"))}</button>
+          </div>
+          <input type="hidden" data-ann-category value="announcement" />
           <textarea class="ann-text" data-ann-text rows="5" placeholder="${esc(I18n.t("announcementText"))}"></textarea>
           <div class="ann-actions">
             <button type="button" class="btn btn-primary" data-ann-generate>${esc(I18n.t("generateImage"))}</button>
@@ -272,16 +282,16 @@ const WhatsAppApp = (() => {
 
         <section class="admin-panel" style="margin-bottom:1rem">
           <div class="admin-panel-head">
-            <div class="admin-panel-label">${esc(I18n.t("selectGroups"))}</div>
+            <div class="admin-panel-label">${esc(I18n.t("selectRecipients"))}</div>
             <span class="ann-group-count" data-ann-group-count></span>
           </div>
           <div class="ann-group-toolbar">
-            <input type="search" class="ann-group-search" data-ann-group-search placeholder="${esc(I18n.t("searchGroups"))}" />
-            <button type="button" class="btn btn-ghost btn-sm" data-ann-select-all>${esc(I18n.t("selectAllGroups"))}</button>
-            <button type="button" class="btn btn-ghost btn-sm" data-ann-clear-groups>${esc(I18n.t("clearGroups"))}</button>
+            <input type="search" class="ann-group-search" data-ann-group-search placeholder="${esc(I18n.t("searchRecipients"))}" />
+            <button type="button" class="btn btn-ghost btn-sm" data-ann-select-all>${esc(I18n.t("selectAllVisible"))}</button>
+            <button type="button" class="btn btn-ghost btn-sm" data-ann-clear-groups>${esc(I18n.t("clearSelection"))}</button>
             <button type="button" class="btn btn-ghost btn-sm" data-ann-groups-refresh>${esc(I18n.t("waRefresh"))}</button>
           </div>
-          <div class="ann-groups" data-ann-groups>
+          <div class="ann-recipients" data-ann-recipients>
             <div class="admin-empty">${esc(I18n.t("loading"))}</div>
           </div>
         </section>
@@ -559,9 +569,14 @@ const WhatsAppApp = (() => {
     if (!createRoot) return;
 
     let groups = [];
+    let contacts = [];
     let selected = new Set();
+    let nameById = new Map();
+    let groupsOpen = true;
+    let contactsOpen = true;
 
     const textEl = createRoot.querySelector("[data-ann-text]");
+    const categoryEl = createRoot.querySelector("[data-ann-category]");
     const statusEl = createRoot.querySelector("[data-ann-status]");
     const previewWrap = createRoot.querySelector("[data-ann-preview]");
     const previewImg = createRoot.querySelector("[data-ann-preview-img]");
@@ -569,7 +584,7 @@ const WhatsAppApp = (() => {
     const validatedEl = createRoot.querySelector("[data-ann-image-validated]");
     const validateBtn = createRoot.querySelector("[data-ann-validate]");
     const validateHint = createRoot.querySelector("[data-ann-validate-hint]");
-    const groupsEl = createRoot.querySelector("[data-ann-groups]");
+    const recipientsEl = createRoot.querySelector("[data-ann-recipients]");
     const groupCountEl = createRoot.querySelector("[data-ann-group-count]");
     const sendBtn = createRoot.querySelector("[data-ann-send]");
     const sendResultEl = createRoot.querySelector("[data-ann-send-result]");
@@ -577,6 +592,18 @@ const WhatsAppApp = (() => {
     const schedFields = createRoot.querySelector("[data-ann-sched-fields]");
     const schedAtEl = createRoot.querySelector("[data-ann-sched-at]");
     const schedModes = createRoot.querySelectorAll("[data-ann-sched-mode]");
+
+    createRoot.querySelectorAll("[data-ann-cat]").forEach((chip) => {
+      chip.addEventListener("click", () => {
+        const id = chip.getAttribute("data-ann-cat") || "announcement";
+        if (categoryEl) categoryEl.value = id;
+        createRoot.querySelectorAll("[data-ann-cat]").forEach((c) => {
+          const on = c === chip;
+          c.classList.toggle("is-active", on);
+          c.setAttribute("aria-pressed", on ? "true" : "false");
+        });
+      });
+    });
 
     const toLocalInputValue = (date) => {
       const pad = (n) => String(n).padStart(2, "0");
@@ -647,60 +674,125 @@ const WhatsAppApp = (() => {
     const updateSendEnabled = () => {
       const hasImage = Boolean(imageUrlEl?.value);
       const validated = validatedEl?.value === "1";
-      const hasGroups = selected.size > 0;
-      if (sendBtn) sendBtn.disabled = !(hasImage && validated && hasGroups);
+      const hasRecipients = selected.size > 0;
+      if (sendBtn) sendBtn.disabled = !(hasImage && validated && hasRecipients);
       if (groupCountEl) {
-        groupCountEl.textContent = I18n.t("groupsSelected").replace("{n}", String(selected.size));
+        groupCountEl.textContent = I18n.t("recipientsSelected").replace("{n}", String(selected.size));
       }
     };
 
-    const renderGroups = () => {
+    const initialOf = (name) => {
+      const s = String(name || "?").trim();
+      return (s[0] || "?").toUpperCase();
+    };
+
+    const rowHtml = (item, kind) => {
+      const on = selected.has(item.id);
+      return `<button type="button" class="ann-recipient-row${on ? " selected" : ""}" data-recipient-id="${esc(item.id)}" data-recipient-kind="${kind}">
+        <span class="ann-recipient-avatar" aria-hidden="true">${esc(initialOf(item.name))}</span>
+        <span class="ann-recipient-meta">
+          <span class="ann-recipient-name">${esc(item.name || item.id)}</span>
+          ${item.phone ? `<span class="ann-recipient-sub">${esc(item.phone)}</span>` : ""}
+        </span>
+        <span class="ann-recipient-check" aria-hidden="true">${on ? "✓" : ""}</span>
+      </button>`;
+    };
+
+    const matchQ = (item, q) => {
+      if (!q) return true;
+      const hay = `${item.name || ""} ${item.phone || ""} ${item.id || ""}`.toLowerCase();
+      return hay.includes(q);
+    };
+
+    const renderRecipients = () => {
+      if (!recipientsEl) return;
       const q = (searchEl?.value || "").trim().toLowerCase();
-      const filtered = groups.filter((g) => !q || String(g.name || "").toLowerCase().includes(q));
-      if (!groups.length) {
-        groupsEl.innerHTML = `<div class="admin-empty">${esc(I18n.t("noGroups"))}</div>`;
+      const filteredGroups = groups.filter((g) => matchQ(g, q));
+      const filteredContacts = contacts.filter((c) => matchQ(c, q));
+
+      if (!groups.length && !contacts.length) {
+        recipientsEl.innerHTML = `<div class="admin-empty">${esc(I18n.t("noRecipients"))}</div>`;
         updateSendEnabled();
         return;
       }
-      if (!filtered.length) {
-        groupsEl.innerHTML = `<div class="admin-empty">—</div>`;
+      if (!filteredGroups.length && !filteredContacts.length) {
+        recipientsEl.innerHTML = `<div class="admin-empty">${esc(I18n.t("noRecipients"))}</div>`;
         updateSendEnabled();
         return;
       }
-      groupsEl.innerHTML = filtered
-        .map((g) => {
-          const on = selected.has(g.id);
-          return `<button type="button" class="ann-group-card${on ? " selected" : ""}" data-group-id="${esc(g.id)}">
-            <span class="ann-group-check" aria-hidden="true">${on ? "✓" : ""}</span>
-            <span class="ann-group-name">${esc(g.name || g.id)}</span>
-          </button>`;
-        })
-        .join("");
-      groupsEl.querySelectorAll("[data-group-id]").forEach((btn) => {
+
+      const gLabel = I18n.t("recipientGroupsCount").replace("{n}", String(filteredGroups.length));
+      const cLabel = I18n.t("recipientContactsCount").replace("{n}", String(filteredContacts.length));
+
+      recipientsEl.innerHTML = `
+        <section class="ann-recipient-section${groupsOpen ? "" : " is-collapsed"}" data-recipient-section="groups">
+          <button type="button" class="ann-recipient-section-head" data-toggle-section="groups">
+            <span>${esc(gLabel)}</span>
+            <span class="ann-recipient-chevron" aria-hidden="true">${groupsOpen ? "▾" : "▸"}</span>
+          </button>
+          <div class="ann-recipient-list" ${groupsOpen ? "" : "hidden"}>
+            ${
+              filteredGroups.length
+                ? filteredGroups.map((g) => rowHtml(g, "group")).join("")
+                : `<div class="admin-empty">${esc(I18n.t("noGroups"))}</div>`
+            }
+          </div>
+        </section>
+        <section class="ann-recipient-section${contactsOpen ? "" : " is-collapsed"}" data-recipient-section="contacts">
+          <button type="button" class="ann-recipient-section-head" data-toggle-section="contacts">
+            <span>${esc(cLabel)}</span>
+            <span class="ann-recipient-chevron" aria-hidden="true">${contactsOpen ? "▾" : "▸"}</span>
+          </button>
+          <div class="ann-recipient-list" ${contactsOpen ? "" : "hidden"}>
+            ${
+              filteredContacts.length
+                ? filteredContacts.map((c) => rowHtml(c, "contact")).join("")
+                : `<div class="admin-empty">${esc(I18n.t("noContacts"))}</div>`
+            }
+          </div>
+        </section>`;
+
+      recipientsEl.querySelectorAll("[data-toggle-section]").forEach((btn) => {
         btn.addEventListener("click", () => {
-          const gid = btn.getAttribute("data-group-id");
-          if (selected.has(gid)) selected.delete(gid);
-          else selected.add(gid);
-          renderGroups();
+          const which = btn.getAttribute("data-toggle-section");
+          if (which === "groups") groupsOpen = !groupsOpen;
+          if (which === "contacts") contactsOpen = !contactsOpen;
+          renderRecipients();
+        });
+      });
+      recipientsEl.querySelectorAll("[data-recipient-id]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const id = btn.getAttribute("data-recipient-id");
+          if (!id) return;
+          if (selected.has(id)) selected.delete(id);
+          else selected.add(id);
+          renderRecipients();
         });
       });
       updateSendEnabled();
     };
 
-    const loadGroups = async () => {
-      groupsEl.innerHTML = `<div class="admin-empty">${esc(I18n.t("loading"))}</div>`;
+    const loadRecipients = async () => {
+      if (recipientsEl) {
+        recipientsEl.innerHTML = `<div class="admin-empty">${esc(I18n.t("loading"))}</div>`;
+      }
       try {
-        const data = await BBC_API.get("/announcements/wa/groups");
-        groups = Array.isArray(data?.groups) ? data.groups : Array.isArray(data) ? data : [];
-        if (!groups.length) {
-          groupsEl.innerHTML = `<div class="admin-empty">${esc(I18n.t("noGroups"))}</div>`;
-          updateSendEnabled();
-          return;
-        }
-        renderGroups();
+        const [gData, cData] = await Promise.all([
+          BBC_API.get("/announcements/wa/groups").catch((err) => ({ error: err.message, groups: [] })),
+          BBC_API.get("/announcements/wa/contacts").catch((err) => ({ error: err.message, contacts: [] })),
+        ]);
+        groups = Array.isArray(gData?.groups) ? gData.groups : Array.isArray(gData) ? gData : [];
+        contacts = Array.isArray(cData?.contacts) ? cData.contacts : Array.isArray(cData) ? cData : [];
+        nameById = new Map();
+        groups.forEach((g) => nameById.set(g.id, g.name || g.id));
+        contacts.forEach((c) => nameById.set(c.id, c.name || c.phone || c.id));
+        renderRecipients();
       } catch (err) {
         groups = [];
-        groupsEl.innerHTML = `<div class="admin-empty is-err">${esc(err.message || I18n.t("noGroups"))}</div>`;
+        contacts = [];
+        if (recipientsEl) {
+          recipientsEl.innerHTML = `<div class="admin-empty is-err">${esc(err.message || I18n.t("noRecipients"))}</div>`;
+        }
         updateSendEnabled();
       }
     };
@@ -711,10 +803,11 @@ const WhatsAppApp = (() => {
         setStatus("Enter announcement text first", false);
         return;
       }
+      const category = categoryEl?.value || "announcement";
       setStatus(I18n.t("generatingImage"), true);
       setValidated(false);
       try {
-        const res = await BBC_API.post("/announcements/generate-image", { text });
+        const res = await BBC_API.post("/announcements/generate-image", { text, category });
         setImage(res.url, { needsValidation: true });
         setStatus(I18n.t("imageReadyValidate"), true);
       } catch (err) {
@@ -749,19 +842,18 @@ const WhatsAppApp = (() => {
     });
 
     createRoot.querySelector("[data-ann-groups-refresh]")?.addEventListener("click", () => {
-      loadGroups();
+      loadRecipients();
     });
-    searchEl?.addEventListener("input", () => renderGroups());
+    searchEl?.addEventListener("input", () => renderRecipients());
     createRoot.querySelector("[data-ann-select-all]")?.addEventListener("click", () => {
       const q = (searchEl?.value || "").trim().toLowerCase();
-      groups
-        .filter((g) => !q || String(g.name || "").toLowerCase().includes(q))
-        .forEach((g) => selected.add(g.id));
-      renderGroups();
+      groups.filter((g) => matchQ(g, q)).forEach((g) => selected.add(g.id));
+      contacts.filter((c) => matchQ(c, q)).forEach((c) => selected.add(c.id));
+      renderRecipients();
     });
     createRoot.querySelector("[data-ann-clear-groups]")?.addEventListener("click", () => {
       selected.clear();
-      renderGroups();
+      renderRecipients();
     });
 
     sendBtn?.addEventListener("click", async () => {
@@ -772,7 +864,7 @@ const WhatsAppApp = (() => {
         return;
       }
       const groupIds = [...selected];
-      const groupNames = groupIds.map((id) => groups.find((x) => x.id === id)?.name || id);
+      const groupNames = groupIds.map((id) => nameById.get(id) || id);
       if (!imageUrl || !groupIds.length) return;
 
       const mode = createRoot.querySelector("[data-ann-sched-mode]:checked")?.value || "now";
@@ -833,7 +925,7 @@ const WhatsAppApp = (() => {
       }
     });
 
-    loadGroups();
+    loadRecipients();
   }
 
   function bind(root, go) {

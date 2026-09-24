@@ -399,6 +399,143 @@ app.get("/groups", async (_req, res) => {
   }
 });
 
+app.get("/contacts", async (_req, res) => {
+  try {
+    if (!client || !client.info) {
+      return res.status(503).json({ ok: false, error: "WhatsApp not connected yet" });
+    }
+
+    const MAX = 500;
+    const seen = new Set();
+    const contacts = [];
+
+    const push = (id, name, phone) => {
+      const sid = id == null ? "" : String(id);
+      if (!sid || seen.has(sid)) return;
+      if (sid.endsWith("@g.us") || sid.endsWith("@broadcast")) return;
+      // Accept classic @c.us and LID-era user chats
+      if (!sid.includes("@")) return;
+      seen.add(sid);
+      const label = String(name || phone || sid).trim() || sid;
+      contacts.push({
+        id: sid,
+        name: label,
+        phone: phone ? String(phone) : null,
+      });
+    };
+
+    try {
+      const list = await client.getContacts();
+      for (const c of list || []) {
+        try {
+          if (c?.isGroup || c?.isMe) continue;
+          const id = c?.id?._serialized || "";
+          if (!id || id.endsWith("@g.us")) continue;
+          const name =
+            c.pushname ||
+            c.name ||
+            c.shortName ||
+            c.verifiedName ||
+            c.number ||
+            "";
+          push(id, name, c.number || c.id?.user || null);
+        } catch {
+          /* skip one */
+        }
+      }
+    } catch (err) {
+      console.warn("getContacts failed, using chat fallback:", err?.message || err);
+    }
+
+    if (!contacts.length) {
+      try {
+        const chats = await client.getChats();
+        for (const c of chats || []) {
+          if (c?.isGroup) continue;
+          const id = c?.id?._serialized || "";
+          if (!id || id.endsWith("@g.us")) continue;
+          push(id, c.name || c.id?.user, c.id?.user || null);
+        }
+      } catch (err) {
+        console.warn("getChats contact fallback failed:", err?.message || err);
+      }
+    }
+
+    if (!contacts.length && client.pupPage) {
+      try {
+        const fromStore = await client.pupPage.evaluate(() => {
+          const out = [];
+          const seenLocal = new Set();
+          const pushLocal = (id, name, phone) => {
+            const sid = id == null ? "" : String(id);
+            if (!sid || seenLocal.has(sid)) return;
+            if (sid.endsWith("@g.us") || sid.endsWith("@broadcast")) return;
+            if (!sid.includes("@")) return;
+            seenLocal.add(sid);
+            out.push({
+              id: sid,
+              name: String(name || phone || sid),
+              phone: phone ? String(phone) : null,
+            });
+          };
+          try {
+            const coll = window.require?.("WAWebCollections")?.Contact;
+            const models = coll?.getModelsArray?.() || [];
+            for (const c of models) {
+              const id = c?.id?._serialized || "";
+              if (!id || c?.isGroup || c?.isMe) continue;
+              pushLocal(
+                id,
+                c.pushname || c.name || c.shortName || c.verifiedName,
+                c.number || c.id?.user
+              );
+            }
+          } catch (_) {
+            /* next */
+          }
+          try {
+            const chats =
+              window.Store?.Chat?.getModelsArray?.() ||
+              window.Store?.Chat?.models ||
+              [];
+            for (const c of chats) {
+              const id = c?.id?._serialized || "";
+              if (!id || c?.isGroup || String(id).endsWith("@g.us")) continue;
+              pushLocal(id, c.name || c.formattedTitle || c.id?.user, c.id?.user);
+            }
+          } catch (_) {
+            /* next */
+          }
+          return out;
+        });
+        if (Array.isArray(fromStore)) {
+          for (const c of fromStore) push(c.id, c.name, c.phone);
+        }
+      } catch (err) {
+        console.warn("contacts store fallback failed:", err?.message || err);
+      }
+    }
+
+    contacts.sort((a, b) =>
+      String(a.name).localeCompare(String(b.name), undefined, { sensitivity: "base" })
+    );
+
+    const limited = contacts.slice(0, MAX);
+    res.json({
+      ok: true,
+      contacts: limited,
+      count: limited.length,
+      truncated: contacts.length > MAX,
+    });
+  } catch (err) {
+    console.error("contacts failed", err);
+    res.status(500).json({
+      ok: false,
+      error: err?.message || String(err),
+    });
+  }
+});
+
 app.post("/send-image", async (req, res) => {
   try {
     if (!client || !client.info) {

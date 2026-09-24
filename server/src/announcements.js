@@ -216,6 +216,15 @@ export async function waGroups(_req, res) {
   }
 }
 
+export async function waContacts(_req, res) {
+  try {
+    const data = await bridgeFetch("/contacts");
+    res.json(data);
+  } catch (err) {
+    res.status(err.status || 503).json({ ok: false, error: err.message || "Failed to load contacts" });
+  }
+}
+
 export async function waLogout(_req, res) {
   try {
     const data = await bridgeFetch("/logout", {
@@ -236,12 +245,13 @@ export async function waLogout(_req, res) {
 export async function generateImage(req, res) {
   try {
     const text = String(req.body?.text || "").trim();
+    const category = String(req.body?.category || "announcement").trim();
     if (!text) return res.status(400).json({ error: "text required" });
     if (!OPENROUTER_API_KEY) {
       return res.status(500).json({ error: "OPENROUTER_API_KEY not configured on server" });
     }
 
-    const poster = await generatePosterFromText(text);
+    const poster = await generatePosterFromText(text, { category });
     const saved = saveAnnouncementImage({
       buffer: poster.buffer,
       mime: poster.mime,
@@ -251,6 +261,7 @@ export async function generateImage(req, res) {
       ok: true,
       url: saved.url,
       text,
+      category: poster.category,
       model: poster.model,
       method: poster.method,
       provider: "openrouter+html",
@@ -282,7 +293,7 @@ export async function sendAnnouncement(req, res) {
     const scheduleAt = parseScheduleInput(req.body || {});
 
     if (!imageUrl) return res.status(400).json({ error: "imageUrl required" });
-    if (!groupIds.length) return res.status(400).json({ error: "Select at least one group" });
+    if (!groupIds.length) return res.status(400).json({ error: "Select at least one recipient" });
 
     const abs = absoluteUploadPath(imageUrl);
     if (!abs || !fs.existsSync(abs)) {
