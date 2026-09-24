@@ -3639,9 +3639,106 @@ html[dir="rtl"] .home-icon-tile {
   font-weight: 800;
 }
 
+.ann-selected {
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line);
+}
+
+.ann-selected-head {
+  margin-bottom: 0.55rem;
+}
+
+.ann-selected-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.ann-selected-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  max-height: 160px;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.ann-selected-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  max-width: min(100%, 240px);
+  padding: 0.28rem 0.45rem 0.28rem 0.28rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff6ee;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  text-align: start;
+}
+
+.ann-selected-chip:hover {
+  border-color: var(--orange);
+}
+
+.ann-selected-chip-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  background: var(--orange-soft);
+  color: var(--orange-deep);
+  font-weight: 800;
+  font-size: 0.75rem;
+}
+
+.ann-selected-chip-meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.15;
+}
+
+.ann-selected-chip-name {
+  font-size: 0.82rem;
+  font-weight: 650;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ann-selected-chip-kind {
+  font-size: 0.68rem;
+  color: var(--muted);
+}
+
+.ann-selected-chip-x {
+  flex-shrink: 0;
+  width: 1.1rem;
+  text-align: center;
+  font-size: 1.05rem;
+  line-height: 1;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.ann-selected-chip:hover .ann-selected-chip-x {
+  color: var(--orange-deep);
+}
+
 @media (max-width: 640px) {
   .ann-recipient-list {
     max-height: 220px;
+  }
+
+  .ann-selected-chips {
+    max-height: 120px;
   }
 
   .ann-group-toolbar {

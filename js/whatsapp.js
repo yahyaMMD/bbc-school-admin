@@ -294,6 +294,12 @@ const WhatsAppApp = (() => {
           <div class="ann-recipients" data-ann-recipients>
             <div class="admin-empty">${esc(I18n.t("loading"))}</div>
           </div>
+          <div class="ann-selected" data-ann-selected hidden>
+            <div class="ann-selected-head">
+              <span class="ann-selected-label" data-ann-selected-label></span>
+            </div>
+            <div class="ann-selected-chips" data-ann-selected-chips></div>
+          </div>
         </section>
 
         <section class="admin-panel" style="margin-bottom:1rem">
@@ -585,6 +591,9 @@ const WhatsAppApp = (() => {
     const validateBtn = createRoot.querySelector("[data-ann-validate]");
     const validateHint = createRoot.querySelector("[data-ann-validate-hint]");
     const recipientsEl = createRoot.querySelector("[data-ann-recipients]");
+    const selectedWrap = createRoot.querySelector("[data-ann-selected]");
+    const selectedLabelEl = createRoot.querySelector("[data-ann-selected-label]");
+    const selectedChipsEl = createRoot.querySelector("[data-ann-selected-chips]");
     const groupCountEl = createRoot.querySelector("[data-ann-group-count]");
     const sendBtn = createRoot.querySelector("[data-ann-send]");
     const sendResultEl = createRoot.querySelector("[data-ann-send-result]");
@@ -671,6 +680,63 @@ const WhatsAppApp = (() => {
       }
     };
 
+    const initialOf = (name) => {
+      const s = String(name || "?").trim();
+      return (s[0] || "?").toUpperCase();
+    };
+
+    const lookupRecipient = (id) => {
+      const g = groups.find((x) => x.id === id);
+      if (g) return { id, name: g.name || id, kind: "group", phone: "" };
+      const c = contacts.find((x) => x.id === id);
+      if (c) return { id, name: c.name || c.phone || id, kind: "contact", phone: c.phone || "" };
+      return { id, name: nameById.get(id) || id, kind: "unknown", phone: "" };
+    };
+
+    const renderSelected = () => {
+      if (!selectedWrap || !selectedChipsEl) return;
+      const ids = [...selected];
+      if (!ids.length) {
+        selectedWrap.hidden = true;
+        selectedChipsEl.innerHTML = "";
+        return;
+      }
+      selectedWrap.hidden = false;
+      if (selectedLabelEl) {
+        selectedLabelEl.textContent = I18n.t("selectedRecipientsLabel").replace(
+          "{n}",
+          String(ids.length)
+        );
+      }
+      selectedChipsEl.innerHTML = ids
+        .map((id) => {
+          const item = lookupRecipient(id);
+          const kindLabel =
+            item.kind === "group"
+              ? I18n.t("selectGroups")
+              : item.kind === "contact"
+                ? I18n.t("selectContacts")
+                : "";
+          return `<button type="button" class="ann-selected-chip" data-remove-recipient="${esc(id)}" title="${esc(I18n.t("removeRecipient"))}">
+            <span class="ann-selected-chip-avatar" aria-hidden="true">${esc(initialOf(item.name))}</span>
+            <span class="ann-selected-chip-meta">
+              <span class="ann-selected-chip-name">${esc(item.name)}</span>
+              ${kindLabel ? `<span class="ann-selected-chip-kind">${esc(kindLabel)}</span>` : ""}
+            </span>
+            <span class="ann-selected-chip-x" aria-hidden="true">×</span>
+          </button>`;
+        })
+        .join("");
+      selectedChipsEl.querySelectorAll("[data-remove-recipient]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const id = btn.getAttribute("data-remove-recipient");
+          if (!id) return;
+          selected.delete(id);
+          renderRecipients();
+        });
+      });
+    };
+
     const updateSendEnabled = () => {
       const hasImage = Boolean(imageUrlEl?.value);
       const validated = validatedEl?.value === "1";
@@ -679,11 +745,7 @@ const WhatsAppApp = (() => {
       if (groupCountEl) {
         groupCountEl.textContent = I18n.t("recipientsSelected").replace("{n}", String(selected.size));
       }
-    };
-
-    const initialOf = (name) => {
-      const s = String(name || "?").trim();
-      return (s[0] || "?").toUpperCase();
+      renderSelected();
     };
 
     const rowHtml = (item, kind) => {
