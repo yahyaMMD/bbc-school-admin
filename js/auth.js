@@ -1,5 +1,6 @@
 /**
  * Session — password alone selects Director, Staff/admin, or WhatsApp.
+ * Teachers use phone + password via teacher login.
  */
 const Auth = (() => {
   function isAuthenticated() {
@@ -22,16 +23,26 @@ const Auth = (() => {
     return role() === "whatsapp";
   }
 
+  function isTeacher() {
+    return role() === "teacher";
+  }
+
   function homePath() {
     if (isAdmin()) return "/manage";
     if (isWhatsApp()) return "/whatsapp";
+    if (isTeacher()) return "/my";
     return "/home";
   }
 
-  async function login(password) {
+  async function login(password, opts = {}) {
     try {
-      const data = await BBC_API.login(password);
-      return { ok: true, role: data.role };
+      const data = await BBC_API.login(password, opts.roleHint, opts.phone);
+      return {
+        ok: true,
+        role: data.role,
+        teacherId: data.teacherId,
+        mustChangePassword: data.mustChangePassword,
+      };
     } catch (err) {
       const msg =
         typeof I18n !== "undefined" ? I18n.t("loginError") : "Incorrect password";
@@ -41,6 +52,7 @@ const Auth = (() => {
 
   function logout() {
     if (typeof BBC_API !== "undefined") BBC_API.logout();
+    if (typeof TeacherApp !== "undefined" && TeacherApp.reset) TeacherApp.reset();
   }
 
   return {
@@ -51,6 +63,7 @@ const Auth = (() => {
     isAdmin,
     isDirector,
     isWhatsApp,
+    isTeacher,
     homePath,
   };
 })();

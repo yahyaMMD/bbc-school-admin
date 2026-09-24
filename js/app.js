@@ -260,14 +260,17 @@
     }
     const isStaff = Auth.isAdmin();
     const isWa = Auth.isWhatsApp();
-    const homeNav = isStaff ? "#/manage" : isWa ? "#/whatsapp" : "#/home";
+    const isTeacher = Auth.isTeacher();
+    const homeNav = isStaff ? "#/manage" : isWa ? "#/whatsapp" : isTeacher ? "#/my" : "#/home";
     const subtitle = isStaff
       ? I18n.t("adminConsole")
       : isWa
         ? I18n.t("whatsappConsole")
-        : I18n.t("portal");
+        : isTeacher
+          ? I18n.t("teacherPortal")
+          : I18n.t("portal");
     return `
-      <div class="app-shell${isStaff || isWa ? " app-shell-staff" : ""}">
+      <div class="app-shell${isStaff || isWa || isTeacher ? " app-shell-staff" : ""}">
         <header class="topbar">
           <div class="topbar-main">
             <button type="button" class="topbar-brand" data-nav="${homeNav}" aria-label="${esc(I18n.t("home"))}">
@@ -287,7 +290,7 @@
             </div>
           </div>
           ${
-            isStaff || isWa
+            isStaff || isWa || isTeacher
               ? ""
               : `<form class="top-search" id="global-search" autocomplete="off">
             <input type="search" name="q" placeholder="${esc(I18n.t("searchPlaceholder"))}" value="${esc(state.searchQuery)}" />
@@ -334,6 +337,42 @@
             <button type="submit" class="btn btn-primary">${esc(I18n.t("access"))}</button>
           </form>
           <p class="login-meta">${esc(I18n.t("welcomeAddress"))}</p>
+          <p class="login-alt">
+            <button type="button" class="link-btn" data-nav="#/teacher-login">${esc(I18n.t("teacherLoginLink"))}</button>
+          </p>
+        </div>
+      </div>
+    `;
+  }
+
+  function viewTeacherLogin() {
+    return `
+      <div class="login-page">
+        <div class="login-card">
+          <div class="login-lang">${I18n.langSwitcher()}</div>
+          <div class="login-brand">
+            <img src="assets/logo.png?v=2" alt="${esc(I18n.t("brand"))}" width="88" height="88" />
+            <div>
+              <h1>${esc(I18n.t("teacherPortal"))}</h1>
+              <p class="login-hint">${esc(I18n.t("teacherLoginHint"))}</p>
+            </div>
+          </div>
+          <form class="login-form" id="teacher-login-form" autocomplete="on">
+            <div class="field">
+              <label for="teacher-phone">${esc(I18n.t("phone"))}</label>
+              <input id="teacher-phone" name="phone" type="tel" inputmode="tel" placeholder="${esc(I18n.t("teacherPhonePlaceholder"))}" required autofocus />
+            </div>
+            <div class="field">
+              <label for="teacher-password">${esc(I18n.t("password"))}</label>
+              <input id="teacher-password" name="password" type="password" placeholder="${esc(I18n.t("passwordPlaceholder"))}" required />
+            </div>
+            <div class="login-error" id="teacher-login-error" role="alert"></div>
+            <button type="submit" class="btn btn-primary">${esc(I18n.t("access"))}</button>
+          </form>
+          <p class="login-meta">${esc(I18n.t("welcomeAddress"))}</p>
+          <p class="login-alt">
+            <button type="button" class="link-btn" data-nav="#/">${esc(I18n.t("staffLoginLink"))}</button>
+          </p>
         </div>
       </div>
     `;
@@ -1186,15 +1225,17 @@
     `);
   }
 
-  function resolveView() {
-    if (!Auth.isAuthenticated()) {
-      return viewLogin();
-    }
+  async function resolveView() {
     const { parts, params } = state.route;
     const path0 = parts[0] || "home";
 
-    // Keep Director, Staff, and WhatsApp sides fully separated
-    if (Auth.isDirector() && (path0 === "manage" || path0 === "whatsapp")) {
+    if (!Auth.isAuthenticated()) {
+      if (path0 === "teacher-login") return viewTeacherLogin();
+      return viewLogin();
+    }
+
+    // Keep Director, Staff, WhatsApp, and Teacher sides fully separated
+    if (Auth.isDirector() && (path0 === "manage" || path0 === "whatsapp" || path0 === "my")) {
       go("/home");
       return viewHome();
     }
@@ -1208,6 +1249,11 @@
       const html = WhatsAppApp.resolve(["whatsapp"]);
       return shell(html || "");
     }
+    if (Auth.isTeacher() && path0 !== "my") {
+      go("/my");
+      const result = await TeacherApp.resolve(["my"], new URLSearchParams());
+      return shell(result.html || "");
+    }
 
     if (Auth.isAdmin() && path0 === "manage") {
       const html = AdminApp.resolve(parts, params);
@@ -1217,6 +1263,11 @@
     if (Auth.isWhatsApp() && path0 === "whatsapp") {
       const html = WhatsAppApp.resolve(parts);
       if (html) return shell(html);
+    }
+
+    if (Auth.isTeacher() && path0 === "my") {
+      const result = await TeacherApp.resolve(parts, params);
+      return shell(result.html || "");
     }
 
     if (parts[0] === "search") {
@@ -1267,7 +1318,7 @@
       }
       try {
         app.innerHTML = `<div class="login-page"><div class="login-card"><p>${esc(I18n.t("loading"))}</p></div></div>`;
-        if (result.role !== "whatsapp") {
+        if (result.role !== "whatsapp" && result.role !== "teacher") {
           const data = await BBC_API.loadSchoolData();
           BBC_DATA.setData(data);
         }
@@ -1279,6 +1330,23 @@
         err.classList.add("show");
         render();
       }
+    });
+
+    document.getElementById("teacher-login-form")?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const phone = document.getElementById("teacher-phone")?.value || "";
+      const password = document.getElementById("teacher-password")?.value || "";
+      const err = document.getElementById("teacher-login-error");
+      const result = await Auth.login(password, { phone });
+      if (!result.ok) {
+        if (err) {
+          err.textContent = result.error || I18n.t("loginError");
+          err.classList.add("show");
+        }
+        return;
+      }
+      go(Auth.homePath());
+      render();
     });
 
     document.getElementById("btn-logout")?.addEventListener("click", () => {
@@ -1355,6 +1423,13 @@
       });
     }
 
+    if (Auth.isTeacher()) {
+      TeacherApp.bind(app, (path) => {
+        go(path);
+        render();
+      });
+    }
+
     app.querySelectorAll("[data-nav]").forEach((el) => {
       el.addEventListener("click", (e) => {
         const target = el.getAttribute("data-nav");
@@ -1370,7 +1445,7 @@
     if (Auth.isAuthenticated()) {
       try {
         app.innerHTML = `<div class="login-page"><div class="login-card"><p>${typeof I18n !== "undefined" ? I18n.t("loading") : "Loading…"}</p></div></div>`;
-        if (!Auth.isWhatsApp()) {
+        if (!Auth.isWhatsApp() && !Auth.isTeacher()) {
           const data = await BBC_API.loadSchoolData();
           BBC_DATA.setData(data);
         }
@@ -1385,13 +1460,13 @@
     render();
   }
 
-  function render() {
+  async function render() {
     state.route = parseHash();
     if (state.route.params.get("q")) {
       state.searchQuery = state.route.params.get("q") || "";
     }
     try {
-      app.innerHTML = resolveView();
+      app.innerHTML = await resolveView();
       bindEvents();
     } catch (err) {
       console.error(err);

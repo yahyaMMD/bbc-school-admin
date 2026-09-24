@@ -973,6 +973,26 @@ const AdminApp = (() => {
           <button type="button" class="btn btn-ghost admin-del-teacher" data-id="${esc(t.id)}">Delete</button>
         </div>
       </form>
+      <section class="admin-panel" style="margin-top:1rem" data-teacher-portal data-teacher-id="${esc(t.id)}">
+        <div class="admin-panel-label">${esc(I18n.t("teacherPortalAdmin"))}</div>
+        <p class="admin-field-hint">${esc(I18n.t("teacherPortalAdminHint"))}</p>
+        <p class="muted" data-portal-status>${esc(I18n.t("loading"))}</p>
+        <form id="admin-teacher-portal" class="admin-form admin-form-stack" data-id="${esc(t.id)}" style="margin-top:0.75rem">
+          <label class="admin-field">
+            <span>${esc(I18n.t("portalPassword"))}</span>
+            <input type="password" name="password" minlength="6" placeholder="${esc(I18n.t("portalPasswordPlaceholder"))}" required autocomplete="new-password" />
+          </label>
+          <label class="admin-check">
+            <input type="checkbox" name="mustChangePassword" checked />
+            <span>${esc(I18n.t("mustChangePasswordHint"))}</span>
+          </label>
+          <div class="admin-form-actions">
+            <button type="submit" class="btn btn-primary">${esc(I18n.t("setPortalPassword"))}</button>
+            <button type="button" class="btn btn-ghost" data-disable-portal hidden>${esc(I18n.t("disablePortal"))}</button>
+          </div>
+          <p class="ann-status" data-portal-msg hidden></p>
+        </form>
+      </section>
     `
     );
   }
@@ -1323,6 +1343,59 @@ const AdminApp = (() => {
         });
       }, "/manage/teachers");
     });
+
+    const portalBox = root.querySelector("[data-teacher-portal]");
+    if (portalBox) {
+      const teacherId = portalBox.getAttribute("data-teacher-id");
+      const statusEl = portalBox.querySelector("[data-portal-status]");
+      const disableBtn = portalBox.querySelector("[data-disable-portal]");
+      const msgEl = portalBox.querySelector("[data-portal-msg]");
+      const setMsg = (msg, ok) => {
+        if (!msgEl) return;
+        msgEl.hidden = !msg;
+        msgEl.textContent = msg || "";
+        msgEl.classList.toggle("is-ok", Boolean(ok && msg));
+        msgEl.classList.toggle("is-err", Boolean(!ok && msg));
+      };
+      const refreshPortal = async () => {
+        try {
+          const st = await BBC_API.get(`/teachers/${teacherId}/portal`);
+          if (statusEl) {
+            statusEl.textContent = st.enabled
+              ? I18n.t("portalEnabled")
+              : I18n.t("portalDisabled");
+          }
+          if (disableBtn) disableBtn.hidden = !st.enabled;
+        } catch (err) {
+          if (statusEl) statusEl.textContent = err.message || I18n.t("portalDisabled");
+        }
+      };
+      refreshPortal();
+      root.querySelector("#admin-teacher-portal")?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        const password = String(fd.get("password") || "");
+        const mustChangePassword = fd.get("mustChangePassword") === "on";
+        try {
+          await BBC_API.put(`/teachers/${teacherId}/portal`, { password, mustChangePassword });
+          e.target.querySelector('input[name="password"]').value = "";
+          setMsg(I18n.t("portalSaved"), true);
+          refreshPortal();
+        } catch (err) {
+          setMsg(err.message || "Failed", false);
+        }
+      });
+      disableBtn?.addEventListener("click", async () => {
+        if (!confirm(I18n.t("disablePortalConfirm"))) return;
+        try {
+          await BBC_API.del(`/teachers/${teacherId}/portal`);
+          setMsg(I18n.t("portalDisabledOk"), true);
+          refreshPortal();
+        } catch (err) {
+          setMsg(err.message || "Failed", false);
+        }
+      });
+    }
 
     root.querySelectorAll(".admin-del-teacher").forEach((btn) => {
       btn.addEventListener("click", () => {

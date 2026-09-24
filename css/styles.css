@@ -4012,3 +4012,148 @@ html[dir="rtl"] .home-icon-tile {
     overflow-x: auto;
   }
 }
+
+/* ——— Teacher portal ——— */
+.login-hint {
+  margin: 0.35rem 0 0;
+  font-size: 0.9rem;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.login-alt {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.login-alt .link-btn {
+  font-size: 0.9rem;
+}
+
+.teacher-portal {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.teacher-portal-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.teacher-portal-kicker {
+  margin: 0 0 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.teacher-portal-me {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.35rem 0.65rem 0.35rem 0.35rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  font: inherit;
+  cursor: pointer;
+  max-width: 220px;
+}
+
+.teacher-portal-me span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 650;
+  font-size: 0.88rem;
+}
+
+.teacher-nav {
+  display: flex;
+  gap: 0.4rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.teacher-nav-item {
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 999px;
+  padding: 0.45rem 0.9rem;
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+  color: inherit;
+}
+
+.teacher-nav-item.is-active {
+  background: var(--orange-soft);
+  border-color: var(--orange);
+  color: var(--orange-deep);
+}
+
+.teacher-class-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+
+.teacher-class-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+  padding: 1rem 1.05rem;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+  text-align: start;
+  font: inherit;
+  cursor: pointer;
+  color: inherit;
+}
+
+.teacher-class-card:hover {
+  border-color: var(--orange);
+}
+
+.teacher-class-count {
+  margin-top: 0.45rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--orange-deep);
+}
+
+.teacher-photo-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.admin-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  margin: 0.35rem 0 0.75rem;
+}
+
+.admin-check input {
+  margin-top: 0.2rem;
+}
+
+@media (max-width: 640px) {
+  .teacher-portal-head {
+    flex-direction: column;
+  }
+
+  .teacher-portal-me {
+    max-width: 100%;
+  }
+}

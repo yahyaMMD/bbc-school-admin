@@ -44,9 +44,10 @@ const BBC_API = (() => {
     return data;
   }
 
-  async function login(password, roleHint) {
+  async function login(password, roleHint, phone) {
     const body = { password };
     if (roleHint) body.role = roleHint;
+    if (phone) body.phone = phone;
     const data = await request("/auth/login", {
       method: "POST",
       body: JSON.stringify(body),

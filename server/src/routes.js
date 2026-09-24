@@ -5,6 +5,7 @@ import { authRequired } from "./auth.js";
 import { buildSchoolData, mapTeacher, mapStudent, mapClass, mapIssue } from "./schoolData.js";
 import { saveProfilePhoto, deleteProfilePhoto } from "./uploads.js";
 import * as Announcements from "./announcements.js";
+import * as TeacherPortal from "./teacherPortal.js";
 
 const router = Router();
 
@@ -24,11 +25,36 @@ router.get("/school-data", authRequired(["director", "admin"]), async (_req, res
   }
 });
 
+// ——— Teacher portal (self) ———
+router.get("/me", authRequired(["teacher"]), TeacherPortal.getMe);
+router.get("/me/classes", authRequired(["teacher"]), TeacherPortal.getMyClasses);
+router.get("/me/classes/:id/students", authRequired(["teacher"]), TeacherPortal.getMyClassStudents);
+router.get("/me/students/:id", authRequired(["teacher"]), TeacherPortal.getMyStudent);
+router.post("/me/photo", authRequired(["teacher"]), TeacherPortal.updateMyPhoto);
+router.delete("/me/photo", authRequired(["teacher"]), TeacherPortal.removeMyPhoto);
+router.post("/me/password", authRequired(["teacher"]), TeacherPortal.changeMyPassword);
+
 // ——— Teachers ———
 router.get("/teachers", authRequired(["director", "admin"]), async (_req, res) => {
   const r = await query("SELECT * FROM teachers ORDER BY last_name, first_name");
   res.json(r.rows.map(mapTeacher));
 });
+
+router.get(
+  "/teachers/:id/portal",
+  authRequired(["admin"]),
+  TeacherPortal.getTeacherPortal
+);
+router.put(
+  "/teachers/:id/portal",
+  authRequired(["admin"]),
+  TeacherPortal.setTeacherPortal
+);
+router.delete(
+  "/teachers/:id/portal",
+  authRequired(["admin"]),
+  TeacherPortal.deleteTeacherPortal
+);
 
 router.post("/teachers", authRequired(["admin"]), async (req, res) => {
   const b = req.body || {};

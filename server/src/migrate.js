@@ -118,4 +118,14 @@ export async function migrate() {
      ON announcements (scheduled_at)
      WHERE status = 'scheduled' AND scheduled_at IS NOT NULL`
   );
+
+  await query(`
+    CREATE TABLE IF NOT EXISTS teacher_accounts (
+      teacher_id TEXT PRIMARY KEY REFERENCES teachers(id) ON DELETE CASCADE,
+      password_hash TEXT NOT NULL,
+      must_change_password BOOLEAN NOT NULL DEFAULT TRUE,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+  `);
 }
