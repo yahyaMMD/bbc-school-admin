@@ -615,8 +615,13 @@ app.post("/send-image", async (req, res) => {
     for (let i = 0; i < groupIds.length; i++) {
       const gid = String(groupIds[i] || "").trim();
       try {
-        if (!gid.includes("@g.us") && !gid.includes("@c.us")) {
-          results.push({ groupId: gid, ok: false, error: "Invalid group id" });
+        // Accept groups (@g.us) and personal chats (@c.us, @lid, @s.whatsapp.net, …)
+        const okId =
+          gid.includes("@") &&
+          !gid.endsWith("@broadcast") &&
+          !gid.endsWith("@newsletter");
+        if (!okId) {
+          results.push({ groupId: gid, ok: false, error: "Invalid chat id" });
           continue;
         }
         const sent = await sendMediaToGroup(client, gid, media, caption);

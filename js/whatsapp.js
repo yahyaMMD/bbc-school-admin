@@ -698,11 +698,26 @@ const WhatsAppApp = (() => {
       </button>`;
     };
 
+    const normSearch = (s) =>
+      String(s || "")
+        .toLowerCase()
+        .normalize("NFKD")
+        .replace(/[\u064B-\u065F\u0670]/g, "")
+        .replace(/[أإآٱ]/g, "ا")
+        .replace(/[ىئ]/g, "ي")
+        .replace(/ة/g, "ه")
+        .replace(/\s+/g, " ")
+        .trim();
+
     const matchQ = (item, q) => {
       if (!q) return true;
-      const hay = `${item.name || ""} ${item.phone || ""} ${item.id || ""}`.toLowerCase();
-      if (hay.includes(q)) return true;
-      const qDigits = q.replace(/\D+/g, "");
+      const hay = normSearch(`${item.name || ""} ${item.phone || ""} ${item.id || ""}`);
+      const nq = normSearch(q);
+      if (!nq) return true;
+      if (hay.includes(nq)) return true;
+      // token match (any word starts with query)
+      if (hay.split(" ").some((t) => t.startsWith(nq))) return true;
+      const qDigits = String(q).replace(/\D+/g, "");
       if (qDigits.length >= 3) {
         const phoneDigits = `${item.phone || ""} ${item.id || ""}`.replace(/\D+/g, "");
         if (phoneDigits.includes(qDigits)) return true;
@@ -710,9 +725,13 @@ const WhatsAppApp = (() => {
       return false;
     };
 
+    const LIST_PREVIEW = 120;
+    const LIST_SEARCH_CAP = 400;
+
     const renderRecipients = () => {
       if (!recipientsEl) return;
-      const q = (searchEl?.value || "").trim().toLowerCase();
+      const rawQ = (searchEl?.value || "").trim();
+      const q = rawQ.toLowerCase();
       const filteredGroups = groups.filter((g) => matchQ(g, q));
       const filteredContacts = contacts.filter((c) => matchQ(c, q));
 
@@ -727,32 +746,60 @@ const WhatsAppApp = (() => {
         return;
       }
 
-      const gLabel = I18n.t("recipientGroupsCount").replace("{n}", String(filteredGroups.length));
-      const cLabel = I18n.t("recipientContactsCount").replace("{n}", String(filteredContacts.length));
+      // While searching, auto-open sections that have matches
+      let showGroups = groupsOpen;
+      let showContacts = contactsOpen;
+      if (q) {
+        if (filteredContacts.length) showContacts = true;
+        if (filteredGroups.length) showGroups = true;
+      }
+
+      const visibleGroups = q ? filteredGroups : filteredGroups.slice(0, LIST_PREVIEW);
+      const visibleContacts = q
+        ? filteredContacts.slice(0, LIST_SEARCH_CAP)
+        : filteredContacts.slice(0, LIST_PREVIEW);
+
+      const gLabel = I18n.t("recipientGroupsCount").replace(
+        "{n}",
+        String(filteredGroups.length)
+      );
+      const cLabel = I18n.t("recipientContactsCount").replace(
+        "{n}",
+        String(filteredContacts.length)
+      );
+      const moreContacts =
+        filteredContacts.length > visibleContacts.length
+          ? `<div class="admin-empty">${esc(
+              I18n.t("recipientsSearchHint").replace(
+                "{n}",
+                String(filteredContacts.length - visibleContacts.length)
+              )
+            )}</div>`
+          : "";
 
       recipientsEl.innerHTML = `
-        <section class="ann-recipient-section${groupsOpen ? "" : " is-collapsed"}" data-recipient-section="groups">
+        <section class="ann-recipient-section${showGroups ? "" : " is-collapsed"}" data-recipient-section="groups">
           <button type="button" class="ann-recipient-section-head" data-toggle-section="groups">
             <span>${esc(gLabel)}</span>
-            <span class="ann-recipient-chevron" aria-hidden="true">${groupsOpen ? "▾" : "▸"}</span>
+            <span class="ann-recipient-chevron" aria-hidden="true">${showGroups ? "▾" : "▸"}</span>
           </button>
-          <div class="ann-recipient-list" ${groupsOpen ? "" : "hidden"}>
+          <div class="ann-recipient-list" ${showGroups ? "" : "hidden"}>
             ${
-              filteredGroups.length
-                ? filteredGroups.map((g) => rowHtml(g, "group")).join("")
+              visibleGroups.length
+                ? visibleGroups.map((g) => rowHtml(g, "group")).join("")
                 : `<div class="admin-empty">${esc(I18n.t("noGroups"))}</div>`
             }
           </div>
         </section>
-        <section class="ann-recipient-section${contactsOpen ? "" : " is-collapsed"}" data-recipient-section="contacts">
+        <section class="ann-recipient-section${showContacts ? "" : " is-collapsed"}" data-recipient-section="contacts">
           <button type="button" class="ann-recipient-section-head" data-toggle-section="contacts">
             <span>${esc(cLabel)}</span>
-            <span class="ann-recipient-chevron" aria-hidden="true">${contactsOpen ? "▾" : "▸"}</span>
+            <span class="ann-recipient-chevron" aria-hidden="true">${showContacts ? "▾" : "▸"}</span>
           </button>
-          <div class="ann-recipient-list" ${contactsOpen ? "" : "hidden"}>
+          <div class="ann-recipient-list" ${showContacts ? "" : "hidden"}>
             ${
-              filteredContacts.length
-                ? filteredContacts.map((c) => rowHtml(c, "contact")).join("")
+              visibleContacts.length
+                ? visibleContacts.map((c) => rowHtml(c, "contact")).join("") + moreContacts
                 : `<div class="admin-empty">${esc(I18n.t("noContacts"))}</div>`
             }
           </div>
@@ -850,7 +897,13 @@ const WhatsAppApp = (() => {
     createRoot.querySelector("[data-ann-groups-refresh]")?.addEventListener("click", () => {
       loadRecipients();
     });
-    searchEl?.addEventListener("input", () => renderRecipients());
+    let searchTimer = null;
+    const scheduleSearch = () => {
+      if (searchTimer) clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => renderRecipients(), 120);
+    };
+    searchEl?.addEventListener("input", scheduleSearch);
+    searchEl?.addEventListener("search", scheduleSearch);
     createRoot.querySelector("[data-ann-select-all]")?.addEventListener("click", () => {
       const q = (searchEl?.value || "").trim().toLowerCase();
       groups.filter((g) => matchQ(g, q)).forEach((g) => selected.add(g.id));
