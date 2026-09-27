@@ -2,8 +2,12 @@
 <html lang="ar" dir="rtl">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"
+    />
     <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#f26522" />
     <title>استمارة الأولياء — Quality education Algerie</title>
     <link rel="icon" type="image/png" href="assets/logo.png?v=40" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -12,12 +16,12 @@
       href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/parent-form.css?v=2" />
+    <link rel="stylesheet" href="css/parent-form.css?v=3" />
   </head>
   <body>
     <div class="pf-wrap">
       <header class="pf-header">
-        <img src="assets/logo.png?v=40" alt="" width="64" height="64" />
+        <img src="assets/logo.png?v=40" alt="" width="56" height="56" />
         <div>
           <h1>Quality education Algerie</h1>
           <p>جودة التعليم — استمارة معلومات التلميذ</p>
@@ -26,7 +30,7 @@
       </header>
 
       <p class="pf-intro">
-        مرحباً بكم. يرجى ملء هذه الاستمارة بمعلومات طفلكم. الحقول الكبيرة واضحة — خذوا وقتكم.
+        مرحباً بكم. يرجى ملء هذه الاستمارة بمعلومات طفلكم.
         <br />
         <span class="pf-fr">Bonjour. Merci de remplir ce formulaire avec les informations de votre enfant.</span>
       </p>
@@ -37,19 +41,12 @@
 
           <label class="pf-field">
             <span class="pf-label">لقب التلميذ <span class="pf-fr">Nom</span></span>
-            <input name="studentLastName" type="text" autocomplete="family-name" required />
+            <input name="studentLastName" type="text" autocomplete="family-name" enterkeyhint="next" required />
           </label>
 
           <label class="pf-field">
             <span class="pf-label">اسم التلميذ <span class="pf-fr">Prénom</span></span>
-            <input name="studentFirstName" type="text" autocomplete="given-name" required />
-          </label>
-
-          <label class="pf-field">
-            <span class="pf-label">القسم <span class="pf-fr">Classe</span></span>
-            <select name="className" id="class-select" required>
-              <option value="">— اختاروا القسم —</option>
-            </select>
+            <input name="studentFirstName" type="text" autocomplete="given-name" enterkeyhint="next" required />
           </label>
         </section>
 
@@ -58,17 +55,17 @@
 
           <label class="pf-field">
             <span class="pf-label">العنوان الكامل للمنزل <span class="pf-fr">Adresse exacte</span></span>
-            <textarea name="homeAddress" rows="3" required placeholder="الحي، العمارة، رقم الباب…"></textarea>
+            <textarea name="homeAddress" rows="3" required placeholder="الحي، العمارة، رقم الباب…" enterkeyhint="next"></textarea>
           </label>
 
           <label class="pf-field">
             <span class="pf-label">رقم الهاتف الرئيسي <span class="pf-fr">Téléphone principal</span></span>
-            <input name="phonePrimary" type="tel" inputmode="tel" autocomplete="tel" required placeholder="05…" />
+            <input name="phonePrimary" type="tel" inputmode="tel" autocomplete="tel" required placeholder="05…" enterkeyhint="next" />
           </label>
 
           <label class="pf-field">
             <span class="pf-label">رقم هاتف ثانٍ <span class="pf-fr">Deuxième numéro</span></span>
-            <input name="phoneSecondary" type="tel" inputmode="tel" placeholder="اختياري / optionnel" />
+            <input name="phoneSecondary" type="tel" inputmode="tel" placeholder="اختياري / optionnel" enterkeyhint="next" />
           </label>
         </section>
 
@@ -107,24 +104,26 @@
 
           <label class="pf-field">
             <span class="pf-label">الاسم الكامل <span class="pf-fr">Nom complet</span></span>
-            <input name="emergencyName" type="text" required />
+            <input name="emergencyName" type="text" enterkeyhint="next" required />
           </label>
 
           <label class="pf-field">
             <span class="pf-label">رقم الهاتف <span class="pf-fr">Téléphone</span></span>
-            <input name="emergencyPhone" type="tel" inputmode="tel" required placeholder="05…" />
+            <input name="emergencyPhone" type="tel" inputmode="tel" required placeholder="05…" enterkeyhint="next" />
           </label>
 
           <label class="pf-field">
             <span class="pf-label">صلة القرابة <span class="pf-fr">Lien (père, mère, oncle…)</span></span>
-            <input name="emergencyRelation" type="text" placeholder="أب / أم / عم…" />
+            <input name="emergencyRelation" type="text" placeholder="أب / أم / عم…" enterkeyhint="done" />
           </label>
         </section>
 
         <p class="pf-error" id="form-error" hidden></p>
 
-        <button type="submit" class="pf-submit" id="submit-btn">إرسال الاستمارة</button>
-        <p class="pf-submit-hint">Appuyer une seule fois · اضغطوا مرة واحدة فقط</p>
+        <div class="pf-actions">
+          <button type="submit" class="pf-submit" id="submit-btn">إرسال الاستمارة</button>
+          <p class="pf-submit-hint">اضغطوا مرة واحدة فقط · Une seule fois</p>
+        </div>
       </form>
 
       <div class="pf-success" id="success" hidden>
@@ -137,6 +136,6 @@
       </div>
     </div>
 
-    <script src="js/parent-form.js?v=2"></script>
+    <script src="js/parent-form.js?v=3"></script>
   </body>
 </html>

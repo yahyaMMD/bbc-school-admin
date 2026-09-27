@@ -75,9 +75,6 @@ export async function submitForm(req, res) {
     if (!studentLastName || !studentFirstName) {
       return res.status(400).json({ error: "اسم ولقب التلميذ مطلوبان / Nom et prénom requis" });
     }
-    if (!className) {
-      return res.status(400).json({ error: "القسم مطلوب / Classe requise" });
-    }
     if (!homeAddress) {
       return res.status(400).json({ error: "العنوان مطلوب / Adresse requise" });
     }
