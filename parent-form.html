@@ -16,7 +16,7 @@
       href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/parent-form.css?v=3" />
+    <link rel="stylesheet" href="css/parent-form.css?v=4" />
   </head>
   <body>
     <div class="pf-wrap">
@@ -31,65 +31,126 @@
 
       <p class="pf-intro">
         مرحباً بكم. يرجى ملء هذه الاستمارة بمعلومات طفلكم.
-        <br />
-        <span class="pf-fr">Bonjour. Merci de remplir ce formulaire avec les informations de votre enfant.</span>
+        <span class="pf-fr" lang="fr" dir="ltr"
+          >Bonjour. Merci de remplir ce formulaire avec les informations de votre enfant.</span
+        >
       </p>
 
       <form id="parent-form" novalidate>
         <section class="pf-card">
-          <h2>١) التلميذ <span class="pf-fr">Élève</span></h2>
+          <h2>
+            <span class="pf-ar">١) التلميذ</span>
+            <span class="pf-fr" lang="fr" dir="ltr">Élève</span>
+          </h2>
 
           <label class="pf-field">
-            <span class="pf-label">لقب التلميذ <span class="pf-fr">Nom</span></span>
+            <span class="pf-label">
+              <span class="pf-ar">لقب التلميذ</span>
+              <span class="pf-fr" lang="fr" dir="ltr">Nom</span>
+            </span>
             <input name="studentLastName" type="text" autocomplete="family-name" enterkeyhint="next" required />
           </label>
 
           <label class="pf-field">
-            <span class="pf-label">اسم التلميذ <span class="pf-fr">Prénom</span></span>
+            <span class="pf-label">
+              <span class="pf-ar">اسم التلميذ</span>
+              <span class="pf-fr" lang="fr" dir="ltr">Prénom</span>
+            </span>
             <input name="studentFirstName" type="text" autocomplete="given-name" enterkeyhint="next" required />
           </label>
         </section>
 
         <section class="pf-card">
-          <h2>٢) العنوان والهاتف <span class="pf-fr">Adresse & téléphone</span></h2>
+          <h2>
+            <span class="pf-ar">٢) العنوان والهاتف</span>
+            <span class="pf-fr" lang="fr" dir="ltr">Adresse et téléphone</span>
+          </h2>
 
           <label class="pf-field">
-            <span class="pf-label">العنوان الكامل للمنزل <span class="pf-fr">Adresse exacte</span></span>
+            <span class="pf-label">
+              <span class="pf-ar">العنوان الكامل للمنزل</span>
+              <span class="pf-fr" lang="fr" dir="ltr">Adresse exacte</span>
+            </span>
             <textarea name="homeAddress" rows="3" required placeholder="الحي، العمارة، رقم الباب…" enterkeyhint="next"></textarea>
           </label>
 
           <label class="pf-field">
-            <span class="pf-label">رقم الهاتف الرئيسي <span class="pf-fr">Téléphone principal</span></span>
+            <span class="pf-label">
+              <span class="pf-ar">رقم الهاتف الرئيسي</span>
+              <span class="pf-fr" lang="fr" dir="ltr">Téléphone principal</span>
+            </span>
             <input name="phonePrimary" type="tel" inputmode="tel" autocomplete="tel" required placeholder="05…" enterkeyhint="next" />
           </label>
 
           <label class="pf-field">
-            <span class="pf-label">رقم هاتف ثانٍ <span class="pf-fr">Deuxième numéro</span></span>
-            <input name="phoneSecondary" type="tel" inputmode="tel" placeholder="اختياري / optionnel" enterkeyhint="next" />
+            <span class="pf-label">
+              <span class="pf-ar">رقم هاتف ثانٍ</span>
+              <span class="pf-fr" lang="fr" dir="ltr">Deuxième numéro (optionnel)</span>
+            </span>
+            <input name="phoneSecondary" type="tel" inputmode="tel" placeholder="اختياري" enterkeyhint="next" />
           </label>
         </section>
 
         <section class="pf-card">
-          <h2>٣) الوضعية العائلية <span class="pf-fr">Situation familiale</span></h2>
+          <h2>
+            <span class="pf-ar">٣) الوضعية العائلية</span>
+            <span class="pf-fr" lang="fr" dir="ltr">Situation familiale</span>
+          </h2>
 
           <fieldset class="pf-choices">
-            <legend class="pf-label">الحالة العائلية <span class="pf-fr">Situation des parents</span></legend>
-            <label class="pf-choice"><input type="radio" name="maritalStatus" value="married" checked /> متزوج(ة) <span class="pf-fr">Marié(e)</span></label>
-            <label class="pf-choice"><input type="radio" name="maritalStatus" value="divorced" /> مطلق(ة) <span class="pf-fr">Divorcé(e)</span></label>
-            <label class="pf-choice"><input type="radio" name="maritalStatus" value="widowed" /> أرمل(ة) <span class="pf-fr">Veuf(ve)</span></label>
-            <label class="pf-choice"><input type="radio" name="maritalStatus" value="other" /> أخرى <span class="pf-fr">Autre</span></label>
+            <legend class="pf-label">
+              <span class="pf-ar">الحالة العائلية</span>
+              <span class="pf-fr" lang="fr" dir="ltr">Situation des parents</span>
+            </legend>
+            <label class="pf-choice">
+              <input type="radio" name="maritalStatus" value="married" checked />
+              <span class="pf-choice-text">
+                <span class="pf-ar">متزوج(ة)</span>
+                <span class="pf-fr" lang="fr" dir="ltr">Marié(e)</span>
+              </span>
+            </label>
+            <label class="pf-choice">
+              <input type="radio" name="maritalStatus" value="divorced" />
+              <span class="pf-choice-text">
+                <span class="pf-ar">مطلق(ة)</span>
+                <span class="pf-fr" lang="fr" dir="ltr">Divorcé(e)</span>
+              </span>
+            </label>
+            <label class="pf-choice">
+              <input type="radio" name="maritalStatus" value="widowed" />
+              <span class="pf-choice-text">
+                <span class="pf-ar">أرمل(ة)</span>
+                <span class="pf-fr" lang="fr" dir="ltr">Veuf / Veuve</span>
+              </span>
+            </label>
+            <label class="pf-choice">
+              <input type="radio" name="maritalStatus" value="other" />
+              <span class="pf-choice-text">
+                <span class="pf-ar">أخرى</span>
+                <span class="pf-fr" lang="fr" dir="ltr">Autre</span>
+              </span>
+            </label>
           </fieldset>
 
           <label class="pf-field">
-            <span class="pf-label">ملاحظات عن الوضعية الاجتماعية / العائلية <span class="pf-fr">Notes (optionnel)</span></span>
+            <span class="pf-label">
+              <span class="pf-ar">ملاحظات عن الوضعية الاجتماعية / العائلية</span>
+              <span class="pf-fr" lang="fr" dir="ltr">Notes (optionnel)</span>
+            </span>
             <textarea name="familySituation" rows="2" placeholder="اختياري"></textarea>
           </label>
         </section>
 
         <section class="pf-card">
-          <h2>٤) الصحة <span class="pf-fr">Santé</span></h2>
+          <h2>
+            <span class="pf-ar">٤) الصحة</span>
+            <span class="pf-fr" lang="fr" dir="ltr">Santé</span>
+          </h2>
           <label class="pf-field">
-            <span class="pf-label">معلومات صحية مهمة للمدرسة <span class="pf-fr">Santé de l'enfant</span></span>
+            <span class="pf-label">
+              <span class="pf-ar">معلومات صحية مهمة للمدرسة</span>
+              <span class="pf-fr" lang="fr" dir="ltr">Santé de l'enfant</span>
+            </span>
             <textarea
               name="healthNotes"
               rows="3"
@@ -99,21 +160,36 @@
         </section>
 
         <section class="pf-card">
-          <h2>٥) اتصال الطوارئ <span class="pf-fr">Urgence</span></h2>
-          <p class="pf-hint">من نتصل به إذا لم نصل إليكم؟</p>
+          <h2>
+            <span class="pf-ar">٥) اتصال الطوارئ</span>
+            <span class="pf-fr" lang="fr" dir="ltr">Contact d'urgence</span>
+          </h2>
+          <p class="pf-hint">
+            من نتصل به إذا لم نصل إليكم؟
+            <span class="pf-fr" lang="fr" dir="ltr">Qui appeler si nous ne vous joignons pas ?</span>
+          </p>
 
           <label class="pf-field">
-            <span class="pf-label">الاسم الكامل <span class="pf-fr">Nom complet</span></span>
+            <span class="pf-label">
+              <span class="pf-ar">الاسم الكامل</span>
+              <span class="pf-fr" lang="fr" dir="ltr">Nom complet</span>
+            </span>
             <input name="emergencyName" type="text" enterkeyhint="next" required />
           </label>
 
           <label class="pf-field">
-            <span class="pf-label">رقم الهاتف <span class="pf-fr">Téléphone</span></span>
+            <span class="pf-label">
+              <span class="pf-ar">رقم الهاتف</span>
+              <span class="pf-fr" lang="fr" dir="ltr">Téléphone</span>
+            </span>
             <input name="emergencyPhone" type="tel" inputmode="tel" required placeholder="05…" enterkeyhint="next" />
           </label>
 
           <label class="pf-field">
-            <span class="pf-label">صلة القرابة <span class="pf-fr">Lien (père, mère, oncle…)</span></span>
+            <span class="pf-label">
+              <span class="pf-ar">صلة القرابة</span>
+              <span class="pf-fr" lang="fr" dir="ltr">Lien (père, mère, oncle…)</span>
+            </span>
             <input name="emergencyRelation" type="text" placeholder="أب / أم / عم…" enterkeyhint="done" />
           </label>
         </section>
@@ -122,7 +198,10 @@
 
         <div class="pf-actions">
           <button type="submit" class="pf-submit" id="submit-btn">إرسال الاستمارة</button>
-          <p class="pf-submit-hint">اضغطوا مرة واحدة فقط · Une seule fois</p>
+          <p class="pf-submit-hint">
+            اضغطوا مرة واحدة فقط
+            <span class="pf-fr" lang="fr" dir="ltr">Une seule fois</span>
+          </p>
         </div>
       </form>
 
@@ -131,11 +210,11 @@
           <div class="pf-success-ico" aria-hidden="true">✓</div>
           <h2>شكراً لكم</h2>
           <p>تم استلام استمارتكم بنجاح.</p>
-          <p class="pf-fr">Votre formulaire a bien été envoyé. Merci.</p>
+          <p class="pf-fr" lang="fr" dir="ltr">Votre formulaire a bien été envoyé. Merci.</p>
         </div>
       </div>
     </div>
 
-    <script src="js/parent-form.js?v=3"></script>
+    <script src="js/parent-form.js?v=4"></script>
   </body>
 </html>

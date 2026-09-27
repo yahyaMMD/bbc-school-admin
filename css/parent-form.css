@@ -97,12 +97,22 @@ body {
   font-size: 0.95rem;
 }
 
+.pf-ar {
+  display: block;
+}
+
+/* French always on its own LTR line — never mixed inline with Arabic */
 .pf-fr {
-  display: inline-block;
-  margin-top: 0.15rem;
-  font-size: 0.8rem;
-  color: var(--muted);
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.78rem;
+  line-height: 1.35;
   font-weight: 500;
+  color: #7a7a7a;
+  direction: ltr;
+  unicode-bidi: isolate;
+  text-align: left;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
 .pf-card {
@@ -120,11 +130,14 @@ body {
   font-size: 1.05rem;
   color: var(--orange-deep);
   border-bottom: 2px solid var(--orange-soft);
-  padding-bottom: 0.4rem;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.35rem;
+  padding-bottom: 0.45rem;
+  display: block;
+}
+
+.pf-card h2 .pf-fr {
+  margin-top: 0.15rem;
+  color: #9a6a52;
+  font-weight: 600;
 }
 
 .pf-field {
@@ -133,17 +146,28 @@ body {
 }
 
 .pf-label {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.1rem;
+  margin-bottom: 0.4rem;
   font-weight: 700;
-  margin-bottom: 0.35rem;
   font-size: 0.95rem;
   line-height: 1.35;
+}
+
+.pf-label .pf-fr {
+  font-weight: 500;
 }
 
 .pf-hint {
   margin: 0 0 0.7rem;
   color: var(--muted);
   font-size: 0.9rem;
+}
+
+.pf-hint .pf-fr {
+  margin-top: 0.25rem;
 }
 
 .pf-field input,
@@ -192,7 +216,7 @@ body {
   display: flex;
   align-items: center;
   gap: 0.65rem;
-  padding: 0.8rem 0.85rem;
+  padding: 0.75rem 0.85rem;
   min-height: 48px;
   border: 2px solid var(--line);
   border-radius: 12px;
@@ -216,6 +240,19 @@ body {
   flex-shrink: 0;
   margin: 0;
   accent-color: var(--orange);
+}
+
+.pf-choice-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.pf-choice-text .pf-fr {
+  margin-top: 0;
+  font-weight: 500;
 }
 
 .pf-actions {
@@ -256,8 +293,13 @@ body {
 .pf-submit-hint {
   text-align: center;
   color: var(--muted);
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   margin: 0.5rem 0 0;
+}
+
+.pf-submit-hint .pf-fr {
+  text-align: center;
+  font-size: 0.75rem;
 }
 
 .pf-error {
