@@ -5,13 +5,27 @@ function sid() {
   return "PF" + crypto.randomBytes(6).toString("hex").toUpperCase();
 }
 
-function clean(v, max = 2000) {
+function clean(v, max = 4000) {
   return String(v ?? "")
     .trim()
     .slice(0, max);
 }
 
+function cleanObj(obj, max = 2000) {
+  const out = {};
+  if (!obj || typeof obj !== "object") return out;
+  for (const [k, v] of Object.entries(obj)) {
+    if (v && typeof v === "object" && !Array.isArray(v)) {
+      out[k] = cleanObj(v, max);
+    } else {
+      out[k] = clean(v, max);
+    }
+  }
+  return out;
+}
+
 function mapRow(r) {
+  const formData = r.form_data && typeof r.form_data === "object" ? r.form_data : {};
   return {
     id: r.id,
     studentLastName: r.student_last_name || "",
@@ -21,58 +35,48 @@ function mapRow(r) {
     homeAddress: r.home_address || "",
     phonePrimary: r.phone_primary || "",
     phoneSecondary: r.phone_secondary || "",
+    email: r.email || "",
     maritalStatus: r.marital_status || "",
     familySituation: r.family_situation || "",
     healthNotes: r.health_notes || "",
     emergencyName: r.emergency_name || "",
     emergencyPhone: r.emergency_phone || "",
     emergencyRelation: r.emergency_relation || "",
+    formData,
+    formVersion: r.form_version || 1,
     status: r.status || "new",
     createdAt: r.created_at,
   };
 }
 
-/** Public: class list for a simple dropdown */
+/** Public: lightweight meta */
 export async function listFormMeta(_req, res) {
-  try {
-    const r = await query(
-      `SELECT id, code, name, name_ar, department_id, year
-       FROM classes
-       ORDER BY department_id, year, code`
-    );
-    res.json({
-      academicYear: "2026 — 2027",
-      classes: r.rows.map((c) => ({
-        id: c.id,
-        code: c.code,
-        label: c.code,
-        labelAr: c.name_ar || c.name || c.code,
-        departmentId: c.department_id,
-      })),
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: err.message || "Failed" });
-  }
+  res.json({
+    academicYear: "2026 — 2027",
+    formTitle: "استمارة جمع المعلومات واكتشاف المواهب",
+    formTitleFr: "Fiche de collecte d'informations et détection des talents",
+  });
 }
 
-/** Public: submit parent form */
+/** Public: submit parent form (full school fiche) */
 export async function submitForm(req, res) {
   try {
     const b = req.body || {};
-    const studentLastName = clean(b.studentLastName, 120);
-    const studentFirstName = clean(b.studentFirstName, 120);
-    const dateOfBirth = clean(b.dateOfBirth, 20);
-    const className = clean(b.className, 80);
-    const homeAddress = clean(b.homeAddress, 1000);
-    const phonePrimary = clean(b.phonePrimary, 40);
-    const phoneSecondary = clean(b.phoneSecondary, 40);
-    const maritalStatus = clean(b.maritalStatus, 40);
-    const familySituation = clean(b.familySituation, 1000);
-    const healthNotes = clean(b.healthNotes, 1000);
-    const emergencyName = clean(b.emergencyName, 120);
-    const emergencyPhone = clean(b.emergencyPhone, 40);
-    const emergencyRelation = clean(b.emergencyRelation, 80);
+    const formData = cleanObj(b.formData || b, 4000);
+
+    const student = formData.student || {};
+    const father = formData.father || {};
+    const mother = formData.mother || {};
+    const contact = formData.contact || {};
+
+    const studentLastName = clean(student.lastName || b.studentLastName, 120);
+    const studentFirstName = clean(student.firstName || b.studentFirstName, 120);
+    const dateOfBirth = clean(student.dateOfBirth || b.dateOfBirth, 20);
+    const homeAddress = clean(contact.address || b.homeAddress, 1000);
+    const phonePrimary = clean(father.phone || contact.phoneFather || b.phonePrimary, 40);
+    const phoneSecondary = clean(mother.phone || contact.phoneMother || b.phoneSecondary, 40);
+    const email = clean(contact.email || b.email, 200);
+    const phoneBackup = clean(contact.phoneBackup, 40);
 
     if (!studentLastName || !studentFirstName) {
       return res.status(400).json({ error: "اسم ولقب التلميذ مطلوبان / Nom et prénom requis" });
@@ -86,40 +90,52 @@ export async function submitForm(req, res) {
       return res.status(400).json({ error: "العنوان مطلوب / Adresse requise" });
     }
     if (!phonePrimary || phonePrimary.replace(/\D/g, "").length < 8) {
-      return res.status(400).json({ error: "رقم الهاتف الرئيسي مطلوب / Téléphone principal requis" });
+      return res.status(400).json({ error: "هاتف الأب مطلوب / Téléphone du père requis" });
     }
     if (!phoneSecondary || phoneSecondary.replace(/\D/g, "").length < 8) {
-      return res.status(400).json({ error: "رقم الهاتف الثاني مطلوب / Deuxième numéro requis" });
+      return res.status(400).json({ error: "هاتف الأم مطلوب / Téléphone de la mère requis" });
     }
-    if (!emergencyName || !emergencyPhone) {
+    if (!phoneBackup || phoneBackup.replace(/\D/g, "").length < 8) {
       return res
         .status(400)
-        .json({ error: "جهة اتصال الطوارئ مطلوبة / Contact d'urgence requis" });
+        .json({ error: "رقم هاتف احتياطي مطلوب / Numéro de secours requis" });
     }
+
+    // Ensure nested student basics are consistent
+    formData.student = {
+      ...(formData.student || {}),
+      lastName: studentLastName,
+      firstName: studentFirstName,
+      dateOfBirth,
+    };
+    formData.contact = {
+      ...(formData.contact || {}),
+      address: homeAddress,
+      email,
+      phoneBackup,
+    };
+    formData.father = { ...(formData.father || {}), phone: phonePrimary };
+    formData.mother = { ...(formData.mother || {}), phone: phoneSecondary };
 
     const id = sid();
     await query(
       `INSERT INTO parent_form_submissions (
         id, student_last_name, student_first_name, date_of_birth, class_name,
-        home_address, phone_primary, phone_secondary,
-        marital_status, family_situation, health_notes,
-        emergency_name, emergency_phone, emergency_relation
-      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)`,
+        home_address, phone_primary, phone_secondary, email,
+        form_data, form_version
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10::jsonb,$11)`,
       [
         id,
         studentLastName,
         studentFirstName,
         dateOfBirth,
-        className,
+        "",
         homeAddress,
         phonePrimary,
         phoneSecondary,
-        maritalStatus,
-        familySituation,
-        healthNotes,
-        emergencyName,
-        emergencyPhone,
-        emergencyRelation,
+        email,
+        JSON.stringify(formData),
+        2,
       ]
     );
     res.status(201).json({ ok: true, id });
@@ -165,7 +181,7 @@ export async function getSubmission(req, res) {
   }
 }
 
-/** Admin: update status (new / reviewed / linked) */
+/** Admin: update status */
 export async function updateSubmissionStatus(req, res) {
   try {
     const status = clean(req.body?.status, 40) || "reviewed";

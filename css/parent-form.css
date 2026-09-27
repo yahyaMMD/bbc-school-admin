@@ -140,6 +140,34 @@ body {
   font-weight: 600;
 }
 
+.pf-subhead {
+  margin: 0.35rem 0 0.75rem;
+  padding: 0.45rem 0.65rem;
+  background: var(--orange-soft);
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: var(--orange-deep);
+}
+
+.pf-subhead .pf-fr {
+  margin-top: 0.1rem;
+  color: #9a6a52;
+  font-weight: 600;
+}
+
+.pf-row2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 0.65rem;
+}
+
+@media (max-width: 420px) {
+  .pf-row2 {
+    grid-template-columns: 1fr;
+  }
+}
+
 .pf-field {
   display: block;
   margin-bottom: 0.9rem;
@@ -171,7 +199,8 @@ body {
 }
 
 .pf-field input,
-.pf-field textarea {
+.pf-field textarea,
+.pf-field select {
   width: 100%;
   max-width: 100%;
   font: inherit;
@@ -187,11 +216,31 @@ body {
   touch-action: manipulation;
 }
 
-.pf-field input[type="date"] {
+.pf-field select {
+  background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+    linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+  background-position: calc(10%) calc(1.2rem), calc(10% + 6px) calc(1.2rem);
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+  padding-left: 2rem;
+  min-height: 3.1rem;
+}
+
+.pf-field input[type="date"],
+.pf-field input[type="number"],
+.pf-field input[type="email"] {
   min-height: 3.1rem;
   direction: ltr;
   text-align: left;
   unicode-bidi: isolate;
+}
+
+.pf-field input[type="number"] {
+  direction: ltr;
+}
+
+[data-show-when][hidden] {
+  display: none !important;
 }
 
 .pf-field textarea {
@@ -201,7 +250,8 @@ body {
 }
 
 .pf-field input:focus,
-.pf-field textarea:focus {
+.pf-field textarea:focus,
+.pf-field select:focus {
   outline: none;
   border-color: var(--orange);
   box-shadow: 0 0 0 3px rgba(242, 101, 34, 0.18);

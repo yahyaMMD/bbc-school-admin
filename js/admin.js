@@ -1499,36 +1499,198 @@ const AdminApp = (() => {
         try {
           const s = await BBC_API.get(`/parent-form/${encodeURIComponent(sid)}`);
           const name = `${s.studentLastName || ""} ${s.studentFirstName || ""}`.trim();
+          const fd = s.formData || {};
+          const yesNo = (v) => (v === "yes" ? "نعم / Oui" : v === "no" ? "لا / Non" : v || "—");
+          const row = (k, v) =>
+            `<div class="fact-card"><div class="k">${esc(k)}</div><div class="v" dir="auto">${esc(v || "—")}</div></div>`;
+          const block = (title, html) =>
+            `<div class="info-panel" style="margin-top:1rem"><div class="panel-label">${esc(title)}</div>${html}</div>`;
+          const kv = (obj, labels) =>
+            `<div class="facts-grid" style="margin-top:0.6rem">${labels
+              .map(([key, lab]) => row(lab, obj?.[key]))
+              .join("")}</div>`;
+
+          const st = fd.student || {};
+          const fa = fd.father || {};
+          const mo = fd.mother || {};
+          const co = fd.contact || {};
+          const fam = fd.family || {};
+          const med = fd.medical || {};
+          const pot = fd.potential || {};
+          const ss = fd.studentSpace || {};
+          const sch = fd.school || {};
+          const cons = fd.consents || {};
+
+          const parentsStatusMap = {
+            marriage: "زواج عادي / Mariage",
+            polygamy: "زواج متعدد / Polygamie",
+            divorce: "طلاق / Divorce",
+          };
+          const leaveMap = {
+            with_parent: "مع الولي / Avec parent",
+            alone: "وحده / Seul(e)",
+            companion: "مرافق / Accompagnateur",
+            driver: "سائق / Chauffeur",
+          };
+
           pfDetail.innerHTML = `
             <div class="admin-panel-label">${esc(name)}</div>
             <div class="facts-grid" style="margin-top:0.75rem">
-              <div class="fact-card"><div class="k">${esc(I18n.t("dob"))}</div><div class="v">${esc(formatDob(s.dateOfBirth))}</div></div>
-              <div class="fact-card"><div class="k">${esc(I18n.t("phone"))}</div><div class="v">${esc(s.phonePrimary || "—")}</div></div>
-              <div class="fact-card"><div class="k">${esc(I18n.t("parentPhoneSecondary"))}</div><div class="v">${esc(s.phoneSecondary || "—")}</div></div>
-              <div class="fact-card"><div class="k">${esc(I18n.t("parentMarital"))}</div><div class="v">${esc(maritalLabel(s.maritalStatus))}</div></div>
-              <div class="fact-card"><div class="k">${esc(I18n.t("status"))}</div><div class="v">${esc(s.status || "new")}</div></div>
-              <div class="fact-card"><div class="k">${esc(I18n.t("annCreatedAt"))}</div><div class="v">${esc(s.createdAt ? new Date(s.createdAt).toLocaleString() : "—")}</div></div>
+              ${row(I18n.t("dob"), formatDob(s.dateOfBirth || st.dateOfBirth))}
+              ${row("الجنس / Sexe", st.sex === "female" ? "أنثى / Fille" : st.sex === "male" ? "ذكر / Garçon" : st.sex)}
+              ${row("هاتف الأب", s.phonePrimary || fa.phone)}
+              ${row("هاتف الأم", s.phoneSecondary || mo.phone)}
+              ${row("احتياطي", co.phoneBackup)}
+              ${row("E-mail", s.email || co.email)}
+              ${row(I18n.t("status"), s.status || "new")}
+              ${row(I18n.t("annCreatedAt"), s.createdAt ? new Date(s.createdAt).toLocaleString() : "—")}
             </div>
-            <div class="info-panel" style="margin-top:1rem">
-              <div class="panel-label">${esc(I18n.t("parentAddress"))}</div>
-              <p style="margin-top:0.4rem;white-space:pre-wrap" dir="auto">${esc(s.homeAddress || "—")}</p>
-            </div>
-            <div class="info-panel" style="margin-top:1rem">
-              <div class="panel-label">${esc(I18n.t("parentFamily"))}</div>
-              <p style="margin-top:0.4rem;white-space:pre-wrap" dir="auto">${esc(s.familySituation || "—")}</p>
-            </div>
-            <div class="info-panel" style="margin-top:1rem">
-              <div class="panel-label">${esc(I18n.t("parentHealth"))}</div>
-              <p style="margin-top:0.4rem;white-space:pre-wrap" dir="auto">${esc(s.healthNotes || "—")}</p>
-            </div>
-            <div class="info-panel" style="margin-top:1rem">
-              <div class="panel-label">${esc(I18n.t("parentEmergency"))}</div>
-              <p style="margin-top:0.4rem" dir="auto">
-                <strong>${esc(s.emergencyName || "—")}</strong>
-                · ${esc(s.emergencyPhone || "—")}
-                · ${esc(s.emergencyRelation || "—")}
-              </p>
-            </div>
+            ${block(
+              "١) معلومات عامة",
+              kv(st, [
+                ["lastName", "اللقب"],
+                ["firstName", "الاسم"],
+                ["placeOfBirth", "مكان الميلاد"],
+                ["nationality", "الجنسية"],
+              ]) +
+                kv(fa, [
+                  ["name", "الأب"],
+                  ["profession", "مهنة الأب"],
+                  ["nationality", "جنسية الأب"],
+                  ["phone", "هاتف الأب"],
+                ]) +
+                kv(mo, [
+                  ["name", "الأم"],
+                  ["profession", "مهنة الأم"],
+                  ["nationality", "جنسية الأم"],
+                  ["phone", "هاتف الأم"],
+                ]) +
+                `<p style="margin-top:0.6rem;white-space:pre-wrap" dir="auto"><strong>العنوان:</strong> ${esc(co.address || s.homeAddress || "—")}</p>`
+            )}
+            ${block(
+              "٢) الحالة العائلية",
+              kv(
+                {
+                  parentsStatus: parentsStatusMap[fam.parentsStatus] || fam.parentsStatus,
+                  custody: fam.custody,
+                  hasStepFather: yesNo(fam.hasStepFather),
+                  hasStepMother: yesNo(fam.hasStepMother),
+                  fatherDeceased: yesNo(fam.fatherDeceased),
+                  motherDeceased: yesNo(fam.motherDeceased),
+                  siblingsCount: fam.siblingsCount,
+                  brothersCount: fam.brothersCount,
+                  sistersCount: fam.sistersCount,
+                  siblingRank: fam.siblingRank,
+                  hasHalfSiblings: yesNo(fam.hasHalfSiblings),
+                  tutorNameRole: fam.tutorNameRole,
+                  tutorPhone: fam.tutorPhone,
+                  adopted: yesNo(fam.adopted),
+                  adoptedExplain: fam.adoptedExplain,
+                },
+                [
+                  ["parentsStatus", "حالة الأولياء"],
+                  ["custody", "الحضانة"],
+                  ["hasStepFather", "زوج أم"],
+                  ["hasStepMother", "زوجة أب"],
+                  ["fatherDeceased", "وفاة الأب"],
+                  ["motherDeceased", "وفاة الأم"],
+                  ["siblingsCount", "عدد الإخوة"],
+                  ["brothersCount", "ذكور"],
+                  ["sistersCount", "إناث"],
+                  ["siblingRank", "الترتيب"],
+                  ["hasHalfSiblings", "إخوة غير أشقاء"],
+                  ["tutorNameRole", "القائم بالرعاية"],
+                  ["tutorPhone", "هاتف الرعاية"],
+                  ["adopted", "متبنّى"],
+                  ["adoptedExplain", "توضيح التبنّي"],
+                ]
+              )
+            )}
+            ${block(
+              "٣) التاريخ الطبي",
+              kv(med, [
+                ["bloodType", "زمرة الدم"],
+                ["disability", "إعاقة"],
+                ["disabilityExplain", "توضيح الإعاقة"],
+                ["vaccinations", "التطعيمات"],
+                ["hereditary", "مرض وراثي"],
+                ["hereditaryOrigin", "منشأ وراثي"],
+                ["hereditaryExplain", "توضيح وراثي"],
+                ["acutePast", "مرض حاد سابق"],
+                ["organicCurrent", "مرض عضوي حالي"],
+                ["allergy", "حساسية"],
+                ["glasses", "نظارات"],
+                ["behavior", "سلوك خاص"],
+                ["learningDifficulty", "صعوبة تعلم"],
+                ["treatment", "علاج حالي"],
+                ["psychologist", "مختص نفسي"],
+                ["incident", "حادثة خاصة"],
+                ["other", "آخر"],
+              ].map(([k, lab]) => [k, lab]))
+            )}
+            ${block(
+              "٤) الاستعدادات والميول",
+              kv(pot, [
+                ["describe", "الوصف العام"],
+                ["excel", "التفوق"],
+                ["tendencies", "الميول"],
+                ["talent", "الموهبة"],
+                ["interests", "الاهتمام"],
+                ["motivation", "الدافعية"],
+                ["behaviorWish", "سلوك مرغوب"],
+                ["other", "آخر"],
+              ])
+            )}
+            ${block(
+              "٥) مساحة التلميذ",
+              kv(ss, [
+                ["favSubject1", "مادة ١"],
+                ["favSubject2", "مادة ٢"],
+                ["favSubject3", "مادة ٣"],
+                ["hobbies", "هوايات"],
+                ["skills", "مهارات"],
+                ["futureCareer", "مهنة مستقبلية"],
+                ["ambitions", "طموح"],
+              ])
+            )}
+            ${block(
+              "٦) الولي والموافقات",
+              kv(sch, [
+                ["previousSchool", "المدرسة الأصلية"],
+                ["enrollmentDate", "تاريخ الالتحاق"],
+                ["level", "المستوى"],
+                ["repeatedYear", "إعادة السنة"],
+                ["abroad", "تمدرس بالخارج"],
+              ]) +
+                kv(
+                  {
+                    leaveMode: leaveMap[cons.leaveMode] || cons.leaveMode,
+                    companionRole: cons.companionRole,
+                    companionName: cons.companionName,
+                    companionPhone: cons.companionPhone,
+                    driverName: cons.driverName,
+                    driverPhone: cons.driverPhone,
+                    trips: yesNo(cons.trips),
+                    sport: yesNo(cons.sport),
+                    socialVideos: yesNo(cons.socialVideos),
+                    activitiesMedia: yesNo(cons.activitiesMedia),
+                    parentNotes: cons.parentNotes,
+                  },
+                  [
+                    ["leaveMode", "المغادرة"],
+                    ["companionRole", "صفة المرافق"],
+                    ["companionName", "اسم المرافق"],
+                    ["companionPhone", "هاتف المرافق"],
+                    ["driverName", "السائق"],
+                    ["driverPhone", "هاتف السائق"],
+                    ["trips", "خرجات"],
+                    ["sport", "رياضة"],
+                    ["socialVideos", "فيديوهات"],
+                    ["activitiesMedia", "نشاطات وصور"],
+                    ["parentNotes", "توصيات"],
+                  ]
+                )
+            )}
             <div class="admin-form-actions" style="margin-top:1rem">
               <button type="button" class="btn btn-primary btn-sm" data-pf-mark="reviewed">${esc(I18n.t("parentMarkReviewed"))}</button>
               <button type="button" class="btn btn-ghost btn-sm" data-nav="#/manage/parent-forms">${esc(I18n.t("back"))}</button>
