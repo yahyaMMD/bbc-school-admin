@@ -48,7 +48,11 @@
       return;
     }
     if (payload.phonePrimary.replace(/\D/g, "").length < 8) {
-      showError("رقم هاتف صحيح مطلوب");
+      showError("رقم الهاتف الرئيسي مطلوب");
+      return;
+    }
+    if (payload.phoneSecondary.replace(/\D/g, "").length < 8) {
+      showError("رقم الهاتف الثاني مطلوب");
       return;
     }
     if (!payload.emergencyName || !payload.emergencyPhone) {

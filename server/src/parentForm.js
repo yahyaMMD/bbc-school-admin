@@ -86,7 +86,10 @@ export async function submitForm(req, res) {
       return res.status(400).json({ error: "العنوان مطلوب / Adresse requise" });
     }
     if (!phonePrimary || phonePrimary.replace(/\D/g, "").length < 8) {
-      return res.status(400).json({ error: "رقم هاتف صحيح مطلوب / Téléphone valide requis" });
+      return res.status(400).json({ error: "رقم الهاتف الرئيسي مطلوب / Téléphone principal requis" });
+    }
+    if (!phoneSecondary || phoneSecondary.replace(/\D/g, "").length < 8) {
+      return res.status(400).json({ error: "رقم الهاتف الثاني مطلوب / Deuxième numéro requis" });
     }
     if (!emergencyName || !emergencyPhone) {
       return res

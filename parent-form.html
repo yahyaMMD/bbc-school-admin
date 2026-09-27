@@ -16,7 +16,7 @@
       href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/parent-form.css?v=5" />
+    <link rel="stylesheet" href="css/parent-form.css?v=6" />
   </head>
   <body>
     <div class="pf-wrap">
@@ -100,9 +100,9 @@
           <label class="pf-field">
             <span class="pf-label">
               <span class="pf-ar">رقم هاتف ثانٍ</span>
-              <span class="pf-fr" lang="fr" dir="ltr">Deuxième numéro (optionnel)</span>
+              <span class="pf-fr" lang="fr" dir="ltr">Deuxième numéro</span>
             </span>
-            <input name="phoneSecondary" type="tel" inputmode="tel" placeholder="اختياري" enterkeyhint="next" />
+            <input name="phoneSecondary" type="tel" inputmode="tel" required placeholder="05…" enterkeyhint="next" />
           </label>
         </section>
 
@@ -114,35 +114,28 @@
 
           <fieldset class="pf-choices">
             <legend class="pf-label">
-              <span class="pf-ar">الحالة العائلية</span>
-              <span class="pf-fr" lang="fr" dir="ltr">Situation des parents</span>
+              <span class="pf-ar">الحالة العائلية للأولياء</span>
+              <span class="pf-fr" lang="fr" dir="ltr">Situation familiale des parents</span>
             </legend>
             <label class="pf-choice">
               <input type="radio" name="maritalStatus" value="married" checked />
               <span class="pf-choice-text">
-                <span class="pf-ar">متزوج(ة)</span>
-                <span class="pf-fr" lang="fr" dir="ltr">Marié(e)</span>
+                <span class="pf-ar">متزوجان</span>
+                <span class="pf-fr" lang="fr" dir="ltr">Mariés</span>
               </span>
             </label>
             <label class="pf-choice">
               <input type="radio" name="maritalStatus" value="divorced" />
               <span class="pf-choice-text">
-                <span class="pf-ar">مطلق(ة)</span>
-                <span class="pf-fr" lang="fr" dir="ltr">Divorcé(e)</span>
+                <span class="pf-ar">مطلقان</span>
+                <span class="pf-fr" lang="fr" dir="ltr">Divorcés</span>
               </span>
             </label>
             <label class="pf-choice">
               <input type="radio" name="maritalStatus" value="widowed" />
               <span class="pf-choice-text">
-                <span class="pf-ar">أرمل(ة)</span>
-                <span class="pf-fr" lang="fr" dir="ltr">Veuf / Veuve</span>
-              </span>
-            </label>
-            <label class="pf-choice">
-              <input type="radio" name="maritalStatus" value="other" />
-              <span class="pf-choice-text">
-                <span class="pf-ar">أخرى</span>
-                <span class="pf-fr" lang="fr" dir="ltr">Autre</span>
+                <span class="pf-ar">أرملان</span>
+                <span class="pf-fr" lang="fr" dir="ltr">Veufs</span>
               </span>
             </label>
           </fieldset>
@@ -158,13 +151,13 @@
 
         <section class="pf-card">
           <h2>
-            <span class="pf-ar">٤) الصحة</span>
-            <span class="pf-fr" lang="fr" dir="ltr">Santé</span>
+            <span class="pf-ar">٤) معلومات حول صحة التلميذ</span>
+            <span class="pf-fr" lang="fr" dir="ltr">Informations sur l'état de santé de l'élève</span>
           </h2>
           <label class="pf-field">
             <span class="pf-label">
-              <span class="pf-ar">معلومات صحية مهمة للمدرسة</span>
-              <span class="pf-fr" lang="fr" dir="ltr">Santé de l'enfant</span>
+              <span class="pf-ar">معلومات حول صحة التلميذ</span>
+              <span class="pf-fr" lang="fr" dir="ltr">Informations sur l'état de santé de l'élève</span>
             </span>
             <textarea
               name="healthNotes"
@@ -176,8 +169,8 @@
 
         <section class="pf-card">
           <h2>
-            <span class="pf-ar">٥) اتصال الطوارئ</span>
-            <span class="pf-fr" lang="fr" dir="ltr">Contact d'urgence</span>
+            <span class="pf-ar">٥) جهة اتصال للطوارئ</span>
+            <span class="pf-fr" lang="fr" dir="ltr">Personne à contacter en cas d'urgence</span>
           </h2>
           <p class="pf-hint">
             من نتصل به إذا لم نصل إليكم؟
@@ -230,6 +223,6 @@
       </div>
     </div>
 
-    <script src="js/parent-form.js?v=5"></script>
+    <script src="js/parent-form.js?v=6"></script>
   </body>
 </html>

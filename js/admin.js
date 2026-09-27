@@ -1465,11 +1465,12 @@ const AdminApp = (() => {
                   const when = s.createdAt
                     ? new Date(s.createdAt).toLocaleString()
                     : "";
+                  const dob = formatDob(s.dateOfBirth);
                   return `
                   <div class="admin-person-card">
                     <div class="admin-person-main">
                       <strong dir="auto">${esc(name)}</strong>
-                      <span class="muted">${esc(s.className || "")} · ${esc(s.phonePrimary || "")}</span>
+                      <span class="muted">${esc(I18n.t("dob"))}: ${esc(dob)} · ${esc(s.phonePrimary || "")}</span>
                       <span class="muted">${esc(when)} · ${esc(s.status || "new")}</span>
                     </div>
                     <div class="admin-person-actions">
@@ -1501,8 +1502,7 @@ const AdminApp = (() => {
           pfDetail.innerHTML = `
             <div class="admin-panel-label">${esc(name)}</div>
             <div class="facts-grid" style="margin-top:0.75rem">
-              <div class="fact-card"><div class="k">${esc(I18n.t("dob"))}</div><div class="v">${esc(s.dateOfBirth || "—")}</div></div>
-              <div class="fact-card"><div class="k">${esc(I18n.t("class"))}</div><div class="v">${esc(s.className || "—")}</div></div>
+              <div class="fact-card"><div class="k">${esc(I18n.t("dob"))}</div><div class="v">${esc(formatDob(s.dateOfBirth))}</div></div>
               <div class="fact-card"><div class="k">${esc(I18n.t("phone"))}</div><div class="v">${esc(s.phonePrimary || "—")}</div></div>
               <div class="fact-card"><div class="k">${esc(I18n.t("parentPhoneSecondary"))}</div><div class="v">${esc(s.phoneSecondary || "—")}</div></div>
               <div class="fact-card"><div class="k">${esc(I18n.t("parentMarital"))}</div><div class="v">${esc(maritalLabel(s.maritalStatus))}</div></div>
@@ -1588,12 +1588,19 @@ const AdminApp = (() => {
 
   function maritalLabel(v) {
     const map = {
-      married: "Married / متزوج",
-      divorced: "Divorced / مطلق",
-      widowed: "Widowed / أرمل",
-      other: "Other / أخرى",
+      married: "متزوجان / Mariés",
+      divorced: "مطلقان / Divorcés",
+      widowed: "أرملان / Veufs",
+      other: "أخرى / Autre",
     };
     return map[v] || v || "—";
+  }
+
+  function formatDob(iso) {
+    if (!iso) return "—";
+    const m = String(iso).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (!m) return iso;
+    return `${m[3]}/${m[2]}/${m[1]}`;
   }
 
   function viewParentForms() {
