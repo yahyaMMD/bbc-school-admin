@@ -16,6 +16,7 @@ function mapRow(r) {
     id: r.id,
     studentLastName: r.student_last_name || "",
     studentFirstName: r.student_first_name || "",
+    dateOfBirth: r.date_of_birth || "",
     className: r.class_name || "",
     homeAddress: r.home_address || "",
     phonePrimary: r.phone_primary || "",
@@ -61,6 +62,7 @@ export async function submitForm(req, res) {
     const b = req.body || {};
     const studentLastName = clean(b.studentLastName, 120);
     const studentFirstName = clean(b.studentFirstName, 120);
+    const dateOfBirth = clean(b.dateOfBirth, 20);
     const className = clean(b.className, 80);
     const homeAddress = clean(b.homeAddress, 1000);
     const phonePrimary = clean(b.phonePrimary, 40);
@@ -74,6 +76,11 @@ export async function submitForm(req, res) {
 
     if (!studentLastName || !studentFirstName) {
       return res.status(400).json({ error: "اسم ولقب التلميذ مطلوبان / Nom et prénom requis" });
+    }
+    if (!dateOfBirth || !/^\d{4}-\d{2}-\d{2}$/.test(dateOfBirth)) {
+      return res
+        .status(400)
+        .json({ error: "تاريخ الميلاد مطلوب / Date de naissance requise" });
     }
     if (!homeAddress) {
       return res.status(400).json({ error: "العنوان مطلوب / Adresse requise" });
@@ -90,15 +97,16 @@ export async function submitForm(req, res) {
     const id = sid();
     await query(
       `INSERT INTO parent_form_submissions (
-        id, student_last_name, student_first_name, class_name,
+        id, student_last_name, student_first_name, date_of_birth, class_name,
         home_address, phone_primary, phone_secondary,
         marital_status, family_situation, health_notes,
         emergency_name, emergency_phone, emergency_relation
-      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)`,
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)`,
       [
         id,
         studentLastName,
         studentFirstName,
+        dateOfBirth,
         className,
         homeAddress,
         phonePrimary,

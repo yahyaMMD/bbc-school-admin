@@ -187,6 +187,13 @@ body {
   touch-action: manipulation;
 }
 
+.pf-field input[type="date"] {
+  min-height: 3.1rem;
+  direction: ltr;
+  text-align: left;
+  unicode-bidi: isolate;
+}
+
 .pf-field textarea {
   resize: vertical;
   min-height: 5.5rem;

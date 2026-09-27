@@ -22,6 +22,7 @@
     const payload = {
       studentLastName: String(fd.get("studentLastName") || "").trim(),
       studentFirstName: String(fd.get("studentFirstName") || "").trim(),
+      dateOfBirth: String(fd.get("dateOfBirth") || "").trim(),
       className: "",
       homeAddress: String(fd.get("homeAddress") || "").trim(),
       phonePrimary: String(fd.get("phonePrimary") || "").trim(),
@@ -36,6 +37,10 @@
 
     if (!payload.studentLastName || !payload.studentFirstName) {
       showError("اسم ولقب التلميذ مطلوبان");
+      return;
+    }
+    if (!payload.dateOfBirth) {
+      showError("تاريخ الميلاد مطلوب");
       return;
     }
     if (!payload.homeAddress) {

@@ -1501,6 +1501,7 @@ const AdminApp = (() => {
           pfDetail.innerHTML = `
             <div class="admin-panel-label">${esc(name)}</div>
             <div class="facts-grid" style="margin-top:0.75rem">
+              <div class="fact-card"><div class="k">${esc(I18n.t("dob"))}</div><div class="v">${esc(s.dateOfBirth || "—")}</div></div>
               <div class="fact-card"><div class="k">${esc(I18n.t("class"))}</div><div class="v">${esc(s.className || "—")}</div></div>
               <div class="fact-card"><div class="k">${esc(I18n.t("phone"))}</div><div class="v">${esc(s.phonePrimary || "—")}</div></div>
               <div class="fact-card"><div class="k">${esc(I18n.t("parentPhoneSecondary"))}</div><div class="v">${esc(s.phoneSecondary || "—")}</div></div>

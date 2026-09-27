@@ -134,6 +134,7 @@ export async function migrate() {
       id TEXT PRIMARY KEY,
       student_last_name TEXT NOT NULL DEFAULT '',
       student_first_name TEXT NOT NULL DEFAULT '',
+      date_of_birth TEXT NOT NULL DEFAULT '',
       class_name TEXT NOT NULL DEFAULT '',
       home_address TEXT NOT NULL DEFAULT '',
       phone_primary TEXT NOT NULL DEFAULT '',
@@ -148,5 +149,11 @@ export async function migrate() {
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
     CREATE INDEX IF NOT EXISTS idx_parent_form_created ON parent_form_submissions (created_at DESC);
+  `);
+
+  // Existing installs created the table before date_of_birth existed
+  await query(`
+    ALTER TABLE parent_form_submissions
+      ADD COLUMN IF NOT EXISTS date_of_birth TEXT NOT NULL DEFAULT '';
   `);
 }

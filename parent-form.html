@@ -16,7 +16,7 @@
       href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/parent-form.css?v=4" />
+    <link rel="stylesheet" href="css/parent-form.css?v=5" />
   </head>
   <body>
     <div class="pf-wrap">
@@ -57,6 +57,21 @@
               <span class="pf-fr" lang="fr" dir="ltr">Prénom</span>
             </span>
             <input name="studentFirstName" type="text" autocomplete="given-name" enterkeyhint="next" required />
+          </label>
+
+          <label class="pf-field">
+            <span class="pf-label">
+              <span class="pf-ar">تاريخ الميلاد</span>
+              <span class="pf-fr" lang="fr" dir="ltr">Date de naissance</span>
+            </span>
+            <input
+              name="dateOfBirth"
+              type="date"
+              required
+              enterkeyhint="next"
+              max="2026-12-31"
+              min="2005-01-01"
+            />
           </label>
         </section>
 
@@ -215,6 +230,6 @@
       </div>
     </div>
 
-    <script src="js/parent-form.js?v=4"></script>
+    <script src="js/parent-form.js?v=5"></script>
   </body>
 </html>
