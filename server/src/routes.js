@@ -6,6 +6,7 @@ import { buildSchoolData, mapTeacher, mapStudent, mapClass, mapIssue } from "./s
 import { saveProfilePhoto, deleteProfilePhoto } from "./uploads.js";
 import * as Announcements from "./announcements.js";
 import * as TeacherPortal from "./teacherPortal.js";
+import * as ParentForm from "./parentForm.js";
 
 const router = Router();
 
@@ -14,6 +15,17 @@ function sid(prefix = "S") {
 }
 
 router.get("/health", (_req, res) => res.json({ ok: true }));
+
+// ——— Parent form (public submit + admin review) ———
+router.get("/parent-form/meta", ParentForm.listFormMeta);
+router.post("/parent-form", ParentForm.submitForm);
+router.get("/parent-form", authRequired(["admin", "director"]), ParentForm.listSubmissions);
+router.get("/parent-form/:id", authRequired(["admin", "director"]), ParentForm.getSubmission);
+router.patch(
+  "/parent-form/:id",
+  authRequired(["admin", "director"]),
+  ParentForm.updateSubmissionStatus
+);
 
 router.get("/school-data", authRequired(["director", "admin"]), async (_req, res) => {
   try {

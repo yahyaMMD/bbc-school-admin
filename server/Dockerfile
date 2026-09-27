@@ -19,6 +19,7 @@ COPY server/scripts ./scripts
 
 # Bake frontend into the image so a missing volume cannot blank the UI
 COPY index.html ./web/index.html
+COPY parent-form.html ./web/parent-form.html
 COPY css ./web/css
 COPY js ./web/js
 COPY assets ./web/assets

@@ -242,6 +242,7 @@ const AdminApp = (() => {
       { id: "classes", href: "#/manage/classes", label: I18n.t("classesRosters"), icon: "▦" },
       { id: "students", href: "#/manage/students", label: I18n.t("allStudents"), icon: "○" },
       { id: "teachers", href: "#/manage/teachers", label: I18n.t("teachers"), icon: "◇" },
+      { id: "parent-forms", href: "#/manage/parent-forms", label: I18n.t("parentForms"), icon: "✎" },
       { id: "incomplete", href: "#/manage/incomplete", label: I18n.t("missingInfo"), icon: "!" },
     ];
     return `
@@ -1446,6 +1447,123 @@ const AdminApp = (() => {
       }, `/manage/classes/${id}`);
     });
 
+    const pfList = root.querySelector("[data-pf-list]");
+    if (pfList) {
+      (async () => {
+        try {
+          const data = await BBC_API.get("/parent-form");
+          const rows = data.submissions || [];
+          if (!rows.length) {
+            pfList.outerHTML = `<div class="admin-empty">${esc(I18n.t("parentFormsEmpty"))}</div>`;
+            return;
+          }
+          pfList.outerHTML = `
+            <div class="admin-person-list admin-person-list-dense" data-pf-rows>
+              ${rows
+                .map((s) => {
+                  const name = `${s.studentLastName || ""} ${s.studentFirstName || ""}`.trim();
+                  const when = s.createdAt
+                    ? new Date(s.createdAt).toLocaleString()
+                    : "";
+                  return `
+                  <div class="admin-person-card">
+                    <div class="admin-person-main">
+                      <strong dir="auto">${esc(name)}</strong>
+                      <span class="muted">${esc(s.className || "")} · ${esc(s.phonePrimary || "")}</span>
+                      <span class="muted">${esc(when)} · ${esc(s.status || "new")}</span>
+                    </div>
+                    <div class="admin-person-actions">
+                      <button type="button" class="btn btn-ghost btn-sm" data-nav="#/manage/parent-forms/${esc(s.id)}">${esc(I18n.t("annViewDetails"))}</button>
+                    </div>
+                  </div>`;
+                })
+                .join("")}
+            </div>`;
+          root.querySelectorAll("[data-pf-rows] [data-nav]").forEach((el) => {
+            el.addEventListener("click", () => {
+              const target = el.getAttribute("data-nav");
+              if (target) go(target);
+            });
+          });
+        } catch (err) {
+          pfList.outerHTML = `<div class="admin-empty is-err">${esc(err.message || "Failed")}</div>`;
+        }
+      })();
+    }
+
+    const pfDetail = root.querySelector("[data-pf-detail]");
+    if (pfDetail) {
+      const sid = pfDetail.getAttribute("data-id");
+      (async () => {
+        try {
+          const s = await BBC_API.get(`/parent-form/${encodeURIComponent(sid)}`);
+          const name = `${s.studentLastName || ""} ${s.studentFirstName || ""}`.trim();
+          pfDetail.innerHTML = `
+            <div class="admin-panel-label">${esc(name)}</div>
+            <div class="facts-grid" style="margin-top:0.75rem">
+              <div class="fact-card"><div class="k">${esc(I18n.t("class"))}</div><div class="v">${esc(s.className || "—")}</div></div>
+              <div class="fact-card"><div class="k">${esc(I18n.t("phone"))}</div><div class="v">${esc(s.phonePrimary || "—")}</div></div>
+              <div class="fact-card"><div class="k">${esc(I18n.t("parentPhoneSecondary"))}</div><div class="v">${esc(s.phoneSecondary || "—")}</div></div>
+              <div class="fact-card"><div class="k">${esc(I18n.t("parentMarital"))}</div><div class="v">${esc(maritalLabel(s.maritalStatus))}</div></div>
+              <div class="fact-card"><div class="k">${esc(I18n.t("status"))}</div><div class="v">${esc(s.status || "new")}</div></div>
+              <div class="fact-card"><div class="k">${esc(I18n.t("annCreatedAt"))}</div><div class="v">${esc(s.createdAt ? new Date(s.createdAt).toLocaleString() : "—")}</div></div>
+            </div>
+            <div class="info-panel" style="margin-top:1rem">
+              <div class="panel-label">${esc(I18n.t("parentAddress"))}</div>
+              <p style="margin-top:0.4rem;white-space:pre-wrap" dir="auto">${esc(s.homeAddress || "—")}</p>
+            </div>
+            <div class="info-panel" style="margin-top:1rem">
+              <div class="panel-label">${esc(I18n.t("parentFamily"))}</div>
+              <p style="margin-top:0.4rem;white-space:pre-wrap" dir="auto">${esc(s.familySituation || "—")}</p>
+            </div>
+            <div class="info-panel" style="margin-top:1rem">
+              <div class="panel-label">${esc(I18n.t("parentHealth"))}</div>
+              <p style="margin-top:0.4rem;white-space:pre-wrap" dir="auto">${esc(s.healthNotes || "—")}</p>
+            </div>
+            <div class="info-panel" style="margin-top:1rem">
+              <div class="panel-label">${esc(I18n.t("parentEmergency"))}</div>
+              <p style="margin-top:0.4rem" dir="auto">
+                <strong>${esc(s.emergencyName || "—")}</strong>
+                · ${esc(s.emergencyPhone || "—")}
+                · ${esc(s.emergencyRelation || "—")}
+              </p>
+            </div>
+            <div class="admin-form-actions" style="margin-top:1rem">
+              <button type="button" class="btn btn-primary btn-sm" data-pf-mark="reviewed">${esc(I18n.t("parentMarkReviewed"))}</button>
+              <button type="button" class="btn btn-ghost btn-sm" data-nav="#/manage/parent-forms">${esc(I18n.t("back"))}</button>
+            </div>
+            <p class="ann-status" data-pf-msg hidden></p>
+          `;
+          pfDetail.querySelectorAll("[data-nav]").forEach((el) => {
+            el.addEventListener("click", () => {
+              const target = el.getAttribute("data-nav");
+              if (target) go(target);
+            });
+          });
+          pfDetail.querySelector("[data-pf-mark]")?.addEventListener("click", async () => {
+            const msg = pfDetail.querySelector("[data-pf-msg]");
+            try {
+              await BBC_API.patch(`/parent-form/${encodeURIComponent(sid)}`, { status: "reviewed" });
+              if (msg) {
+                msg.hidden = false;
+                msg.textContent = I18n.t("parentMarkedReviewed");
+                msg.classList.remove("is-err");
+                msg.classList.add("is-ok");
+              }
+            } catch (err) {
+              if (msg) {
+                msg.hidden = false;
+                msg.textContent = err.message || "Failed";
+                msg.classList.remove("is-ok");
+                msg.classList.add("is-err");
+              }
+            }
+          });
+        } catch (err) {
+          pfDetail.innerHTML = `<div class="admin-empty is-err">${esc(err.message || "Failed")}</div>`;
+        }
+      })();
+    }
   }
 
   function resolve(parts, params) {
@@ -1461,8 +1579,46 @@ const AdminApp = (() => {
     if (section === "teachers" && id === "new") return viewNewTeacher();
     if (section === "teachers" && id) return viewEditTeacher(id);
     if (section === "teachers") return viewManageTeachers(params);
+    if (section === "parent-forms" && id) return viewParentFormDetail(id);
+    if (section === "parent-forms") return viewParentForms();
     if (section === "incomplete") return viewIncomplete();
     return viewAdminHome();
+  }
+
+  function maritalLabel(v) {
+    const map = {
+      married: "Married / متزوج",
+      divorced: "Divorced / مطلق",
+      widowed: "Widowed / أرمل",
+      other: "Other / أخرى",
+    };
+    return map[v] || v || "—";
+  }
+
+  function viewParentForms() {
+    return layout(
+      "parent-forms",
+      I18n.t("parentForms"),
+      `${esc(I18n.t("parentFormsLede"))} <a class="link-btn" href="/parent-form.html" target="_blank" rel="noopener">${esc(I18n.t("parentFormOpen"))}</a>`,
+      `
+      <div class="admin-panel">
+        <div class="admin-empty" data-pf-list>${esc(I18n.t("loading"))}</div>
+      </div>
+    `
+    );
+  }
+
+  function viewParentFormDetail(id) {
+    return layout(
+      "parent-forms",
+      I18n.t("parentFormDetail"),
+      `<button type="button" class="btn btn-ghost btn-sm" data-nav="#/manage/parent-forms">${esc(I18n.t("back"))}</button>`,
+      `
+      <div class="admin-panel" data-pf-detail data-id="${esc(id)}">
+        <div class="admin-empty">${esc(I18n.t("loading"))}</div>
+      </div>
+    `
+    );
   }
 
   return { resolve, bind };
