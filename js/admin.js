@@ -1500,7 +1500,7 @@ const AdminApp = (() => {
           const s = await BBC_API.get(`/parent-form/${encodeURIComponent(sid)}`);
           const name = `${s.studentLastName || ""} ${s.studentFirstName || ""}`.trim();
           const fd = s.formData || {};
-          const yesNo = (v) => (v === "yes" ? "نعم / Oui" : v === "no" ? "لا / Non" : v || "—");
+          const yesNo = (v) => (v === "yes" ? "نعم / YES" : v === "no" ? "لا / NO" : v || "—");
           const row = (k, v) =>
             `<div class="fact-card"><div class="k">${esc(k)}</div><div class="v" dir="auto">${esc(v || "—")}</div></div>`;
           const block = (title, html) =>
@@ -1522,26 +1522,26 @@ const AdminApp = (() => {
           const cons = fd.consents || {};
 
           const parentsStatusMap = {
-            marriage: "زواج عادي / Mariage",
-            polygamy: "زواج متعدد / Polygamie",
+            marriage: "زواج عادي / Marriage",
+            polygamy: "زواج متعدد / Polygamy",
             divorce: "طلاق / Divorce",
           };
           const leaveMap = {
-            with_parent: "مع الولي / Avec parent",
-            alone: "وحده / Seul(e)",
-            companion: "مرافق / Accompagnateur",
-            driver: "سائق / Chauffeur",
+            with_parent: "مع الولي / With guardian",
+            alone: "وحده / Alone",
+            companion: "مرافق / Companion",
+            driver: "سائق / Driver",
           };
 
           pfDetail.innerHTML = `
             <div class="admin-panel-label">${esc(name)}</div>
             <div class="facts-grid" style="margin-top:0.75rem">
               ${row(I18n.t("dob"), formatDob(s.dateOfBirth || st.dateOfBirth))}
-              ${row("الجنس / Sexe", st.sex === "female" ? "أنثى / Fille" : st.sex === "male" ? "ذكر / Garçon" : st.sex)}
-              ${row("هاتف الأب", s.phonePrimary || fa.phone)}
-              ${row("هاتف الأم", s.phoneSecondary || mo.phone)}
-              ${row("احتياطي", co.phoneBackup)}
-              ${row("E-mail", s.email || co.email)}
+              ${row("الجنس / Sex", st.sex === "female" ? "أنثى / Female" : st.sex === "male" ? "ذكر / Male" : st.sex)}
+              ${row("هاتف الأب / Father phone", s.phonePrimary || fa.phone)}
+              ${row("هاتف الأم / Mother phone", s.phoneSecondary || mo.phone)}
+              ${row("احتياطي / Backup", co.phoneBackup)}
+              ${row("Email", s.email || co.email)}
               ${row(I18n.t("status"), s.status || "new")}
               ${row(I18n.t("annCreatedAt"), s.createdAt ? new Date(s.createdAt).toLocaleString() : "—")}
             </div>
@@ -1750,10 +1750,13 @@ const AdminApp = (() => {
 
   function maritalLabel(v) {
     const map = {
-      married: "متزوجان / Mariés",
-      divorced: "مطلقان / Divorcés",
-      widowed: "أرملان / Veufs",
-      other: "أخرى / Autre",
+      married: "متزوجان / Married",
+      divorced: "مطلقان / Divorced",
+      widowed: "أرملان / Widowed",
+      other: "أخرى / Other",
+      marriage: "زواج عادي / Marriage",
+      polygamy: "زواج متعدد / Polygamy",
+      divorce: "طلاق / Divorce",
     };
     return map[v] || v || "—";
   }

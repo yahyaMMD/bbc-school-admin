@@ -54,7 +54,7 @@ export async function listFormMeta(_req, res) {
   res.json({
     academicYear: "2026 — 2027",
     formTitle: "استمارة جمع المعلومات واكتشاف المواهب",
-    formTitleFr: "Fiche de collecte d'informations et détection des talents",
+    formTitleEn: "Information collection & talent detection form",
   });
 }
 
@@ -79,26 +79,26 @@ export async function submitForm(req, res) {
     const phoneBackup = clean(contact.phoneBackup, 40);
 
     if (!studentLastName || !studentFirstName) {
-      return res.status(400).json({ error: "اسم ولقب التلميذ مطلوبان / Nom et prénom requis" });
+      return res.status(400).json({ error: "اسم ولقب التلميذ مطلوبان / Surname and name required" });
     }
     if (!dateOfBirth || !/^\d{4}-\d{2}-\d{2}$/.test(dateOfBirth)) {
       return res
         .status(400)
-        .json({ error: "تاريخ الميلاد مطلوب / Date de naissance requise" });
+        .json({ error: "تاريخ الميلاد مطلوب / Date of birth required" });
     }
     if (!homeAddress) {
-      return res.status(400).json({ error: "العنوان مطلوب / Adresse requise" });
+      return res.status(400).json({ error: "العنوان مطلوب / Address required" });
     }
     if (!phonePrimary || phonePrimary.replace(/\D/g, "").length < 8) {
-      return res.status(400).json({ error: "هاتف الأب مطلوب / Téléphone du père requis" });
+      return res.status(400).json({ error: "هاتف الأب مطلوب / Father's phone required" });
     }
     if (!phoneSecondary || phoneSecondary.replace(/\D/g, "").length < 8) {
-      return res.status(400).json({ error: "هاتف الأم مطلوب / Téléphone de la mère requis" });
+      return res.status(400).json({ error: "هاتف الأم مطلوب / Mother's phone required" });
     }
     if (!phoneBackup || phoneBackup.replace(/\D/g, "").length < 8) {
       return res
         .status(400)
-        .json({ error: "رقم هاتف احتياطي مطلوب / Numéro de secours requis" });
+        .json({ error: "رقم هاتف احتياطي مطلوب / Backup phone required" });
     }
 
     // Ensure nested student basics are consistent

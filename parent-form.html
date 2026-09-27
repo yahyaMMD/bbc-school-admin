@@ -16,7 +16,7 @@
       href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/parent-form.css?v=7" />
+    <link rel="stylesheet" href="css/parent-form.css?v=8" />
   </head>
   <body>
     <div class="pf-wrap">
@@ -25,14 +25,15 @@
         <div>
           <h1>Quality education Algerie</h1>
           <p>استمارة جمع المعلومات واكتشاف المواهب</p>
+          <p class="pf-en" lang="en" dir="ltr">Information collection &amp; talent detection form</p>
           <p class="pf-year">السنة الدراسية 2026 — 2027</p>
         </div>
       </header>
 
       <p class="pf-intro">
-        في إطار جمع المعلومات (النفس اجتماعية والتربوية) حول التلاميذ، نرجو الإجابة على بنود هذه الاستمارة لتقييم شامل واكتشاف المواهب.
-        <span class="pf-fr" lang="fr" dir="ltr"
-          >Dans le cadre du recueil d'informations psycho-sociales et pédagogiques, merci de remplir cette fiche pour un suivi complet et la détection des talents.</span
+        في إطار جمع المعلومات (النفس اجتماعية والتربوية) حول مجموع التلاميذ، فإننا نطلب منكم الإجابة على بنود هذه الإستمارة من أجل اجراء تقييم شامل لكل تلميذ على حدي بهدف اكتشاف كل ما هو ممكن من المواهب وتشجيع الطاقات حسب خصائص كل تلميذ(ة).
+        <span class="pf-en" lang="en" dir="ltr"
+          >As part of collecting psycho-social and educational information about all students, we ask you to answer the items of this form in order to carry out a comprehensive assessment of each student, with the aim of discovering talents and encouraging abilities according to each student's characteristics.</span
         >
       </p>
 
@@ -41,97 +42,97 @@
         <section class="pf-card">
           <h2>
             <span class="pf-ar">١) معلومات عامة</span>
-            <span class="pf-fr" lang="fr" dir="ltr">Informations générales</span>
+            <span class="pf-en" lang="en" dir="ltr">1 — General information</span>
           </h2>
 
           <p class="pf-subhead">
             <span class="pf-ar">التلميذ(ة)</span>
-            <span class="pf-fr" lang="fr" dir="ltr">Élève</span>
+            <span class="pf-en" lang="en" dir="ltr">Student</span>
           </p>
 
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">اللقب</span><span class="pf-fr" lang="fr" dir="ltr">Nom</span></span>
+            <span class="pf-label"><span class="pf-ar">اللقب</span><span class="pf-en" lang="en" dir="ltr">Surname</span></span>
             <input name="student.lastName" type="text" autocomplete="family-name" required />
           </label>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">الاسم</span><span class="pf-fr" lang="fr" dir="ltr">Prénom</span></span>
+            <span class="pf-label"><span class="pf-ar">الاسم</span><span class="pf-en" lang="en" dir="ltr">Name</span></span>
             <input name="student.firstName" type="text" autocomplete="given-name" required />
           </label>
           <fieldset class="pf-choices">
-            <legend class="pf-label"><span class="pf-ar">الجنس</span><span class="pf-fr" lang="fr" dir="ltr">Sexe</span></legend>
-            <label class="pf-choice"><input type="radio" name="student.sex" value="male" required /><span class="pf-choice-text"><span class="pf-ar">ذكر</span><span class="pf-fr" lang="fr" dir="ltr">Garçon</span></span></label>
-            <label class="pf-choice"><input type="radio" name="student.sex" value="female" /><span class="pf-choice-text"><span class="pf-ar">أنثى</span><span class="pf-fr" lang="fr" dir="ltr">Fille</span></span></label>
+            <legend class="pf-label"><span class="pf-ar">الجنس</span><span class="pf-en" lang="en" dir="ltr">Sex</span></legend>
+            <label class="pf-choice"><input type="radio" name="student.sex" value="male" required /><span class="pf-choice-text"><span class="pf-ar">ذكر</span><span class="pf-en" lang="en" dir="ltr">Male</span></span></label>
+            <label class="pf-choice"><input type="radio" name="student.sex" value="female" /><span class="pf-choice-text"><span class="pf-ar">أنثى</span><span class="pf-en" lang="en" dir="ltr">Female</span></span></label>
           </fieldset>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">تاريخ الميلاد</span><span class="pf-fr" lang="fr" dir="ltr">Date de naissance</span></span>
+            <span class="pf-label"><span class="pf-ar">تاريخ الميلاد</span><span class="pf-en" lang="en" dir="ltr">Date of birth</span></span>
             <input name="student.dateOfBirth" type="date" required min="2005-01-01" max="2026-12-31" />
           </label>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">مكان الميلاد</span><span class="pf-fr" lang="fr" dir="ltr">Lieu de naissance</span></span>
+            <span class="pf-label"><span class="pf-ar">مكان الميلاد</span><span class="pf-en" lang="en" dir="ltr">Place of birth</span></span>
             <input name="student.placeOfBirth" type="text" required />
           </label>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">الجنسية</span><span class="pf-fr" lang="fr" dir="ltr">Nationalité</span></span>
+            <span class="pf-label"><span class="pf-ar">الجنسية</span><span class="pf-en" lang="en" dir="ltr">Nationality</span></span>
             <input name="student.nationality" type="text" value="جزائرية" required />
           </label>
 
           <p class="pf-subhead">
             <span class="pf-ar">الأب</span>
-            <span class="pf-fr" lang="fr" dir="ltr">Père</span>
+            <span class="pf-en" lang="en" dir="ltr">Father</span>
           </p>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">الاسم الكامل</span><span class="pf-fr" lang="fr" dir="ltr">Nom complet</span></span>
+            <span class="pf-label"><span class="pf-ar">الاسم الكامل</span><span class="pf-en" lang="en" dir="ltr">Full name</span></span>
             <input name="father.name" type="text" required />
           </label>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">المهنة</span><span class="pf-fr" lang="fr" dir="ltr">Profession</span></span>
+            <span class="pf-label"><span class="pf-ar">المهنة</span><span class="pf-en" lang="en" dir="ltr">Profession</span></span>
             <input name="father.profession" type="text" />
           </label>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">الجنسية</span><span class="pf-fr" lang="fr" dir="ltr">Nationalité</span></span>
+            <span class="pf-label"><span class="pf-ar">الجنسية</span><span class="pf-en" lang="en" dir="ltr">Nationality</span></span>
             <input name="father.nationality" type="text" />
           </label>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">رقم هاتف الأب</span><span class="pf-fr" lang="fr" dir="ltr">Téléphone du père</span></span>
+            <span class="pf-label"><span class="pf-ar">رقم هاتف الأب</span><span class="pf-en" lang="en" dir="ltr">Father's phone</span></span>
             <input name="father.phone" type="tel" inputmode="tel" required placeholder="05…" />
           </label>
 
           <p class="pf-subhead">
             <span class="pf-ar">الأم</span>
-            <span class="pf-fr" lang="fr" dir="ltr">Mère</span>
+            <span class="pf-en" lang="en" dir="ltr">Mother</span>
           </p>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">الاسم الكامل</span><span class="pf-fr" lang="fr" dir="ltr">Nom complet</span></span>
+            <span class="pf-label"><span class="pf-ar">الاسم الكامل</span><span class="pf-en" lang="en" dir="ltr">Full name</span></span>
             <input name="mother.name" type="text" required />
           </label>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">المهنة</span><span class="pf-fr" lang="fr" dir="ltr">Profession</span></span>
+            <span class="pf-label"><span class="pf-ar">المهنة</span><span class="pf-en" lang="en" dir="ltr">Profession</span></span>
             <input name="mother.profession" type="text" />
           </label>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">الجنسية</span><span class="pf-fr" lang="fr" dir="ltr">Nationalité</span></span>
+            <span class="pf-label"><span class="pf-ar">الجنسية</span><span class="pf-en" lang="en" dir="ltr">Nationality</span></span>
             <input name="mother.nationality" type="text" />
           </label>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">رقم هاتف الأم</span><span class="pf-fr" lang="fr" dir="ltr">Téléphone de la mère</span></span>
+            <span class="pf-label"><span class="pf-ar">رقم هاتف الأم</span><span class="pf-en" lang="en" dir="ltr">Mother's phone</span></span>
             <input name="mother.phone" type="tel" inputmode="tel" required placeholder="05…" />
           </label>
 
           <p class="pf-subhead">
             <span class="pf-ar">الاتصال</span>
-            <span class="pf-fr" lang="fr" dir="ltr">Coordonnées</span>
+            <span class="pf-en" lang="en" dir="ltr">Contact</span>
           </p>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">رقم هاتف احتياطي</span><span class="pf-fr" lang="fr" dir="ltr">Numéro de secours</span></span>
+            <span class="pf-label"><span class="pf-ar">رقم هاتف احتياطي</span><span class="pf-en" lang="en" dir="ltr">Backup phone number</span></span>
             <input name="contact.phoneBackup" type="tel" inputmode="tel" required placeholder="05…" />
           </label>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">العنوان</span><span class="pf-fr" lang="fr" dir="ltr">Adresse</span></span>
+            <span class="pf-label"><span class="pf-ar">العنوان</span><span class="pf-en" lang="en" dir="ltr">Address</span></span>
             <textarea name="contact.address" rows="3" required placeholder="الحي، العمارة، رقم الباب…"></textarea>
           </label>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">البريد الإلكتروني</span><span class="pf-fr" lang="fr" dir="ltr">E-mail</span></span>
-            <input name="contact.email" type="email" inputmode="email" dir="ltr" placeholder="exemple@email.com" />
+            <span class="pf-label"><span class="pf-ar">إيمايل</span><span class="pf-en" lang="en" dir="ltr">Email</span></span>
+            <input name="contact.email" type="email" inputmode="email" dir="ltr" placeholder="example@email.com" />
           </label>
         </section>
 
@@ -139,84 +140,84 @@
         <section class="pf-card">
           <h2>
             <span class="pf-ar">٢) الحالة العائلية</span>
-            <span class="pf-fr" lang="fr" dir="ltr">Situation familiale</span>
+            <span class="pf-en" lang="en" dir="ltr">2 — Family status</span>
           </h2>
 
           <fieldset class="pf-choices">
-            <legend class="pf-label"><span class="pf-ar">حالة الأولياء</span><span class="pf-fr" lang="fr" dir="ltr">Situation des parents</span></legend>
-            <label class="pf-choice"><input type="radio" name="family.parentsStatus" value="marriage" checked /><span class="pf-choice-text"><span class="pf-ar">زواج عادي</span><span class="pf-fr" lang="fr" dir="ltr">Mariage</span></span></label>
-            <label class="pf-choice"><input type="radio" name="family.parentsStatus" value="polygamy" /><span class="pf-choice-text"><span class="pf-ar">زواج متعدد</span><span class="pf-fr" lang="fr" dir="ltr">Polygamie</span></span></label>
-            <label class="pf-choice"><input type="radio" name="family.parentsStatus" value="divorce" /><span class="pf-choice-text"><span class="pf-ar">طلاق</span><span class="pf-fr" lang="fr" dir="ltr">Divorce</span></span></label>
+            <legend class="pf-label"><span class="pf-ar">الأولياء</span><span class="pf-en" lang="en" dir="ltr">Parents</span></legend>
+            <label class="pf-choice"><input type="radio" name="family.parentsStatus" value="marriage" checked /><span class="pf-choice-text"><span class="pf-ar">زواج عادي</span><span class="pf-en" lang="en" dir="ltr">Marriage</span></span></label>
+            <label class="pf-choice"><input type="radio" name="family.parentsStatus" value="polygamy" /><span class="pf-choice-text"><span class="pf-ar">زواج متعدد</span><span class="pf-en" lang="en" dir="ltr">Polygamy</span></span></label>
+            <label class="pf-choice"><input type="radio" name="family.parentsStatus" value="divorce" /><span class="pf-choice-text"><span class="pf-ar">طلاق</span><span class="pf-en" lang="en" dir="ltr">Divorce</span></span></label>
           </fieldset>
 
           <fieldset class="pf-choices" data-show-when="family.parentsStatus=divorce">
-            <legend class="pf-label"><span class="pf-ar">إذا طلاق — الحضانة</span><span class="pf-fr" lang="fr" dir="ltr">En cas de divorce — garde</span></legend>
-            <label class="pf-choice"><input type="radio" name="family.custody" value="mother" /><span class="pf-choice-text"><span class="pf-ar">الأم</span><span class="pf-fr" lang="fr" dir="ltr">Mère</span></span></label>
-            <label class="pf-choice"><input type="radio" name="family.custody" value="father" /><span class="pf-choice-text"><span class="pf-ar">الأب</span><span class="pf-fr" lang="fr" dir="ltr">Père</span></span></label>
+            <legend class="pf-label"><span class="pf-ar">إذا نعم — الحضانة</span><span class="pf-en" lang="en" dir="ltr">If yes — custody</span></legend>
+            <label class="pf-choice"><input type="radio" name="family.custody" value="mother" /><span class="pf-choice-text"><span class="pf-ar">الأم</span><span class="pf-en" lang="en" dir="ltr">Mother</span></span></label>
+            <label class="pf-choice"><input type="radio" name="family.custody" value="father" /><span class="pf-choice-text"><span class="pf-ar">الأب</span><span class="pf-en" lang="en" dir="ltr">Father</span></span></label>
           </fieldset>
 
           <fieldset class="pf-choices">
-            <legend class="pf-label"><span class="pf-ar">وجود زوج أم</span><span class="pf-fr" lang="fr" dir="ltr">Beau-père</span></legend>
-            <label class="pf-choice"><input type="radio" name="family.hasStepFather" value="no" checked /><span class="pf-choice-text"><span class="pf-ar">لا</span><span class="pf-fr" lang="fr" dir="ltr">Non</span></span></label>
-            <label class="pf-choice"><input type="radio" name="family.hasStepFather" value="yes" /><span class="pf-choice-text"><span class="pf-ar">نعم</span><span class="pf-fr" lang="fr" dir="ltr">Oui</span></span></label>
+            <legend class="pf-label"><span class="pf-ar">وجود زوج أم</span><span class="pf-en" lang="en" dir="ltr">Having a step father</span></legend>
+            <label class="pf-choice"><input type="radio" name="family.hasStepFather" value="no" checked /><span class="pf-choice-text"><span class="pf-ar">لا</span><span class="pf-en" lang="en" dir="ltr">NO</span></span></label>
+            <label class="pf-choice"><input type="radio" name="family.hasStepFather" value="yes" /><span class="pf-choice-text"><span class="pf-ar">نعم</span><span class="pf-en" lang="en" dir="ltr">YES</span></span></label>
           </fieldset>
           <fieldset class="pf-choices">
-            <legend class="pf-label"><span class="pf-ar">وجود زوجة أب</span><span class="pf-fr" lang="fr" dir="ltr">Belle-mère</span></legend>
-            <label class="pf-choice"><input type="radio" name="family.hasStepMother" value="no" checked /><span class="pf-choice-text"><span class="pf-ar">لا</span><span class="pf-fr" lang="fr" dir="ltr">Non</span></span></label>
-            <label class="pf-choice"><input type="radio" name="family.hasStepMother" value="yes" /><span class="pf-choice-text"><span class="pf-ar">نعم</span><span class="pf-fr" lang="fr" dir="ltr">Oui</span></span></label>
+            <legend class="pf-label"><span class="pf-ar">وجود زوجة أب</span><span class="pf-en" lang="en" dir="ltr">Having a step mother</span></legend>
+            <label class="pf-choice"><input type="radio" name="family.hasStepMother" value="no" checked /><span class="pf-choice-text"><span class="pf-ar">لا</span><span class="pf-en" lang="en" dir="ltr">NO</span></span></label>
+            <label class="pf-choice"><input type="radio" name="family.hasStepMother" value="yes" /><span class="pf-choice-text"><span class="pf-ar">نعم</span><span class="pf-en" lang="en" dir="ltr">YES</span></span></label>
           </fieldset>
           <fieldset class="pf-choices">
-            <legend class="pf-label"><span class="pf-ar">وفاة الأب</span><span class="pf-fr" lang="fr" dir="ltr">Décès du père</span></legend>
-            <label class="pf-choice"><input type="radio" name="family.fatherDeceased" value="no" checked /><span class="pf-choice-text"><span class="pf-ar">لا</span><span class="pf-fr" lang="fr" dir="ltr">Non</span></span></label>
-            <label class="pf-choice"><input type="radio" name="family.fatherDeceased" value="yes" /><span class="pf-choice-text"><span class="pf-ar">نعم</span><span class="pf-fr" lang="fr" dir="ltr">Oui</span></span></label>
+            <legend class="pf-label"><span class="pf-ar">وفاة الأب</span><span class="pf-en" lang="en" dir="ltr">Fatherless</span></legend>
+            <label class="pf-choice"><input type="radio" name="family.fatherDeceased" value="no" checked /><span class="pf-choice-text"><span class="pf-ar">لا</span><span class="pf-en" lang="en" dir="ltr">NO</span></span></label>
+            <label class="pf-choice"><input type="radio" name="family.fatherDeceased" value="yes" /><span class="pf-choice-text"><span class="pf-ar">نعم</span><span class="pf-en" lang="en" dir="ltr">YES</span></span></label>
           </fieldset>
           <fieldset class="pf-choices">
-            <legend class="pf-label"><span class="pf-ar">وفاة الأم</span><span class="pf-fr" lang="fr" dir="ltr">Décès de la mère</span></legend>
-            <label class="pf-choice"><input type="radio" name="family.motherDeceased" value="no" checked /><span class="pf-choice-text"><span class="pf-ar">لا</span><span class="pf-fr" lang="fr" dir="ltr">Non</span></span></label>
-            <label class="pf-choice"><input type="radio" name="family.motherDeceased" value="yes" /><span class="pf-choice-text"><span class="pf-ar">نعم</span><span class="pf-fr" lang="fr" dir="ltr">Oui</span></span></label>
+            <legend class="pf-label"><span class="pf-ar">وفاة الأم</span><span class="pf-en" lang="en" dir="ltr">Motherless</span></legend>
+            <label class="pf-choice"><input type="radio" name="family.motherDeceased" value="no" checked /><span class="pf-choice-text"><span class="pf-ar">لا</span><span class="pf-en" lang="en" dir="ltr">NO</span></span></label>
+            <label class="pf-choice"><input type="radio" name="family.motherDeceased" value="yes" /><span class="pf-choice-text"><span class="pf-ar">نعم</span><span class="pf-en" lang="en" dir="ltr">YES</span></span></label>
           </fieldset>
 
-          <p class="pf-subhead"><span class="pf-ar">الإخوة</span><span class="pf-fr" lang="fr" dir="ltr">Fratrie</span></p>
+          <p class="pf-subhead"><span class="pf-ar">الإخوة</span><span class="pf-en" lang="en" dir="ltr">Siblings</span></p>
           <div class="pf-row2">
             <label class="pf-field">
-              <span class="pf-label"><span class="pf-ar">عدد الإخوة</span><span class="pf-fr" lang="fr" dir="ltr">Nombre de frères et sœurs</span></span>
+              <span class="pf-label"><span class="pf-ar">عدد الإخوة</span><span class="pf-en" lang="en" dir="ltr">N. of siblings</span></span>
               <input name="family.siblingsCount" type="number" inputmode="numeric" min="0" max="30" />
             </label>
             <label class="pf-field">
-              <span class="pf-label"><span class="pf-ar">عدد الذكور</span><span class="pf-fr" lang="fr" dir="ltr">Garçons</span></span>
+              <span class="pf-label"><span class="pf-ar">عدد الذكور</span><span class="pf-en" lang="en" dir="ltr">N. of brothers</span></span>
               <input name="family.brothersCount" type="number" inputmode="numeric" min="0" max="30" />
             </label>
             <label class="pf-field">
-              <span class="pf-label"><span class="pf-ar">عدد الإناث</span><span class="pf-fr" lang="fr" dir="ltr">Filles</span></span>
+              <span class="pf-label"><span class="pf-ar">عدد الإناث</span><span class="pf-en" lang="en" dir="ltr">N. of sisters</span></span>
               <input name="family.sistersCount" type="number" inputmode="numeric" min="0" max="30" />
             </label>
             <label class="pf-field">
-              <span class="pf-label"><span class="pf-ar">الترتيب بين الإخوة</span><span class="pf-fr" lang="fr" dir="ltr">Rang dans la fratrie</span></span>
+              <span class="pf-label"><span class="pf-ar">الترتيب بين الإخوة</span><span class="pf-en" lang="en" dir="ltr">Ranking among siblings</span></span>
               <input name="family.siblingRank" type="text" placeholder="مثال: الثاني" />
             </label>
           </div>
           <fieldset class="pf-choices">
-            <legend class="pf-label"><span class="pf-ar">وجود إخوة غير أشقاء</span><span class="pf-fr" lang="fr" dir="ltr">Demi-frères / demi-sœurs</span></legend>
-            <label class="pf-choice"><input type="radio" name="family.hasHalfSiblings" value="no" checked /><span class="pf-choice-text"><span class="pf-ar">لا</span><span class="pf-fr" lang="fr" dir="ltr">Non</span></span></label>
-            <label class="pf-choice"><input type="radio" name="family.hasHalfSiblings" value="yes" /><span class="pf-choice-text"><span class="pf-ar">نعم</span><span class="pf-fr" lang="fr" dir="ltr">Oui</span></span></label>
+            <legend class="pf-label"><span class="pf-ar">وجود إخوة غير أشقاء</span><span class="pf-en" lang="en" dir="ltr">Presence of half siblings</span></legend>
+            <label class="pf-choice"><input type="radio" name="family.hasHalfSiblings" value="no" checked /><span class="pf-choice-text"><span class="pf-ar">لا</span><span class="pf-en" lang="en" dir="ltr">NO</span></span></label>
+            <label class="pf-choice"><input type="radio" name="family.hasHalfSiblings" value="yes" /><span class="pf-choice-text"><span class="pf-ar">نعم</span><span class="pf-en" lang="en" dir="ltr">YES</span></span></label>
           </fieldset>
 
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">القائم بالرعاية إن وُجد (الاسم والصفة)</span><span class="pf-fr" lang="fr" dir="ltr">Tuteur éventuel (nom et lien)</span></span>
+            <span class="pf-label"><span class="pf-ar">القائم بالرعاية إذا وُجد والصفة</span><span class="pf-en" lang="en" dir="ltr">If there is any tutor (name / relation)</span></span>
             <input name="family.tutorNameRole" type="text" />
           </label>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">هاتف القائم بالرعاية</span><span class="pf-fr" lang="fr" dir="ltr">Téléphone du tuteur</span></span>
+            <span class="pf-label"><span class="pf-ar">الهاتف</span><span class="pf-en" lang="en" dir="ltr">Phone</span></span>
             <input name="family.tutorPhone" type="tel" inputmode="tel" />
           </label>
 
           <fieldset class="pf-choices">
-            <legend class="pf-label"><span class="pf-ar">الطفل متبنّى؟</span><span class="pf-fr" lang="fr" dir="ltr">Enfant adopté ?</span></legend>
-            <label class="pf-choice"><input type="radio" name="family.adopted" value="no" checked /><span class="pf-choice-text"><span class="pf-ar">لا</span><span class="pf-fr" lang="fr" dir="ltr">Non</span></span></label>
-            <label class="pf-choice"><input type="radio" name="family.adopted" value="yes" /><span class="pf-choice-text"><span class="pf-ar">نعم</span><span class="pf-fr" lang="fr" dir="ltr">Oui</span></span></label>
+            <legend class="pf-label"><span class="pf-ar">الطفل متبنّى؟</span><span class="pf-en" lang="en" dir="ltr">Is the child adopted?</span></legend>
+            <label class="pf-choice"><input type="radio" name="family.adopted" value="no" checked /><span class="pf-choice-text"><span class="pf-ar">لا</span><span class="pf-en" lang="en" dir="ltr">NO</span></span></label>
+            <label class="pf-choice"><input type="radio" name="family.adopted" value="yes" /><span class="pf-choice-text"><span class="pf-ar">نعم</span><span class="pf-en" lang="en" dir="ltr">YES</span></span></label>
           </fieldset>
           <label class="pf-field" data-show-when="family.adopted=yes">
-            <span class="pf-label"><span class="pf-ar">إذا نعم أوضحوا</span><span class="pf-fr" lang="fr" dir="ltr">Si oui, précisez</span></span>
+            <span class="pf-label"><span class="pf-ar">إذا نعم وضح</span><span class="pf-en" lang="en" dir="ltr">If yes, explain</span></span>
             <textarea name="family.adoptedExplain" rows="2"></textarea>
           </label>
         </section>
@@ -225,89 +226,89 @@
         <section class="pf-card">
           <h2>
             <span class="pf-ar">٣) التاريخ الطبي</span>
-            <span class="pf-fr" lang="fr" dir="ltr">Historique médical</span>
+            <span class="pf-en" lang="en" dir="ltr">3 — Medical history</span>
           </h2>
 
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">زمرة الدم</span><span class="pf-fr" lang="fr" dir="ltr">Groupe sanguin</span></span>
+            <span class="pf-label"><span class="pf-ar">زمرة الدم</span><span class="pf-en" lang="en" dir="ltr">Blood group</span></span>
             <select name="medical.bloodType">
-              <option value="">— اختاروا —</option>
+              <option value="">— اختاروا / Choose —</option>
               <option>A+</option><option>A-</option>
               <option>B+</option><option>B-</option>
               <option>AB+</option><option>AB-</option>
               <option>O+</option><option>O-</option>
-              <option value="unknown">غير معروف / Inconnu</option>
+              <option value="unknown">غير معروف / Unknown</option>
             </select>
           </label>
 
           <fieldset class="pf-choices">
-            <legend class="pf-label"><span class="pf-ar">وجود إعاقة</span><span class="pf-fr" lang="fr" dir="ltr">Présence d'un handicap</span></legend>
-            <label class="pf-choice"><input type="radio" name="medical.disability" value="no" checked /><span class="pf-choice-text"><span class="pf-ar">لا</span><span class="pf-fr" lang="fr" dir="ltr">Non</span></span></label>
-            <label class="pf-choice"><input type="radio" name="medical.disability" value="yes" /><span class="pf-choice-text"><span class="pf-ar">نعم</span><span class="pf-fr" lang="fr" dir="ltr">Oui</span></span></label>
+            <legend class="pf-label"><span class="pf-ar">وجود إعاقة</span><span class="pf-en" lang="en" dir="ltr">Presence of disability</span></legend>
+            <label class="pf-choice"><input type="radio" name="medical.disability" value="no" checked /><span class="pf-choice-text"><span class="pf-ar">لا</span><span class="pf-en" lang="en" dir="ltr">NO</span></span></label>
+            <label class="pf-choice"><input type="radio" name="medical.disability" value="yes" /><span class="pf-choice-text"><span class="pf-ar">نعم</span><span class="pf-en" lang="en" dir="ltr">YES</span></span></label>
           </fieldset>
           <label class="pf-field" data-show-when="medical.disability=yes">
-            <span class="pf-label"><span class="pf-ar">إذا نعم أوضحوا</span><span class="pf-fr" lang="fr" dir="ltr">Si oui, expliquez</span></span>
+            <span class="pf-label"><span class="pf-ar">إذا نعم (وضح)</span><span class="pf-en" lang="en" dir="ltr">If yes, explain</span></span>
             <textarea name="medical.disabilityExplain" rows="2"></textarea>
           </label>
 
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">هل تلقى جميع التطعيمات المبرمجة؟</span><span class="pf-fr" lang="fr" dir="ltr">A-t-il reçu toutes les vaccinations prévues ?</span></span>
+            <span class="pf-label"><span class="pf-ar">هل تلقى جميع التطعيمات المبرمجة؟</span><span class="pf-en" lang="en" dir="ltr">Did he receive all the planned vaccinations?</span></span>
             <input name="medical.vaccinations" type="text" placeholder="نعم / لا — أوضحوا إن لزم" />
           </label>
 
           <fieldset class="pf-choices">
-            <legend class="pf-label"><span class="pf-ar">وجود مرض وراثي؟</span><span class="pf-fr" lang="fr" dir="ltr">Maladie héréditaire ?</span></legend>
-            <label class="pf-choice"><input type="radio" name="medical.hereditary" value="no" checked /><span class="pf-choice-text"><span class="pf-ar">لا</span><span class="pf-fr" lang="fr" dir="ltr">Non</span></span></label>
-            <label class="pf-choice"><input type="radio" name="medical.hereditary" value="yes" /><span class="pf-choice-text"><span class="pf-ar">نعم</span><span class="pf-fr" lang="fr" dir="ltr">Oui</span></span></label>
+            <legend class="pf-label"><span class="pf-ar">وجود مرض وراثي؟</span><span class="pf-en" lang="en" dir="ltr">Does a hereditary disease exist?</span></legend>
+            <label class="pf-choice"><input type="radio" name="medical.hereditary" value="no" checked /><span class="pf-choice-text"><span class="pf-ar">لا</span><span class="pf-en" lang="en" dir="ltr">NO</span></span></label>
+            <label class="pf-choice"><input type="radio" name="medical.hereditary" value="yes" /><span class="pf-choice-text"><span class="pf-ar">نعم</span><span class="pf-en" lang="en" dir="ltr">YES</span></span></label>
           </fieldset>
           <fieldset class="pf-choices" data-show-when="medical.hereditary=yes">
-            <legend class="pf-label"><span class="pf-ar">المنشأ</span><span class="pf-fr" lang="fr" dir="ltr">Origine</span></legend>
-            <label class="pf-choice"><input type="radio" name="medical.hereditaryOrigin" value="biological" /><span class="pf-choice-text"><span class="pf-ar">ذو منشأ عضوي</span><span class="pf-fr" lang="fr" dir="ltr">Biologique</span></span></label>
-            <label class="pf-choice"><input type="radio" name="medical.hereditaryOrigin" value="neuropsychiatric" /><span class="pf-choice-text"><span class="pf-ar">ذو منشأ نفس عصبي</span><span class="pf-fr" lang="fr" dir="ltr">Neuropsychiatrique</span></span></label>
+            <legend class="pf-label"><span class="pf-ar">في حالة نعم — المنشأ</span><span class="pf-en" lang="en" dir="ltr">If yes — origin</span></legend>
+            <label class="pf-choice"><input type="radio" name="medical.hereditaryOrigin" value="biological" /><span class="pf-choice-text"><span class="pf-ar">ذو منشأ عضوي</span><span class="pf-en" lang="en" dir="ltr">Biological</span></span></label>
+            <label class="pf-choice"><input type="radio" name="medical.hereditaryOrigin" value="neuropsychiatric" /><span class="pf-choice-text"><span class="pf-ar">ذو منشأ نفس عصبي</span><span class="pf-en" lang="en" dir="ltr">Neuropsychiatric origin</span></span></label>
           </fieldset>
           <label class="pf-field" data-show-when="medical.hereditary=yes">
-            <span class="pf-label"><span class="pf-ar">وضحوا</span><span class="pf-fr" lang="fr" dir="ltr">Précisez</span></span>
+            <span class="pf-label"><span class="pf-ar">وضح</span><span class="pf-en" lang="en" dir="ltr">Explain</span></span>
             <textarea name="medical.hereditaryExplain" rows="2"></textarea>
           </label>
 
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">هل أصيب بمرض حاد مسبقاً؟</span><span class="pf-fr" lang="fr" dir="ltr">A-t-il déjà souffert d'une maladie aiguë ?</span></span>
+            <span class="pf-label"><span class="pf-ar">هل أصيب التلميذ(ة) بمرض حاد مسبقاً (وضح)؟</span><span class="pf-en" lang="en" dir="ltr">Has the student ever suffered from an acute illness?</span></span>
             <textarea name="medical.acutePast" rows="2" placeholder="لا / نعم مع التوضيح"></textarea>
           </label>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">هل يعاني من مرض عضوي حالياً؟</span><span class="pf-fr" lang="fr" dir="ltr">Souffre-t-il actuellement d'une maladie organique ?</span></span>
+            <span class="pf-label"><span class="pf-ar">هل يعاني من مرض عضوي ما حالياً (وضح)؟</span><span class="pf-en" lang="en" dir="ltr">Is he currently suffering from an acute illness?</span></span>
             <textarea name="medical.organicCurrent" rows="2" placeholder="لا / نعم مع التوضيح"></textarea>
           </label>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">هل لديه حساسية نحو مادة ما؟</span><span class="pf-fr" lang="fr" dir="ltr">Allergie à une substance ?</span></span>
+            <span class="pf-label"><span class="pf-ar">هل لديه حساسية نحو مادة ما؟</span><span class="pf-en" lang="en" dir="ltr">Does he have an allergy to a certain substance?</span></span>
             <textarea name="medical.allergy" rows="2" placeholder="لا / نعم — اذكروا المادة"></textarea>
           </label>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">هل يستعمل النظارات الطبية؟</span><span class="pf-fr" lang="fr" dir="ltr">Porte-t-il des lunettes ?</span></span>
+            <span class="pf-label"><span class="pf-ar">هل يستعمل النظارات الطبية؟</span><span class="pf-en" lang="en" dir="ltr">Does he use medical glasses?</span></span>
             <input name="medical.glasses" type="text" placeholder="نعم / لا" />
           </label>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">هل يظهر أي سلوك خاص (عناد، إفراط حركي…)؟</span><span class="pf-fr" lang="fr" dir="ltr">Comportement particulier (opposition, hyperactivité…) ?</span></span>
+            <span class="pf-label"><span class="pf-ar">هل يظهر التلميذ أي سلوك خاص (عناد، إفراط حركي…)؟</span><span class="pf-en" lang="en" dir="ltr">Does he have a behavioral problem?</span></span>
             <textarea name="medical.behavior" rows="2"></textarea>
           </label>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">هل تعتقدون أن لديه صعوبة في التعلم؟</span><span class="pf-fr" lang="fr" dir="ltr">Suspectez-vous une difficulté d'apprentissage ?</span></span>
+            <span class="pf-label"><span class="pf-ar">هل تعتقد أنه لديه صعوبة ما في التعلم؟</span><span class="pf-en" lang="en" dir="ltr">Do you suspect that your child has a learning difficulty?</span></span>
             <textarea name="medical.learningDifficulty" rows="2"></textarea>
           </label>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">هل يخضع للعلاج حالياً؟</span><span class="pf-fr" lang="fr" dir="ltr">Sous traitement actuellement ?</span></span>
+            <span class="pf-label"><span class="pf-ar">هل يخضع للعلاج حالياً (وضح)؟</span><span class="pf-en" lang="en" dir="ltr">Is he undergoing a treatment at present?</span></span>
             <textarea name="medical.treatment" rows="2" placeholder="لا / نعم مع التوضيح"></textarea>
           </label>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">هل يتابع عند مختص نفسي حالياً؟</span><span class="pf-fr" lang="fr" dir="ltr">Suit-il un psychologue actuellement ?</span></span>
+            <span class="pf-label"><span class="pf-ar">هل يتابع عند مختص نفسي حالياً؟</span><span class="pf-en" lang="en" dir="ltr">Is he currently seeing a psychologist?</span></span>
             <input name="medical.psychologist" type="text" placeholder="نعم / لا" />
           </label>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">حادثة أو تجربة خاصة</span><span class="pf-fr" lang="fr" dir="ltr">Incident ou expérience particulière</span></span>
+            <span class="pf-label"><span class="pf-ar">حادثة أو تجربة خاصة</span><span class="pf-en" lang="en" dir="ltr">Incident or a personal experience</span></span>
             <textarea name="medical.incident" rows="2"></textarea>
           </label>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">آخر</span><span class="pf-fr" lang="fr" dir="ltr">Autre</span></span>
+            <span class="pf-label"><span class="pf-ar">آخر</span><span class="pf-en" lang="en" dir="ltr">Others</span></span>
             <textarea name="medical.other" rows="2"></textarea>
           </label>
         </section>
@@ -316,43 +317,45 @@
         <section class="pf-card">
           <h2>
             <span class="pf-ar">٤) الاستعدادات والميول</span>
-            <span class="pf-fr" lang="fr" dir="ltr">Aptitudes et centres d'intérêt</span>
+            <span class="pf-en" lang="en" dir="ltr">4 — Potential and trends</span>
           </h2>
           <p class="pf-hint">
-            خذوا وقتكم قبل الإجابة.
-            <span class="pf-fr" lang="fr" dir="ltr">Prenez le temps nécessaire avant de répondre.</span>
+            سيدي الولي في هذه الفقرة، نطلب منك أن تفكر جيداً وأن تأخذ الوقت الكافي قبل الإجابة على الأسئلة التالية.
+            <span class="pf-en" lang="en" dir="ltr"
+              >Dear parents, we kindly request that you carefully consider each question and take the necessary time to answer:</span
+            >
           </p>
 
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">كيف تصفون ابنكم / ابنتكم عموماً؟</span><span class="pf-fr" lang="fr" dir="ltr">Comment décrivez-vous votre enfant en général ?</span></span>
+            <span class="pf-label"><span class="pf-ar">كيف تصف ابنك / ابنتك (عموماً)</span><span class="pf-en" lang="en" dir="ltr">How do you describe your child in general?</span></span>
             <textarea name="potential.describe" rows="3"></textarea>
           </label>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">فيمَ يتفوق ويتميز بشكل خاص؟</span><span class="pf-fr" lang="fr" dir="ltr">En quoi excelle-t-il particulièrement ?</span></span>
+            <span class="pf-label"><span class="pf-ar">فيمَ يتفوق ويتميز بشكل خاص (المهارة)؟</span><span class="pf-en" lang="en" dir="ltr">What does your child especially excel at?</span></span>
             <textarea name="potential.excel" rows="2"></textarea>
           </label>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">هل لديه ميول خاصة؟</span><span class="pf-fr" lang="fr" dir="ltr">A-t-il des inclinations particulières ?</span></span>
+            <span class="pf-label"><span class="pf-ar">هل لديه ميول خاصة؟</span><span class="pf-en" lang="en" dir="ltr">Does he have any particular tendencies?</span></span>
             <textarea name="potential.tendencies" rows="2"></textarea>
           </label>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">هل يظهر بوادر موهبة معينة؟</span><span class="pf-fr" lang="fr" dir="ltr">Montre-t-il des signes de talent ?</span></span>
+            <span class="pf-label"><span class="pf-ar">هل يظهر بوادر موهبة معينة؟</span><span class="pf-en" lang="en" dir="ltr">Does he show signs of some talent?</span></span>
             <textarea name="potential.talent" rows="2"></textarea>
           </label>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">ما الذي يثير الاهتمام والشغف لديه؟</span><span class="pf-fr" lang="fr" dir="ltr">Qu'est-ce qui l'intéresse et le passionne ?</span></span>
+            <span class="pf-label"><span class="pf-ar">ما الذي يثير الاهتمام والشغف لديه؟</span><span class="pf-en" lang="en" dir="ltr">What is he interested in?</span></span>
             <textarea name="potential.interests" rows="2"></textarea>
           </label>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">ما الذي يثير دافعيته للتعلم؟</span><span class="pf-fr" lang="fr" dir="ltr">Qu'est-ce qui le motive académiquement ?</span></span>
+            <span class="pf-label"><span class="pf-ar">ما الذي يثير دافعيته للتعلم؟</span><span class="pf-en" lang="en" dir="ltr">What could motivate him academically?</span></span>
             <textarea name="potential.motivation" rows="2"></textarea>
           </label>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">ما السلوك الذي تتمنون أن يكتسبه أو يتخلى عنه؟</span><span class="pf-fr" lang="fr" dir="ltr">Quel comportement souhaitez-vous qu'il adopte ou abandonne ?</span></span>
+            <span class="pf-label"><span class="pf-ar">ما السلوك الذي تتمنى أن يكتسبه ابنك أو يتخلى عنه مستقبلاً؟</span><span class="pf-en" lang="en" dir="ltr">What behavior would you like your child to adopt or abandon in the future?</span></span>
             <textarea name="potential.behaviorWish" rows="2"></textarea>
           </label>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">آخر</span><span class="pf-fr" lang="fr" dir="ltr">Autre</span></span>
+            <span class="pf-label"><span class="pf-ar">آخر</span><span class="pf-en" lang="en" dir="ltr">Other</span></span>
             <textarea name="potential.other" rows="2"></textarea>
           </label>
         </section>
@@ -361,39 +364,41 @@
         <section class="pf-card">
           <h2>
             <span class="pf-ar">٥) مساحة خاصة بالتلميذ(ة)</span>
-            <span class="pf-fr" lang="fr" dir="ltr">Espace réservé à l'élève</span>
+            <span class="pf-en" lang="en" dir="ltr">5 — Reserved space for the student</span>
           </h2>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">المادة المفضلة ١</span><span class="pf-fr" lang="fr" dir="ltr">Matière préférée 1</span></span>
+            <span class="pf-label"><span class="pf-ar">المادة المفضلة ١</span><span class="pf-en" lang="en" dir="ltr">Favorite subject 1</span></span>
             <input name="studentSpace.favSubject1" type="text" />
           </label>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">المادة المفضلة ٢</span><span class="pf-fr" lang="fr" dir="ltr">Matière préférée 2</span></span>
+            <span class="pf-label"><span class="pf-ar">المادة المفضلة ٢</span><span class="pf-en" lang="en" dir="ltr">Favorite subject 2</span></span>
             <input name="studentSpace.favSubject2" type="text" />
           </label>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">المادة المفضلة ٣</span><span class="pf-fr" lang="fr" dir="ltr">Matière préférée 3</span></span>
+            <span class="pf-label"><span class="pf-ar">المادة المفضلة ٣</span><span class="pf-en" lang="en" dir="ltr">Favorite subject 3</span></span>
             <input name="studentSpace.favSubject3" type="text" />
           </label>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">الهوايات</span><span class="pf-fr" lang="fr" dir="ltr">Loisirs</span></span>
+            <span class="pf-label"><span class="pf-ar">الهوايات</span><span class="pf-en" lang="en" dir="ltr">Hobbies</span></span>
             <textarea name="studentSpace.hobbies" rows="2"></textarea>
           </label>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">المهارات</span><span class="pf-fr" lang="fr" dir="ltr">Compétences</span></span>
+            <span class="pf-label"><span class="pf-ar">المهارات</span><span class="pf-en" lang="en" dir="ltr">Skills</span></span>
             <textarea name="studentSpace.skills" rows="2"></textarea>
           </label>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">المهنة المستقبلية</span><span class="pf-fr" lang="fr" dir="ltr">Métier futur</span></span>
+            <span class="pf-label"><span class="pf-ar">المهنة المستقبلية</span><span class="pf-en" lang="en" dir="ltr">Future career</span></span>
             <input name="studentSpace.futureCareer" type="text" />
           </label>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">الطموح والأهداف</span><span class="pf-fr" lang="fr" dir="ltr">Ambitions et objectifs</span></span>
+            <span class="pf-label"><span class="pf-ar">الطموح والأهداف</span><span class="pf-en" lang="en" dir="ltr">Ambitions and objectives</span></span>
             <textarea name="studentSpace.ambitions" rows="2"></textarea>
           </label>
           <p class="pf-hint">
-            إذا كان لديكم وثائق أو فيديوهات تدعم ميول ابنكم، يسعدنا تواصلكم مع الإدارة.
-            <span class="pf-fr" lang="fr" dir="ltr">Si vous avez des preuves (documents, vidéos) des talents de votre enfant, contactez l'administration.</span>
+            ملاحظة: سيدي الولي إذا كان لديك أي دليل يدعم رأيك أو صحة حكمك حول اتجاهات وميول ابنك (ابنتك)، فإنه يشرفنا اتصالكم أو حتى حضوركم مرفقين بكل ما من شأنه إثبات ذلك (وثيقة، فيديو، إنجاز …).
+            <span class="pf-en" lang="en" dir="ltr"
+              >Note: In order to strengthen your opinion regarding your child's ambitions and preferences, we would be honored by your presence with all documents, videos, etc. proving your judgment.</span
+            >
           </p>
         </section>
 
@@ -401,72 +406,77 @@
         <section class="pf-card">
           <h2>
             <span class="pf-ar">٦) مساحة خاصة بالولي + الموافقات</span>
-            <span class="pf-fr" lang="fr" dir="ltr">Espace parent et autorisations</span>
+            <span class="pf-en" lang="en" dir="ltr">6 — Parent space &amp; authorizations</span>
           </h2>
 
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">المدرسة الأصلية (إن وُجدت)</span><span class="pf-fr" lang="fr" dir="ltr">École d'origine (si applicable)</span></span>
+            <span class="pf-label"><span class="pf-ar">المدرسة الأصلية (إن وُجدت)</span><span class="pf-en" lang="en" dir="ltr">Original school (if any)</span></span>
             <input name="school.previousSchool" type="text" />
           </label>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">تاريخ الالتحاق بالمدرسة</span><span class="pf-fr" lang="fr" dir="ltr">Date d'inscription</span></span>
+            <span class="pf-label"><span class="pf-ar">تاريخ الالتحاق بالمدرسة</span><span class="pf-en" lang="en" dir="ltr">Date of enrollment</span></span>
             <input name="school.enrollmentDate" type="date" />
           </label>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">المستوى</span><span class="pf-fr" lang="fr" dir="ltr">Niveau</span></span>
+            <span class="pf-label"><span class="pf-ar">المستوى</span><span class="pf-en" lang="en" dir="ltr">Level</span></span>
             <input name="school.level" type="text" placeholder="مثال: 3AP / 1M" />
           </label>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">هل أعاد السنة من قبل؟</span><span class="pf-fr" lang="fr" dir="ltr">A-t-il redoublé ?</span></span>
+            <span class="pf-label"><span class="pf-ar">هل أعاد السنة من قبل (إذا نعم وضح)؟</span><span class="pf-en" lang="en" dir="ltr">Has he repeated a year before (if yes, explain)?</span></span>
             <textarea name="school.repeatedYear" rows="2" placeholder="لا / نعم مع التوضيح"></textarea>
           </label>
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">هل أقام أو تمدرس بالخارج؟</span><span class="pf-fr" lang="fr" dir="ltr">A-t-il étudié / vécu à l'étranger ?</span></span>
+            <span class="pf-label"><span class="pf-ar">هل أقام أو تمدرس بالخارج من قبل (إذا نعم وضح)؟</span><span class="pf-en" lang="en" dir="ltr">Has he lived or studied abroad before (if yes, explain)?</span></span>
             <textarea name="school.abroad" rows="2" placeholder="لا / نعم مع التوضيح"></textarea>
           </label>
 
+          <p class="pf-hint">
+            سيدي الولي، فيما يلي بعض الأمور التنظيمية التي تمس تمدرس التلميذ وتتطلب موافقتك المسبقة:
+            <span class="pf-en" lang="en" dir="ltr">Dear parent, the following organizational points require your prior approval:</span>
+          </p>
+
           <fieldset class="pf-choices">
-            <legend class="pf-label"><span class="pf-ar">السماح بالمغادرة</span><span class="pf-fr" lang="fr" dir="ltr">Autorisation de sortie</span></legend>
-            <label class="pf-choice"><input type="radio" name="consents.leaveMode" value="with_parent" checked /><span class="pf-choice-text"><span class="pf-ar">فقط مع ولي الأمر (أب / أم)</span><span class="pf-fr" lang="fr" dir="ltr">Uniquement avec le parent</span></span></label>
-            <label class="pf-choice"><input type="radio" name="consents.leaveMode" value="alone" /><span class="pf-choice-text"><span class="pf-ar">وحده</span><span class="pf-fr" lang="fr" dir="ltr">Seul(e)</span></span></label>
-            <label class="pf-choice"><input type="radio" name="consents.leaveMode" value="companion" /><span class="pf-choice-text"><span class="pf-ar">مرافق</span><span class="pf-fr" lang="fr" dir="ltr">Accompagnateur</span></span></label>
-            <label class="pf-choice"><input type="radio" name="consents.leaveMode" value="driver" /><span class="pf-choice-text"><span class="pf-ar">السائق</span><span class="pf-fr" lang="fr" dir="ltr">Chauffeur</span></span></label>
+            <legend class="pf-label"><span class="pf-ar">السماح للتلميذ(ة) بالمغادرة</span><span class="pf-en" lang="en" dir="ltr">Permission for the student to leave</span></legend>
+            <label class="pf-choice"><input type="radio" name="consents.leaveMode" value="with_parent" checked /><span class="pf-choice-text"><span class="pf-ar">فقط مع ولي الأمر: الأب — الأم</span><span class="pf-en" lang="en" dir="ltr">Only with the guardian: father — mother</span></span></label>
+            <label class="pf-choice"><input type="radio" name="consents.leaveMode" value="alone" /><span class="pf-choice-text"><span class="pf-ar">وحده</span><span class="pf-en" lang="en" dir="ltr">Alone</span></span></label>
+            <label class="pf-choice"><input type="radio" name="consents.leaveMode" value="companion" /><span class="pf-choice-text"><span class="pf-ar">مرافق</span><span class="pf-en" lang="en" dir="ltr">Companion</span></span></label>
+            <label class="pf-choice"><input type="radio" name="consents.leaveMode" value="driver" /><span class="pf-choice-text"><span class="pf-ar">السائق</span><span class="pf-en" lang="en" dir="ltr">Driver</span></span></label>
           </fieldset>
           <div data-show-when="consents.leaveMode=companion">
-            <label class="pf-field"><span class="pf-label"><span class="pf-ar">صفة المرافق</span><span class="pf-fr" lang="fr" dir="ltr">Lien de l'accompagnateur</span></span><input name="consents.companionRole" type="text" /></label>
-            <label class="pf-field"><span class="pf-label"><span class="pf-ar">اسم المرافق</span><span class="pf-fr" lang="fr" dir="ltr">Nom de l'accompagnateur</span></span><input name="consents.companionName" type="text" /></label>
-            <label class="pf-field"><span class="pf-label"><span class="pf-ar">هاتف المرافق</span><span class="pf-fr" lang="fr" dir="ltr">Téléphone</span></span><input name="consents.companionPhone" type="tel" inputmode="tel" /></label>
-            <p class="pf-hint">هام: يُرفق صورة من بطاقة هوية المرافق عند الحاجة. <span class="pf-fr" lang="fr" dir="ltr">Joindre une copie de la pièce d'identité si demandé.</span></p>
+            <label class="pf-field"><span class="pf-label"><span class="pf-ar">الصفة</span><span class="pf-en" lang="en" dir="ltr">Relation</span></span><input name="consents.companionRole" type="text" /></label>
+            <label class="pf-field"><span class="pf-label"><span class="pf-ar">الاسم</span><span class="pf-en" lang="en" dir="ltr">Name</span></span><input name="consents.companionName" type="text" /></label>
+            <label class="pf-field"><span class="pf-label"><span class="pf-ar">الهاتف</span><span class="pf-en" lang="en" dir="ltr">Phone</span></span><input name="consents.companionPhone" type="tel" inputmode="tel" /></label>
+            <p class="pf-hint">هام: في الحالة 3/4 يجب إرفاق هذه الوثيقة بصورة طبق الأصل عن بطاقة الهوية للمرافق. <span class="pf-en" lang="en" dir="ltr">Important: for companion/driver, attach a copy of their ID card.</span></p>
           </div>
           <div data-show-when="consents.leaveMode=driver">
-            <label class="pf-field"><span class="pf-label"><span class="pf-ar">اسم السائق</span><span class="pf-fr" lang="fr" dir="ltr">Nom du chauffeur</span></span><input name="consents.driverName" type="text" /></label>
-            <label class="pf-field"><span class="pf-label"><span class="pf-ar">هاتف السائق</span><span class="pf-fr" lang="fr" dir="ltr">Téléphone du chauffeur</span></span><input name="consents.driverPhone" type="tel" inputmode="tel" /></label>
-            <p class="pf-hint">هام: يُرفق صورة من بطاقة هوية السائق عند الحاجة. <span class="pf-fr" lang="fr" dir="ltr">Joindre une copie de la pièce d'identité si demandé.</span></p>
+            <label class="pf-field"><span class="pf-label"><span class="pf-ar">السائق</span><span class="pf-en" lang="en" dir="ltr">Driver</span></span><input name="consents.driverName" type="text" /></label>
+            <label class="pf-field"><span class="pf-label"><span class="pf-ar">الهاتف</span><span class="pf-en" lang="en" dir="ltr">Phone</span></span><input name="consents.driverPhone" type="tel" inputmode="tel" /></label>
+            <p class="pf-hint">هام: يجب إرفاق صورة طبق الأصل عن بطاقة هوية السائق. <span class="pf-en" lang="en" dir="ltr">Important: attach a copy of the driver's ID card.</span></p>
           </div>
 
           <fieldset class="pf-choices">
-            <legend class="pf-label"><span class="pf-ar">الخرجات التعليمية والترفيهية</span><span class="pf-fr" lang="fr" dir="ltr">Sorties éducatives et récréatives</span></legend>
-            <label class="pf-choice"><input type="radio" name="consents.trips" value="yes" checked /><span class="pf-choice-text"><span class="pf-ar">أوافق</span><span class="pf-fr" lang="fr" dir="ltr">J'accepte</span></span></label>
-            <label class="pf-choice"><input type="radio" name="consents.trips" value="no" /><span class="pf-choice-text"><span class="pf-ar">لا أوافق</span><span class="pf-fr" lang="fr" dir="ltr">Je refuse</span></span></label>
+            <legend class="pf-label"><span class="pf-ar">الاستفادة من الخرجات التعليمية والترفيهية المبرمجة</span><span class="pf-en" lang="en" dir="ltr">Educational and recreational trips during the school year</span></legend>
+            <label class="pf-choice"><input type="radio" name="consents.trips" value="yes" checked /><span class="pf-choice-text"><span class="pf-ar">أوافق</span><span class="pf-en" lang="en" dir="ltr">I agree</span></span></label>
+            <label class="pf-choice"><input type="radio" name="consents.trips" value="no" /><span class="pf-choice-text"><span class="pf-ar">لا أوافق</span><span class="pf-en" lang="en" dir="ltr">I do not agree</span></span></label>
           </fieldset>
           <fieldset class="pf-choices">
-            <legend class="pf-label"><span class="pf-ar">ممارسة الرياضة</span><span class="pf-fr" lang="fr" dir="ltr">Pratique du sport</span></legend>
-            <label class="pf-choice"><input type="radio" name="consents.sport" value="yes" checked /><span class="pf-choice-text"><span class="pf-ar">أوافق</span><span class="pf-fr" lang="fr" dir="ltr">J'accepte</span></span></label>
-            <label class="pf-choice"><input type="radio" name="consents.sport" value="no" /><span class="pf-choice-text"><span class="pf-ar">لا أوافق</span><span class="pf-fr" lang="fr" dir="ltr">Je refuse</span></span></label>
+            <legend class="pf-label"><span class="pf-ar">السماح للتلميذ(ة) بممارسة الرياضة</span><span class="pf-en" lang="en" dir="ltr">Permission to practice sport</span></legend>
+            <label class="pf-choice"><input type="radio" name="consents.sport" value="yes" checked /><span class="pf-choice-text"><span class="pf-ar">أوافق</span><span class="pf-en" lang="en" dir="ltr">I agree</span></span></label>
+            <label class="pf-choice"><input type="radio" name="consents.sport" value="no" /><span class="pf-choice-text"><span class="pf-ar">لا أوافق</span><span class="pf-en" lang="en" dir="ltr">I do not agree</span></span></label>
           </fieldset>
           <fieldset class="pf-choices">
-            <legend class="pf-label"><span class="pf-ar">الظهور في فيديوهات مواقع التواصل</span><span class="pf-fr" lang="fr" dir="ltr">Apparition dans les vidéos des réseaux sociaux</span></legend>
-            <label class="pf-choice"><input type="radio" name="consents.socialVideos" value="yes" /><span class="pf-choice-text"><span class="pf-ar">أوافق</span><span class="pf-fr" lang="fr" dir="ltr">J'accepte</span></span></label>
-            <label class="pf-choice"><input type="radio" name="consents.socialVideos" value="no" checked /><span class="pf-choice-text"><span class="pf-ar">لا أوافق</span><span class="pf-fr" lang="fr" dir="ltr">Je refuse</span></span></label>
+            <legend class="pf-label"><span class="pf-ar">السماح بالظهور في الفيديوهات على منصات التواصل الاجتماعي</span><span class="pf-en" lang="en" dir="ltr">Permission to appear in social media videos</span></legend>
+            <label class="pf-choice"><input type="radio" name="consents.socialVideos" value="yes" /><span class="pf-choice-text"><span class="pf-ar">أوافق</span><span class="pf-en" lang="en" dir="ltr">I agree</span></span></label>
+            <label class="pf-choice"><input type="radio" name="consents.socialVideos" value="no" checked /><span class="pf-choice-text"><span class="pf-ar">لا أوافق</span><span class="pf-en" lang="en" dir="ltr">I do not agree</span></span></label>
           </fieldset>
           <fieldset class="pf-choices">
-            <legend class="pf-label"><span class="pf-ar">المشاركة في النشاطات وتصوير الطفل واستعمال الصور/المقاطع للأولياء أو موقع المدرسة</span><span class="pf-fr" lang="fr" dir="ltr">Activités + photos/vidéos pour les parents ou le site de l'école</span></legend>
-            <label class="pf-choice"><input type="radio" name="consents.activitiesMedia" value="yes" /><span class="pf-choice-text"><span class="pf-ar">أوافق</span><span class="pf-fr" lang="fr" dir="ltr">J'accepte</span></span></label>
-            <label class="pf-choice"><input type="radio" name="consents.activitiesMedia" value="no" checked /><span class="pf-choice-text"><span class="pf-ar">لا أوافق</span><span class="pf-fr" lang="fr" dir="ltr">Je refuse</span></span></label>
+            <legend class="pf-label"><span class="pf-ar">المشاركة في النشاطات التربوية والثقافية والرياضية واللاصفية والترخيص بتصوير طفلي واستعمال الصور/المقاطع</span><span class="pf-en" lang="en" dir="ltr">Participation in educational, cultural, sports &amp; extracurricular activities, and permission to photograph/film my child for parents' channels or the school website/social pages</span></legend>
+            <label class="pf-choice"><input type="radio" name="consents.activitiesMedia" value="yes" /><span class="pf-choice-text"><span class="pf-ar">أوافق</span><span class="pf-en" lang="en" dir="ltr">I agree</span></span></label>
+            <label class="pf-choice"><input type="radio" name="consents.activitiesMedia" value="no" checked /><span class="pf-choice-text"><span class="pf-ar">لا أوافق</span><span class="pf-en" lang="en" dir="ltr">I do not agree</span></span></label>
           </fieldset>
 
           <label class="pf-field">
-            <span class="pf-label"><span class="pf-ar">توصيات الولي</span><span class="pf-fr" lang="fr" dir="ltr">Recommandations du parent</span></span>
+            <span class="pf-label"><span class="pf-ar">توصيات الولي</span><span class="pf-en" lang="en" dir="ltr">Parent's recommendations</span></span>
             <textarea name="consents.parentNotes" rows="3"></textarea>
           </label>
         </section>
@@ -477,7 +487,7 @@
           <button type="submit" class="pf-submit" id="submit-btn">إرسال الاستمارة</button>
           <p class="pf-submit-hint">
             اضغطوا مرة واحدة فقط
-            <span class="pf-fr" lang="fr" dir="ltr">Une seule fois</span>
+            <span class="pf-en" lang="en" dir="ltr">Press only once</span>
           </p>
         </div>
       </form>
@@ -487,11 +497,11 @@
           <div class="pf-success-ico" aria-hidden="true">✓</div>
           <h2>شكراً لكم</h2>
           <p>تم استلام استمارتكم بنجاح.</p>
-          <p class="pf-fr" lang="fr" dir="ltr">Votre formulaire a bien été envoyé. Merci.</p>
+          <p class="pf-en" lang="en" dir="ltr">Your form has been received successfully. Thank you.</p>
         </div>
       </div>
     </div>
 
-    <script src="js/parent-form.js?v=7"></script>
+    <script src="js/parent-form.js?v=8"></script>
   </body>
 </html>
