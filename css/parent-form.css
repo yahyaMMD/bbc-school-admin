@@ -230,6 +230,12 @@ body {
   z-index: 20;
 }
 
+/* Must beat .pf-success { display: grid } — otherwise the thank-you
+   overlay stays visible even with the HTML hidden attribute. */
+.pf-success[hidden] {
+  display: none !important;
+}
+
 .pf-success-card {
   background: #fff;
   border-radius: 20px;

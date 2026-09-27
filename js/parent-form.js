@@ -5,6 +5,10 @@
   const success = document.getElementById("success");
   const classSelect = document.getElementById("class-select");
 
+  // Always start on the empty form (Safari bfcache can restore a prior submit).
+  if (success) success.hidden = true;
+  if (form) form.hidden = false;
+
   function showError(msg) {
     if (!errEl) return;
     errEl.hidden = !msg;
