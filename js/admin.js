@@ -1679,11 +1679,48 @@ const AdminApp = (() => {
               )
             )}
             ${block(
-              "موافقة التصوير / Photo consent",
-              kv(
-                { photoMedia: photoLabel(photoVal) },
-                [["photoMedia", "تصوير واستعمال الصور/الفيديوهات / Photos & videos"]]
-              )
+              "الموافقات / Approvals",
+              (() => {
+                const depMap = {
+                  withParent: "1ـ فقط مع ولّي الأمر: الأب — الأم / With guardian only",
+                  alone: "2ـ لوحده / Alone",
+                  companion: "3ـ مرافق / Companion",
+                  driver: "4ـ السائق / Driver",
+                };
+                const agree = (v) =>
+                  v === "yes" ? "أوافق / I agree" : v === "no" ? "لا أوافق / I do not agree" : v || "—";
+                const labels = [["departureMode", "1) السماح بالمغادرة / Departure"]];
+                const values = {
+                  departureMode: depMap[cons.departureMode] || cons.departureMode,
+                };
+                if (cons.departureMode === "companion") {
+                  values.companionRole = cons.companionRole;
+                  values.companionName = cons.companionName;
+                  values.companionPhone = cons.companionPhone;
+                  labels.push(
+                    ["companionRole", "صفة المرافق / Companion role"],
+                    ["companionName", "اسم المرافق / Companion name"],
+                    ["companionPhone", "هاتف المرافق / Companion phone"]
+                  );
+                }
+                if (cons.departureMode === "driver") {
+                  values.driverName = cons.driverName;
+                  values.driverPhone = cons.driverPhone;
+                  labels.push(
+                    ["driverName", "اسم السائق / Driver name"],
+                    ["driverPhone", "هاتف السائق / Driver phone"]
+                  );
+                }
+                values.outings = agree(cons.outings);
+                values.sports = agree(cons.sports);
+                values.photoMedia = photoLabel(photoVal);
+                labels.push(
+                  ["outings", "2) الخرجات التعليمية والترفيهية / Outings"],
+                  ["sports", "3) ممارسة الرياضة / Sports"],
+                  ["photoMedia", "تصوير واستعمال الصور/الفيديوهات / Photos & videos"]
+                );
+                return kv(values, labels);
+              })()
             )}
             <div class="admin-form-actions" style="margin-top:1rem">
               <button type="button" class="btn btn-primary btn-sm" data-pf-mark="reviewed">${esc(I18n.t("parentMarkReviewed"))}</button>

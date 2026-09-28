@@ -108,7 +108,32 @@
       showError("العنوان مطلوب");
       return;
     }
-    if (!(formData.consents || {}).photoMedia) {
+    const cons = formData.consents || {};
+    if (!cons.departureMode) {
+      showError("يرجى اختيار طريقة السماح بالمغادرة");
+      return;
+    }
+    if (cons.departureMode === "companion") {
+      if (!cons.companionRole || !cons.companionName || !cons.companionPhone) {
+        showError("يرجى إكمال بيانات المرافق (الصفة، الاسم، الهاتف)");
+        return;
+      }
+    }
+    if (cons.departureMode === "driver") {
+      if (!cons.driverName || !cons.driverPhone) {
+        showError("يرجى إكمال بيانات السائق (الاسم والهاتف)");
+        return;
+      }
+    }
+    if (!cons.outings) {
+      showError("يرجى اختيار الموافقة أو عدم الموافقة على الخرجات");
+      return;
+    }
+    if (!cons.sports) {
+      showError("يرجى اختيار الموافقة أو عدم الموافقة على الرياضة");
+      return;
+    }
+    if (!cons.photoMedia) {
       showError("يرجى اختيار الموافقة أو عدم الموافقة على التصوير");
       return;
     }

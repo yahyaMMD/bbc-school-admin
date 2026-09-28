@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import { query } from "./db.js";
 
-const FORM_VERSION = 3;
+const FORM_VERSION = 4;
 
 function sid() {
   return "PF" + crypto.randomBytes(6).toString("hex").toUpperCase();
@@ -87,6 +87,14 @@ export function normalizeFormData(raw) {
       other: clean(medical.other, 1000),
     },
     consents: {
+      departureMode: clean(consents.departureMode, 40),
+      companionRole: clean(consents.companionRole, 120),
+      companionName: clean(consents.companionName, 120),
+      companionPhone: clean(consents.companionPhone, 40),
+      driverName: clean(consents.driverName, 120),
+      driverPhone: clean(consents.driverPhone, 40),
+      outings: clean(consents.outings, 10),
+      sports: clean(consents.sports, 10),
       photoMedia: clean(consents.photoMedia, 10),
     },
   };
@@ -164,6 +172,35 @@ export async function submitForm(req, res) {
     }
     if (!contact.address) {
       return res.status(400).json({ error: "العنوان مطلوب / Address required" });
+    }
+    if (!["withParent", "alone", "companion", "driver"].includes(consents.departureMode)) {
+      return res
+        .status(400)
+        .json({ error: "اختيار المغادرة مطلوب / Departure permission required" });
+    }
+    if (consents.departureMode === "companion") {
+      if (!consents.companionRole || !consents.companionName || consents.companionPhone.replace(/\D/g, "").length < 8) {
+        return res
+          .status(400)
+          .json({ error: "بيانات المرافق مطلوبة / Companion details required" });
+      }
+    }
+    if (consents.departureMode === "driver") {
+      if (!consents.driverName || consents.driverPhone.replace(/\D/g, "").length < 8) {
+        return res
+          .status(400)
+          .json({ error: "بيانات السائق مطلوبة / Driver details required" });
+      }
+    }
+    if (!["yes", "no"].includes(consents.outings)) {
+      return res
+        .status(400)
+        .json({ error: "موافقة الخرجات مطلوبة / Outings consent required" });
+    }
+    if (!["yes", "no"].includes(consents.sports)) {
+      return res
+        .status(400)
+        .json({ error: "موافقة الرياضة مطلوبة / Sports consent required" });
     }
     if (!["yes", "no"].includes(consents.photoMedia)) {
       return res

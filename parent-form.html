@@ -16,7 +16,7 @@
       href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/parent-form.css?v=9" />
+    <link rel="stylesheet" href="css/parent-form.css?v=10" />
   </head>
   <body>
     <div class="pf-wrap">
@@ -313,12 +313,96 @@
           </label>
         </section>
 
-        <!-- Photo / media consent (end of form) -->
+        <!-- Approvals / consents -->
         <section class="pf-card">
+          <h2>
+            <span class="pf-ar">الموافقات</span>
+            <span class="pf-en" lang="en" dir="ltr">Approvals</span>
+          </h2>
+
+          <p class="pf-consent-intro">
+            سيدي الولّي، فيما يلّي إليك بعض الأمور التنظيمية التي تمسّ تمدرس التلميذ وتتطلب موافقتك المسبقة:
+          </p>
+
+          <p class="pf-subhead">
+            <span class="pf-ar">1)ـ السماح للتلميذ(ة) بالمغادرة</span>
+            <span class="pf-en" lang="en" dir="ltr">1 — Permission for the pupil to leave</span>
+          </p>
+
+          <fieldset class="pf-choices pf-choices-stack">
+            <legend class="pf-visually-hidden">مغادرة التلميذ</legend>
+            <label class="pf-choice">
+              <input type="radio" name="consents.departureMode" value="withParent" required />
+              <span class="pf-choice-text"><span class="pf-ar">1ـ فقط مع ولّي الأمر: الأب — الأم</span><span class="pf-en" lang="en" dir="ltr">1 — Only with guardian: father — mother</span></span>
+            </label>
+            <label class="pf-choice">
+              <input type="radio" name="consents.departureMode" value="alone" />
+              <span class="pf-choice-text"><span class="pf-ar">2ـ لوحده</span><span class="pf-en" lang="en" dir="ltr">2 — Alone</span></span>
+            </label>
+            <label class="pf-choice">
+              <input type="radio" name="consents.departureMode" value="companion" />
+              <span class="pf-choice-text"><span class="pf-ar">3ـ مرافق</span><span class="pf-en" lang="en" dir="ltr">3 — Companion</span></span>
+            </label>
+            <div class="pf-nested" data-show-when="consents.departureMode=companion" hidden>
+              <label class="pf-field">
+                <span class="pf-label"><span class="pf-ar">الصفة</span><span class="pf-en" lang="en" dir="ltr">Role / relation</span></span>
+                <input name="consents.companionRole" type="text" />
+              </label>
+              <label class="pf-field">
+                <span class="pf-label"><span class="pf-ar">الاسم</span><span class="pf-en" lang="en" dir="ltr">Name</span></span>
+                <input name="consents.companionName" type="text" />
+              </label>
+              <label class="pf-field">
+                <span class="pf-label"><span class="pf-ar">الهاتف</span><span class="pf-en" lang="en" dir="ltr">Phone</span></span>
+                <input name="consents.companionPhone" type="tel" inputmode="tel" placeholder="05…" />
+              </label>
+            </div>
+            <label class="pf-choice">
+              <input type="radio" name="consents.departureMode" value="driver" />
+              <span class="pf-choice-text"><span class="pf-ar">4ـ السائق</span><span class="pf-en" lang="en" dir="ltr">4 — Driver</span></span>
+            </label>
+            <div class="pf-nested" data-show-when="consents.departureMode=driver" hidden>
+              <label class="pf-field">
+                <span class="pf-label"><span class="pf-ar">اسم السائق</span><span class="pf-en" lang="en" dir="ltr">Driver name</span></span>
+                <input name="consents.driverName" type="text" />
+              </label>
+              <label class="pf-field">
+                <span class="pf-label"><span class="pf-ar">الهاتف</span><span class="pf-en" lang="en" dir="ltr">Phone</span></span>
+                <input name="consents.driverPhone" type="tel" inputmode="tel" placeholder="05…" />
+              </label>
+            </div>
+          </fieldset>
+          <p class="pf-note">
+            هام: في الحالة 3/4 يجب إرفاق هذه الوثيقة بصورة طبق الأصل عن بطاقة الهوية للمرافق.
+            <span class="pf-en" lang="en" dir="ltr">Important: for options 3/4, attach a certified copy of the companion’s ID card with this document.</span>
+          </p>
+
+          <fieldset class="pf-choices">
+            <legend class="pf-label">
+              <span class="pf-ar">2)ـ الاستفادة من الخرجات التعليمية والترفيهية المبرمجة لفائدة التلاميذ على مدار السنة الدراسية (على أن يتم الإعلام بالتفاصيل في أوانه):</span>
+              <span class="pf-en" lang="en" dir="ltr">2 — Educational and recreational outings programmed during the school year (details will be shared in due time):</span>
+            </legend>
+            <label class="pf-choice"><input type="radio" name="consents.outings" value="yes" required /><span class="pf-choice-text"><span class="pf-ar">أوافق</span><span class="pf-en" lang="en" dir="ltr">I agree</span></span></label>
+            <label class="pf-choice"><input type="radio" name="consents.outings" value="no" /><span class="pf-choice-text"><span class="pf-ar">لا أوافق</span><span class="pf-en" lang="en" dir="ltr">I do not agree</span></span></label>
+          </fieldset>
+
+          <fieldset class="pf-choices">
+            <legend class="pf-label">
+              <span class="pf-ar">3)ـ السماح للتلميذ(ة) بممارسة الرياضة:</span>
+              <span class="pf-en" lang="en" dir="ltr">3 — Permission for the pupil to practise sport:</span>
+            </legend>
+            <label class="pf-choice"><input type="radio" name="consents.sports" value="yes" required /><span class="pf-choice-text"><span class="pf-ar">أوافق</span><span class="pf-en" lang="en" dir="ltr">I agree</span></span></label>
+            <label class="pf-choice"><input type="radio" name="consents.sports" value="no" /><span class="pf-choice-text"><span class="pf-ar">لا أوافق</span><span class="pf-en" lang="en" dir="ltr">I do not agree</span></span></label>
+          </fieldset>
+
+          <p class="pf-subhead" style="margin-top:1.1rem">
+            <span class="pf-ar">تصوير واستعمال الصور / الفيديوهات</span>
+            <span class="pf-en" lang="en" dir="ltr">Photos &amp; videos</span>
+          </p>
           <fieldset class="pf-choices">
             <legend class="pf-label">
               <span class="pf-ar">تصوير ابني/ابنتي أثناء مشاركته/مشاركتها في الأنشطة التربوية والثقافية والرياضية واللاصفية، و استعمال الصور او الفيديوهات التي يظهر فيها عبر مجموعات الأولياء والقنوات الرقمية الرسمية التابعة للمؤسسة.</span>
-              <span class="pf-en" lang="en" dir="ltr">Photographing and/or filming my child while participating in educational, cultural, sports, and extracurricular activities, and using the photographs or videos in which my child appears through the institution’s official parent groups and digital channels.</span>
+              <span class="pf-en" lang="en" dir="ltr">Photographing and/or filming my child while participating in educational, cultural, sports, and extracurricular activities, and using the photographs or videos in which my child appears through the institution’s official parent groups and digital channels</span>
             </legend>
             <label class="pf-choice"><input type="radio" name="consents.photoMedia" value="yes" required /><span class="pf-choice-text"><span class="pf-ar">أوافق</span><span class="pf-en" lang="en" dir="ltr">I agree</span></span></label>
             <label class="pf-choice"><input type="radio" name="consents.photoMedia" value="no" /><span class="pf-choice-text"><span class="pf-ar">لا أوافق</span><span class="pf-en" lang="en" dir="ltr">I do not agree</span></span></label>
@@ -346,6 +430,6 @@
       </div>
     </div>
 
-    <script src="js/parent-form.js?v=9"></script>
+    <script src="js/parent-form.js?v=10"></script>
   </body>
 </html>

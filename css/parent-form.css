@@ -198,6 +198,57 @@ body {
   font-size: 0.9rem;
 }
 
+.pf-consent-intro {
+  margin: 0 0 1rem;
+  font-size: 0.98rem;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.pf-note {
+  margin: 0.35rem 0 1rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 10px;
+  background: #fff6ef;
+  border: 1px solid #f0d2bc;
+  color: var(--orange-deep);
+  font-size: 0.88rem;
+  line-height: 1.55;
+  font-weight: 600;
+}
+
+.pf-note .pf-en {
+  margin-top: 0.25rem;
+  font-weight: 500;
+  color: #9a6a52;
+}
+
+.pf-choices-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.pf-nested {
+  margin: 0.15rem 0 0.55rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 12px;
+  background: #faf7f4;
+  border: 1px dashed var(--line);
+}
+
+.pf-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .pf-hint .pf-en,
 .pf-fr {
   margin-top: 0.25rem;
