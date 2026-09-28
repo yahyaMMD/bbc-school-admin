@@ -165,4 +165,8 @@ export async function migrate() {
   await query(`ALTER TABLE parent_form_submissions ADD COLUMN IF NOT EXISTS form_version INTEGER NOT NULL DEFAULT 1`);
   await query(`ALTER TABLE parent_form_submissions ADD COLUMN IF NOT EXISTS phone_backup TEXT NOT NULL DEFAULT ''`);
   await query(`ALTER TABLE parent_form_submissions ADD COLUMN IF NOT EXISTS photo_media TEXT NOT NULL DEFAULT ''`);
+  await query(`ALTER TABLE parent_form_submissions ADD COLUMN IF NOT EXISTS enrollment_year TEXT NOT NULL DEFAULT ''`);
+  await query(`ALTER TABLE parent_form_submissions ADD COLUMN IF NOT EXISTS student_level TEXT NOT NULL DEFAULT ''`);
+  await query(`ALTER TABLE parent_form_submissions ADD COLUMN IF NOT EXISTS repeated_year TEXT NOT NULL DEFAULT ''`);
+  await query(`ALTER TABLE parent_form_submissions ADD COLUMN IF NOT EXISTS studied_abroad TEXT NOT NULL DEFAULT ''`);
 }

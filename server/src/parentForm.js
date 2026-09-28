@@ -1,7 +1,19 @@
 import crypto from "crypto";
 import { query } from "./db.js";
 
-const FORM_VERSION = 4;
+const FORM_VERSION = 5;
+
+const ENROLLMENT_YEARS = [
+  "2026-2027",
+  "2025-2026",
+  "2024-2025",
+  "2023-2024",
+  "2022-2023",
+  "2021-2022",
+  "2020-2021",
+  "2019-2020",
+  "2018-2019",
+];
 
 function sid() {
   return "PF" + crypto.randomBytes(6).toString("hex").toUpperCase();
@@ -32,6 +44,10 @@ export function normalizeFormData(raw) {
       dateOfBirth: clean(student.dateOfBirth, 20),
       placeOfBirth: clean(student.placeOfBirth, 120),
       nationality: clean(student.nationality, 80),
+      enrollmentYear: clean(student.enrollmentYear, 20),
+      level: clean(student.level, 120),
+      repeatedYear: clean(student.repeatedYear, 10),
+      studiedAbroad: clean(student.studiedAbroad, 10),
     },
     father: {
       name: clean(father.name, 120),
@@ -109,6 +125,10 @@ function mapRow(r) {
     studentLastName: r.student_last_name || formData.student.lastName || "",
     studentFirstName: r.student_first_name || formData.student.firstName || "",
     dateOfBirth: r.date_of_birth || formData.student.dateOfBirth || "",
+    enrollmentYear: r.enrollment_year || formData.student.enrollmentYear || "",
+    studentLevel: r.student_level || formData.student.level || "",
+    repeatedYear: r.repeated_year || formData.student.repeatedYear || "",
+    studiedAbroad: r.studied_abroad || formData.student.studiedAbroad || "",
     homeAddress: r.home_address || formData.contact.address || "",
     phonePrimary: r.phone_primary || formData.father.phone || "",
     phoneSecondary: r.phone_secondary || formData.mother.phone || "",
@@ -160,6 +180,24 @@ export async function submitForm(req, res) {
     }
     if (!student.placeOfBirth) {
       return res.status(400).json({ error: "مكان الميلاد مطلوب / Place of birth required" });
+    }
+    if (!ENROLLMENT_YEARS.includes(student.enrollmentYear)) {
+      return res
+        .status(400)
+        .json({ error: "تاريخ الالتحاق بالمدرسة مطلوب / Enrollment year required" });
+    }
+    if (!student.level) {
+      return res.status(400).json({ error: "المستوى مطلوب / Level required" });
+    }
+    if (!["yes", "no"].includes(student.repeatedYear)) {
+      return res
+        .status(400)
+        .json({ error: "إعادة السنة مطلوبة / Repeated year answer required" });
+    }
+    if (!["yes", "no"].includes(student.studiedAbroad)) {
+      return res
+        .status(400)
+        .json({ error: "التمدرس بالخارج مطلوب / Studied abroad answer required" });
     }
     if (!father.name || father.phone.replace(/\D/g, "").length < 8) {
       return res.status(400).json({ error: "هاتف الأب مطلوب / Father's phone required" });
@@ -213,14 +251,19 @@ export async function submitForm(req, res) {
       `INSERT INTO parent_form_submissions (
         id,
         student_last_name, student_first_name, date_of_birth,
+        enrollment_year, student_level, repeated_year, studied_abroad,
         home_address, phone_primary, phone_secondary, phone_backup, email,
         photo_media, form_data, form_version
-      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11::jsonb,$12)`,
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15::jsonb,$16)`,
       [
         id,
         student.lastName,
         student.firstName,
         student.dateOfBirth,
+        student.enrollmentYear,
+        student.level,
+        student.repeatedYear,
+        student.studiedAbroad,
         contact.address,
         father.phone,
         mother.phone,

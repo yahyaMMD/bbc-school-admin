@@ -75,6 +75,35 @@
             <span class="pf-label"><span class="pf-ar">الجنسية</span><span class="pf-en" lang="en" dir="ltr">Nationality</span></span>
             <input name="student.nationality" type="text" value="جزائرية" required />
           </label>
+          <label class="pf-field">
+            <span class="pf-label"><span class="pf-ar">تاريخ الالتحاق بالمدرسة</span><span class="pf-en" lang="en" dir="ltr">Year of joining the school</span></span>
+            <select name="student.enrollmentYear" required>
+              <option value="">— اختاروا السنة الدراسية —</option>
+              <option value="2026-2027">2026-2027</option>
+              <option value="2025-2026">2025-2026</option>
+              <option value="2024-2025">2024-2025</option>
+              <option value="2023-2024">2023-2024</option>
+              <option value="2022-2023">2022-2023</option>
+              <option value="2021-2022">2021-2022</option>
+              <option value="2020-2021">2020-2021</option>
+              <option value="2019-2020">2019-2020</option>
+              <option value="2018-2019">2018-2019</option>
+            </select>
+          </label>
+          <label class="pf-field">
+            <span class="pf-label"><span class="pf-ar">المستوى</span><span class="pf-en" lang="en" dir="ltr">Level / grade</span></span>
+            <input name="student.level" type="text" required placeholder="مثال: السنة الثالثة ابتدائي" />
+          </label>
+          <fieldset class="pf-choices">
+            <legend class="pf-label"><span class="pf-ar">هل أعاد السنة من قبل؟</span><span class="pf-en" lang="en" dir="ltr">Has the pupil repeated a year before?</span></legend>
+            <label class="pf-choice"><input type="radio" name="student.repeatedYear" value="yes" required /><span class="pf-choice-text"><span class="pf-ar">نعم</span><span class="pf-en" lang="en" dir="ltr">YES</span></span></label>
+            <label class="pf-choice"><input type="radio" name="student.repeatedYear" value="no" /><span class="pf-choice-text"><span class="pf-ar">لا</span><span class="pf-en" lang="en" dir="ltr">NO</span></span></label>
+          </fieldset>
+          <fieldset class="pf-choices">
+            <legend class="pf-label"><span class="pf-ar">هل أقام أو تمدرس بالخارج من قبل؟</span><span class="pf-en" lang="en" dir="ltr">Has the pupil lived or studied abroad before?</span></legend>
+            <label class="pf-choice"><input type="radio" name="student.studiedAbroad" value="yes" required /><span class="pf-choice-text"><span class="pf-ar">نعم</span><span class="pf-en" lang="en" dir="ltr">YES</span></span></label>
+            <label class="pf-choice"><input type="radio" name="student.studiedAbroad" value="no" /><span class="pf-choice-text"><span class="pf-ar">لا</span><span class="pf-en" lang="en" dir="ltr">NO</span></span></label>
+          </fieldset>
 
           <p class="pf-subhead">
             <span class="pf-ar">الأب</span>
@@ -430,6 +459,6 @@
       </div>
     </div>
 
-    <script src="js/parent-form.js?v=10"></script>
+    <script src="js/parent-form.js?v=11"></script>
   </body>
 </html>

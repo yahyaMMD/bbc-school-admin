@@ -92,6 +92,22 @@
       showError("مكان الميلاد مطلوب");
       return;
     }
+    if (!student.enrollmentYear) {
+      showError("تاريخ الالتحاق بالمدرسة مطلوب");
+      return;
+    }
+    if (!student.level) {
+      showError("المستوى مطلوب");
+      return;
+    }
+    if (!student.repeatedYear) {
+      showError("يرجى الإجابة: هل أعاد السنة من قبل؟");
+      return;
+    }
+    if (!student.studiedAbroad) {
+      showError("يرجى الإجابة: هل أقام أو تمدرس بالخارج من قبل؟");
+      return;
+    }
     if (!father.name || !father.phone || father.phone.replace(/\D/g, "").length < 8) {
       showError("بيانات الأب ورقم هاتفه مطلوبان");
       return;

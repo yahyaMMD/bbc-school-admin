@@ -1558,6 +1558,10 @@ const AdminApp = (() => {
                     dateOfBirth: formatDob(st.dateOfBirth || s.dateOfBirth),
                     placeOfBirth: st.placeOfBirth,
                     nationality: st.nationality,
+                    enrollmentYear: st.enrollmentYear || s.enrollmentYear,
+                    level: st.level || s.studentLevel,
+                    repeatedYear: yesNo(st.repeatedYear || s.repeatedYear),
+                    studiedAbroad: yesNo(st.studiedAbroad || s.studiedAbroad),
                   },
                   [
                     ["lastName", "اللقب / Surname"],
@@ -1566,6 +1570,10 @@ const AdminApp = (() => {
                     ["dateOfBirth", "تاريخ الميلاد / Date of birth"],
                     ["placeOfBirth", "مكان الميلاد / Place of birth"],
                     ["nationality", "الجنسية / Nationality"],
+                    ["enrollmentYear", "تاريخ الالتحاق بالمدرسة / Enrollment year"],
+                    ["level", "المستوى / Level"],
+                    ["repeatedYear", "هل أعاد السنة من قبل؟ / Repeated a year"],
+                    ["studiedAbroad", "هل أقام أو تمدرس بالخارج؟ / Lived/studied abroad"],
                   ]
                 ) +
                 subhead("الأب / Father") +
