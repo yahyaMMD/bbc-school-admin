@@ -1501,10 +1501,14 @@ const AdminApp = (() => {
           const name = `${s.studentLastName || ""} ${s.studentFirstName || ""}`.trim();
           const fd = s.formData || {};
           const yesNo = (v) => (v === "yes" ? "نعم / YES" : v === "no" ? "لا / NO" : v || "—");
+          const photoLabel = (v) =>
+            v === "yes" ? "أوافق / I agree" : v === "no" ? "لا أوافق / I do not agree" : yesNo(v);
           const row = (k, v) =>
             `<div class="fact-card"><div class="k">${esc(k)}</div><div class="v" dir="auto">${esc(v || "—")}</div></div>`;
           const block = (title, html) =>
             `<div class="info-panel" style="margin-top:1rem"><div class="panel-label">${esc(title)}</div>${html}</div>`;
+          const subhead = (t) =>
+            `<p class="panel-label" style="margin:0.85rem 0 0.35rem;opacity:0.85">${esc(t)}</p>`;
           const kv = (obj, labels) =>
             `<div class="facts-grid" style="margin-top:0.6rem">${labels
               .map(([key, lab]) => row(lab, obj?.[key]))
@@ -1517,54 +1521,87 @@ const AdminApp = (() => {
           const fam = fd.family || {};
           const med = fd.medical || {};
           const cons = fd.consents || {};
+          const photoVal = s.photoMedia || cons.photoMedia;
 
           const parentsStatusMap = {
             marriage: "زواج عادي / Marriage",
             polygamy: "زواج متعدد / Polygamy",
             divorce: "طلاق / Divorce",
           };
+          const custodyMap = {
+            mother: "الأم / Mother",
+            father: "الأب / Father",
+          };
+          const hereditaryOriginMap = {
+            biological: "ذو منشأ عضوي / Biological",
+            neuropsychiatric: "ذو منشأ نفس عصبي / Neuropsychiatric",
+          };
+          const sexLabel =
+            st.sex === "female" ? "أنثى / Female" : st.sex === "male" ? "ذكر / Male" : st.sex || "—";
 
+          /* Same section + field order as parent-form.html */
           pfDetail.innerHTML = `
             <div class="admin-panel-label">${esc(name)}</div>
             <div class="facts-grid" style="margin-top:0.75rem">
-              ${row(I18n.t("dob"), formatDob(s.dateOfBirth || st.dateOfBirth))}
-              ${row("الجنس / Sex", st.sex === "female" ? "أنثى / Female" : st.sex === "male" ? "ذكر / Male" : st.sex)}
-              ${row("هاتف الأب / Father phone", s.phonePrimary || fa.phone)}
-              ${row("هاتف الأم / Mother phone", s.phoneSecondary || mo.phone)}
-              ${row("احتياطي / Backup", s.phoneBackup || co.phoneBackup)}
-              ${row("Email", s.email || co.email)}
-              ${row("تصوير / Photo", s.photoMedia === "yes" ? "أوافق / I agree" : s.photoMedia === "no" ? "لا أوافق / I do not agree" : yesNo(cons.photoMedia))}
               ${row(I18n.t("status"), s.status || "new")}
               ${row(I18n.t("annCreatedAt"), s.createdAt ? new Date(s.createdAt).toLocaleString() : "—")}
+              ${row("نسخة الاستمارة / Form version", String(s.formVersion || 3))}
             </div>
             ${block(
-              "١) معلومات عامة",
-              kv(st, [
-                ["lastName", "اللقب"],
-                ["firstName", "الاسم"],
-                ["placeOfBirth", "مكان الميلاد"],
-                ["nationality", "الجنسية"],
-              ]) +
+              "١) معلومات عامة / 1 — General information",
+              subhead("التلميذ(ة) / Student") +
+                kv(
+                  {
+                    lastName: st.lastName || s.studentLastName,
+                    firstName: st.firstName || s.studentFirstName,
+                    sex: sexLabel,
+                    dateOfBirth: formatDob(st.dateOfBirth || s.dateOfBirth),
+                    placeOfBirth: st.placeOfBirth,
+                    nationality: st.nationality,
+                  },
+                  [
+                    ["lastName", "اللقب / Surname"],
+                    ["firstName", "الاسم / Name"],
+                    ["sex", "الجنس / Sex"],
+                    ["dateOfBirth", "تاريخ الميلاد / Date of birth"],
+                    ["placeOfBirth", "مكان الميلاد / Place of birth"],
+                    ["nationality", "الجنسية / Nationality"],
+                  ]
+                ) +
+                subhead("الأب / Father") +
                 kv(fa, [
-                  ["name", "الأب"],
-                  ["profession", "مهنة الأب"],
-                  ["nationality", "جنسية الأب"],
-                  ["phone", "هاتف الأب"],
+                  ["name", "الاسم واللقب / Full name"],
+                  ["profession", "المهنة / Profession"],
+                  ["nationality", "الجنسية / Nationality"],
+                  ["phone", "الهاتف / Phone"],
                 ]) +
+                subhead("الأم / Mother") +
                 kv(mo, [
-                  ["name", "الأم"],
-                  ["profession", "مهنة الأم"],
-                  ["nationality", "جنسية الأم"],
-                  ["phone", "هاتف الأم"],
+                  ["name", "الاسم واللقب / Full name"],
+                  ["profession", "المهنة / Profession"],
+                  ["nationality", "الجنسية / Nationality"],
+                  ["phone", "الهاتف / Phone"],
                 ]) +
-                `<p style="margin-top:0.6rem;white-space:pre-wrap" dir="auto"><strong>العنوان:</strong> ${esc(co.address || s.homeAddress || "—")}</p>`
+                subhead("الاتصال / Contact") +
+                kv(
+                  {
+                    phoneBackup: co.phoneBackup || s.phoneBackup,
+                    address: co.address || s.homeAddress,
+                    email: co.email || s.email,
+                  },
+                  [
+                    ["phoneBackup", "هاتف احتياطي / Backup phone"],
+                    ["address", "العنوان / Address"],
+                    ["email", "البريد الإلكتروني / Email"],
+                  ]
+                )
             )}
             ${block(
-              "٢) الحالة العائلية",
+              "٢) الحالة العائلية / 2 — Family situation",
               kv(
                 {
                   parentsStatus: parentsStatusMap[fam.parentsStatus] || fam.parentsStatus,
-                  custody: fam.custody,
+                  custody: custodyMap[fam.custody] || fam.custody,
                   hasStepFather: yesNo(fam.hasStepFather),
                   hasStepMother: yesNo(fam.hasStepMother),
                   fatherDeceased: yesNo(fam.fatherDeceased),
@@ -1580,53 +1617,72 @@ const AdminApp = (() => {
                   adoptedExplain: fam.adoptedExplain,
                 },
                 [
-                  ["parentsStatus", "حالة الأولياء"],
-                  ["custody", "الحضانة"],
-                  ["hasStepFather", "زوج أم"],
-                  ["hasStepMother", "زوجة أب"],
-                  ["fatherDeceased", "وفاة الأب"],
-                  ["motherDeceased", "وفاة الأم"],
-                  ["siblingsCount", "عدد الإخوة"],
-                  ["brothersCount", "ذكور"],
-                  ["sistersCount", "إناث"],
-                  ["siblingRank", "الترتيب"],
-                  ["hasHalfSiblings", "إخوة غير أشقاء"],
-                  ["tutorNameRole", "القائم بالرعاية"],
-                  ["tutorPhone", "هاتف الرعاية"],
-                  ["adopted", "متبنّى"],
-                  ["adoptedExplain", "توضيح التبنّي"],
+                  ["parentsStatus", "حالة الأولياء / Parents’ status"],
+                  ["custody", "الحضانة / Custody"],
+                  ["hasStepFather", "زوج الأم / Stepfather"],
+                  ["hasStepMother", "زوجة الأب / Stepmother"],
+                  ["fatherDeceased", "وفاة الأب / Father deceased"],
+                  ["motherDeceased", "وفاة الأم / Mother deceased"],
+                  ["siblingsCount", "عدد الإخوة / Siblings"],
+                  ["brothersCount", "ذكور / Brothers"],
+                  ["sistersCount", "إناث / Sisters"],
+                  ["siblingRank", "الترتيب / Rank"],
+                  ["hasHalfSiblings", "إخوة غير أشقاء / Half-siblings"],
+                  ["tutorNameRole", "القائم بالرعاية / Tutor"],
+                  ["tutorPhone", "هاتف الرعاية / Tutor phone"],
+                  ["adopted", "متبنّى / Adopted"],
+                  ["adoptedExplain", "توضيح التبنّي / Adoption notes"],
                 ]
               )
             )}
             ${block(
-              "٣) التاريخ الطبي",
-              kv(med, [
-                ["bloodType", "زمرة الدم"],
-                ["disability", "إعاقة"],
-                ["disabilityExplain", "توضيح الإعاقة"],
-                ["vaccinations", "التطعيمات"],
-                ["hereditary", "مرض وراثي"],
-                ["hereditaryOrigin", "منشأ وراثي"],
-                ["hereditaryExplain", "توضيح وراثي"],
-                ["acutePast", "مرض حاد سابق"],
-                ["organicCurrent", "مرض عضوي حالي"],
-                ["allergy", "حساسية"],
-                ["glasses", "نظارات"],
-                ["behavior", "سلوك خاص"],
-                ["learningDifficulty", "صعوبة تعلم"],
-                ["treatment", "علاج حالي"],
-                ["psychologist", "مختص نفسي"],
-                ["incident", "حادثة خاصة"],
-                ["other", "آخر"],
-              ].map(([k, lab]) => [k, lab]))
+              "٣) التاريخ الطبي / 3 — Medical history",
+              kv(
+                {
+                  bloodType: med.bloodType,
+                  disability: yesNo(med.disability),
+                  disabilityExplain: med.disabilityExplain,
+                  vaccinations: med.vaccinations,
+                  hereditary: yesNo(med.hereditary),
+                  hereditaryOrigin: hereditaryOriginMap[med.hereditaryOrigin] || med.hereditaryOrigin,
+                  hereditaryExplain: med.hereditaryExplain,
+                  acutePast: med.acutePast,
+                  organicCurrent: med.organicCurrent,
+                  allergy: med.allergy,
+                  glasses: med.glasses,
+                  behavior: med.behavior,
+                  learningDifficulty: med.learningDifficulty,
+                  treatment: med.treatment,
+                  psychologist: med.psychologist,
+                  incident: med.incident,
+                  other: med.other,
+                },
+                [
+                  ["bloodType", "زمرة الدم / Blood type"],
+                  ["disability", "إعاقة / Disability"],
+                  ["disabilityExplain", "توضيح الإعاقة / Disability notes"],
+                  ["vaccinations", "التطعيمات / Vaccinations"],
+                  ["hereditary", "مرض وراثي / Hereditary"],
+                  ["hereditaryOrigin", "منشأ وراثي / Origin"],
+                  ["hereditaryExplain", "توضيح وراثي / Hereditary notes"],
+                  ["acutePast", "مرض حاد سابق / Past acute illness"],
+                  ["organicCurrent", "مرض عضوي حالي / Current organic illness"],
+                  ["allergy", "حساسية / Allergy"],
+                  ["glasses", "نظارات / Glasses"],
+                  ["behavior", "سلوك خاص / Behavior"],
+                  ["learningDifficulty", "صعوبة تعلم / Learning difficulty"],
+                  ["treatment", "علاج حالي / Current treatment"],
+                  ["psychologist", "مختص نفسي / Psychologist"],
+                  ["incident", "حادثة خاصة / Incident"],
+                  ["other", "آخر / Other"],
+                ]
+              )
             )}
             ${block(
               "موافقة التصوير / Photo consent",
               kv(
-                {
-                  photoMedia: yesNo(cons.photoMedia),
-                },
-                [["photoMedia", "تصوير واستعمال الصور/الفيديوهات"]]
+                { photoMedia: photoLabel(photoVal) },
+                [["photoMedia", "تصوير واستعمال الصور/الفيديوهات / Photos & videos"]]
               )
             )}
             <div class="admin-form-actions" style="margin-top:1rem">
