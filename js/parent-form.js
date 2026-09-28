@@ -108,6 +108,10 @@
       showError("العنوان مطلوب");
       return;
     }
+    if (!(formData.consents || {}).photoMedia) {
+      showError("يرجى اختيار الموافقة أو عدم الموافقة على التصوير");
+      return;
+    }
 
     btn.disabled = true;
     btn.textContent = "جاري الإرسال…";

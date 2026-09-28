@@ -1516,21 +1516,12 @@ const AdminApp = (() => {
           const co = fd.contact || {};
           const fam = fd.family || {};
           const med = fd.medical || {};
-          const pot = fd.potential || {};
-          const ss = fd.studentSpace || {};
-          const sch = fd.school || {};
           const cons = fd.consents || {};
 
           const parentsStatusMap = {
             marriage: "زواج عادي / Marriage",
             polygamy: "زواج متعدد / Polygamy",
             divorce: "طلاق / Divorce",
-          };
-          const leaveMap = {
-            with_parent: "مع الولي / With guardian",
-            alone: "وحده / Alone",
-            companion: "مرافق / Companion",
-            driver: "سائق / Driver",
           };
 
           pfDetail.innerHTML = `
@@ -1629,67 +1620,13 @@ const AdminApp = (() => {
               ].map(([k, lab]) => [k, lab]))
             )}
             ${block(
-              "٤) الاستعدادات والميول",
-              kv(pot, [
-                ["describe", "الوصف العام"],
-                ["excel", "التفوق"],
-                ["tendencies", "الميول"],
-                ["talent", "الموهبة"],
-                ["interests", "الاهتمام"],
-                ["motivation", "الدافعية"],
-                ["behaviorWish", "سلوك مرغوب"],
-                ["other", "آخر"],
-              ])
-            )}
-            ${block(
-              "٥) مساحة التلميذ",
-              kv(ss, [
-                ["favSubject1", "مادة ١"],
-                ["favSubject2", "مادة ٢"],
-                ["favSubject3", "مادة ٣"],
-                ["hobbies", "هوايات"],
-                ["skills", "مهارات"],
-                ["futureCareer", "مهنة مستقبلية"],
-                ["ambitions", "طموح"],
-              ])
-            )}
-            ${block(
-              "٦) الولي والموافقات",
-              kv(sch, [
-                ["previousSchool", "المدرسة الأصلية"],
-                ["enrollmentDate", "تاريخ الالتحاق"],
-                ["level", "المستوى"],
-                ["repeatedYear", "إعادة السنة"],
-                ["abroad", "تمدرس بالخارج"],
-              ]) +
-                kv(
-                  {
-                    leaveMode: leaveMap[cons.leaveMode] || cons.leaveMode,
-                    companionRole: cons.companionRole,
-                    companionName: cons.companionName,
-                    companionPhone: cons.companionPhone,
-                    driverName: cons.driverName,
-                    driverPhone: cons.driverPhone,
-                    trips: yesNo(cons.trips),
-                    sport: yesNo(cons.sport),
-                    socialVideos: yesNo(cons.socialVideos),
-                    activitiesMedia: yesNo(cons.activitiesMedia),
-                    parentNotes: cons.parentNotes,
-                  },
-                  [
-                    ["leaveMode", "المغادرة"],
-                    ["companionRole", "صفة المرافق"],
-                    ["companionName", "اسم المرافق"],
-                    ["companionPhone", "هاتف المرافق"],
-                    ["driverName", "السائق"],
-                    ["driverPhone", "هاتف السائق"],
-                    ["trips", "خرجات"],
-                    ["sport", "رياضة"],
-                    ["socialVideos", "فيديوهات"],
-                    ["activitiesMedia", "نشاطات وصور"],
-                    ["parentNotes", "توصيات"],
-                  ]
-                )
+              "موافقة التصوير / Photo consent",
+              kv(
+                {
+                  photoMedia: yesNo(cons.photoMedia),
+                },
+                [["photoMedia", "تصوير واستعمال الصور/الفيديوهات"]]
+              )
             )}
             <div class="admin-form-actions" style="margin-top:1rem">
               <button type="button" class="btn btn-primary btn-sm" data-pf-mark="reviewed">${esc(I18n.t("parentMarkReviewed"))}</button>
