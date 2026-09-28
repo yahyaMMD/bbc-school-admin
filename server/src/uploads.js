@@ -145,6 +145,7 @@ export function absoluteUploadPath(publicUrl) {
 
 const DOC_MIME_EXT = {
   ...MIME_EXT,
+  "image/jpg": "jpg",
   "application/pdf": "pdf",
 };
 
@@ -152,10 +153,15 @@ const MAX_DOC_BYTES = 5 * 1024 * 1024; // 5 MB
 
 function parseDocDataUrl(dataUrl) {
   const raw = String(dataUrl || "");
-  const m = raw.match(/^data:([a-zA-Z0-9.+/-]+);base64,(.+)$/);
+  let m = raw.match(/^data:([a-zA-Z0-9.+/-]+);base64,(.+)$/);
+  // Phones sometimes omit MIME — treat as JPEG
+  if (!m) {
+    m = raw.match(/^data:;base64,(.+)$/);
+    if (m) m = ["", "image/jpeg", m[1]];
+  }
   if (!m) return null;
-  const mime = m[1].toLowerCase();
-  const ext = DOC_MIME_EXT[mime];
+  const mime = String(m[1] || "image/jpeg").toLowerCase();
+  const ext = DOC_MIME_EXT[mime] || (mime === "image/jpg" ? "jpg" : null);
   if (!ext) return null;
   let buffer;
   try {
@@ -164,7 +170,7 @@ function parseDocDataUrl(dataUrl) {
     return null;
   }
   if (!buffer.length || buffer.length > MAX_DOC_BYTES) return null;
-  return { mime, buffer, ext };
+  return { mime: mime === "image/jpg" ? "image/jpeg" : mime, buffer, ext };
 }
 
 /**

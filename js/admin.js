@@ -1547,6 +1547,14 @@ const AdminApp = (() => {
               ${row(I18n.t("status"), s.status || "new")}
               ${row(I18n.t("annCreatedAt"), s.createdAt ? new Date(s.createdAt).toLocaleString() : "—")}
               ${row("نسخة الاستمارة / Form version", String(s.formVersion || 3))}
+              ${row(
+                "مرفق بطاقة الهوية / ID attachment",
+                s.hasCompanionId || cons.companionIdUrl
+                  ? `نعم — ${cons.companionIdName || s.companionIdName || "document"}`
+                  : cons.departureMode === "companion" || cons.departureMode === "driver"
+                    ? "مطلوب لكن غير موجود / Missing"
+                    : "غير مطلوب / Not required"
+              )}
             </div>
             ${block(
               "١) معلومات عامة / 1 — General information",
@@ -1728,23 +1736,25 @@ const AdminApp = (() => {
                   ["sports", "3) ممارسة الرياضة / Sports"],
                   ["photoMedia", "تصوير واستعمال الصور/الفيديوهات / Photos & videos"]
                 );
-                const idBlock =
-                  s.hasCompanionId || cons.companionIdUrl
-                    ? `<div class="info-panel" style="margin-top:0.85rem" data-pf-id-doc>
-                        <div class="panel-label">بطاقة هوية المرافق/السائق / Companion ID</div>
-                        <p class="muted" style="margin:0.4rem 0">${esc(cons.companionIdName || s.companionIdName || "ID document")}</p>
-                        <div class="admin-form-actions" style="margin-top:0.4rem">
-                          <button type="button" class="btn btn-primary btn-sm" data-pf-id-open>عرض / Open</button>
-                          <button type="button" class="btn btn-ghost btn-sm" data-pf-id-download>تحميل / Download</button>
-                        </div>
-                        <div data-pf-id-preview style="margin-top:0.75rem"></div>
-                      </div>`
-                    : cons.departureMode === "companion" || cons.departureMode === "driver"
-                      ? `<p class="muted" style="margin-top:0.75rem">لا توجد بطاقة هوية مرفقة / No ID document attached</p>`
-                      : "";
-                return kv(values, labels) + idBlock;
+                return kv(values, labels);
               })()
             )}
+            ${
+              s.hasCompanionId || cons.companionIdUrl
+                ? `<div class="info-panel" style="margin-top:1rem" data-pf-id-doc>
+                    <div class="panel-label">بطاقة هوية المرافق/السائق / Companion or driver ID</div>
+                    <p style="margin:0.45rem 0" dir="auto"><strong>${esc(cons.companionIdName || s.companionIdName || "ID document")}</strong></p>
+                    <div class="admin-form-actions" style="margin-top:0.35rem">
+                      <button type="button" class="btn btn-primary btn-sm" data-pf-id-open>عرض / Open</button>
+                      <button type="button" class="btn btn-ghost btn-sm" data-pf-id-download>تحميل / Download</button>
+                    </div>
+                    <p class="muted" data-pf-id-status style="margin-top:0.5rem">جاري تحميل المرفق…</p>
+                    <div data-pf-id-preview style="margin-top:0.75rem"></div>
+                  </div>`
+                : cons.departureMode === "companion" || cons.departureMode === "driver"
+                  ? `<div class="info-panel" style="margin-top:1rem"><div class="panel-label">بطاقة الهوية / ID</div><p class="muted">لا توجد بطاقة هوية مرفقة / No ID document attached</p></div>`
+                  : ""
+            }
             <div class="admin-form-actions" style="margin-top:1rem">
               <button type="button" class="btn btn-primary btn-sm" data-pf-mark="reviewed">${esc(I18n.t("parentMarkReviewed"))}</button>
               <button type="button" class="btn btn-ghost btn-sm" data-nav="#/manage/parent-forms">${esc(I18n.t("back"))}</button>
@@ -1758,40 +1768,47 @@ const AdminApp = (() => {
             });
           });
 
-          const loadIdDocBlob = async () => {
-            const token = sessionStorage.getItem("bbc_api_token") || "";
-            const res = await fetch(`/api/parent-form/${encodeURIComponent(sid)}/id-document`, {
-              headers: token ? { Authorization: `Bearer ${token}` } : {},
-            });
-            if (!res.ok) {
-              const err = await res.json().catch(() => ({}));
-              throw new Error(err.error || "Failed to load ID document");
+          const renderIdPreview = async () => {
+            const preview = pfDetail.querySelector("[data-pf-id-preview]");
+            const status = pfDetail.querySelector("[data-pf-id-status]");
+            if (!preview) return null;
+            try {
+              if (status) status.textContent = "جاري تحميل المرفق…";
+              const { url, contentType } = await BBC_API.getBlob(
+                `/parent-form/${encodeURIComponent(sid)}/id-document`
+              );
+              const ctype = String(contentType || "").toLowerCase();
+              if (ctype.includes("pdf")) {
+                preview.innerHTML = `<iframe src="${url}" title="ID document" style="width:100%;min-height:480px;border:1px solid #ddd;border-radius:8px;background:#fff"></iframe>`;
+              } else {
+                preview.innerHTML = `<img src="${url}" alt="ID document" style="max-width:100%;max-height:640px;border-radius:8px;border:1px solid #ddd;background:#fff" />`;
+              }
+              if (status) status.textContent = "المرفق جاهز للعرض / Attachment ready";
+              return url;
+            } catch (err) {
+              if (status) status.textContent = err.message || "Failed to load ID document";
+              preview.innerHTML = `<div class="admin-empty is-err">${esc(err.message || "Failed to load ID document")}</div>`;
+              throw err;
             }
-            const blob = await res.blob();
-            const ctype = res.headers.get("Content-Type") || blob.type || "";
-            return { blob, ctype, url: URL.createObjectURL(blob) };
           };
 
+          if (s.hasCompanionId || cons.companionIdUrl) {
+            renderIdPreview().catch(() => {});
+          }
+
           pfDetail.querySelector("[data-pf-id-open]")?.addEventListener("click", async () => {
-            const preview = pfDetail.querySelector("[data-pf-id-preview]");
             try {
-              const { url, ctype } = await loadIdDocBlob();
-              if (preview) {
-                if (ctype.includes("pdf")) {
-                  preview.innerHTML = `<iframe src="${url}" title="ID document" style="width:100%;min-height:420px;border:1px solid #ddd;border-radius:8px"></iframe>`;
-                } else {
-                  preview.innerHTML = `<img src="${url}" alt="ID document" style="max-width:100%;border-radius:8px;border:1px solid #ddd" />`;
-                }
-              } else {
-                window.open(url, "_blank", "noopener");
-              }
+              const url = await renderIdPreview();
+              if (url) pfDetail.querySelector("[data-pf-id-preview]")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
             } catch (err) {
               alert(err.message || "Failed");
             }
           });
           pfDetail.querySelector("[data-pf-id-download]")?.addEventListener("click", async () => {
             try {
-              const { url } = await loadIdDocBlob();
+              const { url } = await BBC_API.getBlob(
+                `/parent-form/${encodeURIComponent(sid)}/id-document`
+              );
               const a = document.createElement("a");
               a.href = url;
               a.download = cons.companionIdName || s.companionIdName || `id-${sid}`;

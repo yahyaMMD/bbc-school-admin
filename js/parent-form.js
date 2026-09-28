@@ -187,7 +187,11 @@
         return;
       }
       const type = String(file.type || "").toLowerCase();
-      if (!ALLOWED_ID_TYPES.has(type)) {
+      const ext = String(file.name || "").split(".").pop()?.toLowerCase() || "";
+      const okType =
+        ALLOWED_ID_TYPES.has(type) ||
+        (!type && ["jpg", "jpeg", "png", "webp", "gif", "pdf"].includes(ext));
+      if (!okType) {
         showError("نوع الملف غير مدعوم. استخدموا JPG أو PNG أو PDF");
         return;
       }
@@ -198,6 +202,22 @@
       try {
         companionIdDataUrl = await readFileAsDataUrl(file);
         companionIdFileName = file.name || "";
+        if (
+          companionIdDataUrl.startsWith("data:;base64,") ||
+          companionIdDataUrl.startsWith("data:application/octet-stream;base64,")
+        ) {
+          const mime =
+            ext === "pdf"
+              ? "application/pdf"
+              : ext === "png"
+                ? "image/png"
+                : ext === "webp"
+                  ? "image/webp"
+                  : ext === "gif"
+                    ? "image/gif"
+                    : "image/jpeg";
+          companionIdDataUrl = companionIdDataUrl.replace(/^data:[^;]*;base64,/, `data:${mime};base64,`);
+        }
       } catch (err) {
         showError(err.message || "تعذر قراءة الملف");
         return;
