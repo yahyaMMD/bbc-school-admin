@@ -132,24 +132,29 @@ export async function migrate() {
   await query(`
     CREATE TABLE IF NOT EXISTS parent_form_submissions (
       id TEXT PRIMARY KEY,
+      -- Indexed summary columns (match current public form)
       student_last_name TEXT NOT NULL DEFAULT '',
       student_first_name TEXT NOT NULL DEFAULT '',
       date_of_birth TEXT NOT NULL DEFAULT '',
-      class_name TEXT NOT NULL DEFAULT '',
       home_address TEXT NOT NULL DEFAULT '',
       phone_primary TEXT NOT NULL DEFAULT '',
       phone_secondary TEXT NOT NULL DEFAULT '',
+      phone_backup TEXT NOT NULL DEFAULT '',
       email TEXT NOT NULL DEFAULT '',
+      photo_media TEXT NOT NULL DEFAULT '',
+      -- Full ordered payload: student → father → mother → contact → family → medical → consents
+      form_data JSONB NOT NULL DEFAULT '{}'::jsonb,
+      form_version INTEGER NOT NULL DEFAULT 3,
+      status TEXT NOT NULL DEFAULT 'new',
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      -- Legacy columns kept for older rows (no longer written by v3 form)
+      class_name TEXT NOT NULL DEFAULT '',
       marital_status TEXT NOT NULL DEFAULT '',
       family_situation TEXT NOT NULL DEFAULT '',
       health_notes TEXT NOT NULL DEFAULT '',
       emergency_name TEXT NOT NULL DEFAULT '',
       emergency_phone TEXT NOT NULL DEFAULT '',
-      emergency_relation TEXT NOT NULL DEFAULT '',
-      form_data JSONB NOT NULL DEFAULT '{}'::jsonb,
-      form_version INTEGER NOT NULL DEFAULT 1,
-      status TEXT NOT NULL DEFAULT 'new',
-      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      emergency_relation TEXT NOT NULL DEFAULT ''
     );
     CREATE INDEX IF NOT EXISTS idx_parent_form_created ON parent_form_submissions (created_at DESC);
   `);
@@ -158,4 +163,6 @@ export async function migrate() {
   await query(`ALTER TABLE parent_form_submissions ADD COLUMN IF NOT EXISTS email TEXT NOT NULL DEFAULT ''`);
   await query(`ALTER TABLE parent_form_submissions ADD COLUMN IF NOT EXISTS form_data JSONB NOT NULL DEFAULT '{}'::jsonb`);
   await query(`ALTER TABLE parent_form_submissions ADD COLUMN IF NOT EXISTS form_version INTEGER NOT NULL DEFAULT 1`);
+  await query(`ALTER TABLE parent_form_submissions ADD COLUMN IF NOT EXISTS phone_backup TEXT NOT NULL DEFAULT ''`);
+  await query(`ALTER TABLE parent_form_submissions ADD COLUMN IF NOT EXISTS photo_media TEXT NOT NULL DEFAULT ''`);
 }

@@ -1531,8 +1531,9 @@ const AdminApp = (() => {
               ${row("الجنس / Sex", st.sex === "female" ? "أنثى / Female" : st.sex === "male" ? "ذكر / Male" : st.sex)}
               ${row("هاتف الأب / Father phone", s.phonePrimary || fa.phone)}
               ${row("هاتف الأم / Mother phone", s.phoneSecondary || mo.phone)}
-              ${row("احتياطي / Backup", co.phoneBackup)}
+              ${row("احتياطي / Backup", s.phoneBackup || co.phoneBackup)}
               ${row("Email", s.email || co.email)}
+              ${row("تصوير / Photo", s.photoMedia === "yes" ? "أوافق / I agree" : s.photoMedia === "no" ? "لا أوافق / I do not agree" : yesNo(cons.photoMedia))}
               ${row(I18n.t("status"), s.status || "new")}
               ${row(I18n.t("annCreatedAt"), s.createdAt ? new Date(s.createdAt).toLocaleString() : "—")}
             </div>
