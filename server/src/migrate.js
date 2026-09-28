@@ -169,4 +169,5 @@ export async function migrate() {
   await query(`ALTER TABLE parent_form_submissions ADD COLUMN IF NOT EXISTS student_level TEXT NOT NULL DEFAULT ''`);
   await query(`ALTER TABLE parent_form_submissions ADD COLUMN IF NOT EXISTS repeated_year TEXT NOT NULL DEFAULT ''`);
   await query(`ALTER TABLE parent_form_submissions ADD COLUMN IF NOT EXISTS studied_abroad TEXT NOT NULL DEFAULT ''`);
+  await query(`ALTER TABLE parent_form_submissions ADD COLUMN IF NOT EXISTS companion_id_url TEXT NOT NULL DEFAULT ''`);
 }

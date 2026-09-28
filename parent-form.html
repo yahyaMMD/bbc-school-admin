@@ -16,7 +16,7 @@
       href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/parent-form.css?v=10" />
+    <link rel="stylesheet" href="css/parent-form.css?v=11" />
   </head>
   <body>
     <div class="pf-wrap">
@@ -405,6 +405,22 @@
             هام: في الحالة 3/4 يجب إرفاق هذه الوثيقة بصورة طبق الأصل عن بطاقة الهوية للمرافق.
             <span class="pf-en" lang="en" dir="ltr">Important: for options 3/4, attach a certified copy of the companion’s ID card with this document.</span>
           </p>
+          <div class="pf-nested pf-id-upload" data-show-when="consents.departureMode=companion|driver" hidden>
+            <label class="pf-field">
+              <span class="pf-label">
+                <span class="pf-ar">إرفاق صورة بطاقة الهوية (مرافق / سائق)</span>
+                <span class="pf-en" lang="en" dir="ltr">Attach ID card copy (companion / driver)</span>
+              </span>
+              <input
+                id="companion-id-file"
+                name="companionIdFile"
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/gif,application/pdf,.jpg,.jpeg,.png,.webp,.gif,.pdf"
+              />
+              <span class="pf-file-hint">JPG / PNG / PDF — بحد أقصى 5 ميغابايت</span>
+              <span class="pf-file-name" id="companion-id-name" hidden></span>
+            </label>
+          </div>
 
           <fieldset class="pf-choices">
             <legend class="pf-label">
@@ -459,6 +475,6 @@
       </div>
     </div>
 
-    <script src="js/parent-form.js?v=11"></script>
+    <script src="js/parent-form.js?v=12"></script>
   </body>
 </html>

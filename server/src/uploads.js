@@ -19,6 +19,7 @@ export function ensureUploadDir() {
   fs.mkdirSync(path.join(UPLOAD_DIR, "students"), { recursive: true });
   fs.mkdirSync(path.join(UPLOAD_DIR, "teachers"), { recursive: true });
   fs.mkdirSync(path.join(UPLOAD_DIR, "announcements"), { recursive: true });
+  fs.mkdirSync(path.join(UPLOAD_DIR, "parent-forms"), { recursive: true });
   return UPLOAD_DIR;
 }
 
@@ -142,4 +143,57 @@ export function absoluteUploadPath(publicUrl) {
   return path.join(UPLOAD_DIR, rel);
 }
 
-export { parseDataUrl };
+const DOC_MIME_EXT = {
+  ...MIME_EXT,
+  "application/pdf": "pdf",
+};
+
+const MAX_DOC_BYTES = 5 * 1024 * 1024; // 5 MB
+
+function parseDocDataUrl(dataUrl) {
+  const raw = String(dataUrl || "");
+  const m = raw.match(/^data:([a-zA-Z0-9.+/-]+);base64,(.+)$/);
+  if (!m) return null;
+  const mime = m[1].toLowerCase();
+  const ext = DOC_MIME_EXT[mime];
+  if (!ext) return null;
+  let buffer;
+  try {
+    buffer = Buffer.from(m[2], "base64");
+  } catch {
+    return null;
+  }
+  if (!buffer.length || buffer.length > MAX_DOC_BYTES) return null;
+  return { mime, buffer, ext };
+}
+
+/**
+ * Save companion/driver ID scan for a parent-form submission (VPS volume).
+ * Returns public-style path used only via authenticated API.
+ */
+export function saveParentFormIdDocument({ submissionId, dataUrl }) {
+  const cleanId = safeId(submissionId);
+  if (!cleanId) {
+    throw Object.assign(new Error("submission id required"), { status: 400 });
+  }
+  const parsed = parseDocDataUrl(dataUrl);
+  if (!parsed) {
+    throw Object.assign(
+      new Error("Invalid ID file. Use JPG, PNG, WEBP, GIF or PDF under 5 MB."),
+      { status: 400 }
+    );
+  }
+  ensureUploadDir();
+  const stamp = crypto.randomBytes(4).toString("hex");
+  const filename = `${cleanId}-${stamp}.${parsed.ext}`;
+  const abs = path.join(UPLOAD_DIR, "parent-forms", filename);
+  fs.writeFileSync(abs, parsed.buffer);
+  return {
+    url: `/uploads/parent-forms/${filename}`,
+    filename,
+    mime: parsed.mime,
+    absPath: abs,
+  };
+}
+
+export { parseDataUrl, parseDocDataUrl };

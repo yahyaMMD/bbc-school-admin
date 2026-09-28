@@ -3,9 +3,21 @@
   const errEl = document.getElementById("form-error");
   const btn = document.getElementById("submit-btn");
   const success = document.getElementById("success");
+  const idFileInput = document.getElementById("companion-id-file");
+  const idFileNameEl = document.getElementById("companion-id-name");
 
   if (success) success.hidden = true;
   if (form) form.hidden = false;
+
+  const MAX_ID_BYTES = 5 * 1024 * 1024;
+  const ALLOWED_ID_TYPES = new Set([
+    "image/jpeg",
+    "image/jpg",
+    "image/png",
+    "image/webp",
+    "image/gif",
+    "application/pdf",
+  ]);
 
   function showError(msg) {
     if (!errEl) return;
@@ -27,11 +39,10 @@
 
   function collectFormData(el) {
     const data = {};
-    const fd = new FormData(el);
-    // radios / checked
     el.querySelectorAll("input, textarea, select").forEach((input) => {
       const name = input.name;
       if (!name || !name.includes(".")) return;
+      if (input.type === "file") return;
       if (input.type === "radio") {
         if (input.checked) setNested(data, name, input.value);
         return;
@@ -42,25 +53,49 @@
       }
       setNested(data, name, String(input.value || "").trim());
     });
-    // ensure unchecked radios that were never checked don't leave gaps — FormData already handled checked ones
-    void fd;
     return data;
   }
 
   function syncConditional() {
     document.querySelectorAll("[data-show-when]").forEach((node) => {
       const rule = node.getAttribute("data-show-when") || "";
-      const [name, expected] = rule.split("=");
+      const eq = rule.indexOf("=");
+      if (eq < 0) return;
+      const name = rule.slice(0, eq);
+      const expected = rule.slice(eq + 1).split("|");
       const checked = form.querySelector(`input[name="${CSS.escape(name)}"]:checked`);
-      const show = checked && checked.value === expected;
+      const show = Boolean(checked && expected.includes(checked.value));
       node.hidden = !show;
-      node.querySelectorAll("input, textarea, select").forEach((inp) => {
-        if (!show && inp.type !== "radio") {
-          // keep values but don't require when hidden
+      if (!show && idFileInput && node.contains(idFileInput)) {
+        idFileInput.value = "";
+        if (idFileNameEl) {
+          idFileNameEl.hidden = true;
+          idFileNameEl.textContent = "";
         }
-      });
+      }
     });
   }
+
+  function readFileAsDataUrl(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result || ""));
+      reader.onerror = () => reject(new Error("تعذر قراءة الملف"));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  idFileInput?.addEventListener("change", () => {
+    const file = idFileInput.files && idFileInput.files[0];
+    if (!idFileNameEl) return;
+    if (!file) {
+      idFileNameEl.hidden = true;
+      idFileNameEl.textContent = "";
+      return;
+    }
+    idFileNameEl.hidden = false;
+    idFileNameEl.textContent = file.name;
+  });
 
   form?.addEventListener("change", (e) => {
     if (e.target && e.target.matches("input[type=radio]")) syncConditional();
@@ -141,6 +176,34 @@
         return;
       }
     }
+
+    const needsId = cons.departureMode === "companion" || cons.departureMode === "driver";
+    let companionIdDataUrl = "";
+    let companionIdFileName = "";
+    if (needsId) {
+      const file = idFileInput?.files && idFileInput.files[0];
+      if (!file) {
+        showError("يرجى إرفاق صورة بطاقة الهوية للحالة 3 أو 4");
+        return;
+      }
+      const type = String(file.type || "").toLowerCase();
+      if (!ALLOWED_ID_TYPES.has(type)) {
+        showError("نوع الملف غير مدعوم. استخدموا JPG أو PNG أو PDF");
+        return;
+      }
+      if (file.size > MAX_ID_BYTES) {
+        showError("حجم الملف كبير جداً (الحد 5 ميغابايت)");
+        return;
+      }
+      try {
+        companionIdDataUrl = await readFileAsDataUrl(file);
+        companionIdFileName = file.name || "";
+      } catch (err) {
+        showError(err.message || "تعذر قراءة الملف");
+        return;
+      }
+    }
+
     if (!cons.outings) {
       showError("يرجى اختيار الموافقة أو عدم الموافقة على الخرجات");
       return;
@@ -157,10 +220,15 @@
     btn.disabled = true;
     btn.textContent = "جاري الإرسال…";
     try {
+      const payload = { formData };
+      if (needsId) {
+        payload.companionIdDataUrl = companionIdDataUrl;
+        payload.companionIdFileName = companionIdFileName;
+      }
       const res = await fetch("/api/parent-form", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ formData }),
+        body: JSON.stringify(payload),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || "فشل الإرسال");

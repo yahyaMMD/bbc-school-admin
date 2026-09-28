@@ -1,7 +1,10 @@
 import crypto from "crypto";
+import fs from "fs";
+import path from "path";
 import { query } from "./db.js";
+import { saveParentFormIdDocument, absoluteUploadPath } from "./uploads.js";
 
-const FORM_VERSION = 5;
+const FORM_VERSION = 6;
 
 const ENROLLMENT_YEARS = [
   "2026-2027",
@@ -109,6 +112,8 @@ export function normalizeFormData(raw) {
       companionPhone: clean(consents.companionPhone, 40),
       driverName: clean(consents.driverName, 120),
       driverPhone: clean(consents.driverPhone, 40),
+      companionIdUrl: clean(consents.companionIdUrl, 400),
+      companionIdName: clean(consents.companionIdName, 200),
       outings: clean(consents.outings, 10),
       sports: clean(consents.sports, 10),
       photoMedia: clean(consents.photoMedia, 10),
@@ -135,6 +140,9 @@ function mapRow(r) {
     phoneBackup: r.phone_backup || formData.contact.phoneBackup || "",
     email: r.email || formData.contact.email || "",
     photoMedia: r.photo_media || formData.consents.photoMedia || "",
+    companionIdUrl: r.companion_id_url || formData.consents.companionIdUrl || "",
+    companionIdName: formData.consents.companionIdName || "",
+    hasCompanionId: Boolean(r.companion_id_url || formData.consents.companionIdUrl),
     formData,
     formVersion: r.form_version || 1,
     status: r.status || "new",
@@ -230,6 +238,15 @@ export async function submitForm(req, res) {
           .json({ error: "بيانات السائق مطلوبة / Driver details required" });
       }
     }
+    const needsId =
+      consents.departureMode === "companion" || consents.departureMode === "driver";
+    const idDataUrl = String(b.companionIdDataUrl || b.idDocumentDataUrl || "").trim();
+    const idFileName = clean(b.companionIdFileName || b.idDocumentName || "", 200);
+    if (needsId && !idDataUrl) {
+      return res.status(400).json({
+        error: "صورة بطاقة الهوية مطلوبة للحالة 3/4 / ID card copy required for options 3/4",
+      });
+    }
     if (!["yes", "no"].includes(consents.outings)) {
       return res
         .status(400)
@@ -247,14 +264,20 @@ export async function submitForm(req, res) {
     }
 
     const id = sid();
+    if (needsId) {
+      const saved = saveParentFormIdDocument({ submissionId: id, dataUrl: idDataUrl });
+      formData.consents.companionIdUrl = saved.url;
+      formData.consents.companionIdName = idFileName || saved.filename;
+    }
+
     await query(
       `INSERT INTO parent_form_submissions (
         id,
         student_last_name, student_first_name, date_of_birth,
         enrollment_year, student_level, repeated_year, studied_abroad,
         home_address, phone_primary, phone_secondary, phone_backup, email,
-        photo_media, form_data, form_version
-      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15::jsonb,$16)`,
+        photo_media, companion_id_url, form_data, form_version
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16::jsonb,$17)`,
       [
         id,
         student.lastName,
@@ -270,14 +293,20 @@ export async function submitForm(req, res) {
         contact.phoneBackup,
         contact.email,
         consents.photoMedia,
+        formData.consents.companionIdUrl || "",
         JSON.stringify(formData),
         FORM_VERSION,
       ]
     );
-    res.status(201).json({ ok: true, id, formVersion: FORM_VERSION });
+    res.status(201).json({
+      ok: true,
+      id,
+      formVersion: FORM_VERSION,
+      hasCompanionId: Boolean(formData.consents.companionIdUrl),
+    });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: err.message || "Submit failed" });
+    res.status(err.status || 500).json({ error: err.message || "Submit failed" });
   }
 }
 
@@ -311,6 +340,47 @@ export async function getSubmission(req, res) {
     ]);
     if (!r.rows.length) return res.status(404).json({ error: "Not found" });
     res.json(mapRow(r.rows[0]));
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message || "Failed" });
+  }
+}
+
+/** Admin: download companion/driver ID document from VPS volume */
+export async function getCompanionIdDocument(req, res) {
+  try {
+    const r = await query(`SELECT * FROM parent_form_submissions WHERE id = $1`, [
+      req.params.id,
+    ]);
+    if (!r.rows.length) return res.status(404).json({ error: "Not found" });
+    const row = mapRow(r.rows[0]);
+    const url = row.companionIdUrl || "";
+    if (!url) return res.status(404).json({ error: "No ID document" });
+    const abs = absoluteUploadPath(url);
+    if (!abs || !fs.existsSync(abs)) {
+      return res.status(404).json({ error: "File missing on server" });
+    }
+    const ext = path.extname(abs).toLowerCase();
+    const mime =
+      ext === ".pdf"
+        ? "application/pdf"
+        : ext === ".png"
+          ? "image/png"
+          : ext === ".webp"
+            ? "image/webp"
+            : ext === ".gif"
+              ? "image/gif"
+              : "image/jpeg";
+    const downloadName =
+      row.companionIdName ||
+      `id-${row.id}${ext || ".bin"}`;
+    res.setHeader("Content-Type", mime);
+    res.setHeader(
+      "Content-Disposition",
+      `inline; filename="${String(downloadName).replace(/"/g, "")}"`
+    );
+    res.setHeader("Cache-Control", "private, no-store");
+    fs.createReadStream(abs).pipe(res);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message || "Failed" });

@@ -40,7 +40,7 @@ async function main() {
 
   const app = express();
   app.use(cors());
-  app.use(express.json({ limit: "6mb" }));
+  app.use(express.json({ limit: "10mb" }));
 
   app.get("/api/health", (_req, res) =>
     res.json({
@@ -54,6 +54,11 @@ async function main() {
   );
   app.post("/api/auth/login", loginHandler);
   app.use("/api", apiRoutes);
+
+  // Block direct public access to parent-form ID documents (use authenticated API).
+  app.use("/uploads/parent-forms", (_req, res) => {
+    res.status(401).json({ error: "Authentication required" });
+  });
 
   // Profile photos hosted on the VPS (Docker volume)
   app.use(

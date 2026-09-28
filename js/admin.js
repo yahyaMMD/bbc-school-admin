@@ -1471,6 +1471,7 @@ const AdminApp = (() => {
                     <div class="admin-person-main">
                       <strong dir="auto">${esc(name)}</strong>
                       <span class="muted">${esc(I18n.t("dob"))}: ${esc(dob)} · ${esc(s.phonePrimary || "")}</span>
+                      <span class="muted">${esc(s.enrollmentYear || "")}${s.studentLevel ? ` · ${esc(s.studentLevel)}` : ""}${s.hasCompanionId ? " · ID" : ""}</span>
                       <span class="muted">${esc(when)} · ${esc(s.status || "new")}</span>
                     </div>
                     <div class="admin-person-actions">
@@ -1727,7 +1728,21 @@ const AdminApp = (() => {
                   ["sports", "3) ممارسة الرياضة / Sports"],
                   ["photoMedia", "تصوير واستعمال الصور/الفيديوهات / Photos & videos"]
                 );
-                return kv(values, labels);
+                const idBlock =
+                  s.hasCompanionId || cons.companionIdUrl
+                    ? `<div class="info-panel" style="margin-top:0.85rem" data-pf-id-doc>
+                        <div class="panel-label">بطاقة هوية المرافق/السائق / Companion ID</div>
+                        <p class="muted" style="margin:0.4rem 0">${esc(cons.companionIdName || s.companionIdName || "ID document")}</p>
+                        <div class="admin-form-actions" style="margin-top:0.4rem">
+                          <button type="button" class="btn btn-primary btn-sm" data-pf-id-open>عرض / Open</button>
+                          <button type="button" class="btn btn-ghost btn-sm" data-pf-id-download>تحميل / Download</button>
+                        </div>
+                        <div data-pf-id-preview style="margin-top:0.75rem"></div>
+                      </div>`
+                    : cons.departureMode === "companion" || cons.departureMode === "driver"
+                      ? `<p class="muted" style="margin-top:0.75rem">لا توجد بطاقة هوية مرفقة / No ID document attached</p>`
+                      : "";
+                return kv(values, labels) + idBlock;
               })()
             )}
             <div class="admin-form-actions" style="margin-top:1rem">
@@ -1742,6 +1757,52 @@ const AdminApp = (() => {
               if (target) go(target);
             });
           });
+
+          const loadIdDocBlob = async () => {
+            const token = sessionStorage.getItem("bbc_api_token") || "";
+            const res = await fetch(`/api/parent-form/${encodeURIComponent(sid)}/id-document`, {
+              headers: token ? { Authorization: `Bearer ${token}` } : {},
+            });
+            if (!res.ok) {
+              const err = await res.json().catch(() => ({}));
+              throw new Error(err.error || "Failed to load ID document");
+            }
+            const blob = await res.blob();
+            const ctype = res.headers.get("Content-Type") || blob.type || "";
+            return { blob, ctype, url: URL.createObjectURL(blob) };
+          };
+
+          pfDetail.querySelector("[data-pf-id-open]")?.addEventListener("click", async () => {
+            const preview = pfDetail.querySelector("[data-pf-id-preview]");
+            try {
+              const { url, ctype } = await loadIdDocBlob();
+              if (preview) {
+                if (ctype.includes("pdf")) {
+                  preview.innerHTML = `<iframe src="${url}" title="ID document" style="width:100%;min-height:420px;border:1px solid #ddd;border-radius:8px"></iframe>`;
+                } else {
+                  preview.innerHTML = `<img src="${url}" alt="ID document" style="max-width:100%;border-radius:8px;border:1px solid #ddd" />`;
+                }
+              } else {
+                window.open(url, "_blank", "noopener");
+              }
+            } catch (err) {
+              alert(err.message || "Failed");
+            }
+          });
+          pfDetail.querySelector("[data-pf-id-download]")?.addEventListener("click", async () => {
+            try {
+              const { url } = await loadIdDocBlob();
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = cons.companionIdName || s.companionIdName || `id-${sid}`;
+              document.body.appendChild(a);
+              a.click();
+              a.remove();
+            } catch (err) {
+              alert(err.message || "Failed");
+            }
+          });
+
           pfDetail.querySelector("[data-pf-mark]")?.addEventListener("click", async () => {
             const msg = pfDetail.querySelector("[data-pf-msg]");
             try {
