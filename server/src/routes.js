@@ -49,6 +49,7 @@ router.get("/me/classes/:id/students", authRequired(["teacher"]), TeacherPortal.
 router.get("/me/students/:id", authRequired(["teacher"]), TeacherPortal.getMyStudent);
 router.post("/me/photo", authRequired(["teacher"]), TeacherPortal.updateMyPhoto);
 router.delete("/me/photo", authRequired(["teacher"]), TeacherPortal.removeMyPhoto);
+router.put("/me/profile", authRequired(["teacher"]), TeacherPortal.updateMyProfile);
 router.post("/me/password", authRequired(["teacher"]), TeacherPortal.changeMyPassword);
 
 // ——— Teachers ———

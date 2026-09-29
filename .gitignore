@@ -7,6 +7,9 @@ server/node_modules/
 # Profile photos (stored on VPS volume)
 data/uploads/
 
+# Generated credential sheets (contain passwords)
+reports/
+
 # WhatsApp bridge local session
 server/whatsapp-bridge/.auth/
 server/whatsapp-bridge/.data/

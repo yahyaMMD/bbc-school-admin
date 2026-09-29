@@ -291,15 +291,36 @@ const TeacherApp = (() => {
       </section>
 
       <section class="admin-panel" style="margin-bottom:1rem">
-        <div class="admin-panel-label">${esc(I18n.t("officialInfoLocked"))}</div>
-        <div class="facts-grid" style="margin-top:0.75rem">
-          <div class="fact-card"><div class="k">${esc(I18n.t("firstName"))}</div><div class="v" dir="auto">${esc(dash(t.firstName))}</div></div>
-          <div class="fact-card"><div class="k">${esc(I18n.t("lastName"))}</div><div class="v" dir="auto">${esc(dash(t.lastName))}</div></div>
-          <div class="fact-card"><div class="k">${esc(I18n.t("phone"))}</div><div class="v">${esc(dash(t.phone))}</div></div>
-          <div class="fact-card"><div class="k">${esc(I18n.t("wilaya"))}</div><div class="v">${esc(dash(t.wilaya))}</div></div>
-          <div class="fact-card"><div class="k">${esc(I18n.t("commune"))}</div><div class="v">${esc(dash(t.commune))}</div></div>
-          <div class="fact-card"><div class="k">${esc(I18n.t("teacherId"))}</div><div class="v">${esc(t.loginCode || t.id)}</div></div>
-        </div>
+        <div class="admin-panel-label">${esc(I18n.t("officialInfo"))}</div>
+        <p class="admin-field-hint">${esc(I18n.t("officialInfoHint"))}</p>
+        <form id="teacher-profile-form" class="admin-form admin-form-stack" style="margin-top:0.75rem">
+          <label class="admin-field">
+            <span>${esc(I18n.t("firstName"))}</span>
+            <input name="firstName" type="text" dir="auto" value="${esc(t.firstName || "")}" autocomplete="given-name" />
+          </label>
+          <label class="admin-field">
+            <span>${esc(I18n.t("lastName"))}</span>
+            <input name="lastName" type="text" dir="auto" value="${esc(t.lastName || "")}" autocomplete="family-name" />
+          </label>
+          <label class="admin-field">
+            <span>${esc(I18n.t("phone"))}</span>
+            <input name="phone" type="tel" value="${esc(t.phone || "")}" autocomplete="tel" inputmode="tel" />
+          </label>
+          <label class="admin-field">
+            <span>${esc(I18n.t("wilaya"))}</span>
+            <input name="wilaya" type="text" dir="auto" value="${esc(t.wilaya || "")}" />
+          </label>
+          <label class="admin-field">
+            <span>${esc(I18n.t("commune"))}</span>
+            <input name="commune" type="text" dir="auto" value="${esc(t.commune || "")}" />
+          </label>
+          <label class="admin-field">
+            <span>${esc(I18n.t("teacherId"))}</span>
+            <input type="text" value="${esc(t.loginCode || t.id || "")}" readonly disabled />
+          </label>
+          <p class="ann-status" data-profile-status hidden></p>
+          <button type="submit" class="btn btn-primary">${esc(I18n.t("saveProfile"))}</button>
+        </form>
         <div class="chip-row" style="margin-top:0.85rem">
           ${(t.modules || []).map((m) => `<span class="chip">${esc(m)}</span>`).join("") || `<span class="muted">${esc(I18n.t("noneListed"))}</span>`}
         </div>
@@ -429,6 +450,27 @@ const TeacherApp = (() => {
         if (state.me) state.me.mustChangePassword = false;
         e.target.reset();
         setStatus(statusEl, I18n.t("passwordChanged"), true);
+      } catch (err) {
+        setStatus(statusEl, err.message || I18n.t("loginError"), false);
+      }
+    });
+
+    root.querySelector("#teacher-profile-form")?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const statusEl = root.querySelector("[data-profile-status]");
+      const payload = {
+        firstName: String(fd.get("firstName") || "").trim(),
+        lastName: String(fd.get("lastName") || "").trim(),
+        phone: String(fd.get("phone") || "").trim(),
+        wilaya: String(fd.get("wilaya") || "").trim(),
+        commune: String(fd.get("commune") || "").trim(),
+      };
+      try {
+        const res = await BBC_API.put("/me/profile", payload);
+        if (state.me && res.teacher) state.me.teacher = res.teacher;
+        setStatus(statusEl, I18n.t("profileSaved"), true);
+        go("/my/profile");
       } catch (err) {
         setStatus(statusEl, err.message || I18n.t("loginError"), false);
       }

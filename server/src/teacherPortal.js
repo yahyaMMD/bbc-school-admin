@@ -180,6 +180,42 @@ export async function removeMyPhoto(req, res) {
   }
 }
 
+/** Teacher: update own contact / name fields (not login ID). */
+export async function updateMyProfile(req, res) {
+  try {
+    const teacherId = req.user?.teacherId;
+    if (!teacherId) return res.status(401).json({ error: "Unauthorized" });
+    const b = req.body || {};
+
+    const firstName = b.firstName != null ? String(b.firstName).trim() : null;
+    const lastName = b.lastName != null ? String(b.lastName).trim() : null;
+    const phone = b.phone != null ? String(b.phone).trim() : null;
+    const wilaya = b.wilaya != null ? String(b.wilaya).trim() : null;
+    const commune = b.commune != null ? String(b.commune).trim() : null;
+
+    if (firstName === null && lastName === null && phone === null && wilaya === null && commune === null) {
+      return res.status(400).json({ error: "No fields to update" });
+    }
+
+    const r = await query(
+      `UPDATE teachers SET
+         first_name = COALESCE($2, first_name),
+         last_name = COALESCE($3, last_name),
+         phone = COALESCE($4, phone),
+         wilaya = COALESCE($5, wilaya),
+         commune = COALESCE($6, commune)
+       WHERE id = $1
+       RETURNING *`,
+      [teacherId, firstName, lastName, phone, wilaya, commune]
+    );
+    if (!r.rows.length) return res.status(404).json({ error: "Teacher not found" });
+    res.json({ ok: true, teacher: mapTeacher(r.rows[0]) });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message || "Profile update failed" });
+  }
+}
+
 export async function changeMyPassword(req, res) {
   try {
     const teacherId = req.user?.teacherId;
