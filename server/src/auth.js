@@ -27,11 +27,32 @@ export function authRequired(roles = []) {
   };
 }
 
+function normalizeLoginCode(raw) {
+  return String(raw || "")
+    .trim()
+    .toUpperCase()
+    .replace(/\s+/g, "");
+}
+
+async function findTeacherAccountByLoginCode(loginCode) {
+  const code = normalizeLoginCode(loginCode);
+  if (!/^TR\d{1,4}$/.test(code)) return null;
+  const r = await query(
+    `SELECT t.id, t.login_code, t.phone, ta.password_hash, ta.must_change_password
+     FROM teachers t
+     INNER JOIN teacher_accounts ta ON ta.teacher_id = t.id
+     WHERE UPPER(BTRIM(COALESCE(t.login_code, ''))) = $1
+     LIMIT 1`,
+    [code]
+  );
+  return r.rows[0] || null;
+}
+
 async function findTeacherAccountByPhone(phone) {
   const digits = normalizePhoneDigits(phone);
   if (digits.length < 8) return null;
   const r = await query(
-    `SELECT t.id, t.phone, ta.password_hash, ta.must_change_password
+    `SELECT t.id, t.login_code, t.phone, ta.password_hash, ta.must_change_password
      FROM teachers t
      INNER JOIN teacher_accounts ta ON ta.teacher_id = t.id
      WHERE regexp_replace(COALESCE(t.phone, ''), '[^0-9]', '', 'g') <> ''`
@@ -48,9 +69,15 @@ export async function loginHandler(req, res) {
     return res.status(400).json({ error: "password required" });
   }
 
+  const loginCode = String(
+    req.body?.loginCode || req.body?.teacherCode || req.body?.code || ""
+  ).trim();
   const phone = String(req.body?.phone || "").trim();
-  if (phone) {
-    const row = await findTeacherAccountByPhone(phone);
+
+  if (loginCode || phone) {
+    const row = loginCode
+      ? await findTeacherAccountByLoginCode(loginCode)
+      : await findTeacherAccountByPhone(phone);
     if (!row) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
@@ -63,6 +90,7 @@ export async function loginHandler(req, res) {
       token,
       role: "teacher",
       teacherId: row.id,
+      loginCode: row.login_code || "",
       mustChangePassword: Boolean(row.must_change_password),
     });
   }

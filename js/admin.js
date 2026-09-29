@@ -978,6 +978,7 @@ const AdminApp = (() => {
         <div class="admin-panel-label">${esc(I18n.t("teacherPortalAdmin"))}</div>
         <p class="admin-field-hint">${esc(I18n.t("teacherPortalAdminHint"))}</p>
         <p class="muted" data-portal-status>${esc(I18n.t("loading"))}</p>
+        <p class="muted" data-portal-login-code style="margin-top:0.35rem"></p>
         <form id="admin-teacher-portal" class="admin-form admin-form-stack" data-id="${esc(t.id)}" style="margin-top:0.75rem">
           <label class="admin-field">
             <span>${esc(I18n.t("portalPassword"))}</span>
@@ -1365,6 +1366,12 @@ const AdminApp = (() => {
             statusEl.textContent = st.enabled
               ? I18n.t("portalEnabled")
               : I18n.t("portalDisabled");
+          }
+          const codeEl = portalBox.querySelector("[data-portal-login-code]");
+          if (codeEl) {
+            codeEl.textContent = st.loginCode
+              ? `${I18n.t("teacherLoginId")}: ${st.loginCode}`
+              : "";
           }
           if (disableBtn) disableBtn.hidden = !st.enabled;
         } catch (err) {

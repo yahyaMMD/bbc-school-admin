@@ -298,7 +298,7 @@ const TeacherApp = (() => {
           <div class="fact-card"><div class="k">${esc(I18n.t("phone"))}</div><div class="v">${esc(dash(t.phone))}</div></div>
           <div class="fact-card"><div class="k">${esc(I18n.t("wilaya"))}</div><div class="v">${esc(dash(t.wilaya))}</div></div>
           <div class="fact-card"><div class="k">${esc(I18n.t("commune"))}</div><div class="v">${esc(dash(t.commune))}</div></div>
-          <div class="fact-card"><div class="k">${esc(I18n.t("teacherId"))}</div><div class="v">${esc(t.id)}</div></div>
+          <div class="fact-card"><div class="k">${esc(I18n.t("teacherId"))}</div><div class="v">${esc(t.loginCode || t.id)}</div></div>
         </div>
         <div class="chip-row" style="margin-top:0.85rem">
           ${(t.modules || []).map((m) => `<span class="chip">${esc(m)}</span>`).join("") || `<span class="muted">${esc(I18n.t("noneListed"))}</span>`}

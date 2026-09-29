@@ -3,6 +3,7 @@ import { query } from "./db.js";
 function mapTeacher(r) {
   return {
     id: r.id,
+    loginCode: r.login_code || "",
     firstName: r.first_name,
     lastName: r.last_name,
     nameLatin: r.name_latin || "",

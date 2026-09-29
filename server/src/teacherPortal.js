@@ -216,7 +216,7 @@ export async function changeMyPassword(req, res) {
 export async function getTeacherPortal(req, res) {
   try {
     const id = req.params.id;
-    const t = await query("SELECT id, phone FROM teachers WHERE id = $1", [id]);
+    const t = await query("SELECT id, phone, login_code FROM teachers WHERE id = $1", [id]);
     if (!t.rows.length) return res.status(404).json({ error: "Not found" });
     const acc = await query(
       "SELECT must_change_password, updated_at FROM teacher_accounts WHERE teacher_id = $1",
@@ -224,6 +224,7 @@ export async function getTeacherPortal(req, res) {
     );
     res.json({
       teacherId: id,
+      loginCode: t.rows[0].login_code || "",
       phone: t.rows[0].phone || "",
       enabled: acc.rows.length > 0,
       mustChangePassword: Boolean(acc.rows[0]?.must_change_password),
@@ -245,11 +246,8 @@ export async function setTeacherPortal(req, res) {
     if (password.length < 6) {
       return res.status(400).json({ error: "Password must be at least 6 characters" });
     }
-    const t = await query("SELECT id, phone FROM teachers WHERE id = $1", [id]);
+    const t = await query("SELECT id, phone, login_code FROM teachers WHERE id = $1", [id]);
     if (!t.rows.length) return res.status(404).json({ error: "Teacher not found" });
-    if (!normalizePhoneDigits(t.rows[0].phone)) {
-      return res.status(400).json({ error: "Teacher needs a phone number before enabling the portal" });
-    }
     const hash = await bcrypt.hash(password, SALT_ROUNDS);
     await query(
       `INSERT INTO teacher_accounts (teacher_id, password_hash, must_change_password, updated_at)
@@ -263,12 +261,132 @@ export async function setTeacherPortal(req, res) {
     res.json({
       ok: true,
       teacherId: id,
+      loginCode: t.rows[0].login_code || "",
       enabled: true,
       mustChangePassword: mustChange,
     });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message || "Failed to set portal password" });
+  }
+}
+
+function passwordFirstName(row) {
+  const raw = String(row.first_name_latin || row.first_name || "teacher")
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-zA-Z]/g, "")
+    .toLowerCase();
+  if (raw.length >= 2) return raw;
+  return "teacher";
+}
+
+async function nextLoginCodeNumber() {
+  const existing = await query(
+    `SELECT login_code FROM teachers
+     WHERE login_code ~ '^TR[0-9]+$'
+     ORDER BY login_code DESC
+     LIMIT 1`
+  );
+  if (!existing.rows.length) return 1;
+  const n = Number(String(existing.rows[0].login_code).replace(/^TR/i, ""));
+  return Number.isFinite(n) ? n + 1 : 1;
+}
+
+export async function allocateLoginCodeForTeacher(teacherId) {
+  const cur = await query(`SELECT login_code FROM teachers WHERE id = $1`, [teacherId]);
+  if (!cur.rows.length) return "";
+  if (cur.rows[0].login_code) return cur.rows[0].login_code;
+  let next = await nextLoginCodeNumber();
+  for (let i = 0; i < 50; i++) {
+    const code = `TR${String(next).padStart(3, "0")}`;
+    try {
+      await query(`UPDATE teachers SET login_code = $2 WHERE id = $1 AND (login_code IS NULL OR BTRIM(login_code) = '')`, [
+        teacherId,
+        code,
+      ]);
+      const check = await query(`SELECT login_code FROM teachers WHERE id = $1`, [teacherId]);
+      return check.rows[0]?.login_code || code;
+    } catch {
+      next += 1;
+    }
+  }
+  return "";
+}
+
+/** Admin: assign portal passwords for every teacher and return plaintext once. */
+export async function provisionAllTeacherPortals(req, res) {
+  try {
+    const teachers = await query(
+      `SELECT id, first_name, last_name, first_name_latin, last_name_latin, name_latin, phone, login_code
+       FROM teachers
+       ORDER BY
+         NULLIF(BTRIM(last_name_latin), '') NULLS LAST,
+         NULLIF(BTRIM(first_name_latin), '') NULLS LAST,
+         NULLIF(BTRIM(last_name), '') NULLS LAST,
+         NULLIF(BTRIM(first_name), '') NULLS LAST,
+         id`
+    );
+
+    // Fill any missing login codes
+    let next = await nextLoginCodeNumber();
+    for (const row of teachers.rows) {
+      if (!row.login_code || !String(row.login_code).trim()) {
+        const code = `TR${String(next).padStart(3, "0")}`;
+        await query(`UPDATE teachers SET login_code = $2 WHERE id = $1`, [row.id, code]);
+        row.login_code = code;
+        next += 1;
+      }
+    }
+
+    const usedNums = new Set();
+    const credentials = [];
+    for (const row of teachers.rows) {
+      const first = passwordFirstName(row);
+      let n = 100 + Math.floor(Math.random() * 900);
+      while (usedNums.has(`${first}@${n}`)) {
+        n = 100 + Math.floor(Math.random() * 900);
+      }
+      usedNums.add(`${first}@${n}`);
+      const password = `${first}@${n}`;
+      const hash = await bcrypt.hash(password, SALT_ROUNDS);
+      await query(
+        `INSERT INTO teacher_accounts (teacher_id, password_hash, must_change_password, updated_at)
+         VALUES ($1, $2, FALSE, NOW())
+         ON CONFLICT (teacher_id) DO UPDATE SET
+           password_hash = EXCLUDED.password_hash,
+           must_change_password = FALSE,
+           updated_at = NOW()`,
+        [row.id, hash]
+      );
+      const displayName =
+        [row.first_name, row.last_name].filter(Boolean).join(" ").trim() ||
+        [row.first_name_latin, row.last_name_latin].filter(Boolean).join(" ").trim() ||
+        row.name_latin ||
+        row.id;
+      const latinName =
+        [row.first_name_latin, row.last_name_latin].filter(Boolean).join(" ").trim() ||
+        row.name_latin ||
+        "";
+      credentials.push({
+        teacherId: row.id,
+        loginCode: row.login_code,
+        name: displayName,
+        nameLatin: latinName,
+        phone: row.phone || "",
+        password,
+      });
+    }
+
+    credentials.sort((a, b) => String(a.loginCode).localeCompare(String(b.loginCode)));
+    res.json({
+      ok: true,
+      count: credentials.length,
+      credentials,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message || "Provision failed" });
   }
 }
 

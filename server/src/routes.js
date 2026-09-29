@@ -57,6 +57,12 @@ router.get("/teachers", authRequired(["director", "admin"]), async (_req, res) =
   res.json(r.rows.map(mapTeacher));
 });
 
+router.post(
+  "/teachers/provision-portals",
+  authRequired(["admin"]),
+  TeacherPortal.provisionAllTeacherPortals
+);
+
 router.get(
   "/teachers/:id/portal",
   authRequired(["admin"]),
@@ -93,6 +99,7 @@ router.post("/teachers", authRequired(["admin"]), async (req, res) => {
       b.photo || "",
     ]
   );
+  await TeacherPortal.allocateLoginCodeForTeacher(id);
   const r = await query("SELECT * FROM teachers WHERE id = $1", [id]);
   res.status(201).json(mapTeacher(r.rows[0]));
 });

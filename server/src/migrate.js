@@ -170,4 +170,43 @@ export async function migrate() {
   await query(`ALTER TABLE parent_form_submissions ADD COLUMN IF NOT EXISTS repeated_year TEXT NOT NULL DEFAULT ''`);
   await query(`ALTER TABLE parent_form_submissions ADD COLUMN IF NOT EXISTS studied_abroad TEXT NOT NULL DEFAULT ''`);
   await query(`ALTER TABLE parent_form_submissions ADD COLUMN IF NOT EXISTS companion_id_url TEXT NOT NULL DEFAULT ''`);
+
+  // Teacher portal login codes (TR001, TR002, …) — separate from internal teacher id
+  await query(`ALTER TABLE teachers ADD COLUMN IF NOT EXISTS login_code TEXT`);
+  await assignTeacherLoginCodes();
+  await query(
+    `CREATE UNIQUE INDEX IF NOT EXISTS idx_teachers_login_code
+     ON teachers (login_code)
+     WHERE login_code IS NOT NULL AND login_code <> ''`
+  );
+}
+
+/** Assign TR001… to teachers missing a login_code (stable order). */
+async function assignTeacherLoginCodes() {
+  const existing = await query(
+    `SELECT login_code FROM teachers
+     WHERE login_code ~ '^TR[0-9]+$'
+     ORDER BY login_code DESC
+     LIMIT 1`
+  );
+  let next = 1;
+  if (existing.rows.length) {
+    const n = Number(String(existing.rows[0].login_code).replace(/^TR/i, ""));
+    if (Number.isFinite(n) && n >= next) next = n + 1;
+  }
+  const missing = await query(
+    `SELECT id FROM teachers
+     WHERE login_code IS NULL OR BTRIM(login_code) = ''
+     ORDER BY
+       NULLIF(BTRIM(last_name_latin), '') NULLS LAST,
+       NULLIF(BTRIM(first_name_latin), '') NULLS LAST,
+       NULLIF(BTRIM(last_name), '') NULLS LAST,
+       NULLIF(BTRIM(first_name), '') NULLS LAST,
+       id`
+  );
+  for (const row of missing.rows) {
+    const code = `TR${String(next).padStart(3, "0")}`;
+    await query(`UPDATE teachers SET login_code = $2 WHERE id = $1`, [row.id, code]);
+    next += 1;
+  }
 }

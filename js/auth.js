@@ -1,6 +1,6 @@
 /**
  * Session — password alone selects Director, Staff/admin, or WhatsApp.
- * Teachers use phone + password via teacher login.
+ * Teachers use login ID (TR001…) + password via teacher login.
  */
 const Auth = (() => {
   function isAuthenticated() {
@@ -36,11 +36,17 @@ const Auth = (() => {
 
   async function login(password, opts = {}) {
     try {
-      const data = await BBC_API.login(password, opts.roleHint, opts.phone);
+      const data = await BBC_API.login(
+        password,
+        opts.roleHint,
+        opts.phone,
+        opts.loginCode
+      );
       return {
         ok: true,
         role: data.role,
         teacherId: data.teacherId,
+        loginCode: data.loginCode,
         mustChangePassword: data.mustChangePassword,
       };
     } catch (err) {

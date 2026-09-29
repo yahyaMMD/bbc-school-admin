@@ -359,8 +359,8 @@
           </div>
           <form class="login-form" id="teacher-login-form" autocomplete="on">
             <div class="field">
-              <label for="teacher-phone">${esc(I18n.t("phone"))}</label>
-              <input id="teacher-phone" name="phone" type="tel" inputmode="tel" placeholder="${esc(I18n.t("teacherPhonePlaceholder"))}" required autofocus />
+              <label for="teacher-login-code">${esc(I18n.t("teacherLoginId"))}</label>
+              <input id="teacher-login-code" name="loginCode" type="text" inputmode="text" autocomplete="username" placeholder="${esc(I18n.t("teacherLoginIdPlaceholder"))}" required autofocus style="text-transform:uppercase" />
             </div>
             <div class="field">
               <label for="teacher-password">${esc(I18n.t("password"))}</label>
@@ -1181,7 +1181,7 @@
         <div class="fact-card"><div class="k">${esc(I18n.t("department"))}</div><div class="v">${esc(depts.join(" · ") || "—")}</div></div>
         <div class="fact-card"><div class="k">${esc(I18n.t("wilaya"))}</div><div class="v">${esc(dash(t.wilaya))}</div></div>
         <div class="fact-card"><div class="k">${esc(I18n.t("commune"))}</div><div class="v">${esc(dash(t.commune))}</div></div>
-        <div class="fact-card"><div class="k">${esc(I18n.t("teacherId"))}</div><div class="v">${esc(t.id)}</div></div>
+        <div class="fact-card"><div class="k">${esc(I18n.t("teacherId"))}</div><div class="v">${esc(t.loginCode || t.id)}</div></div>
         <div class="fact-card"><div class="k">${esc(I18n.t("classesAssigned"))}</div><div class="v">${classes.length}</div></div>
       </div>
       <div class="detail-layout">
@@ -1334,10 +1334,10 @@
 
     document.getElementById("teacher-login-form")?.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const phone = document.getElementById("teacher-phone")?.value || "";
+      const loginCode = document.getElementById("teacher-login-code")?.value || "";
       const password = document.getElementById("teacher-password")?.value || "";
       const err = document.getElementById("teacher-login-error");
-      const result = await Auth.login(password, { phone });
+      const result = await Auth.login(password, { loginCode });
       if (!result.ok) {
         if (err) {
           err.textContent = result.error || I18n.t("loginError");
