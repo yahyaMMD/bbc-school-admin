@@ -317,15 +317,19 @@ export async function listSubmissions(req, res) {
     let r;
     if (status) {
       r = await query(
-        `SELECT * FROM parent_form_submissions WHERE status = $1 ORDER BY created_at DESC LIMIT 500`,
+        `SELECT * FROM parent_form_submissions WHERE status = $1 ORDER BY created_at DESC LIMIT 5000`,
         [status]
       );
     } else {
       r = await query(
-        `SELECT * FROM parent_form_submissions ORDER BY created_at DESC LIMIT 500`
+        `SELECT * FROM parent_form_submissions ORDER BY created_at DESC LIMIT 5000`
       );
     }
-    res.json({ submissions: r.rows.map(mapRow), formVersion: FORM_VERSION });
+    res.json({
+      submissions: r.rows.map(mapRow),
+      formVersion: FORM_VERSION,
+      count: r.rows.length,
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message || "Failed" });

@@ -1457,43 +1457,407 @@ const AdminApp = (() => {
     const pfList = root.querySelector("[data-pf-list]");
     if (pfList) {
       (async () => {
+        const pfRoot = root.querySelector("[data-pf-root]") || pfList.parentElement;
         try {
           const data = await BBC_API.get("/parent-form");
-          const rows = data.submissions || [];
-          if (!rows.length) {
+          const allRows = data.submissions || [];
+          if (!allRows.length) {
             pfList.outerHTML = `<div class="admin-empty">${esc(I18n.t("parentFormsEmpty"))}</div>`;
             return;
           }
-          pfList.outerHTML = `
-            <div class="admin-person-list admin-person-list-dense" data-pf-rows>
-              ${rows
-                .map((s) => {
-                  const name = `${s.studentLastName || ""} ${s.studentFirstName || ""}`.trim();
-                  const when = s.createdAt
-                    ? new Date(s.createdAt).toLocaleString()
-                    : "";
-                  const dob = formatDob(s.dateOfBirth);
-                  return `
-                  <div class="admin-person-card">
-                    <div class="admin-person-main">
-                      <strong dir="auto">${esc(name)}</strong>
-                      <span class="muted">${esc(I18n.t("dob"))}: ${esc(dob)} · ${esc(s.phonePrimary || "")}</span>
-                      <span class="muted">${esc(s.enrollmentYear || "")}${s.studentLevel ? ` · ${esc(s.studentLevel)}` : ""}${s.hasCompanionId ? " · ID" : ""}</span>
-                      <span class="muted">${esc(when)} · ${esc(s.status || "new")}</span>
-                    </div>
-                    <div class="admin-person-actions">
-                      <button type="button" class="btn btn-ghost btn-sm" data-nav="#/manage/parent-forms/${esc(s.id)}">${esc(I18n.t("annViewDetails"))}</button>
-                    </div>
-                  </div>`;
-                })
-                .join("")}
-            </div>`;
-          root.querySelectorAll("[data-pf-rows] [data-nav]").forEach((el) => {
-            el.addEventListener("click", () => {
-              const target = el.getAttribute("data-nav");
-              if (target) go(target);
+
+          const years = [
+            ...new Set(
+              allRows
+                .map((s) => s.enrollmentYear || s.formData?.student?.enrollmentYear || "")
+                .filter(Boolean)
+            ),
+          ].sort()
+            .reverse();
+
+          const statusLabel = (st) => {
+            if (st === "reviewed") return I18n.t("parentFormsStatusReviewed");
+            if (st === "linked") return I18n.t("parentFormsStatusLinked");
+            return I18n.t("parentFormsStatusNew");
+          };
+
+          const studentNameOf = (s) =>
+            `${s.studentLastName || s.formData?.student?.lastName || ""} ${s.studentFirstName || s.formData?.student?.firstName || ""}`.trim();
+
+          const sexOf = (s) => s.formData?.student?.sex || "";
+          const levelOf = (s) => s.studentLevel || s.formData?.student?.level || "";
+          const yearOf = (s) => s.enrollmentYear || s.formData?.student?.enrollmentYear || "";
+          const dayKey = (s) => {
+            if (!s.createdAt) return "";
+            const d = new Date(s.createdAt);
+            if (Number.isNaN(d.getTime())) return "";
+            return d.toISOString().slice(0, 10);
+          };
+
+          const csvEscape = (v) => {
+            const t = String(v ?? "");
+            if (/[",\n\r]/.test(t)) return `"${t.replace(/"/g, '""')}"`;
+            return t;
+          };
+
+          const exportExcel = (rows) => {
+            const headers = [
+              "#",
+              "ID",
+              "Status",
+              "Submitted at",
+              "Student last name",
+              "Student first name",
+              "Sex",
+              "Date of birth",
+              "Place of birth",
+              "Nationality",
+              "Enrollment year",
+              "Level",
+              "Repeated year",
+              "Studied abroad",
+              "Father name",
+              "Father profession",
+              "Father nationality",
+              "Father phone",
+              "Mother name",
+              "Mother profession",
+              "Mother nationality",
+              "Mother phone",
+              "Phone backup",
+              "Home address",
+              "Email",
+              "Parents status",
+              "Custody",
+              "Siblings count",
+              "Brothers count",
+              "Sisters count",
+              "Sibling rank",
+              "Tutor name/role",
+              "Tutor phone",
+              "Blood type",
+              "Disability",
+              "Allergy",
+              "Glasses",
+              "Behavior",
+              "Learning difficulty",
+              "Treatment",
+              "Departure mode",
+              "Companion role",
+              "Companion name",
+              "Companion phone",
+              "Driver name",
+              "Driver phone",
+              "Has companion ID",
+              "Outings",
+              "Sports",
+              "Photo/media consent",
+            ];
+            const lines = [headers.map(csvEscape).join(",")];
+            rows.forEach((s, i) => {
+              const fd = s.formData || {};
+              const st = fd.student || {};
+              const fa = fd.father || {};
+              const mo = fd.mother || {};
+              const co = fd.contact || {};
+              const fam = fd.family || {};
+              const med = fd.medical || {};
+              const cons = fd.consents || {};
+              lines.push(
+                [
+                  i + 1,
+                  s.id,
+                  s.status,
+                  s.createdAt ? new Date(s.createdAt).toLocaleString() : "",
+                  st.lastName || s.studentLastName,
+                  st.firstName || s.studentFirstName,
+                  st.sex,
+                  st.dateOfBirth || s.dateOfBirth,
+                  st.placeOfBirth,
+                  st.nationality,
+                  st.enrollmentYear || s.enrollmentYear,
+                  st.level || s.studentLevel,
+                  st.repeatedYear,
+                  st.studiedAbroad,
+                  fa.name,
+                  fa.profession,
+                  fa.nationality,
+                  fa.phone || s.phonePrimary,
+                  mo.name,
+                  mo.profession,
+                  mo.nationality,
+                  mo.phone || s.phoneSecondary,
+                  co.phoneBackup || s.phoneBackup,
+                  co.address || s.homeAddress,
+                  co.email || s.email,
+                  fam.parentsStatus,
+                  fam.custody,
+                  fam.siblingsCount,
+                  fam.brothersCount,
+                  fam.sistersCount,
+                  fam.siblingRank,
+                  fam.tutorNameRole,
+                  fam.tutorPhone,
+                  med.bloodType,
+                  med.disability,
+                  med.allergy,
+                  med.glasses,
+                  med.behavior,
+                  med.learningDifficulty,
+                  med.treatment,
+                  cons.departureMode,
+                  cons.companionRole,
+                  cons.companionName,
+                  cons.companionPhone,
+                  cons.driverName,
+                  cons.driverPhone,
+                  s.hasCompanionId ? "yes" : "no",
+                  cons.outings,
+                  cons.sports,
+                  cons.photoMedia || s.photoMedia,
+                ]
+                  .map(csvEscape)
+                  .join(",")
+              );
             });
-          });
+            const bom = "\uFEFF";
+            const blob = new Blob([bom + lines.join("\n")], {
+              type: "text/csv;charset=utf-8",
+            });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `parent-forms-${new Date().toISOString().slice(0, 10)}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+          };
+
+          const filterRows = (state) => {
+            const q = (state.q || "").trim().toLowerCase();
+            let rows = allRows.slice();
+            if (state.status) rows = rows.filter((s) => (s.status || "new") === state.status);
+            if (state.year) rows = rows.filter((s) => yearOf(s) === state.year);
+            if (state.sex) rows = rows.filter((s) => sexOf(s) === state.sex);
+            if (state.idDoc === "yes") rows = rows.filter((s) => s.hasCompanionId);
+            if (state.idDoc === "no") rows = rows.filter((s) => !s.hasCompanionId);
+            if (state.from) rows = rows.filter((s) => dayKey(s) >= state.from);
+            if (state.to) rows = rows.filter((s) => dayKey(s) <= state.to);
+            if (q) {
+              rows = rows.filter((s) => {
+                const hay = [
+                  studentNameOf(s),
+                  s.phonePrimary,
+                  s.phoneSecondary,
+                  s.phoneBackup,
+                  s.email,
+                  levelOf(s),
+                  yearOf(s),
+                  s.id,
+                  s.homeAddress,
+                  s.formData?.father?.name,
+                  s.formData?.mother?.name,
+                ]
+                  .filter(Boolean)
+                  .join(" ")
+                  .toLowerCase();
+                return hay.includes(q);
+              });
+            }
+            const sort = state.sort || "newest";
+            rows.sort((a, b) => {
+              if (sort === "oldest") {
+                return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
+              }
+              if (sort === "name") {
+                return studentNameOf(a).localeCompare(studentNameOf(b), "ar");
+              }
+              if (sort === "level") {
+                return levelOf(a).localeCompare(levelOf(b), "ar");
+              }
+              return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+            });
+            return rows;
+          };
+
+          const readState = () => {
+            const form = pfRoot.querySelector("#admin-pf-filter");
+            if (!form) {
+              return {
+                q: "",
+                status: "",
+                year: "",
+                sex: "",
+                idDoc: "",
+                from: "",
+                to: "",
+                sort: "newest",
+              };
+            }
+            const fd = new FormData(form);
+            return {
+              q: String(fd.get("q") || ""),
+              status: String(fd.get("status") || ""),
+              year: String(fd.get("year") || ""),
+              sex: String(fd.get("sex") || ""),
+              idDoc: String(fd.get("idDoc") || ""),
+              from: String(fd.get("from") || ""),
+              to: String(fd.get("to") || ""),
+              sort: String(fd.get("sort") || "newest"),
+            };
+          };
+
+          const render = (opts = {}) => {
+            const keepFocus = opts.keepFocus;
+            const activeName = document.activeElement?.getAttribute?.("name");
+            const selStart = document.activeElement?.selectionStart;
+            const selEnd = document.activeElement?.selectionEnd;
+
+            const state = readState();
+            const filtered = filterRows(state);
+            const newCount = allRows.filter((s) => (s.status || "new") === "new").length;
+            const reviewedCount = allRows.filter((s) => s.status === "reviewed").length;
+            const withId = allRows.filter((s) => s.hasCompanionId).length;
+
+            const listHtml = filtered.length
+              ? `<div class="admin-person-list admin-person-list-dense" data-pf-rows>
+                  ${filtered
+                    .map((s) => {
+                      const name = studentNameOf(s);
+                      const when = s.createdAt ? new Date(s.createdAt).toLocaleString() : "";
+                      const dob = formatDob(s.dateOfBirth || s.formData?.student?.dateOfBirth);
+                      const sex = sexOf(s);
+                      const sexTxt =
+                        sex === "female"
+                          ? I18n.t("parentFormsSexFemale")
+                          : sex === "male"
+                            ? I18n.t("parentFormsSexMale")
+                            : "";
+                      const st = s.status || "new";
+                      const chips = [
+                        `<span class="chip${st === "new" ? " accent" : " neutral"}">${esc(statusLabel(st))}</span>`,
+                        yearOf(s) ? `<span class="chip neutral">${esc(yearOf(s))}</span>` : "",
+                        levelOf(s) ? `<span class="chip neutral" dir="auto">${esc(levelOf(s))}</span>` : "",
+                        sexTxt ? `<span class="chip neutral">${esc(sexTxt)}</span>` : "",
+                        s.hasCompanionId ? `<span class="chip accent">ID</span>` : "",
+                      ]
+                        .filter(Boolean)
+                        .join("");
+                      return `
+                      <div class="admin-person-card">
+                        <div class="admin-person-main">
+                          <strong dir="auto">${esc(name)}</strong>
+                          <span class="muted">${esc(I18n.t("dob"))}: ${esc(dob || "—")}${s.phonePrimary ? ` · ${esc(s.phonePrimary)}` : ""}</span>
+                          <span class="muted">${esc(when)}</span>
+                          <div class="chip-row" style="margin-top:0.35rem">${chips}</div>
+                        </div>
+                        <div class="admin-person-actions">
+                          <button type="button" class="btn btn-ghost btn-sm" data-nav="#/manage/parent-forms/${esc(s.id)}">${esc(I18n.t("annViewDetails"))}</button>
+                        </div>
+                      </div>`;
+                    })
+                    .join("")}
+                </div>`
+              : `<div class="admin-empty" data-pf-rows>${esc(I18n.t("parentFormsEmpty"))}</div>`;
+
+            let form = pfRoot.querySelector("#admin-pf-filter");
+            if (!form) {
+              pfRoot.innerHTML = `
+                <div class="pf-stats" data-pf-stats style="display:flex;flex-wrap:wrap;gap:0.55rem;margin-bottom:0.85rem"></div>
+                <form id="admin-pf-filter" class="admin-filter-bar admin-filter-bar-wrap">
+                  <input type="search" name="q" placeholder="${esc(I18n.t("parentFormsSearch"))}" value="" autocomplete="off" />
+                  <select name="status">
+                    <option value="">${esc(I18n.t("parentFormsAllStatuses"))}</option>
+                    <option value="new">${esc(I18n.t("parentFormsStatusNew"))}</option>
+                    <option value="reviewed">${esc(I18n.t("parentFormsStatusReviewed"))}</option>
+                    <option value="linked">${esc(I18n.t("parentFormsStatusLinked"))}</option>
+                  </select>
+                  <select name="year">
+                    <option value="">${esc(I18n.t("parentFormsAllYears"))}</option>
+                    ${years.map((y) => `<option value="${esc(y)}">${esc(y)}</option>`).join("")}
+                  </select>
+                  <select name="sex">
+                    <option value="">${esc(I18n.t("parentFormsAllSex"))}</option>
+                    <option value="male">${esc(I18n.t("parentFormsSexMale"))}</option>
+                    <option value="female">${esc(I18n.t("parentFormsSexFemale"))}</option>
+                  </select>
+                  <select name="idDoc">
+                    <option value="">${esc(I18n.t("parentFormsIdAny"))}</option>
+                    <option value="yes">${esc(I18n.t("parentFormsIdYes"))}</option>
+                    <option value="no">${esc(I18n.t("parentFormsIdNo"))}</option>
+                  </select>
+                  <input type="date" name="from" title="${esc(I18n.t("parentFormsDateFrom"))}" />
+                  <input type="date" name="to" title="${esc(I18n.t("parentFormsDateTo"))}" />
+                  <select name="sort">
+                    <option value="newest">${esc(I18n.t("parentFormsSortNewest"))}</option>
+                    <option value="oldest">${esc(I18n.t("parentFormsSortOldest"))}</option>
+                    <option value="name">${esc(I18n.t("parentFormsSortName"))}</option>
+                    <option value="level">${esc(I18n.t("parentFormsSortLevel"))}</option>
+                  </select>
+                  <button type="submit" class="btn btn-primary btn-sm">${esc(I18n.t("parentFormsApply"))}</button>
+                  <button type="button" class="btn btn-ghost btn-sm" data-pf-reset>${esc(I18n.t("parentFormsReset"))}</button>
+                  <button type="button" class="btn btn-primary btn-sm" data-pf-export>${esc(I18n.t("parentFormsExport"))}</button>
+                </form>
+                <div data-pf-list-host></div>
+              `;
+              form = pfRoot.querySelector("#admin-pf-filter");
+              form.addEventListener("submit", (e) => {
+                e.preventDefault();
+                render();
+              });
+              form.querySelectorAll("select, input[type='date']").forEach((el) => {
+                el.addEventListener("change", () => render());
+              });
+              let searchTimer = null;
+              form.querySelector("input[name='q']")?.addEventListener("input", () => {
+                clearTimeout(searchTimer);
+                searchTimer = setTimeout(() => render({ keepFocus: true }), 180);
+              });
+              pfRoot.querySelector("[data-pf-reset]")?.addEventListener("click", () => {
+                form.reset();
+                render();
+              });
+              pfRoot.querySelector("[data-pf-export]")?.addEventListener("click", () => {
+                exportExcel(filterRows(readState()));
+              });
+            }
+
+            const stats = pfRoot.querySelector("[data-pf-stats]");
+            if (stats) {
+              stats.innerHTML = `
+                <span class="chip accent">${esc(I18n.t("parentFormsShowing", { shown: filtered.length, total: allRows.length }))}</span>
+                <span class="chip">${esc(I18n.t("parentFormsStatusNew"))}: ${newCount}</span>
+                <span class="chip neutral">${esc(I18n.t("parentFormsStatusReviewed"))}: ${reviewedCount}</span>
+                <span class="chip neutral">ID: ${withId}</span>
+              `;
+            }
+            const host = pfRoot.querySelector("[data-pf-list-host]");
+            if (host) host.innerHTML = listHtml;
+
+            pfRoot.querySelectorAll("[data-pf-rows] [data-nav]").forEach((el) => {
+              el.addEventListener("click", () => {
+                const target = el.getAttribute("data-nav");
+                if (target) go(target);
+              });
+            });
+
+            if (keepFocus && activeName) {
+              const el = form.querySelector(`[name="${activeName}"]`);
+              if (el) {
+                el.focus();
+                if (typeof selStart === "number" && el.setSelectionRange) {
+                  try {
+                    el.setSelectionRange(selStart, selEnd);
+                  } catch {
+                    /* ignore */
+                  }
+                }
+              }
+            }
+          };
+
+          render();
         } catch (err) {
           pfList.outerHTML = `<div class="admin-empty is-err">${esc(err.message || "Failed")}</div>`;
         }
@@ -1898,7 +2262,7 @@ const AdminApp = (() => {
       I18n.t("parentForms"),
       `${esc(I18n.t("parentFormsLede"))} <a class="link-btn" href="/parent-form.html" target="_blank" rel="noopener">${esc(I18n.t("parentFormOpen"))}</a>`,
       `
-      <div class="admin-panel">
+      <div class="admin-panel" data-pf-root>
         <div class="admin-empty" data-pf-list>${esc(I18n.t("loading"))}</div>
       </div>
     `
