@@ -170,6 +170,17 @@ export async function migrate() {
   await query(`ALTER TABLE parent_form_submissions ADD COLUMN IF NOT EXISTS repeated_year TEXT NOT NULL DEFAULT ''`);
   await query(`ALTER TABLE parent_form_submissions ADD COLUMN IF NOT EXISTS studied_abroad TEXT NOT NULL DEFAULT ''`);
   await query(`ALTER TABLE parent_form_submissions ADD COLUMN IF NOT EXISTS companion_id_url TEXT NOT NULL DEFAULT ''`);
+  await query(`ALTER TABLE parent_form_submissions ADD COLUMN IF NOT EXISTS student_id TEXT`);
+  await query(`ALTER TABLE students ADD COLUMN IF NOT EXISTS parent_form_id TEXT`);
+  await query(`ALTER TABLE students ADD COLUMN IF NOT EXISTS parent_profile JSONB`);
+  await query(
+    `CREATE INDEX IF NOT EXISTS idx_parent_form_student_id ON parent_form_submissions (student_id)
+     WHERE student_id IS NOT NULL AND student_id <> ''`
+  );
+  await query(
+    `CREATE INDEX IF NOT EXISTS idx_students_parent_form_id ON students (parent_form_id)
+     WHERE parent_form_id IS NOT NULL AND parent_form_id <> ''`
+  );
 
   // Teacher portal login codes (TR001, TR002, …) — separate from internal teacher id
   await query(`ALTER TABLE teachers ADD COLUMN IF NOT EXISTS login_code TEXT`);

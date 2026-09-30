@@ -143,6 +143,7 @@ function mapRow(r) {
     companionIdUrl: r.companion_id_url || formData.consents.companionIdUrl || "",
     companionIdName: formData.consents.companionIdName || "",
     hasCompanionId: Boolean(r.companion_id_url || formData.consents.companionIdUrl),
+    studentId: r.student_id || "",
     formData,
     formVersion: r.form_version || 1,
     status: r.status || "new",
@@ -388,6 +389,131 @@ export async function getCompanionIdDocument(req, res) {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message || "Failed" });
+  }
+}
+
+/** Admin: link a parent-form submission to a student and copy profile data. */
+export async function linkSubmissionToStudent(req, res) {
+  try {
+    const submissionId = clean(req.body?.submissionId || req.params.id, 40);
+    const studentId = clean(req.body?.studentId, 40);
+    const fillGapsOnly = req.body?.fillGapsOnly !== false;
+    if (!submissionId || !studentId) {
+      return res.status(400).json({ error: "submissionId and studentId required" });
+    }
+
+    const subR = await query(`SELECT * FROM parent_form_submissions WHERE id = $1`, [submissionId]);
+    if (!subR.rows.length) return res.status(404).json({ error: "Submission not found" });
+    const stuR = await query(`SELECT * FROM students WHERE id = $1`, [studentId]);
+    if (!stuR.rows.length) return res.status(404).json({ error: "Student not found" });
+
+    const sub = subR.rows[0];
+    const stu = stuR.rows[0];
+    const formData = normalizeFormData(sub.form_data);
+    const profile = {
+      submissionId,
+      linkedAt: new Date().toISOString(),
+      formVersion: sub.form_version || FORM_VERSION,
+      ...formData,
+    };
+
+    // Fill missing identity fields from parent form (never overwrite existing non-empty values when fillGapsOnly)
+    const nextDob =
+      fillGapsOnly && String(stu.date_of_birth || "").trim()
+        ? stu.date_of_birth
+        : formData.student.dateOfBirth || stu.date_of_birth || "";
+    const sexMap = { male: "Male", female: "Female" };
+    const formGender = sexMap[formData.student.sex] || "";
+    const nextGender =
+      fillGapsOnly && String(stu.gender || "").trim()
+        ? stu.gender
+        : formGender || stu.gender || "";
+
+    await query(
+      `UPDATE students SET
+         parent_form_id = $2,
+         parent_profile = $3::jsonb,
+         date_of_birth = $4,
+         gender = $5
+       WHERE id = $1`,
+      [studentId, submissionId, JSON.stringify(profile), nextDob, nextGender]
+    );
+
+    // Clear previous link if this submission was linked elsewhere
+    if (sub.student_id && sub.student_id !== studentId) {
+      await query(
+        `UPDATE students SET parent_form_id = NULL, parent_profile = NULL
+         WHERE id = $1 AND parent_form_id = $2`,
+        [sub.student_id, submissionId]
+      );
+    }
+
+    await query(
+      `UPDATE parent_form_submissions SET student_id = $2, status = 'linked' WHERE id = $1`,
+      [submissionId, studentId]
+    );
+
+    const updated = await query(`SELECT * FROM students WHERE id = $1`, [studentId]);
+    const { mapStudent } = await import("./schoolData.js");
+    res.json({
+      ok: true,
+      student: mapStudent(updated.rows[0]),
+      submission: mapRow(
+        (
+          await query(`SELECT * FROM parent_form_submissions WHERE id = $1`, [submissionId])
+        ).rows[0]
+      ),
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message || "Link failed" });
+  }
+}
+
+/** Admin: bulk link pairs [{submissionId, studentId}] */
+export async function bulkLinkSubmissions(req, res) {
+  try {
+    const pairs = Array.isArray(req.body?.pairs) ? req.body.pairs : [];
+    if (!pairs.length) return res.status(400).json({ error: "pairs required" });
+    const fillGapsOnly = req.body?.fillGapsOnly !== false;
+    const results = [];
+    for (const p of pairs) {
+      const fakeReq = {
+        body: {
+          submissionId: p.submissionId,
+          studentId: p.studentId,
+          fillGapsOnly,
+        },
+        params: {},
+      };
+      let captured = null;
+      const fakeRes = {
+        status(code) {
+          this.statusCode = code;
+          return this;
+        },
+        json(payload) {
+          captured = { status: this.statusCode || 200, payload };
+          return payload;
+        },
+      };
+      await linkSubmissionToStudent(fakeReq, fakeRes);
+      results.push({
+        submissionId: p.submissionId,
+        studentId: p.studentId,
+        ok: captured?.payload?.ok === true,
+        error: captured?.payload?.error || null,
+      });
+    }
+    res.json({
+      ok: true,
+      linked: results.filter((r) => r.ok).length,
+      failed: results.filter((r) => !r.ok).length,
+      results,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message || "Bulk link failed" });
   }
 }
 

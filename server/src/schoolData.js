@@ -36,8 +36,10 @@ function mapStudent(r) {
     departmentId: r.department_id,
     searchName: r.search_name || r.full_name,
     photo: r.photo || "",
+    parentFormId: r.parent_form_id || "",
   };
   if (r.previous_year_details) s.previousYearDetails = r.previous_year_details;
+  if (r.parent_profile) s.parentProfile = r.parent_profile;
   return s;
 }
 

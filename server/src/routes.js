@@ -20,6 +20,16 @@ router.get("/health", (_req, res) => res.json({ ok: true }));
 router.get("/parent-form/meta", ParentForm.listFormMeta);
 router.post("/parent-form", ParentForm.submitForm);
 router.get("/parent-form", authRequired(["admin", "director"]), ParentForm.listSubmissions);
+router.post(
+  "/parent-form/link",
+  authRequired(["admin"]),
+  ParentForm.linkSubmissionToStudent
+);
+router.post(
+  "/parent-form/bulk-link",
+  authRequired(["admin"]),
+  ParentForm.bulkLinkSubmissions
+);
 router.get(
   "/parent-form/:id/id-document",
   authRequired(["admin", "director"]),
