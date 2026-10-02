@@ -678,6 +678,65 @@ app.post("/send-text", async (req, res) => {
   }
 });
 
+/** Normalize a phone / chat id into a WhatsApp chat id (@c.us). */
+function resolvePersonalChatId(raw) {
+  const input = String(raw || "").trim();
+  if (!input) return "";
+  if (input.includes("@")) return input;
+  let digits = input.replace(/\D+/g, "");
+  if (!digits) return "";
+  // Algeria local mobiles: 05/06/07… → 2135/2136/2137…
+  if (digits.startsWith("0") && digits.length >= 9) {
+    digits = `213${digits.slice(1)}`;
+  } else if (digits.length === 9 && /^[567]/.test(digits)) {
+    digits = `213${digits}`;
+  }
+  return `${digits}@c.us`;
+}
+
+/**
+ * Send one personalized DM (used by bulk campaigns with server-side pacing).
+ * Body: { phone|to|chatId, text }
+ */
+app.post("/send-dm", async (req, res) => {
+  try {
+    if (!client || !client.info) {
+      return res.status(503).json({ ok: false, error: "WhatsApp not connected yet" });
+    }
+    const text = String(req.body.text || "").trim();
+    if (!text) return res.status(400).json({ ok: false, error: "text required" });
+
+    let chatId = resolvePersonalChatId(
+      req.body.chatId || req.body.to || req.body.phone || ""
+    );
+    if (!chatId) {
+      return res.status(400).json({ ok: false, error: "phone / chatId required" });
+    }
+
+    // Prefer WhatsApp's own number resolution when available
+    try {
+      if (typeof client.getNumberId === "function" && !String(req.body.chatId || "").includes("@")) {
+        const digits = chatId.replace(/@c\.us$/i, "");
+        const wid = await client.getNumberId(digits);
+        if (wid?._serialized) chatId = wid._serialized;
+        else if (wid) chatId = String(wid);
+      }
+    } catch (err) {
+      console.warn("getNumberId failed:", err.message || err);
+    }
+
+    const sent = await sendTextToGroup(client, chatId, text);
+    res.json({
+      ok: true,
+      chatId,
+      id: sent?.id?._serialized || sent?.id || null,
+    });
+  } catch (err) {
+    console.error("send-dm failed", err);
+    res.status(500).json({ ok: false, error: err.message || String(err) });
+  }
+});
+
 /** Temporary diagnostic for media pipeline (safe to keep; returns step results only). */
 app.post("/debug-media", async (req, res) => {
   try {

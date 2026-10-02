@@ -163,6 +163,8 @@ export async function migrate() {
   await query(`ALTER TABLE parent_form_submissions ADD COLUMN IF NOT EXISTS email TEXT NOT NULL DEFAULT ''`);
   await query(`ALTER TABLE parent_form_submissions ADD COLUMN IF NOT EXISTS form_data JSONB NOT NULL DEFAULT '{}'::jsonb`);
   await query(`ALTER TABLE parent_form_submissions ADD COLUMN IF NOT EXISTS form_version INTEGER NOT NULL DEFAULT 1`);
+  // form_version 7+: consents.departureMode may be withParent | motherOnly | fatherOnly | alone | companion | driver
+  // (stored in form_data JSONB — no extra column required)
   await query(`ALTER TABLE parent_form_submissions ADD COLUMN IF NOT EXISTS phone_backup TEXT NOT NULL DEFAULT ''`);
   await query(`ALTER TABLE parent_form_submissions ADD COLUMN IF NOT EXISTS photo_media TEXT NOT NULL DEFAULT ''`);
   await query(`ALTER TABLE parent_form_submissions ADD COLUMN IF NOT EXISTS enrollment_year TEXT NOT NULL DEFAULT ''`);
@@ -190,6 +192,46 @@ export async function migrate() {
      ON teachers (login_code)
      WHERE login_code IS NOT NULL AND login_code <> ''`
   );
+
+  // WhatsApp bulk / personalized DM campaigns
+  await query(`
+    CREATE TABLE IF NOT EXISTS wa_campaigns (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL DEFAULT '',
+      template TEXT NOT NULL DEFAULT '',
+      columns JSONB NOT NULL DEFAULT '[]'::jsonb,
+      status TEXT NOT NULL DEFAULT 'draft',
+      interval_min_ms INTEGER NOT NULL DEFAULT 8000,
+      interval_max_ms INTEGER NOT NULL DEFAULT 12000,
+      scheduled_at TIMESTAMPTZ,
+      next_send_at TIMESTAMPTZ,
+      started_at TIMESTAMPTZ,
+      finished_at TIMESTAMPTZ,
+      created_by TEXT NOT NULL DEFAULT 'whatsapp',
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+    CREATE INDEX IF NOT EXISTS idx_wa_campaigns_status_next
+      ON wa_campaigns (status, next_send_at);
+  `);
+  await query(
+    `ALTER TABLE wa_campaigns ADD COLUMN IF NOT EXISTS max_consecutive_fails INTEGER NOT NULL DEFAULT 0`
+  );
+  await query(`
+    CREATE TABLE IF NOT EXISTS wa_campaign_recipients (
+      id TEXT PRIMARY KEY,
+      campaign_id TEXT NOT NULL REFERENCES wa_campaigns(id) ON DELETE CASCADE,
+      phone TEXT NOT NULL DEFAULT '',
+      chat_id TEXT NOT NULL DEFAULT '',
+      variables JSONB NOT NULL DEFAULT '{}'::jsonb,
+      rendered_text TEXT NOT NULL DEFAULT '',
+      status TEXT NOT NULL DEFAULT 'pending',
+      error TEXT NOT NULL DEFAULT '',
+      row_index INTEGER NOT NULL DEFAULT 0,
+      sent_at TIMESTAMPTZ
+    );
+    CREATE INDEX IF NOT EXISTS idx_wa_recipients_campaign_status
+      ON wa_campaign_recipients (campaign_id, status, row_index);
+  `);
 }
 
 /** Assign TR001… to teachers missing a login_code (stable order). */

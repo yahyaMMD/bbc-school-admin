@@ -5,6 +5,7 @@ import { authRequired } from "./auth.js";
 import { buildSchoolData, mapTeacher, mapStudent, mapClass, mapIssue } from "./schoolData.js";
 import { saveProfilePhoto, deleteProfilePhoto } from "./uploads.js";
 import * as Announcements from "./announcements.js";
+import * as WaCampaigns from "./waCampaigns.js";
 import * as TeacherPortal from "./teacherPortal.js";
 import * as ParentForm from "./parentForm.js";
 
@@ -609,5 +610,15 @@ router.post("/announcements/upload-image", authRequired(["whatsapp"]), Announcem
 router.post("/announcements/send", authRequired(["whatsapp"]), Announcements.sendAnnouncement);
 router.post("/announcements/:id/cancel", authRequired(["whatsapp"]), Announcements.cancelAnnouncement);
 router.get("/announcements/:id", authRequired(["whatsapp"]), Announcements.getAnnouncement);
+
+// ——— WhatsApp bulk personalized campaigns ———
+router.get("/wa/campaigns", authRequired(["whatsapp"]), WaCampaigns.listCampaigns);
+router.post("/wa/campaigns", authRequired(["whatsapp"]), WaCampaigns.createCampaign);
+router.post("/wa/campaigns/test-send", authRequired(["whatsapp"]), WaCampaigns.testSend);
+router.post("/wa/campaigns/preview", authRequired(["whatsapp"]), WaCampaigns.previewTemplate);
+router.get("/wa/campaigns/:id", authRequired(["whatsapp"]), WaCampaigns.getCampaign);
+router.post("/wa/campaigns/:id/pause", authRequired(["whatsapp"]), WaCampaigns.pauseCampaign);
+router.post("/wa/campaigns/:id/resume", authRequired(["whatsapp"]), WaCampaigns.resumeCampaign);
+router.post("/wa/campaigns/:id/cancel", authRequired(["whatsapp"]), WaCampaigns.cancelCampaign);
 
 export default router;

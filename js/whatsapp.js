@@ -15,6 +15,7 @@ const WhatsAppApp = (() => {
     const nav = [
       { id: "connect", href: "#/whatsapp", label: I18n.t("waConnectNav"), icon: "◎" },
       { id: "hub", href: "#/whatsapp/hub", label: I18n.t("waAutomations"), icon: "◆" },
+      { id: "bulk", href: "#/whatsapp/bulk", label: I18n.t("waBulkNav"), icon: "◈" },
       { id: "announcements", href: "#/whatsapp/announcements", label: I18n.t("announcements"), icon: "✦" },
     ];
     return `
@@ -204,6 +205,18 @@ const WhatsAppApp = (() => {
       I18n.t("waAutomationsLede"),
       `
       <div class="admin-action-grid">
+        <button type="button" class="admin-action-card wa-action-featured" data-nav="#/whatsapp/bulk/new">
+          <span class="admin-action-tag">NEW</span>
+          <h3>${esc(I18n.t("waBulkTitle"))}</h3>
+          <p>${esc(I18n.t("waBulkLede"))}</p>
+          <span class="cta">${esc(I18n.t("waBulkNew"))} →</span>
+        </button>
+        <button type="button" class="admin-action-card" data-nav="#/whatsapp/bulk">
+          <span class="admin-action-tag">WhatsApp</span>
+          <h3>${esc(I18n.t("waBulkHistory"))}</h3>
+          <p>${esc(I18n.t("waBulkHistoryLede"))}</p>
+          <span class="cta">${esc(I18n.t("waBulkOpenHistory"))} →</span>
+        </button>
         <button type="button" class="admin-action-card" data-nav="#/whatsapp/announcements">
           <span class="admin-action-tag">WhatsApp</span>
           <h3>${esc(I18n.t("announcements"))}</h3>
@@ -213,6 +226,28 @@ const WhatsAppApp = (() => {
       </div>
       <p class="admin-field-hint" style="margin-top:1.25rem">${esc(I18n.t("waSessionHint"))}</p>
     `
+    );
+  }
+
+  function viewBulkList() {
+    return layout("bulk", I18n.t("waBulkTitle"), I18n.t("waBulkLede"), WaCampaignsUI.viewList());
+  }
+
+  function viewBulkStudio() {
+    return layout(
+      "bulk",
+      I18n.t("waBulkStudioTitle"),
+      I18n.t("waBulkStudioLede"),
+      WaCampaignsUI.viewStudio()
+    );
+  }
+
+  function viewBulkDetail(id) {
+    return layout(
+      "bulk",
+      I18n.t("waBulkDetailTitle"),
+      I18n.t("waBulkDetailLede"),
+      WaCampaignsUI.viewDetail(id)
     );
   }
 
@@ -1065,7 +1100,8 @@ const WhatsAppApp = (() => {
     const parts = hash.split("/").filter(Boolean);
     const section = parts[1] || "";
     const action = parts[2] || "";
-    const needsSession = section === "hub" || section === "announcements";
+    const needsSession =
+      section === "hub" || section === "announcements" || section === "bulk";
 
     // Lock automation nav until connected; block deep links without session
     (async () => {
@@ -1089,6 +1125,18 @@ const WhatsAppApp = (() => {
       }
 
       if (section === "hub") return;
+      if (section === "bulk" && action === "new") {
+        WaCampaignsUI.bindStudio(root, go);
+        return;
+      }
+      if (section === "bulk" && action) {
+        root._annCleanup = WaCampaignsUI.bindDetail(root);
+        return;
+      }
+      if (section === "bulk") {
+        WaCampaignsUI.bindList(root);
+        return;
+      }
       if (section === "announcements" && action === "new") {
         bindCreate(root, go);
         return;
@@ -1118,6 +1166,9 @@ const WhatsAppApp = (() => {
     const action = parts[2] || "";
     if (!section || section === "connect") return viewConnect();
     if (section === "hub") return viewHub();
+    if (section === "bulk" && action === "new") return viewBulkStudio();
+    if (section === "bulk" && action) return viewBulkDetail(action);
+    if (section === "bulk") return viewBulkList();
     if (section === "announcements" && action === "new") return viewCreate();
     if (section === "announcements") return viewAnnouncements();
     return viewConnect();

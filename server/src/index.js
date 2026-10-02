@@ -8,6 +8,7 @@ import { loginHandler } from "./auth.js";
 import apiRoutes from "./routes.js";
 import { ensureUploadDir, getUploadDir } from "./uploads.js";
 import { startAnnouncementScheduler } from "./announcements.js";
+import { startCampaignScheduler } from "./waCampaigns.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT || 3000);
@@ -105,6 +106,7 @@ async function main() {
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`BBC School API listening on :${PORT}`);
     startAnnouncementScheduler();
+    startCampaignScheduler();
   });
 }
 
