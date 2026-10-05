@@ -22,10 +22,12 @@ const FloorApp = (() => {
 
   function floorLabel(m) {
     if (!m) return "";
-    if (typeof I18n !== "undefined" && I18n.getLang && I18n.getLang() === "ar" && m.floorLabelAr) {
-      return m.floorLabelAr;
-    }
-    return m.floorLabel || m.loginCode || "";
+    const base =
+      typeof I18n !== "undefined" && I18n.getLang && I18n.getLang() === "ar" && m.floorLabelAr
+        ? m.floorLabelAr
+        : m.floorLabel || m.loginCode || "";
+    if (m.managedYear) return `${base} · ${I18n.t("year")} ${m.managedYear}`;
+    return base;
   }
 
   function classLabel(c) {

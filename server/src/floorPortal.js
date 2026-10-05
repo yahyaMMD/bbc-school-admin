@@ -21,11 +21,14 @@ function normalizeDate(raw) {
 }
 
 function mapFloorManager(row) {
+  const floorNumber = Number(row.floor_number);
+  const managedYear = Number.isFinite(floorNumber) ? floorNumber + 1 : null;
   return {
     id: row.id,
     loginCode: row.login_code,
     departmentId: row.department_id,
-    floorNumber: row.floor_number,
+    floorNumber,
+    managedYear,
     floorLabel: row.floor_label || "",
     floorLabelAr: row.floor_label_ar || "",
     mustChangePassword: Boolean(row.must_change_password),
@@ -85,13 +88,40 @@ async function loadManager(req, res) {
 }
 
 async function floorClasses(manager) {
+  // Each primary floor account owns one year (FLOOR001 → year 1 … FLOOR005 → year 5).
+  // Only the 10 standard class slots (class_on_floor 1–10) for that year.
+  const year = Number(manager.floor_number) + 1;
   const r = await query(
     `SELECT * FROM classes
-     WHERE department_id = $1 AND floor_number = $2
-     ORDER BY year, code`,
-    [manager.department_id, manager.floor_number]
+     WHERE department_id = $1
+       AND year = $2
+       AND class_on_floor IS NOT NULL
+       AND class_on_floor BETWEEN 1 AND 10
+     ORDER BY class_on_floor, code`,
+    [manager.department_id, year]
   );
+  // Fallback if older rows lack class_on_floor: first 10 by code
+  if (!r.rows.length) {
+    const fallback = await query(
+      `SELECT * FROM classes
+       WHERE department_id = $1 AND year = $2
+       ORDER BY code
+       LIMIT 10`,
+      [manager.department_id, year]
+    );
+    return fallback.rows;
+  }
   return r.rows;
+}
+
+function managerOwnsClassRow(manager, classRow) {
+  const year = Number(manager.floor_number) + 1;
+  if (!classRow || classRow.department_id !== manager.department_id) return false;
+  if (Number(classRow.year) !== year) return false;
+  const slot = classRow.class_on_floor;
+  if (slot == null) return true;
+  const n = Number(slot);
+  return Number.isFinite(n) && n >= 1 && n <= 10;
 }
 
 function waSessionId(manager) {
@@ -253,12 +283,10 @@ export async function getFloorClassDay(req, res) {
     if (!row) return;
     const classId = String(req.params.id || "");
     const date = normalizeDate(req.query.date);
-    const cls = await query(
-      `SELECT * FROM classes
-       WHERE id = $1 AND department_id = $2 AND floor_number = $3`,
-      [classId, row.department_id, row.floor_number]
-    );
-    if (!cls.rows.length) return res.status(404).json({ error: "Class not found on this floor" });
+    const cls = await query(`SELECT * FROM classes WHERE id = $1`, [classId]);
+    if (!cls.rows.length || !managerOwnsClassRow(row, cls.rows[0])) {
+      return res.status(404).json({ error: "Class not found on this floor" });
+    }
 
     const students = await query(
       "SELECT * FROM students WHERE class_id = $1 ORDER BY number, full_name",
