@@ -9,17 +9,40 @@ function newId(prefix) {
 }
 
 function todayIso() {
-  const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
+  // School day in Algeria (UTC+1)
+  try {
+    return new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Africa/Algiers",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).format(new Date());
+  } catch {
+    const d = new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+  }
 }
 
 function normalizeDate(raw) {
   const s = String(raw || "").trim();
   if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
   return todayIso();
+}
+
+function requireTodayDate(raw) {
+  const today = todayIso();
+  const requested = normalizeDate(raw);
+  if (requested !== today) {
+    const err = new Error("Teachers can only edit today’s register");
+    err.status = 400;
+    err.code = "DATE_LOCKED_TODAY";
+    err.today = today;
+    throw err;
+  }
+  return today;
 }
 
 function normalizeSubject(raw) {
@@ -97,7 +120,8 @@ export async function getMyClassSession(req, res) {
       return res.status(403).json({ error: "Forbidden" });
     }
 
-    const date = normalizeDate(req.query.date);
+    // Teachers may only work on today's register (school timezone)
+    const date = todayIso();
     const subject = normalizeSubject(req.query.subject);
 
     const cls = await query("SELECT * FROM classes WHERE id = $1", [classId]);
@@ -183,7 +207,16 @@ export async function putMyClassSession(req, res) {
     }
 
     const body = req.body || {};
-    const date = normalizeDate(body.date);
+    let date;
+    try {
+      date = requireTodayDate(body.date);
+    } catch (err) {
+      return res.status(err.status || 400).json({
+        error: err.message || "Teachers can only edit today’s register",
+        code: err.code || "DATE_LOCKED_TODAY",
+        today: err.today || todayIso(),
+      });
+    }
     const subject = normalizeSubject(body.subject);
     if (!subject) {
       return res.status(400).json({ error: "subject required" });

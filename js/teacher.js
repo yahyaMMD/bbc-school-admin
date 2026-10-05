@@ -20,6 +20,20 @@ const TeacherApp = (() => {
     return v == null || v === "" ? "—" : String(v);
   }
 
+  function todayIso() {
+    try {
+      return new Intl.DateTimeFormat("en-CA", {
+        timeZone: "Africa/Algiers",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      }).format(new Date());
+    } catch {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    }
+  }
+
   function teacherLabel(t) {
     if (!t) return "";
     if (typeof BBC_DATA !== "undefined" && BBC_DATA.teacherDisplayName) {
@@ -282,7 +296,6 @@ const TeacherApp = (() => {
               <strong>${esc(classLabel(c))}</strong>
               <span class="muted">${esc(c.code || "")}${c.year ? ` · ${esc(I18n.t("year"))} ${esc(c.year)}` : ""}</span>
               <span class="teacher-class-count">${esc(I18n.t("studentsCount", { n: c.studentCount || 0 }))}</span>
-              <span class="muted" style="font-size:0.8rem">${esc(I18n.t("openDailyRegister"))}</span>
             </button>`
                 )
                 .join("")
@@ -296,8 +309,7 @@ const TeacherApp = (() => {
   function viewClass(classId, payload) {
     const cls = payload.class;
     const students = payload.students || [];
-    const today = new Date();
-    const todayIso = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+    const today = todayIso();
     return shell(
       "home",
       classLabel(cls),
@@ -307,7 +319,7 @@ const TeacherApp = (() => {
         <button type="button" class="btn btn-ghost" data-nav="#/my" style="padding-left:0">${esc(I18n.t("backToClasses"))}</button>
       </div>
       <div class="teacher-class-actions">
-        <button type="button" class="btn btn-primary" data-nav="#/my/class/${esc(classId)}/day?date=${esc(todayIso)}">${esc(I18n.t("openDailyRegister"))}</button>
+        <button type="button" class="btn btn-primary" data-nav="#/my/class/${esc(classId)}/day?date=${esc(today)}">${esc(I18n.t("openDailyRegister"))}</button>
         <p class="muted teacher-class-actions-hint">${esc(I18n.t("dailyRegisterHint"))}</p>
       </div>
       <div class="student-table-wrap">
@@ -334,7 +346,7 @@ const TeacherApp = (() => {
                 <td dir="auto"><strong>${esc(studentLabel(s))}</strong></td>
                 <td class="hide-sm">${esc(genderLabel(s.gender))}</td>
                 <td class="hide-mobile">${esc(dash(s.dateOfBirth))}</td>
-                <td><button type="button" class="btn btn-ghost btn-sm" data-nav="#/my/student/${esc(s.id)}?from=${encodeURIComponent(`#/my/class/${classId}`)}">${esc(I18n.t("annViewDetails"))}</button></td>
+                <td><button type="button" class="btn btn-primary btn-sm" data-nav="#/my/student/${esc(s.id)}?from=${encodeURIComponent(`#/my/class/${classId}`)}">${esc(I18n.t("annViewDetails"))}</button></td>
               </tr>`
                     )
                     .join("")
@@ -362,12 +374,12 @@ const TeacherApp = (() => {
     const cls = payload.class;
     const students = payload.students || [];
     const subjects = payload.subjects || [];
-    const date = payload.date || params?.get("date") || "";
+    const date = todayIso();
     let subject = payload.subject || params?.get("subject") || "";
     // Auto-pick the teacher's first subject so the class opens ready to use
     if (!subject && subjects.length) subject = String(subjects[0] || "");
     const session = payload.session;
-    const recent = payload.recentSessions || [];
+    const recent = (payload.recentSessions || []).filter((r) => r.date === date);
     const siblings = payload.siblingClasses || [];
     const fromDay = `#/my/class/${classId}/day?date=${encodeURIComponent(date)}${subject ? `&subject=${encodeURIComponent(subject)}` : ""}`;
 
@@ -473,7 +485,9 @@ const TeacherApp = (() => {
         <div class="register-toolbar">
           <label class="admin-field register-field">
             <span>${esc(I18n.t("sessionDate"))}</span>
-            <input type="date" name="date" value="${esc(date)}" required />
+            <input type="date" name="date" value="${esc(date)}" readonly disabled />
+            <input type="hidden" name="dateLocked" value="${esc(date)}" />
+            <span class="admin-field-hint" style="margin-top:0.35rem">${esc(I18n.t("registerTodayOnlyHint"))}</span>
           </label>
           <label class="admin-field register-field">
             <span>${esc(I18n.t("subject"))}</span>
@@ -675,28 +689,32 @@ const TeacherApp = (() => {
       }
       if (parts[1] === "class" && parts[2]) {
         const classId = parts[2];
-        // Opening a class always goes to today's register (presence / absence / remarks / homework)
-        const date = params?.get("date") || "";
-        let subject = params?.get("subject") || "";
-        if (!subject) {
-          try {
-            subject = localStorage.getItem(`qea_reg_subject_${classId}`) || "";
-          } catch {
-            /* ignore */
+        if (parts[3] === "day") {
+          const date = todayIso();
+          let subject = params?.get("subject") || "";
+          if (!subject) {
+            try {
+              subject = localStorage.getItem(`qea_reg_subject_${classId}`) || "";
+            } catch {
+              /* ignore */
+            }
           }
+          if (!subject && state.me?.teacher?.modules?.length) {
+            subject = String(state.me.teacher.modules[0] || "");
+          }
+          const q = new URLSearchParams({ date });
+          if (subject) q.set("subject", subject);
+          const payload = await BBC_API.get(
+            `/me/classes/${encodeURIComponent(classId)}/session?${q}`
+          );
+          return { html: viewDayRegister(classId, payload, params), dayRegister: true };
         }
-        // Prefer first teacher module when nothing saved yet
-        if (!subject && state.me?.teacher?.modules?.length) {
-          subject = String(state.me.teacher.modules[0] || "");
+        let payload = state.classCache.get(classId);
+        if (!payload) {
+          payload = await BBC_API.get(`/me/classes/${encodeURIComponent(classId)}/students`);
+          state.classCache.set(classId, payload);
         }
-        const q = new URLSearchParams();
-        if (date) q.set("date", date);
-        if (subject) q.set("subject", subject);
-        const qs = q.toString() ? `?${q}` : "";
-        const payload = await BBC_API.get(
-          `/me/classes/${encodeURIComponent(classId)}/session${qs}`
-        );
-        return { html: viewDayRegister(classId, payload, params), dayRegister: true };
+        return { html: viewClass(classId, payload) };
       }
       if (parts[1] === "student" && parts[2]) {
         const studentId = parts[2];
@@ -706,11 +724,7 @@ const TeacherApp = (() => {
           state.studentCache.set(studentId, payload);
         }
         const from = params?.get("from") || "";
-        // Default back to class daily register
-        const fallback =
-          payload?.class?.id
-            ? `#/my/class/${payload.class.id}/day`
-            : "#/my";
+        const fallback = payload?.class?.id ? `#/my/class/${payload.class.id}` : "#/my";
         return { html: viewStudent(payload, from || fallback) };
       }
       return { html: viewHome(state.classes) };
@@ -856,20 +870,18 @@ const TeacherApp = (() => {
       };
 
       const navigateSession = () => {
-        const date = registerForm.querySelector('[name="date"]')?.value || "";
+        const date = todayIso();
         const subject = registerForm.querySelector('[name="subject"]')?.value || "";
         try {
           if (subject) localStorage.setItem(`qea_reg_subject_${classId}`, subject);
         } catch {
           /* ignore */
         }
-        const q = new URLSearchParams();
-        if (date) q.set("date", date);
+        const q = new URLSearchParams({ date });
         if (subject) q.set("subject", subject);
         go(`/my/class/${classId}/day?${q.toString()}`);
       };
 
-      registerForm.querySelector('[name="date"]')?.addEventListener("change", navigateSession);
       registerForm.querySelector('[name="subject"]')?.addEventListener("change", navigateSession);
 
       root.querySelector("[data-mark-all-present]")?.addEventListener("click", () => {
@@ -909,7 +921,7 @@ const TeacherApp = (() => {
 
       registerForm.addEventListener("submit", async (e) => {
         e.preventDefault();
-        const date = String(registerForm.querySelector('[name="date"]')?.value || "");
+        const date = todayIso();
         const subject = String(registerForm.querySelector('[name="subject"]')?.value || "").trim();
         const homework = String(registerForm.querySelector('[name="homework"]')?.value || "");
         if (!subject) {
