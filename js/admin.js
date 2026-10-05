@@ -1610,15 +1610,6 @@ const AdminApp = (() => {
             return;
           }
 
-          const years = [
-            ...new Set(
-              allRows
-                .map((s) => s.enrollmentYear || s.formData?.student?.enrollmentYear || "")
-                .filter(Boolean)
-            ),
-          ].sort()
-            .reverse();
-
           const statusLabel = (st) => {
             if (st === "reviewed") return I18n.t("parentFormsStatusReviewed");
             if (st === "linked") return I18n.t("parentFormsStatusLinked");
@@ -1631,12 +1622,68 @@ const AdminApp = (() => {
           const sexOf = (s) => s.formData?.student?.sex || "";
           const levelOf = (s) => s.studentLevel || s.formData?.student?.level || "";
           const yearOf = (s) => s.enrollmentYear || s.formData?.student?.enrollmentYear || "";
-          const dayKey = (s) => {
-            if (!s.createdAt) return "";
-            const d = new Date(s.createdAt);
-            if (Number.isNaN(d.getTime())) return "";
-            return d.toISOString().slice(0, 10);
+
+          const cycleFromLevel = (level) => {
+            const raw = String(level || "");
+            const t = raw.toLowerCase();
+            if (
+              /prescol|précol|precol|maternelle|section|تحض|تمهيد|روضة|petite|moyenne section|grande section|preschool/.test(
+                t
+              ) ||
+              /تحض|تمهيد|روضة/.test(raw)
+            ) {
+              return "preschool";
+            }
+            if (
+              /moyen|middle|college|collège|متوسط|اعداد|إعداد|\bam\b|\d\s*am\b/.test(t) ||
+              /متوسط/.test(raw)
+            ) {
+              return "middle";
+            }
+            if (/primair|primary|ابتد|\bap\b|\d\s*ap\b/.test(t) || /ابتد/.test(raw)) {
+              return "primary";
+            }
+            return "";
           };
+
+          const classIndex = (() => {
+            const byStudent = Object.create(null);
+            const classes = [];
+            for (const dept of BBC_DATA.departments || []) {
+              const cycle = dept.id === "middle" ? "middle" : "primary";
+              for (const lv of dept.levels || []) {
+                for (const cls of lv.classes || []) {
+                  const label = `${adminDeptLabel(dept)} · ${adminLevelLabel(lv)} · ${adminClassLabel(cls)}`;
+                  classes.push({
+                    id: cls.id,
+                    code: cls.code || "",
+                    label,
+                    cycle,
+                    sortKey: `${cycle}-${lv.name || ""}-${cls.code || cls.id}`,
+                  });
+                  for (const stu of cls.students || []) {
+                    if (!stu?.id) continue;
+                    byStudent[stu.id] = {
+                      classId: cls.id,
+                      cycle,
+                      classLabel: label,
+                      classCode: cls.code || "",
+                    };
+                  }
+                }
+              }
+            }
+            classes.sort((a, b) => a.sortKey.localeCompare(b.sortKey, "en"));
+            return { byStudent, classes };
+          })();
+
+          const cycleOf = (s) => {
+            const linked = s.studentId ? classIndex.byStudent[s.studentId] : null;
+            if (linked?.cycle) return linked.cycle;
+            return cycleFromLevel(levelOf(s));
+          };
+
+          const classMetaOf = (s) => (s.studentId ? classIndex.byStudent[s.studentId] || null : null);
 
           const csvEscape = (v) => {
             const t = String(v ?? "");
@@ -1781,25 +1828,16 @@ const AdminApp = (() => {
           const filterRows = (state) => {
             const q = (state.q || "").trim().toLowerCase();
             let rows = allRows.slice();
-            if (state.status) rows = rows.filter((s) => (s.status || "new") === state.status);
-            if (state.year) rows = rows.filter((s) => yearOf(s) === state.year);
-            if (state.sex) rows = rows.filter((s) => sexOf(s) === state.sex);
-            if (state.idDoc === "yes") rows = rows.filter((s) => s.hasCompanionId);
-            if (state.idDoc === "no") rows = rows.filter((s) => !s.hasCompanionId);
-            if (state.from) rows = rows.filter((s) => dayKey(s) >= state.from);
-            if (state.to) rows = rows.filter((s) => dayKey(s) <= state.to);
+            if (state.cycle) {
+              rows = rows.filter((s) => cycleOf(s) === state.cycle);
+            }
+            if (state.classId) {
+              rows = rows.filter((s) => classMetaOf(s)?.classId === state.classId);
+            }
             if (q) {
               rows = rows.filter((s) => {
                 const hay = [
                   studentNameOf(s),
-                  s.phonePrimary,
-                  s.phoneSecondary,
-                  s.phoneBackup,
-                  s.email,
-                  levelOf(s),
-                  yearOf(s),
-                  s.id,
-                  s.homeAddress,
                   s.formData?.father?.name,
                   s.formData?.mother?.name,
                 ]
@@ -1809,47 +1847,36 @@ const AdminApp = (() => {
                 return hay.includes(q);
               });
             }
-            const sort = state.sort || "newest";
-            rows.sort((a, b) => {
-              if (sort === "oldest") {
-                return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
-              }
-              if (sort === "name") {
-                return studentNameOf(a).localeCompare(studentNameOf(b), "ar");
-              }
-              if (sort === "level") {
-                return levelOf(a).localeCompare(levelOf(b), "ar");
-              }
-              return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
-            });
+            rows.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
             return rows;
           };
 
           const readState = () => {
             const form = pfRoot.querySelector("#admin-pf-filter");
             if (!form) {
-              return {
-                q: "",
-                status: "",
-                year: "",
-                sex: "",
-                idDoc: "",
-                from: "",
-                to: "",
-                sort: "newest",
-              };
+              return { q: "", cycle: "", classId: "" };
             }
             const fd = new FormData(form);
             return {
               q: String(fd.get("q") || ""),
-              status: String(fd.get("status") || ""),
-              year: String(fd.get("year") || ""),
-              sex: String(fd.get("sex") || ""),
-              idDoc: String(fd.get("idDoc") || ""),
-              from: String(fd.get("from") || ""),
-              to: String(fd.get("to") || ""),
-              sort: String(fd.get("sort") || "newest"),
+              cycle: String(fd.get("cycle") || ""),
+              classId: String(fd.get("classId") || ""),
             };
+          };
+
+          const classOptionsHtml = (cycle, selectedId) => {
+            const list = cycle
+              ? classIndex.classes.filter((c) => c.cycle === cycle)
+              : classIndex.classes;
+            return `
+              <option value="">${esc(I18n.t("parentFormsAllClasses"))}</option>
+              ${list
+                .map(
+                  (c) =>
+                    `<option value="${esc(c.id)}"${c.id === selectedId ? " selected" : ""}>${esc(c.label)}</option>`
+                )
+                .join("")}
+            `;
           };
 
           const render = (opts = {}) => {
@@ -1859,6 +1886,15 @@ const AdminApp = (() => {
             const selEnd = document.activeElement?.selectionEnd;
 
             const state = readState();
+            // If selected class is outside current cycle, clear it
+            if (state.classId) {
+              const meta = classIndex.classes.find((c) => c.id === state.classId);
+              if (meta && state.cycle && meta.cycle !== state.cycle) {
+                state.classId = "";
+                const classSel = pfRoot.querySelector("#admin-pf-filter select[name='classId']");
+                if (classSel) classSel.value = "";
+              }
+            }
             const filtered = filterRows(state);
             const newCount = allRows.filter((s) => (s.status || "new") === "new").length;
             const reviewedCount = allRows.filter((s) => s.status === "reviewed").length;
@@ -1879,10 +1915,24 @@ const AdminApp = (() => {
                             ? I18n.t("parentFormsSexMale")
                             : "";
                       const st = s.status || "new";
+                      const linkedClass = classMetaOf(s);
+                      const cycle = cycleOf(s);
+                      const cycleLabel =
+                        cycle === "preschool"
+                          ? I18n.t("parentFormsCyclePreschool")
+                          : cycle === "primary"
+                            ? I18n.t("parentFormsCyclePrimary")
+                            : cycle === "middle"
+                              ? I18n.t("parentFormsCycleMiddle")
+                              : "";
                       const chips = [
                         `<span class="chip${st === "new" ? " accent" : " neutral"}">${esc(statusLabel(st))}</span>`,
-                        yearOf(s) ? `<span class="chip neutral">${esc(yearOf(s))}</span>` : "",
-                        levelOf(s) ? `<span class="chip neutral" dir="auto">${esc(levelOf(s))}</span>` : "",
+                        cycleLabel ? `<span class="chip neutral">${esc(cycleLabel)}</span>` : "",
+                        linkedClass?.classCode
+                          ? `<span class="chip accent">${esc(linkedClass.classCode)}</span>`
+                          : levelOf(s)
+                            ? `<span class="chip neutral" dir="auto">${esc(levelOf(s))}</span>`
+                            : "",
                         sexTxt ? `<span class="chip neutral">${esc(sexTxt)}</span>` : "",
                         s.hasCompanionId ? `<span class="chip accent">ID</span>` : "",
                       ]
@@ -1911,33 +1961,14 @@ const AdminApp = (() => {
                 <div class="pf-stats" data-pf-stats style="display:flex;flex-wrap:wrap;gap:0.55rem;margin-bottom:0.85rem"></div>
                 <form id="admin-pf-filter" class="admin-filter-bar admin-filter-bar-wrap">
                   <input type="search" name="q" placeholder="${esc(I18n.t("parentFormsSearch"))}" value="" autocomplete="off" />
-                  <select name="status">
-                    <option value="">${esc(I18n.t("parentFormsAllStatuses"))}</option>
-                    <option value="new">${esc(I18n.t("parentFormsStatusNew"))}</option>
-                    <option value="reviewed">${esc(I18n.t("parentFormsStatusReviewed"))}</option>
-                    <option value="linked">${esc(I18n.t("parentFormsStatusLinked"))}</option>
+                  <select name="cycle" aria-label="${esc(I18n.t("parentFormsAllCycles"))}">
+                    <option value="">${esc(I18n.t("parentFormsAllCycles"))}</option>
+                    <option value="preschool">${esc(I18n.t("parentFormsCyclePreschool"))}</option>
+                    <option value="primary">${esc(I18n.t("parentFormsCyclePrimary"))}</option>
+                    <option value="middle">${esc(I18n.t("parentFormsCycleMiddle"))}</option>
                   </select>
-                  <select name="year">
-                    <option value="">${esc(I18n.t("parentFormsAllYears"))}</option>
-                    ${years.map((y) => `<option value="${esc(y)}">${esc(y)}</option>`).join("")}
-                  </select>
-                  <select name="sex">
-                    <option value="">${esc(I18n.t("parentFormsAllSex"))}</option>
-                    <option value="male">${esc(I18n.t("parentFormsSexMale"))}</option>
-                    <option value="female">${esc(I18n.t("parentFormsSexFemale"))}</option>
-                  </select>
-                  <select name="idDoc">
-                    <option value="">${esc(I18n.t("parentFormsIdAny"))}</option>
-                    <option value="yes">${esc(I18n.t("parentFormsIdYes"))}</option>
-                    <option value="no">${esc(I18n.t("parentFormsIdNo"))}</option>
-                  </select>
-                  <input type="date" name="from" title="${esc(I18n.t("parentFormsDateFrom"))}" />
-                  <input type="date" name="to" title="${esc(I18n.t("parentFormsDateTo"))}" />
-                  <select name="sort">
-                    <option value="newest">${esc(I18n.t("parentFormsSortNewest"))}</option>
-                    <option value="oldest">${esc(I18n.t("parentFormsSortOldest"))}</option>
-                    <option value="name">${esc(I18n.t("parentFormsSortName"))}</option>
-                    <option value="level">${esc(I18n.t("parentFormsSortLevel"))}</option>
+                  <select name="classId" aria-label="${esc(I18n.t("parentFormsClassHint"))}">
+                    ${classOptionsHtml("", "")}
                   </select>
                   <button type="submit" class="btn btn-primary btn-sm">${esc(I18n.t("parentFormsApply"))}</button>
                   <button type="button" class="btn btn-ghost btn-sm" data-pf-reset>${esc(I18n.t("parentFormsReset"))}</button>
@@ -1950,9 +1981,15 @@ const AdminApp = (() => {
                 e.preventDefault();
                 render();
               });
-              form.querySelectorAll("select, input[type='date']").forEach((el) => {
-                el.addEventListener("change", () => render());
+              form.querySelector("select[name='cycle']")?.addEventListener("change", () => {
+                const classSel = form.querySelector("select[name='classId']");
+                const cycle = form.querySelector("select[name='cycle']")?.value || "";
+                if (classSel) {
+                  classSel.innerHTML = classOptionsHtml(cycle, "");
+                }
+                render();
               });
+              form.querySelector("select[name='classId']")?.addEventListener("change", () => render());
               let searchTimer = null;
               form.querySelector("input[name='q']")?.addEventListener("input", () => {
                 clearTimeout(searchTimer);
@@ -1960,6 +1997,8 @@ const AdminApp = (() => {
               });
               pfRoot.querySelector("[data-pf-reset]")?.addEventListener("click", () => {
                 form.reset();
+                const classSel = form.querySelector("select[name='classId']");
+                if (classSel) classSel.innerHTML = classOptionsHtml("", "");
                 render();
               });
               pfRoot.querySelector("[data-pf-export]")?.addEventListener("click", () => {
