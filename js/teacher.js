@@ -478,7 +478,7 @@ const TeacherApp = (() => {
       I18n.t("classRegisterLede", { n: students.length }),
       `
       <div class="page-header" style="margin-bottom:0.75rem">
-        <button type="button" class="btn btn-ghost" data-nav="#/my" style="padding-left:0">${esc(I18n.t("backToClasses"))}</button>
+        <button type="button" class="btn btn-ghost" data-nav="#/my/class/${esc(classId)}" style="padding-left:0">${esc(I18n.t("backToRoster"))}</button>
       </div>
 
       <form id="teacher-day-register" class="register-panel" data-class-id="${esc(classId)}">
