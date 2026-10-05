@@ -299,6 +299,18 @@
         </div>`
       : "";
 
+    const showGlobalSearch = !(isStaff || isWa || isTeacher);
+    const globalSearch = showGlobalSearch
+      ? `<form class="top-search" id="global-search" autocomplete="off">
+            <input type="search" name="q" placeholder="${esc(I18n.t("searchPlaceholder"))}" value="${esc(state.searchQuery)}" />
+            <button type="submit" class="btn btn-primary btn-search" aria-label="${esc(I18n.t("search"))}">${icons.search}</button>
+          </form>`
+      : "";
+    const directorTools =
+      directorNav || globalSearch
+        ? `<div class="director-top-tools">${directorNav}${globalSearch}</div>`
+        : "";
+
     return `
       <div class="app-shell${isStaff || isWa || isTeacher ? " app-shell-staff" : ""}">
         <header class="topbar">
@@ -319,16 +331,8 @@
               </button>
             </div>
           </div>
-          ${directorNav}
+          ${directorTools}
           ${impersonationBar}
-          ${
-            isStaff || isWa || isTeacher
-              ? ""
-              : `<form class="top-search" id="global-search" autocomplete="off">
-            <input type="search" name="q" placeholder="${esc(I18n.t("searchPlaceholder"))}" value="${esc(state.searchQuery)}" />
-            <button type="submit" class="btn btn-primary btn-search" aria-label="${esc(I18n.t("search"))}">${icons.search}</button>
-          </form>`
-          }
         </header>
         <main class="page">${content}</main>
       </div>
