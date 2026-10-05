@@ -63,6 +63,20 @@ async function findTeacherAccountByPhone(phone) {
   return null;
 }
 
+async function findFloorManagerByLoginCode(loginCode) {
+  const code = normalizeLoginCode(loginCode);
+  if (!/^FLOOR\d{3}$/.test(code)) return null;
+  const r = await query(
+    `SELECT id, login_code, password_hash, must_change_password, floor_number, department_id,
+            floor_label, floor_label_ar
+     FROM floor_managers
+     WHERE UPPER(BTRIM(login_code)) = $1
+     LIMIT 1`,
+    [code]
+  );
+  return r.rows[0] || null;
+}
+
 export async function loginHandler(req, res) {
   const password = String(req.body?.password || "");
   if (!password) {
@@ -75,6 +89,32 @@ export async function loginHandler(req, res) {
   const phone = String(req.body?.phone || "").trim();
 
   if (loginCode || phone) {
+    const floorRow = loginCode ? await findFloorManagerByLoginCode(loginCode) : null;
+    if (floorRow) {
+      const ok = await bcrypt.compare(password, floorRow.password_hash);
+      if (!ok) {
+        return res.status(401).json({ error: "Invalid credentials" });
+      }
+      const token = signToken({
+        role: "floor",
+        floorManagerId: floorRow.id,
+        loginCode: floorRow.login_code,
+        floorNumber: floorRow.floor_number,
+        departmentId: floorRow.department_id,
+      });
+      return res.json({
+        token,
+        role: "floor",
+        floorManagerId: floorRow.id,
+        loginCode: floorRow.login_code,
+        floorNumber: floorRow.floor_number,
+        departmentId: floorRow.department_id,
+        floorLabel: floorRow.floor_label || "",
+        floorLabelAr: floorRow.floor_label_ar || "",
+        mustChangePassword: Boolean(floorRow.must_change_password),
+      });
+    }
+
     const row = loginCode
       ? await findTeacherAccountByLoginCode(loginCode)
       : await findTeacherAccountByPhone(phone);

@@ -1213,6 +1213,301 @@ async function sendMediaToGroup(client, chatId, media, caption) {
   throw new Error("Unable to send media to " + chatId);
 }
 
+// ——— Named sessions (floor managers: /s/floor001/…) ———
+const namedSessions = new Map();
+
+function sanitizeSessionId(raw) {
+  const s = String(raw || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9_-]/g, "")
+    .slice(0, 40);
+  return s || "main";
+}
+
+function sessionPaths(sid) {
+  const dataDir = path.join(DATA_DIR, sid);
+  fs.mkdirSync(path.join(AUTH_DIR, sid), { recursive: true });
+  fs.mkdirSync(dataDir, { recursive: true });
+  return {
+    auth: path.join(AUTH_DIR, sid),
+    data: dataDir,
+    status: path.join(dataDir, "status.json"),
+    qr: path.join(dataDir, "qr.png"),
+  };
+}
+
+function writeNamedStatus(sid, patch) {
+  const paths = sessionPaths(sid);
+  let prev = {};
+  try {
+    prev = JSON.parse(fs.readFileSync(paths.status, "utf8"));
+  } catch {
+    /* empty */
+  }
+  const next = { ...prev, ...patch, sessionId: sid, updatedAt: new Date().toISOString() };
+  fs.writeFileSync(paths.status, JSON.stringify(next, null, 2));
+  return next;
+}
+
+function readNamedStatus(sid) {
+  const paths = sessionPaths(sid);
+  try {
+    return JSON.parse(fs.readFileSync(paths.status, "utf8"));
+  } catch {
+    return { ready: false, sessionId: sid };
+  }
+}
+
+function createNamedClient(sid) {
+  const paths = sessionPaths(sid);
+  clearChromeLocks(paths.auth);
+  const c = new Client({
+    authStrategy: new LocalAuth({ dataPath: paths.auth, clientId: sid }),
+    puppeteer: {
+      headless: true,
+      executablePath: chromePath,
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage",
+        "--disable-gpu",
+        "--single-process",
+        "--no-zygote",
+      ],
+    },
+  });
+
+  c.on("qr", async (qr) => {
+    try {
+      await qrcode.toFile(paths.qr, qr, {
+        width: 420,
+        margin: 2,
+        errorCorrectionLevel: "M",
+      });
+      writeNamedStatus(sid, {
+        ready: false,
+        qrReady: true,
+        authenticated: false,
+        phone: null,
+        pushname: null,
+        error: null,
+        info: "Scan this QR with WhatsApp → Linked devices → Link a device",
+      });
+      console.log("QR ready for session", sid);
+    } catch (err) {
+      writeNamedStatus(sid, { ready: false, qrReady: false, error: String(err) });
+    }
+  });
+
+  c.on("authenticated", () => {
+    writeNamedStatus(sid, { authenticated: true, info: "Authenticated. Waiting for ready…" });
+  });
+
+  c.on("ready", () => {
+    const wid = c.info?.wid?.user || null;
+    const pushname = c.info?.pushname || null;
+    writeNamedStatus(sid, {
+      ready: true,
+      qrReady: false,
+      authenticated: true,
+      phone: wid,
+      pushname,
+      error: null,
+      info: `Connected as ${pushname || wid}`,
+    });
+    console.log("WhatsApp ready session", sid, wid);
+  });
+
+  c.on("auth_failure", (msg) => {
+    writeNamedStatus(sid, { ready: false, authenticated: false, error: `Auth failure: ${msg}` });
+  });
+
+  c.on("disconnected", (reason) => {
+    const state = namedSessions.get(sid);
+    if (state?.logoutBusy) return;
+    writeNamedStatus(sid, {
+      ready: false,
+      qrReady: false,
+      authenticated: false,
+      info: `Disconnected: ${reason}`,
+    });
+  });
+
+  return c;
+}
+
+async function ensureNamedSession(sid) {
+  let state = namedSessions.get(sid);
+  if (state?.client) return state;
+  writeNamedStatus(sid, {
+    ready: false,
+    qrReady: false,
+    authenticated: false,
+    info: "Starting WhatsApp client for this floor…",
+  });
+  const c = createNamedClient(sid);
+  state = { client: c, logoutBusy: false };
+  namedSessions.set(sid, state);
+  c.initialize().catch((err) => {
+    console.error("Named session init failed", sid, err);
+    writeNamedStatus(sid, { ready: false, error: String(err) });
+  });
+  return state;
+}
+
+async function logoutNamedSession(sid) {
+  let state = namedSessions.get(sid) || { client: null, logoutBusy: false };
+  if (state.logoutBusy) {
+    const err = new Error("Logout already in progress");
+    err.status = 409;
+    throw err;
+  }
+  state.logoutBusy = true;
+  namedSessions.set(sid, state);
+  const paths = sessionPaths(sid);
+  writeNamedStatus(sid, {
+    ready: false,
+    qrReady: false,
+    authenticated: false,
+    info: "Disconnecting and clearing session…",
+  });
+  try {
+    if (state.client) {
+      try {
+        await state.client.logout();
+      } catch (err) {
+        console.warn("named logout:", err.message || err);
+      }
+      try {
+        await state.client.destroy();
+      } catch (err) {
+        console.warn("named destroy:", err.message || err);
+      }
+    }
+  } finally {
+    namedSessions.delete(sid);
+    clearChromeLocks(paths.auth);
+    try {
+      if (fs.existsSync(paths.auth)) {
+        for (const name of fs.readdirSync(paths.auth)) {
+          fs.rmSync(path.join(paths.auth, name), { recursive: true, force: true });
+        }
+      }
+    } catch (err) {
+      console.warn("clear named auth:", err.message || err);
+    }
+    try {
+      if (fs.existsSync(paths.qr)) fs.unlinkSync(paths.qr);
+    } catch {
+      /* ignore */
+    }
+  }
+  await ensureNamedSession(sid);
+  return readNamedStatus(sid);
+}
+
+app.post("/s/:sessionId/ensure", async (req, res) => {
+  try {
+    const sid = sanitizeSessionId(req.params.sessionId);
+    await ensureNamedSession(sid);
+    res.json({ ok: true, ...readNamedStatus(sid) });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message || String(err) });
+  }
+});
+
+app.get("/s/:sessionId/health", async (req, res) => {
+  const sid = sanitizeSessionId(req.params.sessionId);
+  if (!namedSessions.has(sid)) {
+    // Do not auto-start Chromium on every poll — only report file status
+    return res.json(readNamedStatus(sid));
+  }
+  res.json(readNamedStatus(sid));
+});
+
+app.get("/s/:sessionId/qr", (req, res) => {
+  const sid = sanitizeSessionId(req.params.sessionId);
+  const paths = sessionPaths(sid);
+  if (!fs.existsSync(paths.qr)) {
+    return res.status(404).json({ error: "QR not ready yet" });
+  }
+  res.type("png").sendFile(paths.qr);
+});
+
+app.post("/s/:sessionId/logout", async (req, res) => {
+  try {
+    const sid = sanitizeSessionId(req.params.sessionId);
+    const status = await logoutNamedSession(sid);
+    res.json({ ok: true, ...status });
+  } catch (err) {
+    res.status(err.status || 500).json({ ok: false, error: err.message || String(err) });
+  }
+});
+
+app.post("/s/:sessionId/send-dm", async (req, res) => {
+  try {
+    const sid = sanitizeSessionId(req.params.sessionId);
+    const state = namedSessions.get(sid);
+    const c = state?.client;
+    if (!c || !c.info) {
+      return res.status(503).json({ ok: false, error: "WhatsApp not connected yet" });
+    }
+    const text = String(req.body.text || "").trim();
+    if (!text) return res.status(400).json({ ok: false, error: "text required" });
+
+    let chatId = resolvePersonalChatId(req.body.chatId || req.body.to || req.body.phone || "");
+    if (!chatId) return res.status(400).json({ ok: false, error: "phone / chatId required" });
+
+    try {
+      if (typeof c.getNumberId === "function" && !String(req.body.chatId || "").includes("@")) {
+        const digits = chatId.replace(/@c\.us$/i, "");
+        const wid = await c.getNumberId(digits);
+        if (wid?._serialized) chatId = wid._serialized;
+        else if (wid) chatId = String(wid);
+      }
+    } catch (err) {
+      console.warn("named getNumberId:", err.message || err);
+    }
+
+    const sent = await sendTextToGroup(c, chatId, text);
+    res.json({ ok: true, chatId, id: sent?.id?._serialized || sent?.id || null });
+  } catch (err) {
+    console.error("named send-dm failed", err);
+    res.status(500).json({ ok: false, error: err.message || String(err) });
+  }
+});
+
+app.post("/s/:sessionId/send-text", async (req, res) => {
+  try {
+    const sid = sanitizeSessionId(req.params.sessionId);
+    const state = namedSessions.get(sid);
+    const c = state?.client;
+    if (!c || !c.info) {
+      return res.status(503).json({ ok: false, error: "WhatsApp not connected yet" });
+    }
+    const groupIds = Array.isArray(req.body.groupIds) ? req.body.groupIds : [];
+    const text = String(req.body.text || "").trim();
+    if (!text) return res.status(400).json({ ok: false, error: "text required" });
+    if (!groupIds.length) return res.status(400).json({ ok: false, error: "groupIds required" });
+
+    const results = [];
+    for (let i = 0; i < groupIds.length; i++) {
+      const gid = String(groupIds[i] || "").trim();
+      try {
+        const sent = await sendTextToGroup(c, gid, text);
+        results.push({ groupId: gid, ok: true, id: sent?.id?._serialized || sent?.id || null });
+      } catch (err) {
+        results.push({ groupId: gid, ok: false, error: err.message || String(err) });
+      }
+      if (i < groupIds.length - 1) await sleep(SEND_DELAY_MS);
+    }
+    const okCount = results.filter((r) => r.ok).length;
+    res.json({ ok: okCount > 0, sent: okCount, failed: results.length - okCount, results });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message || String(err) });
+  }
+});
+
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`WhatsApp bridge listening on 0.0.0.0:${PORT}`);
   writeStatus({ server: `0.0.0.0:${PORT}` });

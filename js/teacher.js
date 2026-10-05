@@ -53,6 +53,124 @@ const TeacherApp = (() => {
     return c.name || c.code || c.id;
   }
 
+  function isYesValue(v) {
+    const t = String(v ?? "")
+      .trim()
+      .toLowerCase();
+    return t === "yes" || t === "oui" || t === "نعم" || t === "y";
+  }
+
+  function isEmptyOrNo(v) {
+    const t = String(v ?? "").trim();
+    if (!t || t === "—" || t === "-") return true;
+    const lower = t.toLowerCase();
+    return lower === "no" || lower === "non" || lower === "لا" || lower === "nah";
+  }
+
+  function displayFieldValue(v) {
+    if (isYesValue(v)) return I18n.t("yes");
+    if (isEmptyOrNo(v)) return "";
+    return String(v).trim();
+  }
+
+  function insightDl(pairs) {
+    if (!pairs.length) return "";
+    return `<dl class="parent-dossier-dl">${pairs
+      .map(
+        ([k, v]) =>
+          `<div class="parent-dossier-item"><dt>${esc(k)}</dt><dd dir="auto">${esc(v)}</dd></div>`
+      )
+      .join("")}</dl>`;
+  }
+
+  function insightSection(title, icon, pairs, open) {
+    if (!pairs.length) return "";
+    return `
+      <details class="parent-dossier-section teacher-student-panel"${open ? " open" : ""}>
+        <summary class="parent-dossier-summary">
+          <span class="parent-dossier-section-ico" aria-hidden="true">${icon}</span>
+          <span>${esc(title)}</span>
+          <span class="parent-dossier-count">${pairs.length}</span>
+        </summary>
+        <div class="parent-dossier-section-body">${insightDl(pairs)}</div>
+      </details>`;
+  }
+
+  function renderTeacherFollowUp(details) {
+    if (!details || typeof details !== "object") return "";
+    const pairs = [
+      [I18n.t("pyHealthStatus"), details.healthStatus],
+      [I18n.t("pyStrengths"), details.strengths],
+      [I18n.t("pyWeaknesses"), details.weaknesses],
+      [I18n.t("pyBehavioral"), details.behavioralPerformance],
+      [I18n.t("pyAcademic"), details.academicPerformance],
+      [I18n.t("pyTalents"), details.talents],
+    ]
+      .map(([label, raw]) => [label, displayFieldValue(raw)])
+      .filter(([, v]) => v);
+    return insightSection(I18n.t("previousYearRecord"), "◆", pairs, true);
+  }
+
+  function buildTeacherMedicalPairs(med) {
+    if (!med || typeof med !== "object") return [];
+    const pairs = [];
+    const push = (label, raw, { always = false } = {}) => {
+      const val = displayFieldValue(raw);
+      if (always && val) {
+        pairs.push([label, val]);
+        return;
+      }
+      if (isYesValue(raw)) {
+        pairs.push([label, I18n.t("yes")]);
+        return;
+      }
+      if (val) pairs.push([label, val]);
+    };
+    push(I18n.t("bloodType"), med.bloodType, { always: true });
+    push(I18n.t("disability"), med.disability);
+    if (isYesValue(med.disability) && String(med.disabilityExplain || "").trim()) {
+      pairs.push([I18n.t("disabilityExplain"), String(med.disabilityExplain).trim()]);
+    }
+    push(I18n.t("allergy"), med.allergy);
+    push(I18n.t("glasses"), med.glasses);
+    push(I18n.t("behavior"), med.behavior);
+    push(I18n.t("learningDifficulty"), med.learningDifficulty);
+    push(I18n.t("treatment"), med.treatment);
+    push(I18n.t("psychologist"), med.psychologist);
+    push(I18n.t("incident"), med.incident);
+    push(I18n.t("medicalOther"), med.other);
+    return pairs;
+  }
+
+  function renderTeacherParentInsights(s) {
+    const followUp = renderTeacherFollowUp(s.previousYearDetails);
+    const profile = s.parentProfile;
+    if (!profile || typeof profile !== "object") {
+      return followUp ? `<article class="parent-dossier teacher-student-insights">${followUp}</article>` : "";
+    }
+    const med = profile.medical || {};
+    const cons = profile.consents || {};
+    const medicalPairs = buildTeacherMedicalPairs(med);
+    const consentPairs = isYesValue(cons.photoMedia) ? [[I18n.t("photoMedia"), I18n.t("yes")]] : [];
+    const medical = insightSection(I18n.t("parentSectionMedical"), "+", medicalPairs, medicalPairs.length <= 4);
+    const consent = insightSection(I18n.t("parentSectionConsents"), "✓", consentPairs, true);
+    if (!followUp && !medical && !consent) return "";
+    return `
+      <article class="parent-dossier teacher-student-insights">
+        <header class="parent-dossier-head">
+          <div class="parent-dossier-head-text">
+            <span class="parent-dossier-badge">${esc(I18n.t("parentFormLinkedBadge"))}</span>
+            <p class="parent-dossier-lede">${esc(I18n.t("teacherStudentInsightsLede"))}</p>
+          </div>
+        </header>
+        <div class="parent-dossier-sections">
+          ${followUp}
+          ${medical}
+          ${consent}
+        </div>
+      </article>`;
+  }
+
   function avatarHtml(person, kind, size = "") {
     const src = person?.photo || (kind === "teacher" ? "assets/avatars/teacher.svg" : "assets/avatars/student.svg");
     const label = kind === "teacher" ? teacherLabel(person) : studentLabel(person);
@@ -160,10 +278,11 @@ const TeacherApp = (() => {
             ? classes
                 .map(
                   (c) => `
-            <button type="button" class="teacher-class-card" data-nav="#/my/class/${esc(c.id)}">
+            <button type="button" class="teacher-class-card" data-nav="#/my/class/${esc(c.id)}/day">
               <strong>${esc(classLabel(c))}</strong>
               <span class="muted">${esc(c.code || "")}${c.year ? ` · ${esc(I18n.t("year"))} ${esc(c.year)}` : ""}</span>
-              <span class="teacher-class-count">${esc(I18n.t("studentsCount", { n: c.studentCount || 0 }))}</span>
+              <span class="teacher-class-count">${esc(I18n.t("openDailyRegister"))}</span>
+              <span class="muted" style="font-size:0.8rem">${esc(I18n.t("studentsCount", { n: c.studentCount || 0 }))}</span>
             </button>`
                 )
                 .join("")
@@ -177,6 +296,8 @@ const TeacherApp = (() => {
   function viewClass(classId, payload) {
     const cls = payload.class;
     const students = payload.students || [];
+    const today = new Date();
+    const todayIso = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
     return shell(
       "home",
       classLabel(cls),
@@ -184,6 +305,10 @@ const TeacherApp = (() => {
       `
       <div class="page-header" style="margin-bottom:0.75rem">
         <button type="button" class="btn btn-ghost" data-nav="#/my" style="padding-left:0">${esc(I18n.t("backToClasses"))}</button>
+      </div>
+      <div class="teacher-class-actions">
+        <button type="button" class="btn btn-primary" data-nav="#/my/class/${esc(classId)}/day?date=${esc(todayIso)}">${esc(I18n.t("openDailyRegister"))}</button>
+        <p class="muted teacher-class-actions-hint">${esc(I18n.t("dailyRegisterHint"))}</p>
       </div>
       <div class="student-table-wrap">
         <table class="student-table">
@@ -218,6 +343,170 @@ const TeacherApp = (() => {
           </tbody>
         </table>
       </div>
+    `
+    );
+  }
+
+  function statusLabel(st) {
+    if (st === "absent") return I18n.t("attendanceAbsent");
+    if (st === "late") return I18n.t("attendanceLate");
+    return I18n.t("attendancePresent");
+  }
+
+  function entryByStudent(session, studentId) {
+    const list = session?.entries || [];
+    return list.find((e) => e.studentId === studentId) || null;
+  }
+
+  function viewDayRegister(classId, payload, params) {
+    const cls = payload.class;
+    const students = payload.students || [];
+    const subjects = payload.subjects || [];
+    const date = payload.date || params?.get("date") || "";
+    const subject = payload.subject || params?.get("subject") || "";
+    const session = payload.session;
+    const recent = payload.recentSessions || [];
+    const siblings = payload.siblingClasses || [];
+
+    const counts = { present: 0, absent: 0, late: 0 };
+    students.forEach((s) => {
+      const st = entryByStudent(session, s.id)?.status || "present";
+      if (counts[st] != null) counts[st] += 1;
+      else counts.present += 1;
+    });
+
+    const subjectOptions =
+      subjects.length > 0
+        ? subjects
+            .map((m) => `<option value="${esc(m)}"${m === subject ? " selected" : ""}>${esc(m)}</option>`)
+            .join("")
+        : "";
+
+    const recentChips = recent.length
+      ? `<div class="register-recent">
+          <div class="register-recent-label">${esc(I18n.t("recentSessions"))}</div>
+          <div class="register-recent-list">
+            ${recent
+              .slice(0, 12)
+              .map((r) => {
+                const active = r.date === date && r.subject === subject;
+                const href = `#/my/class/${encodeURIComponent(classId)}/day?date=${encodeURIComponent(r.date)}&subject=${encodeURIComponent(r.subject)}`;
+                return `<button type="button" class="register-recent-chip${active ? " is-active" : ""}" data-nav="${esc(href)}">${esc(r.date)} · ${esc(r.subject)}</button>`;
+              })
+              .join("")}
+          </div>
+        </div>`
+      : "";
+
+    const siblingChecks = siblings.length
+      ? `<div class="register-copy-hw">
+          <div class="register-copy-label">${esc(I18n.t("copyHomeworkTo"))}</div>
+          <div class="register-copy-list">
+            ${siblings
+              .map(
+                (c) => `
+              <label class="admin-check register-copy-item">
+                <input type="checkbox" name="copyTo" value="${esc(c.id)}" />
+                <span dir="auto">${esc(classLabel(c))}${c.code ? ` (${esc(c.code)})` : ""}</span>
+              </label>`
+              )
+              .join("")}
+          </div>
+        </div>`
+      : "";
+
+    const rows = students.length
+      ? students
+          .map((s) => {
+            const ent = entryByStudent(session, s.id);
+            const st = ent?.status || "present";
+            const remark = ent?.remark || "";
+            const remarkOpen = Boolean(remark);
+            return `
+            <article class="register-row" data-student-id="${esc(s.id)}">
+              <div class="register-row-main">
+                <span class="register-num">${s.number ?? "—"}</span>
+                ${avatarHtml(s, "student")}
+                <div class="register-name">
+                  <strong dir="auto">${esc(studentLabel(s))}</strong>
+                </div>
+                <div class="register-status" role="group" aria-label="${esc(I18n.t("attendance"))}">
+                  ${["present", "absent", "late"]
+                    .map(
+                      (k) =>
+                        `<button type="button" class="register-status-btn is-${k}${st === k ? " is-on" : ""}" data-status="${k}" aria-pressed="${st === k ? "true" : "false"}">${esc(statusLabel(k))}</button>`
+                    )
+                    .join("")}
+                </div>
+                <button type="button" class="btn btn-ghost btn-sm register-remark-toggle${remarkOpen ? " has-remark" : ""}" data-remark-toggle aria-expanded="${remarkOpen ? "true" : "false"}">${esc(I18n.t("remark"))}</button>
+              </div>
+              <div class="register-remark-wrap"${remarkOpen ? "" : " hidden"}>
+                <label class="admin-field">
+                  <span class="visually-hidden">${esc(I18n.t("remark"))}</span>
+                  <textarea class="register-remark" rows="2" maxlength="1000" placeholder="${esc(I18n.t("remarkPlaceholder"))}" dir="auto">${esc(remark)}</textarea>
+                </label>
+              </div>
+            </article>`;
+          })
+          .join("")
+      : `<div class="admin-empty">${esc(I18n.t("noStudentsInClass") || "No students")}</div>`;
+
+    return shell(
+      "home",
+      I18n.t("dailyRegisterTitle"),
+      `${classLabel(cls)} · ${I18n.t("dailyRegisterLede")}`,
+      `
+      <div class="page-header" style="margin-bottom:0.75rem">
+        <button type="button" class="btn btn-ghost" data-nav="#/my/class/${esc(classId)}" style="padding-left:0">${esc(I18n.t("backToRoster"))}</button>
+      </div>
+
+      <form id="teacher-day-register" class="register-panel" data-class-id="${esc(classId)}">
+        <div class="register-toolbar">
+          <label class="admin-field register-field">
+            <span>${esc(I18n.t("sessionDate"))}</span>
+            <input type="date" name="date" value="${esc(date)}" required />
+          </label>
+          <label class="admin-field register-field">
+            <span>${esc(I18n.t("subject"))}</span>
+            ${
+              subjects.length
+                ? `<select name="subject" required>
+                    <option value="">${esc(I18n.t("selectSubject"))}</option>
+                    ${subjectOptions}
+                    ${subject && !subjects.includes(subject) ? `<option value="${esc(subject)}" selected>${esc(subject)}</option>` : ""}
+                  </select>`
+                : `<input type="text" name="subject" value="${esc(subject)}" required maxlength="120" placeholder="${esc(I18n.t("subjectPlaceholder"))}" dir="auto" />`
+            }
+          </label>
+          <div class="register-toolbar-actions">
+            <button type="button" class="btn btn-ghost" data-mark-all-present>${esc(I18n.t("markAllPresent"))}</button>
+          </div>
+        </div>
+
+        <div class="register-summary" data-register-summary>
+          <span data-sum-present>${counts.present}</span> ${esc(I18n.t("attendancePresent"))}
+          · <span data-sum-absent>${counts.absent}</span> ${esc(I18n.t("attendanceAbsent"))}
+          · <span data-sum-late>${counts.late}</span> ${esc(I18n.t("attendanceLate"))}
+        </div>
+
+        ${recentChips}
+
+        <div class="register-list" data-register-list>
+          ${rows}
+        </div>
+
+        <section class="register-homework">
+          <div class="admin-panel-label">${esc(I18n.t("homework"))}</div>
+          <p class="admin-field-hint">${esc(I18n.t("homeworkHint"))}</p>
+          <textarea name="homework" rows="3" maxlength="4000" placeholder="${esc(I18n.t("homeworkPlaceholder"))}" dir="auto">${esc(session?.homework || "")}</textarea>
+          ${siblingChecks}
+        </section>
+
+        <div class="register-save-bar">
+          <p class="ann-status" data-register-status hidden></p>
+          <button type="submit" class="btn btn-primary" data-register-save>${esc(I18n.t("saveRegister"))}</button>
+        </div>
+      </form>
     `
     );
   }
@@ -257,6 +546,7 @@ const TeacherApp = (() => {
           ? `<div class="info-panel" style="margin-top:1rem"><div class="panel-label">${esc(I18n.t("notes"))}</div><p style="margin-top:0.5rem">${esc(s.notes)}</p></div>`
           : ""
       }
+      ${renderTeacherParentInsights(s)}
     `
     );
   }
@@ -377,6 +667,26 @@ const TeacherApp = (() => {
       }
       if (parts[1] === "class" && parts[2]) {
         const classId = parts[2];
+        if (parts[3] === "day") {
+          const date = params?.get("date") || "";
+          let subject = params?.get("subject") || "";
+          if (!subject) {
+            try {
+              subject = localStorage.getItem(`qea_reg_subject_${classId}`) || "";
+            } catch {
+              /* ignore */
+            }
+          }
+          const q = new URLSearchParams();
+          if (date) q.set("date", date);
+          if (subject) q.set("subject", subject);
+          const qs = q.toString() ? `?${q}` : "";
+          const payload = await BBC_API.get(
+            `/me/classes/${encodeURIComponent(classId)}/session${qs}`
+          );
+          // If no subject yet but teacher has modules, leave subject empty so they pick
+          return { html: viewDayRegister(classId, payload, params), dayRegister: true };
+        }
         let payload = state.classCache.get(classId);
         if (!payload) {
           payload = await BBC_API.get(`/me/classes/${encodeURIComponent(classId)}/students`);
@@ -513,6 +823,126 @@ const TeacherApp = (() => {
         setStatus(statusEl, err.message || "Remove failed", false);
       }
     });
+
+    const registerForm = root.querySelector("#teacher-day-register");
+    if (registerForm) {
+      const classId = registerForm.getAttribute("data-class-id");
+      const statusEl = root.querySelector("[data-register-status]");
+
+      const refreshSummary = () => {
+        const counts = { present: 0, absent: 0, late: 0 };
+        root.querySelectorAll(".register-row").forEach((row) => {
+          const on = row.querySelector(".register-status-btn.is-on");
+          const st = on?.getAttribute("data-status") || "present";
+          if (counts[st] != null) counts[st] += 1;
+          else counts.present += 1;
+        });
+        const p = root.querySelector("[data-sum-present]");
+        const a = root.querySelector("[data-sum-absent]");
+        const l = root.querySelector("[data-sum-late]");
+        if (p) p.textContent = String(counts.present);
+        if (a) a.textContent = String(counts.absent);
+        if (l) l.textContent = String(counts.late);
+      };
+
+      const navigateSession = () => {
+        const date = registerForm.querySelector('[name="date"]')?.value || "";
+        const subject = registerForm.querySelector('[name="subject"]')?.value || "";
+        try {
+          if (subject) localStorage.setItem(`qea_reg_subject_${classId}`, subject);
+        } catch {
+          /* ignore */
+        }
+        const q = new URLSearchParams();
+        if (date) q.set("date", date);
+        if (subject) q.set("subject", subject);
+        go(`/my/class/${classId}/day?${q.toString()}`);
+      };
+
+      registerForm.querySelector('[name="date"]')?.addEventListener("change", navigateSession);
+      registerForm.querySelector('[name="subject"]')?.addEventListener("change", navigateSession);
+
+      root.querySelector("[data-mark-all-present]")?.addEventListener("click", () => {
+        root.querySelectorAll(".register-row").forEach((row) => {
+          row.querySelectorAll(".register-status-btn").forEach((btn) => {
+            const on = btn.getAttribute("data-status") === "present";
+            btn.classList.toggle("is-on", on);
+            btn.setAttribute("aria-pressed", on ? "true" : "false");
+          });
+        });
+        refreshSummary();
+      });
+
+      root.querySelectorAll("[data-remark-toggle]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const row = btn.closest(".register-row");
+          const wrap = row?.querySelector(".register-remark-wrap");
+          if (!wrap) return;
+          const open = wrap.hidden;
+          wrap.hidden = !open;
+          btn.setAttribute("aria-expanded", open ? "true" : "false");
+        });
+      });
+
+      root.querySelectorAll(".register-status-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const row = btn.closest(".register-row");
+          if (!row) return;
+          row.querySelectorAll(".register-status-btn").forEach((b) => {
+            const on = b === btn;
+            b.classList.toggle("is-on", on);
+            b.setAttribute("aria-pressed", on ? "true" : "false");
+          });
+          refreshSummary();
+        });
+      });
+
+      registerForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const date = String(registerForm.querySelector('[name="date"]')?.value || "");
+        const subject = String(registerForm.querySelector('[name="subject"]')?.value || "").trim();
+        const homework = String(registerForm.querySelector('[name="homework"]')?.value || "");
+        if (!subject) {
+          setStatus(statusEl, I18n.t("selectSubject"), false);
+          return;
+        }
+        const entries = [];
+        root.querySelectorAll(".register-row").forEach((row) => {
+          const studentId = row.getAttribute("data-student-id");
+          const on = row.querySelector(".register-status-btn.is-on");
+          const status = on?.getAttribute("data-status") || "present";
+          const remark = String(row.querySelector(".register-remark")?.value || "").trim();
+          entries.push({ studentId, status, remark });
+        });
+        const copyHomeworkToClassIds = [
+          ...registerForm.querySelectorAll('input[name="copyTo"]:checked'),
+        ].map((el) => el.value);
+
+        const saveBtn = root.querySelector("[data-register-save]");
+        if (saveBtn) saveBtn.disabled = true;
+        try {
+          await BBC_API.put(`/me/classes/${encodeURIComponent(classId)}/session`, {
+            date,
+            subject,
+            homework,
+            entries,
+            copyHomeworkToClassIds,
+          });
+          try {
+            localStorage.setItem(`qea_reg_subject_${classId}`, subject);
+          } catch {
+            /* ignore */
+          }
+          setStatus(statusEl, I18n.t("registerSaved"), true);
+          const q = new URLSearchParams({ date, subject });
+          go(`/my/class/${classId}/day?${q.toString()}`);
+        } catch (err) {
+          setStatus(statusEl, err.message || I18n.t("loginError"), false);
+        } finally {
+          if (saveBtn) saveBtn.disabled = false;
+        }
+      });
+    }
   }
 
   function reset() {

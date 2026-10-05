@@ -8,6 +8,8 @@ import * as Announcements from "./announcements.js";
 import * as WaCampaigns from "./waCampaigns.js";
 import * as TeacherPortal from "./teacherPortal.js";
 import * as ParentForm from "./parentForm.js";
+import * as ClassSessions from "./classSessions.js";
+import * as FloorPortal from "./floorPortal.js";
 
 const router = Router();
 
@@ -57,11 +59,30 @@ router.get("/school-data", authRequired(["director", "admin"]), async (_req, res
 router.get("/me", authRequired(["teacher"]), TeacherPortal.getMe);
 router.get("/me/classes", authRequired(["teacher"]), TeacherPortal.getMyClasses);
 router.get("/me/classes/:id/students", authRequired(["teacher"]), TeacherPortal.getMyClassStudents);
+router.get("/me/classes/:id/session", authRequired(["teacher"]), ClassSessions.getMyClassSession);
+router.put("/me/classes/:id/session", authRequired(["teacher"]), ClassSessions.putMyClassSession);
+router.get("/me/classes/:id/sessions", authRequired(["teacher"]), ClassSessions.listMyClassSessions);
 router.get("/me/students/:id", authRequired(["teacher"]), TeacherPortal.getMyStudent);
 router.post("/me/photo", authRequired(["teacher"]), TeacherPortal.updateMyPhoto);
 router.delete("/me/photo", authRequired(["teacher"]), TeacherPortal.removeMyPhoto);
 router.put("/me/profile", authRequired(["teacher"]), TeacherPortal.updateMyProfile);
 router.post("/me/password", authRequired(["teacher"]), TeacherPortal.changeMyPassword);
+
+// ——— Floor managers (primary étages) ———
+router.get("/floor/me", authRequired(["floor"]), FloorPortal.getFloorMe);
+router.post("/floor/password", authRequired(["floor"]), FloorPortal.changeFloorPassword);
+router.get("/floor/day", authRequired(["floor"]), FloorPortal.getFloorDayBoard);
+router.get("/floor/classes/:id/day", authRequired(["floor"]), FloorPortal.getFloorClassDay);
+router.get("/floor/wa/status", authRequired(["floor"]), FloorPortal.getFloorWaStatus);
+router.get("/floor/wa/qr", authRequired(["floor"]), FloorPortal.getFloorWaQr);
+router.post("/floor/wa/logout", authRequired(["floor"]), FloorPortal.postFloorWaLogout);
+router.post("/floor/wa/send", authRequired(["floor"]), FloorPortal.postFloorWaSend);
+router.get("/floor-managers", authRequired(["director", "admin"]), FloorPortal.listFloorManagers);
+router.put(
+  "/floor-managers/:id/password",
+  authRequired(["director", "admin"]),
+  FloorPortal.resetFloorManagerPassword
+);
 
 // ——— Teachers ———
 router.get("/teachers", authRequired(["director", "admin"]), async (_req, res) => {

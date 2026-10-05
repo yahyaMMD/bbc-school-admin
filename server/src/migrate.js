@@ -1,3 +1,4 @@
+import bcrypt from "bcryptjs";
 import { query } from "./db.js";
 
 export async function migrate() {
@@ -232,6 +233,104 @@ export async function migrate() {
     CREATE INDEX IF NOT EXISTS idx_wa_recipients_campaign_status
       ON wa_campaign_recipients (campaign_id, status, row_index);
   `);
+
+  // Teacher daily class register: one session per class + teacher + date + subject
+  await query(`
+    CREATE TABLE IF NOT EXISTS class_sessions (
+      id TEXT PRIMARY KEY,
+      class_id TEXT NOT NULL REFERENCES classes(id) ON DELETE CASCADE,
+      teacher_id TEXT NOT NULL REFERENCES teachers(id) ON DELETE CASCADE,
+      session_date DATE NOT NULL,
+      subject TEXT NOT NULL DEFAULT '',
+      homework TEXT NOT NULL DEFAULT '',
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      UNIQUE (class_id, teacher_id, session_date, subject)
+    );
+    CREATE INDEX IF NOT EXISTS idx_class_sessions_teacher_date
+      ON class_sessions (teacher_id, session_date DESC);
+    CREATE INDEX IF NOT EXISTS idx_class_sessions_class_date
+      ON class_sessions (class_id, session_date DESC);
+
+    CREATE TABLE IF NOT EXISTS class_session_entries (
+      session_id TEXT NOT NULL REFERENCES class_sessions(id) ON DELETE CASCADE,
+      student_id TEXT NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+      status TEXT NOT NULL DEFAULT 'present'
+        CHECK (status IN ('present', 'absent', 'late')),
+      remark TEXT NOT NULL DEFAULT '',
+      PRIMARY KEY (session_id, student_id)
+    );
+    CREATE INDEX IF NOT EXISTS idx_class_session_entries_student
+      ON class_session_entries (student_id);
+  `);
+
+  // Primary floor managers (one account per floor / étage)
+  await query(`
+    CREATE TABLE IF NOT EXISTS floor_managers (
+      id TEXT PRIMARY KEY,
+      login_code TEXT NOT NULL UNIQUE,
+      password_hash TEXT NOT NULL,
+      department_id TEXT NOT NULL DEFAULT 'primary',
+      floor_number INT NOT NULL,
+      floor_label TEXT NOT NULL DEFAULT '',
+      floor_label_ar TEXT NOT NULL DEFAULT '',
+      must_change_password BOOLEAN NOT NULL DEFAULT TRUE,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      UNIQUE (department_id, floor_number)
+    );
+    CREATE INDEX IF NOT EXISTS idx_floor_managers_dept_floor
+      ON floor_managers (department_id, floor_number);
+
+    CREATE TABLE IF NOT EXISTS floor_action_logs (
+      id TEXT PRIMARY KEY,
+      floor_manager_id TEXT NOT NULL REFERENCES floor_managers(id) ON DELETE CASCADE,
+      class_id TEXT,
+      student_id TEXT,
+      session_id TEXT,
+      action_type TEXT NOT NULL DEFAULT 'custom',
+      channel TEXT NOT NULL DEFAULT 'whatsapp',
+      message TEXT NOT NULL DEFAULT '',
+      recipients JSONB NOT NULL DEFAULT '[]'::jsonb,
+      result JSONB NOT NULL DEFAULT '{}'::jsonb,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+    CREATE INDEX IF NOT EXISTS idx_floor_actions_manager_created
+      ON floor_action_logs (floor_manager_id, created_at DESC);
+  `);
+
+  await ensurePrimaryFloorManagers();
+}
+
+const PRIMARY_FLOORS = [
+  { n: 0, code: "FLOOR001", label: "Ground Floor", labelAr: "الطابق الأرضي" },
+  { n: 1, code: "FLOOR002", label: "Floor 1", labelAr: "الطابق الأول" },
+  { n: 2, code: "FLOOR003", label: "Floor 2", labelAr: "الطابق الثاني" },
+  { n: 3, code: "FLOOR004", label: "Floor 3", labelAr: "الطابق الثالث" },
+  { n: 4, code: "FLOOR005", label: "Floor 4", labelAr: "الطابق الرابع" },
+];
+
+async function ensurePrimaryFloorManagers() {
+  const defaultPass = process.env.FLOOR_PASSWORD || "Floor2026";
+  for (const f of PRIMARY_FLOORS) {
+    const existing = await query("SELECT id FROM floor_managers WHERE id = $1", [f.code]);
+    if (existing.rows.length) {
+      await query(
+        `UPDATE floor_managers
+         SET floor_label = $2, floor_label_ar = $3, department_id = 'primary', floor_number = $4, updated_at = NOW()
+         WHERE id = $1`,
+        [f.code, f.label, f.labelAr, f.n]
+      );
+      continue;
+    }
+    const hash = await bcrypt.hash(defaultPass, 10);
+    await query(
+      `INSERT INTO floor_managers
+         (id, login_code, password_hash, department_id, floor_number, floor_label, floor_label_ar, must_change_password)
+       VALUES ($1, $2, $3, 'primary', $4, $5, $6, TRUE)`,
+      [f.code, f.code, hash, f.n, f.label, f.labelAr]
+    );
+  }
 }
 
 /** Assign TR001… to teachers missing a login_code (stable order). */

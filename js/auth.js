@@ -27,6 +27,10 @@ const Auth = (() => {
     return role() === "teacher";
   }
 
+  function isFloor() {
+    return role() === "floor";
+  }
+
   function isImpersonating() {
     return typeof BBC_API !== "undefined" && BBC_API.isImpersonating();
   }
@@ -43,6 +47,7 @@ const Auth = (() => {
 
   function homePath() {
     if (isImpersonating() || isTeacher()) return "/my";
+    if (isFloor()) return "/floor";
     if (isAdmin()) return "/manage";
     if (isWhatsApp()) return "/whatsapp";
     return "/home";
@@ -51,6 +56,7 @@ const Auth = (() => {
   function exitToDirector() {
     if (typeof BBC_API === "undefined" || !BBC_API.exitImpersonation()) return false;
     if (typeof TeacherApp !== "undefined" && TeacherApp.reset) TeacherApp.reset();
+    if (typeof FloorApp !== "undefined" && FloorApp.reset) FloorApp.reset();
     return true;
   }
 
@@ -66,6 +72,7 @@ const Auth = (() => {
         ok: true,
         role: data.role,
         teacherId: data.teacherId,
+        floorManagerId: data.floorManagerId,
         loginCode: data.loginCode,
         mustChangePassword: data.mustChangePassword,
       };
@@ -79,6 +86,7 @@ const Auth = (() => {
   function logout() {
     if (typeof BBC_API !== "undefined") BBC_API.logout();
     if (typeof TeacherApp !== "undefined" && TeacherApp.reset) TeacherApp.reset();
+    if (typeof FloorApp !== "undefined" && FloorApp.reset) FloorApp.reset();
   }
 
   return {
@@ -90,6 +98,7 @@ const Auth = (() => {
     isDirector,
     isWhatsApp,
     isTeacher,
+    isFloor,
     isImpersonating,
     canManage,
     canWhatsApp,

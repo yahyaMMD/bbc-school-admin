@@ -375,6 +375,8 @@
           <p class="login-meta">${esc(I18n.t("welcomeAddress"))}</p>
           <p class="login-alt">
             <button type="button" class="link-btn" data-nav="#/teacher-login">${esc(I18n.t("teacherLoginLink"))}</button>
+            <span class="muted"> · </span>
+            <button type="button" class="link-btn" data-nav="#/floor-login">${esc(I18n.t("floorLoginLink"))}</button>
           </p>
         </div>
       </div>
@@ -408,6 +410,43 @@
           <p class="login-meta">${esc(I18n.t("welcomeAddress"))}</p>
           <p class="login-alt">
             <button type="button" class="link-btn" data-nav="#/">${esc(I18n.t("staffLoginLink"))}</button>
+            <span class="muted"> · </span>
+            <button type="button" class="link-btn" data-nav="#/floor-login">${esc(I18n.t("floorLoginLink"))}</button>
+          </p>
+        </div>
+      </div>
+    `;
+  }
+
+  function viewFloorLogin() {
+    return `
+      <div class="login-page">
+        <div class="login-card">
+          <div class="login-lang">${I18n.langSwitcher()}</div>
+          <div class="login-brand">
+            <img src="assets/logo.png?v=2" alt="${esc(I18n.t("brand"))}" width="88" height="88" />
+            <div>
+              <h1>${esc(I18n.t("floorPortal"))}</h1>
+              <p class="login-hint">${esc(I18n.t("floorLoginHint"))}</p>
+            </div>
+          </div>
+          <form class="login-form" id="floor-login-form" autocomplete="on">
+            <div class="field">
+              <label for="floor-login-code">${esc(I18n.t("floorLoginId"))}</label>
+              <input id="floor-login-code" name="loginCode" type="text" inputmode="text" autocomplete="username" placeholder="${esc(I18n.t("floorLoginIdPlaceholder"))}" required autofocus style="text-transform:uppercase" />
+            </div>
+            <div class="field">
+              <label for="floor-password">${esc(I18n.t("password"))}</label>
+              <input id="floor-password" name="password" type="password" placeholder="${esc(I18n.t("passwordPlaceholder"))}" required />
+            </div>
+            <div class="login-error" id="floor-login-error" role="alert"></div>
+            <button type="submit" class="btn btn-primary">${esc(I18n.t("access"))}</button>
+          </form>
+          <p class="login-meta">${esc(I18n.t("welcomeAddress"))}</p>
+          <p class="login-alt">
+            <button type="button" class="link-btn" data-nav="#/">${esc(I18n.t("staffLoginLink"))}</button>
+            <span class="muted"> · </span>
+            <button type="button" class="link-btn" data-nav="#/teacher-login">${esc(I18n.t("teacherLoginLink"))}</button>
           </p>
         </div>
       </div>
@@ -448,6 +487,14 @@
             <div>
               <strong>${esc(I18n.t("openTeacherPortals"))}</strong>
               <p>${esc(I18n.t("openTeacherPortalsLede"))}</p>
+            </div>
+            <span class="cta">${esc(I18n.t("open"))}</span>
+          </button>
+          <button type="button" class="director-gate-card" data-nav="#/floor-access">
+            <span class="director-gate-ico" aria-hidden="true">▣</span>
+            <div>
+              <strong>${esc(I18n.t("floorPortal"))}</strong>
+              <p>${esc(I18n.t("floorPortalDirectorDesc"))}</p>
             </div>
             <span class="cta">${esc(I18n.t("open"))}</span>
           </button>
@@ -590,6 +637,60 @@
                 .join("")
             : `<div class="empty-state"><p>${esc(I18n.t("noTeachersFound"))}</p></div>`
         }
+      </div>
+    `);
+  }
+
+  async function viewFloorAccess() {
+    let managers = [];
+    let err = "";
+    try {
+      const data = await BBC_API.get("/floor-managers");
+      managers = data.managers || [];
+    } catch (e) {
+      err = e.message || I18n.t("failedLoad");
+    }
+    const rows = managers.length
+      ? managers
+          .map(
+            (m) => `
+        <tr>
+          <td><code>${esc(m.loginCode || m.id)}</code></td>
+          <td dir="auto">${esc(I18n.getLang() === "ar" && m.floorLabelAr ? m.floorLabelAr : m.floorLabel || "")}</td>
+          <td>${esc(m.floorNumber)}</td>
+          <td>${esc(I18n.t("primary"))}</td>
+        </tr>`
+          )
+          .join("")
+      : `<tr><td colspan="4"><div class="admin-empty">${esc(err || I18n.t("failedLoad"))}</div></td></tr>`;
+
+    return shell(`
+      ${crumb([
+        { label: I18n.t("home"), to: "#/home" },
+        { label: I18n.t("floorPortal"), to: "#/floor-access" },
+      ])}
+      <div class="page-header">
+        <h1>${esc(I18n.t("floorPortal"))}</h1>
+        <p class="lede">${esc(I18n.t("floorAccessLede"))}</p>
+      </div>
+      <div class="admin-panel" style="margin-bottom:1rem">
+        <p class="admin-field-hint">${esc(I18n.t("floorAccessHint"))}</p>
+        <p style="margin:0.75rem 0 0">
+          <button type="button" class="btn btn-primary" data-nav="#/floor-login">${esc(I18n.t("floorLoginLink"))}</button>
+        </p>
+      </div>
+      <div class="student-table-wrap">
+        <table class="student-table">
+          <thead>
+            <tr>
+              <th>${esc(I18n.t("floorLoginId"))}</th>
+              <th>${esc(I18n.t("floorLabel"))}</th>
+              <th>#</th>
+              <th>${esc(I18n.t("department"))}</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
       </div>
     `);
   }
@@ -974,138 +1075,8 @@
   }
 
   function renderParentProfile(profile) {
-    if (!profile || typeof profile !== "object") return "";
-    const yesNo = (v) => (v === "yes" ? I18n.t("yes") : v === "no" ? I18n.t("no") : v || "—");
-    const row = (k, v) =>
-      `<div class="fact-card"><div class="k">${esc(k)}</div><div class="v" dir="auto">${esc(v || "—")}</div></div>`;
-    const block = (title, html) =>
-      html
-        ? `<div class="info-panel" style="margin-top:1rem"><div class="panel-label">${esc(title)}</div>${html}</div>`
-        : "";
-    const grid = (pairs) => {
-      const cells = pairs.filter(([, v]) => v != null && String(v).trim() !== "");
-      if (!cells.length) return "";
-      return `<div class="facts-grid" style="margin-top:0.6rem">${cells
-        .map(([k, v]) => row(k, v))
-        .join("")}</div>`;
-    };
-    const st = profile.student || {};
-    const fa = profile.father || {};
-    const mo = profile.mother || {};
-    const co = profile.contact || {};
-    const fam = profile.family || {};
-    const med = profile.medical || {};
-    const cons = profile.consents || {};
-    const sexLabel =
-      st.sex === "female"
-        ? I18n.t("parentFormsSexFemale")
-        : st.sex === "male"
-          ? I18n.t("parentFormsSexMale")
-          : st.sex || "";
-
-    return `
-      <div class="info-panel" style="margin-top:1.25rem;border-color:var(--accent, #F26522)">
-        <div class="panel-label">${esc(I18n.t("parentFormLinked"))}</div>
-        <p class="muted" style="margin:0.35rem 0 0">${esc(I18n.t("parentFormLinkedLede"))}</p>
-      </div>
-      ${block(
-        I18n.t("parentSectionStudent"),
-        grid([
-          [I18n.t("lastName"), st.lastName],
-          [I18n.t("firstName"), st.firstName],
-          [I18n.t("gender"), sexLabel],
-          [I18n.t("dob"), st.dateOfBirth],
-          [I18n.t("placeOfBirth"), st.placeOfBirth],
-          [I18n.t("nationality"), st.nationality],
-          [I18n.t("enrollmentYear"), st.enrollmentYear],
-          [I18n.t("level"), st.level],
-          [I18n.t("repeatedYear"), yesNo(st.repeatedYear)],
-          [I18n.t("studiedAbroad"), yesNo(st.studiedAbroad)],
-        ])
-      )}
-      ${block(
-        I18n.t("parentSectionFather"),
-        grid([
-          [I18n.t("fullName"), fa.name],
-          [I18n.t("profession"), fa.profession],
-          [I18n.t("nationality"), fa.nationality],
-          [I18n.t("phone"), fa.phone],
-        ])
-      )}
-      ${block(
-        I18n.t("parentSectionMother"),
-        grid([
-          [I18n.t("fullName"), mo.name],
-          [I18n.t("profession"), mo.profession],
-          [I18n.t("nationality"), mo.nationality],
-          [I18n.t("phone"), mo.phone],
-        ])
-      )}
-      ${block(
-        I18n.t("parentSectionContact"),
-        grid([
-          [I18n.t("parentPhoneSecondary"), co.phoneBackup],
-          [I18n.t("parentAddress"), co.address],
-          [I18n.t("email"), co.email],
-        ])
-      )}
-      ${block(
-        I18n.t("parentSectionFamily"),
-        grid([
-          [I18n.t("parentMarital"), fam.parentsStatus],
-          [I18n.t("custody"), fam.custody],
-          [I18n.t("siblingsCount"), fam.siblingsCount],
-          [I18n.t("brothersCount"), fam.brothersCount],
-          [I18n.t("sistersCount"), fam.sistersCount],
-          [I18n.t("siblingRank"), fam.siblingRank],
-          [I18n.t("tutor"), fam.tutorNameRole],
-          [I18n.t("tutorPhone"), fam.tutorPhone],
-          [I18n.t("adopted"), yesNo(fam.adopted)],
-        ])
-      )}
-      ${block(
-        I18n.t("parentSectionMedical"),
-        grid([
-          [I18n.t("bloodType"), med.bloodType],
-          [I18n.t("disability"), yesNo(med.disability)],
-          [I18n.t("disabilityExplain"), med.disabilityExplain],
-          [I18n.t("allergy"), med.allergy],
-          [I18n.t("glasses"), med.glasses],
-          [I18n.t("behavior"), med.behavior],
-          [I18n.t("learningDifficulty"), med.learningDifficulty],
-          [I18n.t("treatment"), med.treatment],
-          [I18n.t("psychologist"), med.psychologist],
-          [I18n.t("incident"), med.incident],
-          [I18n.t("medicalOther"), med.other],
-        ])
-      )}
-      ${block(
-        I18n.t("parentSectionConsents"),
-        grid([
-          [
-            I18n.t("departureMode"),
-            (
-              {
-                withParent: I18n.t("departureWithParent"),
-                motherOnly: I18n.t("departureMotherOnly"),
-                fatherOnly: I18n.t("departureFatherOnly"),
-                alone: I18n.t("departureAlone"),
-                companion: I18n.t("departureCompanion"),
-                driver: I18n.t("departureDriver"),
-              }[cons.departureMode] || cons.departureMode
-            ),
-          ],
-          [I18n.t("companionRole"), cons.companionRole],
-          [I18n.t("companionName"), cons.companionName],
-          [I18n.t("companionPhone"), cons.companionPhone],
-          [I18n.t("driverName"), cons.driverName],
-          [I18n.t("driverPhone"), cons.driverPhone],
-          [I18n.t("outings"), yesNo(cons.outings)],
-          [I18n.t("sports"), yesNo(cons.sports)],
-          [I18n.t("photoMedia"), yesNo(cons.photoMedia)],
-        ])
-      )}
-    `;
+    if (typeof ParentProfileView === "undefined") return "";
+    return ParentProfileView.render(profile);
   }
 
   function viewStudent(studentId, from) {
@@ -1523,11 +1494,12 @@
 
     if (!Auth.isAuthenticated()) {
       if (path0 === "teacher-login") return viewTeacherLogin();
+      if (path0 === "floor-login") return viewFloorLogin();
       return viewLogin();
     }
 
-    // Keep Staff, WhatsApp, and Teacher sides separated; Director may open Manage + WhatsApp + teacher portals
-    if (Auth.isDirector() && path0 === "my") {
+    // Keep Staff, WhatsApp, Teacher, and Floor sides separated; Director may open Manage + WhatsApp + teacher portals
+    if (Auth.isDirector() && (path0 === "my" || path0 === "floor")) {
       go("/home");
       return viewHome();
     }
@@ -1546,6 +1518,11 @@
       const result = await TeacherApp.resolve(["my"], new URLSearchParams());
       return shell(result.html || "");
     }
+    if (Auth.isFloor() && path0 !== "floor") {
+      go("/floor");
+      const result = await FloorApp.resolve(["floor"], new URLSearchParams());
+      return shell(result.html || "");
+    }
 
     if (Auth.canManage() && path0 === "manage") {
       const html = AdminApp.resolve(parts, params);
@@ -1562,8 +1539,21 @@
       return shell(result.html || "");
     }
 
+    if (Auth.isFloor() && path0 === "floor") {
+      const result = await FloorApp.resolve(parts, params);
+      return shell(result.html || "");
+    }
+
     if (Auth.isDirector() && path0 === "enter-teacher") {
       return viewEnterTeacher(params);
+    }
+
+    if (Auth.isDirector() && path0 === "floor-access") {
+      return await viewFloorAccess();
+    }
+
+    if (Auth.isDirector() && path0 === "floor-login") {
+      return await viewFloorAccess();
     }
 
     if (parts[0] === "search") {
@@ -1614,7 +1604,7 @@
       }
       try {
         app.innerHTML = `<div class="login-page"><div class="login-card"><p>${esc(I18n.t("loading"))}</p></div></div>`;
-        if (result.role !== "whatsapp" && result.role !== "teacher") {
+        if (result.role !== "whatsapp" && result.role !== "teacher" && result.role !== "floor") {
           const data = await BBC_API.loadSchoolData();
           BBC_DATA.setData(data);
         }
@@ -1641,6 +1631,24 @@
         }
         return;
       }
+      go(Auth.homePath());
+      render();
+    });
+
+    document.getElementById("floor-login-form")?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const loginCode = document.getElementById("floor-login-code")?.value || "";
+      const password = document.getElementById("floor-password")?.value || "";
+      const err = document.getElementById("floor-login-error");
+      const result = await Auth.login(password, { loginCode });
+      if (!result.ok) {
+        if (err) {
+          err.textContent = result.error || I18n.t("loginError");
+          err.classList.add("show");
+        }
+        return;
+      }
+      if (typeof FloorApp !== "undefined" && FloorApp.reset) FloorApp.reset();
       go(Auth.homePath());
       render();
     });
@@ -1751,6 +1759,13 @@
 
     if (Auth.isTeacher()) {
       TeacherApp.bind(app, (path) => {
+        go(path);
+        render();
+      });
+    }
+
+    if (Auth.isFloor()) {
+      FloorApp.bind(app, (path) => {
         go(path);
         render();
       });
