@@ -4235,6 +4235,33 @@ html[dir="rtl"] .home-icon-tile {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.register-name-btn,
+.register-avatar-btn {
+  display: block;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+.register-avatar-btn {
+  width: auto;
+  line-height: 0;
+}
+.register-avatar-btn .avatar {
+  pointer-events: none;
+}
+.register-open-detail {
+  display: block;
+  margin-top: 0.1rem;
+  font-size: 0.72rem;
+  font-weight: 650;
+  color: var(--orange-deep);
+}
 .register-status {
   display: inline-flex;
   gap: 0.25rem;

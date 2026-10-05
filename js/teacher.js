@@ -278,11 +278,11 @@ const TeacherApp = (() => {
             ? classes
                 .map(
                   (c) => `
-            <button type="button" class="teacher-class-card" data-nav="#/my/class/${esc(c.id)}/day">
+            <button type="button" class="teacher-class-card" data-nav="#/my/class/${esc(c.id)}">
               <strong>${esc(classLabel(c))}</strong>
               <span class="muted">${esc(c.code || "")}${c.year ? ` · ${esc(I18n.t("year"))} ${esc(c.year)}` : ""}</span>
-              <span class="teacher-class-count">${esc(I18n.t("openDailyRegister"))}</span>
-              <span class="muted" style="font-size:0.8rem">${esc(I18n.t("studentsCount", { n: c.studentCount || 0 }))}</span>
+              <span class="teacher-class-count">${esc(I18n.t("studentsCount", { n: c.studentCount || 0 }))}</span>
+              <span class="muted" style="font-size:0.8rem">${esc(I18n.t("openDailyRegister"))}</span>
             </button>`
                 )
                 .join("")
@@ -363,10 +363,13 @@ const TeacherApp = (() => {
     const students = payload.students || [];
     const subjects = payload.subjects || [];
     const date = payload.date || params?.get("date") || "";
-    const subject = payload.subject || params?.get("subject") || "";
+    let subject = payload.subject || params?.get("subject") || "";
+    // Auto-pick the teacher's first subject so the class opens ready to use
+    if (!subject && subjects.length) subject = String(subjects[0] || "");
     const session = payload.session;
     const recent = payload.recentSessions || [];
     const siblings = payload.siblingClasses || [];
+    const fromDay = `#/my/class/${classId}/day?date=${encodeURIComponent(date)}${subject ? `&subject=${encodeURIComponent(subject)}` : ""}`;
 
     const counts = { present: 0, absent: 0, late: 0 };
     students.forEach((s) => {
@@ -422,13 +425,19 @@ const TeacherApp = (() => {
             const st = ent?.status || "present";
             const remark = ent?.remark || "";
             const remarkOpen = Boolean(remark);
+            const detailHref = `#/my/student/${encodeURIComponent(s.id)}?from=${encodeURIComponent(fromDay)}`;
             return `
             <article class="register-row" data-student-id="${esc(s.id)}">
               <div class="register-row-main">
                 <span class="register-num">${s.number ?? "—"}</span>
-                ${avatarHtml(s, "student")}
+                <button type="button" class="register-avatar-btn" data-nav="${esc(detailHref)}" title="${esc(I18n.t("annViewDetails"))}" aria-label="${esc(I18n.t("annViewDetails"))}">
+                  ${avatarHtml(s, "student")}
+                </button>
                 <div class="register-name">
-                  <strong dir="auto">${esc(studentLabel(s))}</strong>
+                  <button type="button" class="register-name-btn" data-nav="${esc(detailHref)}">
+                    <strong dir="auto">${esc(studentLabel(s))}</strong>
+                    <span class="register-open-detail">${esc(I18n.t("annViewDetails"))}</span>
+                  </button>
                 </div>
                 <div class="register-status" role="group" aria-label="${esc(I18n.t("attendance"))}">
                   ${["present", "absent", "late"]
@@ -453,11 +462,11 @@ const TeacherApp = (() => {
 
     return shell(
       "home",
-      I18n.t("dailyRegisterTitle"),
-      `${classLabel(cls)} · ${I18n.t("dailyRegisterLede")}`,
+      classLabel(cls),
+      I18n.t("classRegisterLede", { n: students.length }),
       `
       <div class="page-header" style="margin-bottom:0.75rem">
-        <button type="button" class="btn btn-ghost" data-nav="#/my/class/${esc(classId)}" style="padding-left:0">${esc(I18n.t("backToRoster"))}</button>
+        <button type="button" class="btn btn-ghost" data-nav="#/my" style="padding-left:0">${esc(I18n.t("backToClasses"))}</button>
       </div>
 
       <form id="teacher-day-register" class="register-panel" data-class-id="${esc(classId)}">
@@ -471,8 +480,7 @@ const TeacherApp = (() => {
             ${
               subjects.length
                 ? `<select name="subject" required>
-                    <option value="">${esc(I18n.t("selectSubject"))}</option>
-                    ${subjectOptions}
+                    ${subjectOptions || `<option value="">${esc(I18n.t("selectSubject"))}</option>`}
                     ${subject && !subjects.includes(subject) ? `<option value="${esc(subject)}" selected>${esc(subject)}</option>` : ""}
                   </select>`
                 : `<input type="text" name="subject" value="${esc(subject)}" required maxlength="120" placeholder="${esc(I18n.t("subjectPlaceholder"))}" dir="auto" />`
@@ -667,32 +675,28 @@ const TeacherApp = (() => {
       }
       if (parts[1] === "class" && parts[2]) {
         const classId = parts[2];
-        if (parts[3] === "day") {
-          const date = params?.get("date") || "";
-          let subject = params?.get("subject") || "";
-          if (!subject) {
-            try {
-              subject = localStorage.getItem(`qea_reg_subject_${classId}`) || "";
-            } catch {
-              /* ignore */
-            }
+        // Opening a class always goes to today's register (presence / absence / remarks / homework)
+        const date = params?.get("date") || "";
+        let subject = params?.get("subject") || "";
+        if (!subject) {
+          try {
+            subject = localStorage.getItem(`qea_reg_subject_${classId}`) || "";
+          } catch {
+            /* ignore */
           }
-          const q = new URLSearchParams();
-          if (date) q.set("date", date);
-          if (subject) q.set("subject", subject);
-          const qs = q.toString() ? `?${q}` : "";
-          const payload = await BBC_API.get(
-            `/me/classes/${encodeURIComponent(classId)}/session${qs}`
-          );
-          // If no subject yet but teacher has modules, leave subject empty so they pick
-          return { html: viewDayRegister(classId, payload, params), dayRegister: true };
         }
-        let payload = state.classCache.get(classId);
-        if (!payload) {
-          payload = await BBC_API.get(`/me/classes/${encodeURIComponent(classId)}/students`);
-          state.classCache.set(classId, payload);
+        // Prefer first teacher module when nothing saved yet
+        if (!subject && state.me?.teacher?.modules?.length) {
+          subject = String(state.me.teacher.modules[0] || "");
         }
-        return { html: viewClass(classId, payload) };
+        const q = new URLSearchParams();
+        if (date) q.set("date", date);
+        if (subject) q.set("subject", subject);
+        const qs = q.toString() ? `?${q}` : "";
+        const payload = await BBC_API.get(
+          `/me/classes/${encodeURIComponent(classId)}/session${qs}`
+        );
+        return { html: viewDayRegister(classId, payload, params), dayRegister: true };
       }
       if (parts[1] === "student" && parts[2]) {
         const studentId = parts[2];
@@ -701,7 +705,13 @@ const TeacherApp = (() => {
           payload = await BBC_API.get(`/me/students/${encodeURIComponent(studentId)}`);
           state.studentCache.set(studentId, payload);
         }
-        return { html: viewStudent(payload, params?.get("from") || "") };
+        const from = params?.get("from") || "";
+        // Default back to class daily register
+        const fallback =
+          payload?.class?.id
+            ? `#/my/class/${payload.class.id}/day`
+            : "#/my";
+        return { html: viewStudent(payload, from || fallback) };
       }
       return { html: viewHome(state.classes) };
     } catch (err) {
