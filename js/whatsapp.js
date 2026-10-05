@@ -35,7 +35,7 @@ const WhatsAppApp = (() => {
           </nav>
           ${
             typeof Auth !== "undefined" && Auth.isDirector && Auth.isDirector()
-              ? `<button type="button" class="admin-nav-link admin-nav-back-director" data-nav="#/home"><span class="admin-nav-ico" aria-hidden="true">←</span>${esc(I18n.t("backToDirector"))}</button>`
+              ? `<button type="button" class="admin-nav-link admin-nav-back-director" data-nav="#/home">${esc(I18n.t("backToDirector"))}</button>`
               : ""
           }
           <div class="wa-nav-status" data-wa-nav-status></div>

@@ -262,7 +262,7 @@ const AdminApp = (() => {
           </nav>
           ${
             typeof Auth !== "undefined" && Auth.isDirector && Auth.isDirector()
-              ? `<button type="button" class="admin-nav-link admin-nav-back-director" data-nav="#/home"><span class="admin-nav-ico" aria-hidden="true">←</span>${esc(I18n.t("backToDirector"))}</button>`
+              ? `<button type="button" class="admin-nav-link admin-nav-back-director" data-nav="#/home">${esc(I18n.t("backToDirector"))}</button>`
               : ""
           }
         </aside>
@@ -426,12 +426,6 @@ const AdminApp = (() => {
           <h3>${esc(I18n.t("teachers"))}</h3>
           <p>${esc(I18n.t("adminTeachersLede"))}</p>
           <span class="cta">${esc(I18n.t("adminManageTeachers"))}</span>
-        </button>
-        <button type="button" class="admin-action-card${missS + missT ? " warn" : ""}" data-nav="#/manage/incomplete">
-          <span class="admin-action-tag">${esc(I18n.t("adminQualityTag"))}</span>
-          <h3>${esc(I18n.t("adminMissingInfo"))}</h3>
-          <p>${esc(I18n.t("adminMissingLede", { students: missS, teachers: missT }))}</p>
-          <span class="cta">${esc(I18n.t("adminFillGaps"))}</span>
         </button>
       </div>
     `
