@@ -243,7 +243,6 @@ const AdminApp = (() => {
       { id: "students", href: "#/manage/students", label: I18n.t("allStudents"), icon: "○" },
       { id: "teachers", href: "#/manage/teachers", label: I18n.t("teachers"), icon: "◇" },
       { id: "parent-forms", href: "#/manage/parent-forms", label: I18n.t("parentForms"), icon: "✎" },
-      { id: "incomplete", href: "#/manage/incomplete", label: I18n.t("missingInfo"), icon: "!" },
     ];
     return `
       <div class="admin-shell">
