@@ -260,6 +260,11 @@ const AdminApp = (() => {
               )
               .join("")}
           </nav>
+          ${
+            typeof Auth !== "undefined" && Auth.isDirector && Auth.isDirector()
+              ? `<button type="button" class="admin-nav-link admin-nav-back-director" data-nav="#/home"><span class="admin-nav-ico" aria-hidden="true">←</span>${esc(I18n.t("backToDirector"))}</button>`
+              : ""
+          }
         </aside>
         <div class="admin-main">
           <div class="page-header admin-page-header">
@@ -774,10 +779,149 @@ const AdminApp = (() => {
     );
   }
 
+  function renderParentProfileAdmin(profile) {
+    if (!profile || typeof profile !== "object") return "";
+    const yesNo = (v) => (v === "yes" ? I18n.t("yes") : v === "no" ? I18n.t("no") : v || "—");
+    const row = (k, v) =>
+      `<div class="fact-card"><div class="k">${esc(k)}</div><div class="v" dir="auto">${esc(v || "—")}</div></div>`;
+    const block = (title, html) =>
+      html
+        ? `<div class="info-panel" style="margin-top:1rem"><div class="panel-label">${esc(title)}</div>${html}</div>`
+        : "";
+    const grid = (pairs) => {
+      const cells = pairs.filter(([, v]) => v != null && String(v).trim() !== "");
+      if (!cells.length) return "";
+      return `<div class="facts-grid" style="margin-top:0.6rem">${cells
+        .map(([k, v]) => row(k, v))
+        .join("")}</div>`;
+    };
+    const st = profile.student || {};
+    const fa = profile.father || {};
+    const mo = profile.mother || {};
+    const co = profile.contact || {};
+    const fam = profile.family || {};
+    const med = profile.medical || {};
+    const cons = profile.consents || {};
+    const sexLabel =
+      st.sex === "female"
+        ? I18n.t("parentFormsSexFemale")
+        : st.sex === "male"
+          ? I18n.t("parentFormsSexMale")
+          : st.sex || "";
+    const depLabel =
+      (
+        {
+          withParent: I18n.t("departureWithParent"),
+          motherOnly: I18n.t("departureMotherOnly"),
+          fatherOnly: I18n.t("departureFatherOnly"),
+          alone: I18n.t("departureAlone"),
+          companion: I18n.t("departureCompanion"),
+          driver: I18n.t("departureDriver"),
+        }[cons.departureMode] || cons.departureMode
+      );
+    const pfLink = profile.submissionId
+      ? `<p style="margin:0.5rem 0 0"><a class="link-btn" href="#/manage/parent-forms/${esc(profile.submissionId)}">${esc(I18n.t("parentFormDetail"))}</a></p>`
+      : "";
+
+    return `
+      <div class="info-panel" style="margin-top:1.25rem;border-color:var(--accent, #F26522)">
+        <div class="panel-label">${esc(I18n.t("parentFormLinked"))}</div>
+        <p class="muted" style="margin:0.35rem 0 0">${esc(I18n.t("parentFormLinkedLede"))}</p>
+        ${pfLink}
+      </div>
+      ${block(
+        I18n.t("parentSectionStudent"),
+        grid([
+          [I18n.t("lastName"), st.lastName],
+          [I18n.t("firstName"), st.firstName],
+          [I18n.t("gender"), sexLabel],
+          [I18n.t("dob"), st.dateOfBirth],
+          [I18n.t("placeOfBirth"), st.placeOfBirth],
+          [I18n.t("nationality"), st.nationality],
+          [I18n.t("enrollmentYear"), st.enrollmentYear],
+          [I18n.t("level"), st.level],
+          [I18n.t("repeatedYear"), yesNo(st.repeatedYear)],
+          [I18n.t("studiedAbroad"), yesNo(st.studiedAbroad)],
+        ])
+      )}
+      ${block(
+        I18n.t("parentSectionFather"),
+        grid([
+          [I18n.t("fullName"), fa.name],
+          [I18n.t("profession"), fa.profession],
+          [I18n.t("nationality"), fa.nationality],
+          [I18n.t("phone"), fa.phone],
+        ])
+      )}
+      ${block(
+        I18n.t("parentSectionMother"),
+        grid([
+          [I18n.t("fullName"), mo.name],
+          [I18n.t("profession"), mo.profession],
+          [I18n.t("nationality"), mo.nationality],
+          [I18n.t("phone"), mo.phone],
+        ])
+      )}
+      ${block(
+        I18n.t("parentSectionContact"),
+        grid([
+          [I18n.t("parentPhoneSecondary"), co.phoneBackup],
+          [I18n.t("parentAddress"), co.address],
+          [I18n.t("email"), co.email],
+        ])
+      )}
+      ${block(
+        I18n.t("parentSectionFamily"),
+        grid([
+          [I18n.t("parentMarital"), fam.parentsStatus],
+          [I18n.t("custody"), fam.custody],
+          [I18n.t("siblingsCount"), fam.siblingsCount],
+          [I18n.t("brothersCount"), fam.brothersCount],
+          [I18n.t("sistersCount"), fam.sistersCount],
+          [I18n.t("siblingRank"), fam.siblingRank],
+          [I18n.t("tutor"), fam.tutorNameRole],
+          [I18n.t("tutorPhone"), fam.tutorPhone],
+          [I18n.t("adopted"), yesNo(fam.adopted)],
+        ])
+      )}
+      ${block(
+        I18n.t("parentSectionMedical"),
+        grid([
+          [I18n.t("bloodType"), med.bloodType],
+          [I18n.t("disability"), yesNo(med.disability)],
+          [I18n.t("disabilityExplain"), med.disabilityExplain],
+          [I18n.t("allergy"), med.allergy],
+          [I18n.t("glasses"), med.glasses],
+          [I18n.t("behavior"), med.behavior],
+          [I18n.t("learningDifficulty"), med.learningDifficulty],
+          [I18n.t("treatment"), med.treatment],
+          [I18n.t("psychologist"), med.psychologist],
+          [I18n.t("incident"), med.incident],
+          [I18n.t("medicalOther"), med.other],
+        ])
+      )}
+      ${block(
+        I18n.t("parentSectionConsents"),
+        grid([
+          [I18n.t("departureMode"), depLabel],
+          [I18n.t("companionRole"), cons.companionRole],
+          [I18n.t("companionName"), cons.companionName],
+          [I18n.t("companionPhone"), cons.companionPhone],
+          [I18n.t("driverName"), cons.driverName],
+          [I18n.t("driverPhone"), cons.driverPhone],
+          [I18n.t("outings"), yesNo(cons.outings)],
+          [I18n.t("sports"), yesNo(cons.sports)],
+          [I18n.t("photoMedia"), yesNo(cons.photoMedia)],
+        ])
+      )}
+    `;
+  }
+
   function viewEditStudent(id) {
     const found = BBC_DATA.getStudent(id);
     if (!found) return layout("students", "Student not found", "", "");
     const s = found.student;
+    const hasParent = !!(s.parentProfile && typeof s.parentProfile === "object");
     return layout(
       "students",
       BBC_DATA.studentFullName(s),
@@ -790,6 +934,7 @@ const AdminApp = (() => {
             <span class="admin-chip">${esc(found.cls.code)}</span>
             <span class="admin-chip">${esc(s.gender || "no gender")}</span>
             ${s.previousYearDetails ? `<span class="admin-chip">has previous year</span>` : ""}
+            ${hasParent ? `<span class="admin-chip accent">${esc(I18n.t("parentFormLinkedBadge"))}</span>` : ""}
             ${isStudentIncomplete(s) ? `<span class="admin-chip warn">incomplete</span>` : ""}
           </div>
           <p class="muted" style="margin-top:0.35rem">ID ${esc(s.id)}</p>
@@ -808,6 +953,11 @@ const AdminApp = (() => {
           <button type="button" class="btn btn-ghost admin-del-student" data-id="${esc(s.id)}" data-back="#/manage/students">Delete</button>
         </div>
       </form>
+      ${
+        hasParent
+          ? renderParentProfileAdmin(s.parentProfile)
+          : `<div class="info-panel" style="margin-top:1.25rem"><div class="panel-label">${esc(I18n.t("parentFormLinked"))}</div><p class="muted" style="margin-top:0.5rem">${esc(I18n.t("parentFormNotLinked"))}</p></div>`
+      }
     `
     );
   }
@@ -2070,7 +2220,9 @@ const AdminApp = (() => {
               "الموافقات / Approvals",
               (() => {
                 const depMap = {
-                  withParent: "1ـ فقط مع ولّي الأمر: الأب — الأم / With guardian only",
+                  withParent: "1ـ مع الوالدين (الأب أو الأم) / With parents (mom or dad)",
+                  motherOnly: "الأم فقط / Mother only",
+                  fatherOnly: "الأب فقط / Father only",
                   alone: "2ـ لوحده / Alone",
                   companion: "3ـ مرافق / Companion",
                   driver: "4ـ السائق / Driver",

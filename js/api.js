@@ -4,6 +4,9 @@
 const BBC_API = (() => {
   const TOKEN_KEY = "bbc_api_token";
   const ROLE_KEY = "bbc_api_role";
+  const RESTORE_KEY = "bbc_director_restore";
+  const IMPERSONATE_KEY = "bbc_impersonating";
+  const IMPERSONATE_NAME_KEY = "bbc_impersonate_name";
 
   function getToken() {
     return sessionStorage.getItem(TOKEN_KEY) || "";
@@ -21,6 +24,52 @@ const BBC_API = (() => {
   function clearSession() {
     sessionStorage.removeItem(TOKEN_KEY);
     sessionStorage.removeItem(ROLE_KEY);
+    sessionStorage.removeItem(RESTORE_KEY);
+    sessionStorage.removeItem(IMPERSONATE_KEY);
+    sessionStorage.removeItem(IMPERSONATE_NAME_KEY);
+  }
+
+  function isImpersonating() {
+    return sessionStorage.getItem(IMPERSONATE_KEY) === "1";
+  }
+
+  function impersonateName() {
+    return sessionStorage.getItem(IMPERSONATE_NAME_KEY) || "";
+  }
+
+  async function enterAsTeacher(teacherId) {
+    const role = getRole();
+    if (role !== "director" && role !== "admin") {
+      throw new Error("Only director can open a teacher portal");
+    }
+    sessionStorage.setItem(
+      RESTORE_KEY,
+      JSON.stringify({ token: getToken(), role: getRole() })
+    );
+    const data = await request(`/teachers/${encodeURIComponent(teacherId)}/impersonate`, {
+      method: "POST",
+      body: JSON.stringify({}),
+    });
+    setSession(data.token, data.role);
+    sessionStorage.setItem(IMPERSONATE_KEY, "1");
+    sessionStorage.setItem(IMPERSONATE_NAME_KEY, data.teacherName || "");
+    return data;
+  }
+
+  function exitImpersonation() {
+    const raw = sessionStorage.getItem(RESTORE_KEY);
+    if (!raw) return false;
+    try {
+      const saved = JSON.parse(raw);
+      if (!saved?.token || !saved?.role) return false;
+      setSession(saved.token, saved.role);
+      sessionStorage.removeItem(RESTORE_KEY);
+      sessionStorage.removeItem(IMPERSONATE_KEY);
+      sessionStorage.removeItem(IMPERSONATE_NAME_KEY);
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   async function request(path, options = {}) {
@@ -135,6 +184,10 @@ const BBC_API = (() => {
     login,
     logout,
     isAuthenticated,
+    isImpersonating,
+    impersonateName,
+    enterAsTeacher,
+    exitImpersonation,
     loadSchoolData,
     uploadPhoto,
     removePhoto,

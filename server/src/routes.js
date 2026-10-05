@@ -1,7 +1,7 @@
 import { Router } from "express";
 import crypto from "crypto";
 import { query } from "./db.js";
-import { authRequired } from "./auth.js";
+import { authRequired, signToken } from "./auth.js";
 import { buildSchoolData, mapTeacher, mapStudent, mapClass, mapIssue } from "./schoolData.js";
 import { saveProfilePhoto, deleteProfilePhoto } from "./uploads.js";
 import * as Announcements from "./announcements.js";
@@ -23,12 +23,12 @@ router.post("/parent-form", ParentForm.submitForm);
 router.get("/parent-form", authRequired(["admin", "director"]), ParentForm.listSubmissions);
 router.post(
   "/parent-form/link",
-  authRequired(["admin"]),
+  authRequired(["admin", "director"]),
   ParentForm.linkSubmissionToStudent
 );
 router.post(
   "/parent-form/bulk-link",
-  authRequired(["admin"]),
+  authRequired(["admin", "director"]),
   ParentForm.bulkLinkSubmissions
 );
 router.get(
@@ -71,27 +71,27 @@ router.get("/teachers", authRequired(["director", "admin"]), async (_req, res) =
 
 router.post(
   "/teachers/provision-portals",
-  authRequired(["admin"]),
+  authRequired(["admin", "director"]),
   TeacherPortal.provisionAllTeacherPortals
 );
 
 router.get(
   "/teachers/:id/portal",
-  authRequired(["admin"]),
+  authRequired(["admin", "director"]),
   TeacherPortal.getTeacherPortal
 );
 router.put(
   "/teachers/:id/portal",
-  authRequired(["admin"]),
+  authRequired(["admin", "director"]),
   TeacherPortal.setTeacherPortal
 );
 router.delete(
   "/teachers/:id/portal",
-  authRequired(["admin"]),
+  authRequired(["admin", "director"]),
   TeacherPortal.deleteTeacherPortal
 );
 
-router.post("/teachers", authRequired(["admin"]), async (req, res) => {
+router.post("/teachers", authRequired(["admin", "director"]), async (req, res) => {
   const b = req.body || {};
   const id = b.id || sid("T");
   await query(
@@ -116,7 +116,7 @@ router.post("/teachers", authRequired(["admin"]), async (req, res) => {
   res.status(201).json(mapTeacher(r.rows[0]));
 });
 
-router.put("/teachers/:id", authRequired(["admin"]), async (req, res) => {
+router.put("/teachers/:id", authRequired(["admin", "director"]), async (req, res) => {
   const b = req.body || {};
   const old = await query("SELECT class_ids FROM teachers WHERE id = $1", [req.params.id]);
   if (!old.rows.length) return res.status(404).json({ error: "Not found" });
@@ -182,7 +182,7 @@ router.put("/teachers/:id", authRequired(["admin"]), async (req, res) => {
   res.json(mapTeacher(r.rows[0]));
 });
 
-router.post("/students/:id/transfer", authRequired(["admin"]), async (req, res) => {
+router.post("/students/:id/transfer", authRequired(["admin", "director"]), async (req, res) => {
   const classId = req.body?.classId;
   if (!classId) return res.status(400).json({ error: "classId required" });
   const cls = await query("SELECT id, department_id FROM classes WHERE id = $1", [classId]);
@@ -207,7 +207,7 @@ router.post("/students/:id/transfer", authRequired(["admin"]), async (req, res) 
   res.json(mapStudent(r.rows[0]));
 });
 
-router.delete("/teachers/:id", authRequired(["admin"]), async (req, res) => {
+router.delete("/teachers/:id", authRequired(["admin", "director"]), async (req, res) => {
   await query(
     `UPDATE classes SET teacher_ids = (
        SELECT COALESCE(jsonb_agg(x), '[]'::jsonb)
@@ -221,6 +221,37 @@ router.delete("/teachers/:id", authRequired(["admin"]), async (req, res) => {
   res.json({ ok: true });
 });
 
+/** Director/admin enters a teacher's portal (impersonation token). */
+router.post(
+  "/teachers/:id/impersonate",
+  authRequired(["director", "admin"]),
+  async (req, res) => {
+    const r = await query(
+      `SELECT t.id, t.login_code, t.first_name, t.last_name, t.first_name_latin, t.last_name_latin
+       FROM teachers t WHERE t.id = $1`,
+      [req.params.id]
+    );
+    if (!r.rows.length) return res.status(404).json({ error: "Teacher not found" });
+    const row = r.rows[0];
+    const token = signToken({
+      role: "teacher",
+      teacherId: row.id,
+      impersonatedBy: req.user.role,
+    });
+    const nameAr = [row.last_name, row.first_name].filter(Boolean).join(" ").trim();
+    const nameLat = [row.first_name_latin, row.last_name_latin].filter(Boolean).join(" ").trim();
+    res.json({
+      token,
+      role: "teacher",
+      teacherId: row.id,
+      loginCode: row.login_code || "",
+      teacherName: nameAr || nameLat || row.id,
+      mustChangePassword: false,
+      impersonating: true,
+    });
+  }
+);
+
 // ——— Classes ———
 router.get("/classes", authRequired(["director", "admin"]), async (_req, res) => {
   const classes = await query("SELECT * FROM classes ORDER BY department_id, year, code");
@@ -233,7 +264,7 @@ router.get("/classes", authRequired(["director", "admin"]), async (_req, res) =>
   res.json(classes.rows.map((c) => mapClass(c, byClass.get(c.id) || [])));
 });
 
-router.post("/classes", authRequired(["admin"]), async (req, res) => {
+router.post("/classes", authRequired(["admin", "director"]), async (req, res) => {
   const b = req.body || {};
   if (!b.departmentId || !b.code || !b.levelId || !b.year) {
     return res.status(400).json({ error: "departmentId, levelId, year, code required" });
@@ -266,7 +297,7 @@ router.post("/classes", authRequired(["admin"]), async (req, res) => {
   res.status(201).json(mapClass(r.rows[0], []));
 });
 
-router.put("/classes/:id", authRequired(["admin"]), async (req, res) => {
+router.put("/classes/:id", authRequired(["admin", "director"]), async (req, res) => {
   const b = req.body || {};
   const r = await query(
     `UPDATE classes SET
@@ -308,7 +339,7 @@ router.put("/classes/:id", authRequired(["admin"]), async (req, res) => {
   res.json(mapClass(r.rows[0], stu.rows.map(mapStudent)));
 });
 
-router.delete("/classes/:id", authRequired(["admin"]), async (req, res) => {
+router.delete("/classes/:id", authRequired(["admin", "director"]), async (req, res) => {
   const r = await query("DELETE FROM classes WHERE id = $1 RETURNING id", [req.params.id]);
   if (!r.rows.length) return res.status(404).json({ error: "Not found" });
   res.json({ ok: true });
@@ -332,7 +363,7 @@ router.get("/students", authRequired(["director", "admin"]), async (req, res) =>
   res.json(r.rows.map(mapStudent));
 });
 
-router.post("/students", authRequired(["admin"]), async (req, res) => {
+router.post("/students", authRequired(["admin", "director"]), async (req, res) => {
   const b = req.body || {};
   if (!b.classId || !b.departmentId) {
     return res.status(400).json({ error: "classId and departmentId required" });
@@ -379,7 +410,7 @@ router.post("/students", authRequired(["admin"]), async (req, res) => {
   res.status(201).json(mapStudent(r.rows[0]));
 });
 
-router.put("/students/:id", authRequired(["admin"]), async (req, res) => {
+router.put("/students/:id", authRequired(["admin", "director"]), async (req, res) => {
   const b = req.body || {};
   const existing = await query("SELECT * FROM students WHERE id = $1", [req.params.id]);
   if (!existing.rows.length) return res.status(404).json({ error: "Not found" });
@@ -455,7 +486,7 @@ router.put("/students/:id", authRequired(["admin"]), async (req, res) => {
   res.json(mapStudent(r.rows[0]));
 });
 
-router.delete("/students/:id", authRequired(["admin"]), async (req, res) => {
+router.delete("/students/:id", authRequired(["admin", "director"]), async (req, res) => {
   const existing = await query("SELECT class_id FROM students WHERE id = $1", [req.params.id]);
   if (!existing.rows.length) return res.status(404).json({ error: "Not found" });
   const classId = existing.rows[0].class_id;
@@ -476,7 +507,7 @@ router.get("/issues", authRequired(["director", "admin"]), async (_req, res) => 
   res.json(r.rows.map(mapIssue));
 });
 
-router.post("/issues", authRequired(["admin"]), async (req, res) => {
+router.post("/issues", authRequired(["admin", "director"]), async (req, res) => {
   const b = req.body || {};
   const id = b.id || sid("ISSUE-");
   await query(
@@ -503,7 +534,7 @@ router.post("/issues", authRequired(["admin"]), async (req, res) => {
   res.status(201).json(mapIssue(r.rows[0]));
 });
 
-router.put("/issues/:id", authRequired(["admin"]), async (req, res) => {
+router.put("/issues/:id", authRequired(["admin", "director"]), async (req, res) => {
   const b = req.body || {};
   const r = await query(
     `UPDATE operations_issues SET
@@ -538,7 +569,7 @@ router.put("/issues/:id", authRequired(["admin"]), async (req, res) => {
   res.json(mapIssue(r.rows[0]));
 });
 
-router.delete("/issues/:id", authRequired(["admin"]), async (req, res) => {
+router.delete("/issues/:id", authRequired(["admin", "director"]), async (req, res) => {
   const r = await query("DELETE FROM operations_issues WHERE id = $1 RETURNING id", [
     req.params.id,
   ]);
@@ -547,7 +578,7 @@ router.delete("/issues/:id", authRequired(["admin"]), async (req, res) => {
 });
 
 // ——— Profile photo uploads (stored on VPS volume) ———
-router.post("/uploads/photo", authRequired(["admin"]), async (req, res) => {
+router.post("/uploads/photo", authRequired(["admin", "director"]), async (req, res) => {
   try {
     const entity = String(req.body?.entity || "").trim(); // students | teachers
     const id = String(req.body?.id || "").trim();
@@ -576,7 +607,7 @@ router.post("/uploads/photo", authRequired(["admin"]), async (req, res) => {
   }
 });
 
-router.delete("/uploads/photo", authRequired(["admin"]), async (req, res) => {
+router.delete("/uploads/photo", authRequired(["admin", "director"]), async (req, res) => {
   try {
     const entity = String(req.body?.entity || "").trim();
     const id = String(req.body?.id || "").trim();
@@ -599,26 +630,26 @@ router.delete("/uploads/photo", authRequired(["admin"]), async (req, res) => {
 });
 
 // ——— Announcements (Staff) ———
-router.get("/announcements", authRequired(["whatsapp"]), Announcements.listAnnouncements);
-router.get("/announcements/wa/status", authRequired(["whatsapp"]), Announcements.waStatus);
-router.get("/announcements/wa/qr", authRequired(["whatsapp"]), Announcements.waQr);
-router.get("/announcements/wa/groups", authRequired(["whatsapp"]), Announcements.waGroups);
-router.get("/announcements/wa/contacts", authRequired(["whatsapp"]), Announcements.waContacts);
-router.post("/announcements/wa/logout", authRequired(["whatsapp"]), Announcements.waLogout);
-router.post("/announcements/generate-image", authRequired(["whatsapp"]), Announcements.generateImage);
-router.post("/announcements/upload-image", authRequired(["whatsapp"]), Announcements.uploadImage);
-router.post("/announcements/send", authRequired(["whatsapp"]), Announcements.sendAnnouncement);
-router.post("/announcements/:id/cancel", authRequired(["whatsapp"]), Announcements.cancelAnnouncement);
-router.get("/announcements/:id", authRequired(["whatsapp"]), Announcements.getAnnouncement);
+router.get("/announcements", authRequired(["whatsapp", "director"]), Announcements.listAnnouncements);
+router.get("/announcements/wa/status", authRequired(["whatsapp", "director"]), Announcements.waStatus);
+router.get("/announcements/wa/qr", authRequired(["whatsapp", "director"]), Announcements.waQr);
+router.get("/announcements/wa/groups", authRequired(["whatsapp", "director"]), Announcements.waGroups);
+router.get("/announcements/wa/contacts", authRequired(["whatsapp", "director"]), Announcements.waContacts);
+router.post("/announcements/wa/logout", authRequired(["whatsapp", "director"]), Announcements.waLogout);
+router.post("/announcements/generate-image", authRequired(["whatsapp", "director"]), Announcements.generateImage);
+router.post("/announcements/upload-image", authRequired(["whatsapp", "director"]), Announcements.uploadImage);
+router.post("/announcements/send", authRequired(["whatsapp", "director"]), Announcements.sendAnnouncement);
+router.post("/announcements/:id/cancel", authRequired(["whatsapp", "director"]), Announcements.cancelAnnouncement);
+router.get("/announcements/:id", authRequired(["whatsapp", "director"]), Announcements.getAnnouncement);
 
 // ——— WhatsApp bulk personalized campaigns ———
-router.get("/wa/campaigns", authRequired(["whatsapp"]), WaCampaigns.listCampaigns);
-router.post("/wa/campaigns", authRequired(["whatsapp"]), WaCampaigns.createCampaign);
-router.post("/wa/campaigns/test-send", authRequired(["whatsapp"]), WaCampaigns.testSend);
-router.post("/wa/campaigns/preview", authRequired(["whatsapp"]), WaCampaigns.previewTemplate);
-router.get("/wa/campaigns/:id", authRequired(["whatsapp"]), WaCampaigns.getCampaign);
-router.post("/wa/campaigns/:id/pause", authRequired(["whatsapp"]), WaCampaigns.pauseCampaign);
-router.post("/wa/campaigns/:id/resume", authRequired(["whatsapp"]), WaCampaigns.resumeCampaign);
-router.post("/wa/campaigns/:id/cancel", authRequired(["whatsapp"]), WaCampaigns.cancelCampaign);
+router.get("/wa/campaigns", authRequired(["whatsapp", "director"]), WaCampaigns.listCampaigns);
+router.post("/wa/campaigns", authRequired(["whatsapp", "director"]), WaCampaigns.createCampaign);
+router.post("/wa/campaigns/test-send", authRequired(["whatsapp", "director"]), WaCampaigns.testSend);
+router.post("/wa/campaigns/preview", authRequired(["whatsapp", "director"]), WaCampaigns.previewTemplate);
+router.get("/wa/campaigns/:id", authRequired(["whatsapp", "director"]), WaCampaigns.getCampaign);
+router.post("/wa/campaigns/:id/pause", authRequired(["whatsapp", "director"]), WaCampaigns.pauseCampaign);
+router.post("/wa/campaigns/:id/resume", authRequired(["whatsapp", "director"]), WaCampaigns.resumeCampaign);
+router.post("/wa/campaigns/:id/cancel", authRequired(["whatsapp", "director"]), WaCampaigns.cancelCampaign);
 
 export default router;

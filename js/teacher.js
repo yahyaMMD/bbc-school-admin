@@ -78,7 +78,23 @@ const TeacherApp = (() => {
 
   function shell(active, title, lede, body) {
     const t = state.me?.teacher;
+    const impersonating =
+      typeof Auth !== "undefined" && Auth.isImpersonating && Auth.isImpersonating();
+    const banner = impersonating
+      ? `<div class="impersonation-bar impersonation-bar-inline">
+          <span>${esc(
+            I18n.t("viewingAsTeacher", {
+              name:
+                (typeof BBC_API !== "undefined" && BBC_API.impersonateName && BBC_API.impersonateName()) ||
+                teacherLabel(t) ||
+                "…",
+            })
+          )}</span>
+          <button type="button" class="btn btn-primary btn-sm" data-exit-impersonation>${esc(I18n.t("backToDirector"))}</button>
+        </div>`
+      : "";
     return `
+      ${banner}
       <div class="teacher-portal">
         <div class="teacher-portal-head">
           <div>
@@ -405,6 +421,14 @@ const TeacherApp = (() => {
     if (window.QEAPhoto && typeof window.QEAPhoto.bind === "function") {
       window.QEAPhoto.bind(root);
     }
+
+    root.querySelectorAll("[data-exit-impersonation]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        if (typeof Auth !== "undefined" && Auth.exitToDirector && Auth.exitToDirector()) {
+          go("/home");
+        }
+      });
+    });
 
     const setStatus = (el, msg, ok) => {
       if (!el) return;

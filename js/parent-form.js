@@ -56,6 +56,25 @@
     return data;
   }
 
+  function isAdoptedSelected() {
+    const checked = form?.querySelector('input[name="family.adopted"]:checked');
+    return Boolean(checked && checked.value === "yes");
+  }
+
+  function parentComplete(person) {
+    const p = person || {};
+    return Boolean(p.name && p.phone && p.phone.replace(/\D/g, "").length >= 8);
+  }
+
+  /** When adopted: father/mother HTML required is off (only one parent needed). */
+  function syncParentRequired() {
+    const adopted = isAdoptedSelected();
+    form?.querySelectorAll("[data-parent-required]").forEach((input) => {
+      if (adopted) input.removeAttribute("required");
+      else input.setAttribute("required", "");
+    });
+  }
+
   function syncConditional() {
     document.querySelectorAll("[data-show-when]").forEach((node) => {
       const rule = node.getAttribute("data-show-when") || "";
@@ -74,6 +93,7 @@
         }
       }
     });
+    syncParentRequired();
   }
 
   function readFileAsDataUrl(file) {
@@ -143,13 +163,23 @@
       showError("يرجى الإجابة: هل أقام أو تمدرس بالخارج من قبل؟");
       return;
     }
-    if (!father.name || !father.phone || father.phone.replace(/\D/g, "").length < 8) {
-      showError("بيانات الأب ورقم هاتفه مطلوبان");
-      return;
-    }
-    if (!mother.name || !mother.phone || mother.phone.replace(/\D/g, "").length < 8) {
-      showError("بيانات الأم ورقم هاتفها مطلوبان");
-      return;
+    const adopted = (formData.family || {}).adopted === "yes";
+    const fatherOk = parentComplete(father);
+    const motherOk = parentComplete(mother);
+    if (adopted) {
+      if (!fatherOk && !motherOk) {
+        showError("في حالة التبنّي يُرجى ملء بيانات الأب أو الأم على الأقل (الاسم ورقم الهاتف)");
+        return;
+      }
+    } else {
+      if (!fatherOk) {
+        showError("بيانات الأب ورقم هاتفه مطلوبان");
+        return;
+      }
+      if (!motherOk) {
+        showError("بيانات الأم ورقم هاتفها مطلوبان");
+        return;
+      }
     }
     if (!contact.phoneBackup || contact.phoneBackup.replace(/\D/g, "").length < 8) {
       showError("رقم الهاتف الاحتياطي مطلوب");

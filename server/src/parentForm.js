@@ -4,7 +4,17 @@ import path from "path";
 import { query } from "./db.js";
 import { saveParentFormIdDocument, absoluteUploadPath } from "./uploads.js";
 
-const FORM_VERSION = 6;
+const FORM_VERSION = 7;
+
+/** Allowed departure / pickup modes (form v7+) */
+export const DEPARTURE_MODES = [
+  "withParent", // either parent (mom or dad)
+  "motherOnly",
+  "fatherOnly",
+  "alone",
+  "companion",
+  "driver",
+];
 
 const ENROLLMENT_YEARS = [
   "2026-2027",
@@ -208,11 +218,26 @@ export async function submitForm(req, res) {
         .status(400)
         .json({ error: "التمدرس بالخارج مطلوب / Studied abroad answer required" });
     }
-    if (!father.name || father.phone.replace(/\D/g, "").length < 8) {
-      return res.status(400).json({ error: "هاتف الأب مطلوب / Father's phone required" });
-    }
-    if (!mother.name || mother.phone.replace(/\D/g, "").length < 8) {
-      return res.status(400).json({ error: "هاتف الأم مطلوب / Mother's phone required" });
+    const adopted = formData.family?.adopted === "yes";
+    const fatherOk =
+      Boolean(father.name) && father.phone.replace(/\D/g, "").length >= 8;
+    const motherOk =
+      Boolean(mother.name) && mother.phone.replace(/\D/g, "").length >= 8;
+    if (adopted) {
+      // Adopted only: either father OR mother details are enough
+      if (!fatherOk && !motherOk) {
+        return res.status(400).json({
+          error:
+            "في حالة التبنّي يُرجى ملء بيانات الأب أو الأم / If adopted, fill father OR mother details",
+        });
+      }
+    } else {
+      if (!fatherOk) {
+        return res.status(400).json({ error: "هاتف الأب مطلوب / Father's phone required" });
+      }
+      if (!motherOk) {
+        return res.status(400).json({ error: "هاتف الأم مطلوب / Mother's phone required" });
+      }
     }
     if (contact.phoneBackup.replace(/\D/g, "").length < 8) {
       return res.status(400).json({ error: "رقم هاتف احتياطي مطلوب / Backup phone required" });
@@ -220,7 +245,7 @@ export async function submitForm(req, res) {
     if (!contact.address) {
       return res.status(400).json({ error: "العنوان مطلوب / Address required" });
     }
-    if (!["withParent", "alone", "companion", "driver"].includes(consents.departureMode)) {
+    if (!DEPARTURE_MODES.includes(consents.departureMode)) {
       return res
         .status(400)
         .json({ error: "اختيار المغادرة مطلوب / Departure permission required" });
@@ -289,8 +314,8 @@ export async function submitForm(req, res) {
         student.repeatedYear,
         student.studiedAbroad,
         contact.address,
-        father.phone,
-        mother.phone,
+        father.phone || mother.phone,
+        father.phone && mother.phone ? mother.phone : "",
         contact.phoneBackup,
         contact.email,
         consents.photoMedia,

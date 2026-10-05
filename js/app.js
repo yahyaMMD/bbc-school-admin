@@ -258,17 +258,47 @@
     } catch (_) {
       /* data not loaded yet */
     }
-    const isStaff = Auth.isAdmin();
-    const isWa = Auth.isWhatsApp();
+    const hash = (location.hash || "").replace(/^#/, "") || "/";
+    const onManage = hash === "/manage" || hash.startsWith("/manage/");
+    const onWa = hash === "/whatsapp" || hash.startsWith("/whatsapp/");
+    const onEnterTeacher = hash === "/enter-teacher" || hash.startsWith("/enter-teacher");
+    const isStaff = Auth.isAdmin() || (Auth.isDirector() && onManage);
+    const isWa = Auth.isWhatsApp() || (Auth.isDirector() && onWa);
     const isTeacher = Auth.isTeacher();
-    const homeNav = isStaff ? "#/manage" : isWa ? "#/whatsapp" : isTeacher ? "#/my" : "#/home";
-    const subtitle = isStaff
+    const isDirector = Auth.isDirector();
+    const impersonating = Auth.isImpersonating();
+    const homeNav = Auth.isAdmin()
+      ? "#/manage"
+      : Auth.isWhatsApp()
+        ? "#/whatsapp"
+        : isTeacher
+          ? "#/my"
+          : "#/home";
+    const subtitle = Auth.isAdmin()
       ? I18n.t("adminConsole")
-      : isWa
+      : Auth.isWhatsApp()
         ? I18n.t("whatsappConsole")
         : isTeacher
           ? I18n.t("teacherPortal")
           : I18n.t("portal");
+
+    const directorNav =
+      isDirector && !impersonating
+        ? `<nav class="director-navbar" aria-label="${esc(I18n.t("otherInterfaces"))}">
+            <button type="button" class="director-nav-btn${hash === "/home" || hash === "/" || hash === "" ? " is-active" : ""}" data-nav="#/home">${esc(I18n.t("home"))}</button>
+            <button type="button" class="director-nav-btn${onManage ? " is-active" : ""}" data-nav="#/manage">${esc(I18n.t("openManage"))}</button>
+            <button type="button" class="director-nav-btn${onWa ? " is-active" : ""}" data-nav="#/whatsapp">${esc(I18n.t("openWhatsapp"))}</button>
+            <button type="button" class="director-nav-btn${onEnterTeacher ? " is-active" : ""}" data-nav="#/enter-teacher">${esc(I18n.t("openTeacherPortals"))}</button>
+          </nav>`
+        : "";
+
+    const impersonationBar = impersonating
+      ? `<div class="impersonation-bar">
+          <span>${esc(I18n.t("viewingAsTeacher", { name: BBC_API.impersonateName() || "…" }))}</span>
+          <button type="button" class="btn btn-primary btn-sm" id="btn-exit-impersonation">${esc(I18n.t("backToDirector"))}</button>
+        </div>`
+      : "";
+
     return `
       <div class="app-shell${isStaff || isWa || isTeacher ? " app-shell-staff" : ""}">
         <header class="topbar">
@@ -289,6 +319,8 @@
               </button>
             </div>
           </div>
+          ${directorNav}
+          ${impersonationBar}
           ${
             isStaff || isWa || isTeacher
               ? ""
@@ -383,12 +415,49 @@
     const year = BBC_DATA.school.academicYear;
     const loc =
       I18n.getLang() === "ar" ? "ar" : I18n.getLang() === "fr" ? "fr-FR" : "en-US";
+    const directorGates = Auth.isDirector()
+      ? `
+      <div class="director-gates" role="navigation" aria-label="${esc(I18n.t("otherInterfaces"))}">
+        <div class="page-header" style="margin-bottom:0.65rem">
+          <h2 class="section-title" style="margin:0">${esc(I18n.t("otherInterfaces"))}</h2>
+          <p class="lede" style="margin:0.35rem 0 0">${esc(I18n.t("otherInterfacesLede"))}</p>
+        </div>
+        <div class="director-gate-grid director-gate-grid-3">
+          <button type="button" class="director-gate-card" data-nav="#/manage">
+            <span class="director-gate-ico" aria-hidden="true">▦</span>
+            <div>
+              <strong>${esc(I18n.t("openManage"))}</strong>
+              <p>${esc(I18n.t("openManageLede"))}</p>
+            </div>
+            <span class="cta">${esc(I18n.t("open"))}</span>
+          </button>
+          <button type="button" class="director-gate-card" data-nav="#/whatsapp">
+            <span class="director-gate-ico" aria-hidden="true">◈</span>
+            <div>
+              <strong>${esc(I18n.t("openWhatsapp"))}</strong>
+              <p>${esc(I18n.t("openWhatsappLede"))}</p>
+            </div>
+            <span class="cta">${esc(I18n.t("open"))}</span>
+          </button>
+          <button type="button" class="director-gate-card" data-nav="#/enter-teacher">
+            <span class="director-gate-ico" aria-hidden="true">◇</span>
+            <div>
+              <strong>${esc(I18n.t("openTeacherPortals"))}</strong>
+              <p>${esc(I18n.t("openTeacherPortalsLede"))}</p>
+            </div>
+            <span class="cta">${esc(I18n.t("open"))}</span>
+          </button>
+        </div>
+      </div>`
+      : "";
     return shell(`
       ${crumb([{ label: I18n.t("home"), to: "#/home" }])}
       <div class="page-header home-header">
         <h1>${esc(I18n.t("dashboard"))}</h1>
         <p class="lede">${esc(I18n.t("dashboardLede", { year }))}</p>
       </div>
+
+      ${directorGates}
 
       <div class="page-header" style="margin-bottom:0.85rem">
         <h2 class="section-title" style="margin:0">${esc(I18n.t("departments"))}</h2>
@@ -439,6 +508,84 @@
         <div class="stat-card"><div class="label">${esc(I18n.t("classes"))}</div><div class="value">${stats.classes}</div></div>
         <div class="stat-card"><div class="label">${esc(I18n.t("students"))}</div><div class="value">${stats.students.toLocaleString(loc)}</div></div>
         <div class="stat-card"><div class="label">${esc(I18n.t("teachersListed"))}</div><div class="value">${stats.teachers}</div></div>
+      </div>
+    `);
+  }
+
+  function viewEnterTeacher(params) {
+    const q = (params?.get("q") || "").trim();
+    const qLower = q.toLowerCase();
+    const all = BBC_DATA.listAllTeachers();
+    const filtered = !q
+      ? all.slice(0, 40)
+      : all.filter(({ teacher: t }) => {
+          const hay = [
+            t.id,
+            t.loginCode,
+            t.firstName,
+            t.lastName,
+            t.firstNameLatin,
+            t.lastNameLatin,
+            teacherLabel(t),
+            teacherLatin(t),
+            t.phone,
+          ]
+            .filter(Boolean)
+            .join(" ")
+            .toLowerCase();
+          return hay.includes(qLower) || qLower.split(/\s+/).every((p) => hay.includes(p));
+        });
+    filtered.sort((a, b) =>
+      teacherLabel(a.teacher).localeCompare(
+        teacherLabel(b.teacher),
+        I18n.getLang() === "ar" ? "ar" : I18n.getLang() === "fr" ? "fr" : "en"
+      )
+    );
+
+    return shell(`
+      ${crumb([
+        { label: I18n.t("home"), to: "#/home" },
+        { label: I18n.t("openTeacherPortals"), to: "#/enter-teacher" },
+      ])}
+      <div class="page-header">
+        <h1>${esc(I18n.t("openTeacherPortals"))}</h1>
+        <p class="lede">${esc(I18n.t("openTeacherPortalsLede"))}</p>
+      </div>
+      <form class="filter-panel enter-teacher-search" id="enter-teacher-filter" autocomplete="off">
+        <label class="field" style="flex:1;min-width:220px">
+          <span>${esc(I18n.t("searchTeacher"))}</span>
+          <input type="search" name="q" value="${esc(q)}" placeholder="${esc(I18n.t("searchTeacherPlaceholder"))}" autofocus />
+        </label>
+        <button type="submit" class="btn btn-primary">${esc(I18n.t("search"))}</button>
+        ${q ? `<button type="button" class="btn btn-ghost" data-nav="#/enter-teacher">${esc(I18n.t("clearFilters"))}</button>` : ""}
+      </form>
+      <p class="muted" style="margin:0.75rem 0 1rem">${esc(
+        q
+          ? I18n.t("ofCount", { shown: filtered.length, total: all.length })
+          : I18n.t("teacherSearchHint", { n: filtered.length })
+      )}</p>
+      <div class="enter-teacher-list">
+        ${
+          filtered.length
+            ? filtered
+                .map(({ teacher: t, classes }) => {
+                  const latin = teacherLatin(t);
+                  const code = t.loginCode || t.id;
+                  return `
+          <div class="enter-teacher-row">
+            ${profileAvatar(t, "teacher")}
+            <div class="enter-teacher-meta">
+              <strong dir="auto">${esc(teacherLabel(t))}</strong>
+              ${latin ? `<span class="dir-meta">${esc(latin)}</span>` : ""}
+              <span class="dir-meta">${esc(I18n.t("teacherId"))}: ${esc(code)}${t.phone ? ` · ${esc(t.phone)}` : ""}</span>
+              <span class="dir-meta">${esc((classes || []).map((c) => classDisplayCode(c.cls || c)).filter(Boolean).join(" · ") || "—")}</span>
+            </div>
+            <button type="button" class="btn btn-primary btn-sm" data-enter-teacher="${esc(t.id)}">${esc(I18n.t("enterTeacherPortal"))}</button>
+          </div>`;
+                })
+                .join("")
+            : `<div class="empty-state"><p>${esc(I18n.t("noTeachersFound"))}</p></div>`
+        }
       </div>
     `);
   }
@@ -931,7 +1078,19 @@
       ${block(
         I18n.t("parentSectionConsents"),
         grid([
-          [I18n.t("departureMode"), cons.departureMode],
+          [
+            I18n.t("departureMode"),
+            (
+              {
+                withParent: I18n.t("departureWithParent"),
+                motherOnly: I18n.t("departureMotherOnly"),
+                fatherOnly: I18n.t("departureFatherOnly"),
+                alone: I18n.t("departureAlone"),
+                companion: I18n.t("departureCompanion"),
+                driver: I18n.t("departureDriver"),
+              }[cons.departureMode] || cons.departureMode
+            ),
+          ],
           [I18n.t("companionRole"), cons.companionRole],
           [I18n.t("companionName"), cons.companionName],
           [I18n.t("companionPhone"), cons.companionPhone],
@@ -1363,8 +1522,8 @@
       return viewLogin();
     }
 
-    // Keep Director, Staff, WhatsApp, and Teacher sides fully separated
-    if (Auth.isDirector() && (path0 === "manage" || path0 === "whatsapp" || path0 === "my")) {
+    // Keep Staff, WhatsApp, and Teacher sides separated; Director may open Manage + WhatsApp + teacher portals
+    if (Auth.isDirector() && path0 === "my") {
       go("/home");
       return viewHome();
     }
@@ -1384,12 +1543,12 @@
       return shell(result.html || "");
     }
 
-    if (Auth.isAdmin() && path0 === "manage") {
+    if (Auth.canManage() && path0 === "manage") {
       const html = AdminApp.resolve(parts, params);
       if (html) return shell(html);
     }
 
-    if (Auth.isWhatsApp() && path0 === "whatsapp") {
+    if (Auth.canWhatsApp() && path0 === "whatsapp") {
       const html = WhatsAppApp.resolve(parts);
       if (html) return shell(html);
     }
@@ -1397,6 +1556,10 @@
     if (Auth.isTeacher() && path0 === "my") {
       const result = await TeacherApp.resolve(parts, params);
       return shell(result.html || "");
+    }
+
+    if (Auth.isDirector() && path0 === "enter-teacher") {
+      return viewEnterTeacher(params);
     }
 
     if (parts[0] === "search") {
@@ -1484,6 +1647,36 @@
       render();
     });
 
+    document.getElementById("btn-exit-impersonation")?.addEventListener("click", () => {
+      if (Auth.exitToDirector()) {
+        go("/home");
+        render();
+      }
+    });
+
+    document.getElementById("enter-teacher-filter")?.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const q = String(new FormData(e.target).get("q") || "").trim();
+      go(q ? `/enter-teacher?q=${encodeURIComponent(q)}` : "/enter-teacher");
+    });
+
+    app.querySelectorAll("[data-enter-teacher]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const id = btn.getAttribute("data-enter-teacher");
+        if (!id) return;
+        btn.disabled = true;
+        try {
+          await BBC_API.enterAsTeacher(id);
+          if (typeof TeacherApp !== "undefined" && TeacherApp.reset) TeacherApp.reset();
+          go("/my");
+          render();
+        } catch (err) {
+          btn.disabled = false;
+          alert(err.message || I18n.t("failedLoad"));
+        }
+      });
+    });
+
     document.getElementById("global-search")?.addEventListener("submit", (e) => {
       e.preventDefault();
       const q = new FormData(e.target).get("q");
@@ -1538,14 +1731,14 @@
       });
     }
 
-    if (Auth.isAdmin()) {
+    if (Auth.canManage()) {
       AdminApp.bind(app, (path) => {
         go(path);
         render();
       });
     }
 
-    if (Auth.isWhatsApp()) {
+    if (Auth.canWhatsApp()) {
       WhatsAppApp.bind(app, (path) => {
         go(path);
         render();

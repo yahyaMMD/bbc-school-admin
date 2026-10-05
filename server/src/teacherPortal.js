@@ -68,13 +68,18 @@ export async function getMe(req, res) {
     const teacherId = req.user?.teacherId;
     const row = await loadTeacherOr404(teacherId, res);
     if (!row) return;
+    const impersonating = Boolean(req.user?.impersonatedBy);
     const acc = await query(
       "SELECT must_change_password FROM teacher_accounts WHERE teacher_id = $1",
       [teacherId]
     );
     res.json({
       teacher: mapTeacher(row),
-      mustChangePassword: Boolean(acc.rows[0]?.must_change_password),
+      mustChangePassword: impersonating
+        ? false
+        : Boolean(acc.rows[0]?.must_change_password),
+      impersonating,
+      impersonatedBy: req.user?.impersonatedBy || null,
     });
   } catch (err) {
     console.error(err);

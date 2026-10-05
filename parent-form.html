@@ -16,7 +16,7 @@
       href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/parent-form.css?v=11" />
+    <link rel="stylesheet" href="css/parent-form.css?v=12" />
   </head>
   <body>
     <div class="pf-wrap">
@@ -105,13 +105,27 @@
             <label class="pf-choice"><input type="radio" name="student.studiedAbroad" value="no" /><span class="pf-choice-text"><span class="pf-ar">لا</span><span class="pf-en" lang="en" dir="ltr">NO</span></span></label>
           </fieldset>
 
+          <fieldset class="pf-choices">
+            <legend class="pf-label"><span class="pf-ar">الطفل متبنّى؟</span><span class="pf-en" lang="en" dir="ltr">Is the child adopted?</span></legend>
+            <label class="pf-choice"><input type="radio" name="family.adopted" value="no" checked /><span class="pf-choice-text"><span class="pf-ar">لا</span><span class="pf-en" lang="en" dir="ltr">NO</span></span></label>
+            <label class="pf-choice"><input type="radio" name="family.adopted" value="yes" /><span class="pf-choice-text"><span class="pf-ar">نعم</span><span class="pf-en" lang="en" dir="ltr">YES</span></span></label>
+          </fieldset>
+          <label class="pf-field" data-show-when="family.adopted=yes">
+            <span class="pf-label"><span class="pf-ar">إذا نعم وضح</span><span class="pf-en" lang="en" dir="ltr">If yes, explain</span></span>
+            <textarea name="family.adoptedExplain" rows="2"></textarea>
+          </label>
+          <p class="pf-hint" data-show-when="family.adopted=yes" hidden>
+            <span class="pf-ar">في حالة التبنّي يمكنكم ملء بيانات الأب أو الأم فقط (واحد منهما يكفي)</span>
+            <span class="pf-en" lang="en" dir="ltr">If adopted, you may fill either the father or the mother details (only one is required)</span>
+          </p>
+
           <p class="pf-subhead">
             <span class="pf-ar">الأب</span>
             <span class="pf-en" lang="en" dir="ltr">Father</span>
           </p>
           <label class="pf-field">
             <span class="pf-label"><span class="pf-ar">الاسم الكامل</span><span class="pf-en" lang="en" dir="ltr">Full name</span></span>
-            <input name="father.name" type="text" required />
+            <input name="father.name" type="text" required data-parent-required />
           </label>
           <label class="pf-field">
             <span class="pf-label"><span class="pf-ar">المهنة</span><span class="pf-en" lang="en" dir="ltr">Profession</span></span>
@@ -123,7 +137,7 @@
           </label>
           <label class="pf-field">
             <span class="pf-label"><span class="pf-ar">رقم هاتف الأب</span><span class="pf-en" lang="en" dir="ltr">Father's phone</span></span>
-            <input name="father.phone" type="tel" inputmode="tel" required placeholder="05…" />
+            <input name="father.phone" type="tel" inputmode="tel" required placeholder="05…" data-parent-required />
           </label>
 
           <p class="pf-subhead">
@@ -132,7 +146,7 @@
           </p>
           <label class="pf-field">
             <span class="pf-label"><span class="pf-ar">الاسم الكامل</span><span class="pf-en" lang="en" dir="ltr">Full name</span></span>
-            <input name="mother.name" type="text" required />
+            <input name="mother.name" type="text" required data-parent-required />
           </label>
           <label class="pf-field">
             <span class="pf-label"><span class="pf-ar">المهنة</span><span class="pf-en" lang="en" dir="ltr">Profession</span></span>
@@ -144,7 +158,7 @@
           </label>
           <label class="pf-field">
             <span class="pf-label"><span class="pf-ar">رقم هاتف الأم</span><span class="pf-en" lang="en" dir="ltr">Mother's phone</span></span>
-            <input name="mother.phone" type="tel" inputmode="tel" required placeholder="05…" />
+            <input name="mother.phone" type="tel" inputmode="tel" required placeholder="05…" data-parent-required />
           </label>
 
           <p class="pf-subhead">
@@ -240,15 +254,6 @@
             <input name="family.tutorPhone" type="tel" inputmode="tel" />
           </label>
 
-          <fieldset class="pf-choices">
-            <legend class="pf-label"><span class="pf-ar">الطفل متبنّى؟</span><span class="pf-en" lang="en" dir="ltr">Is the child adopted?</span></legend>
-            <label class="pf-choice"><input type="radio" name="family.adopted" value="no" checked /><span class="pf-choice-text"><span class="pf-ar">لا</span><span class="pf-en" lang="en" dir="ltr">NO</span></span></label>
-            <label class="pf-choice"><input type="radio" name="family.adopted" value="yes" /><span class="pf-choice-text"><span class="pf-ar">نعم</span><span class="pf-en" lang="en" dir="ltr">YES</span></span></label>
-          </fieldset>
-          <label class="pf-field" data-show-when="family.adopted=yes">
-            <span class="pf-label"><span class="pf-ar">إذا نعم وضح</span><span class="pf-en" lang="en" dir="ltr">If yes, explain</span></span>
-            <textarea name="family.adoptedExplain" rows="2"></textarea>
-          </label>
         </section>
 
         <!-- 3 Medical -->
@@ -362,8 +367,18 @@
             <legend class="pf-visually-hidden">مغادرة التلميذ</legend>
             <label class="pf-choice">
               <input type="radio" name="consents.departureMode" value="withParent" required />
-              <span class="pf-choice-text"><span class="pf-ar">1ـ فقط مع ولّي الأمر: الأب — الأم</span><span class="pf-en" lang="en" dir="ltr">1 — Only with guardian: father — mother</span></span>
+              <span class="pf-choice-text"><span class="pf-ar">1ـ مع الوالدين (الأب أو الأم)</span><span class="pf-en" lang="en" dir="ltr">1 — With parents (mom or dad)</span></span>
             </label>
+            <div class="pf-choice-suboptions" role="group" aria-label="Parent pickup restriction">
+              <label class="pf-choice pf-choice-sm">
+                <input type="radio" name="consents.departureMode" value="motherOnly" />
+                <span class="pf-choice-text"><span class="pf-ar">الأم فقط</span><span class="pf-en" lang="en" dir="ltr">Mother only</span></span>
+              </label>
+              <label class="pf-choice pf-choice-sm">
+                <input type="radio" name="consents.departureMode" value="fatherOnly" />
+                <span class="pf-choice-text"><span class="pf-ar">الأب فقط</span><span class="pf-en" lang="en" dir="ltr">Father only</span></span>
+              </label>
+            </div>
             <label class="pf-choice">
               <input type="radio" name="consents.departureMode" value="alone" />
               <span class="pf-choice-text"><span class="pf-ar">2ـ لوحده</span><span class="pf-en" lang="en" dir="ltr">2 — Alone</span></span>
@@ -475,6 +490,6 @@
       </div>
     </div>
 
-    <script src="js/parent-form.js?v=13"></script>
+    <script src="js/parent-form.js?v=14"></script>
   </body>
 </html>

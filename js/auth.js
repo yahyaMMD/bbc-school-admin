@@ -27,11 +27,31 @@ const Auth = (() => {
     return role() === "teacher";
   }
 
+  function isImpersonating() {
+    return typeof BBC_API !== "undefined" && BBC_API.isImpersonating();
+  }
+
+  /** Director may open Staff manage console */
+  function canManage() {
+    return isAdmin() || isDirector();
+  }
+
+  /** Director may open WhatsApp console */
+  function canWhatsApp() {
+    return isWhatsApp() || isDirector();
+  }
+
   function homePath() {
+    if (isImpersonating() || isTeacher()) return "/my";
     if (isAdmin()) return "/manage";
     if (isWhatsApp()) return "/whatsapp";
-    if (isTeacher()) return "/my";
     return "/home";
+  }
+
+  function exitToDirector() {
+    if (typeof BBC_API === "undefined" || !BBC_API.exitImpersonation()) return false;
+    if (typeof TeacherApp !== "undefined" && TeacherApp.reset) TeacherApp.reset();
+    return true;
   }
 
   async function login(password, opts = {}) {
@@ -70,6 +90,10 @@ const Auth = (() => {
     isDirector,
     isWhatsApp,
     isTeacher,
+    isImpersonating,
+    canManage,
+    canWhatsApp,
     homePath,
+    exitToDirector,
   };
 })();
