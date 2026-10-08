@@ -4,8 +4,22 @@ server/node_modules/
 *.log
 .DS_Store
 
+# Local Python / OCR scratch
+.venv/
+.pydeps/
+__pycache__/
+
 # Profile photos (stored on VPS volume)
 data/uploads/
+
+# Local import / OCR scratch (not part of the product)
+data/_*/
+data/_*
+data/photo_zips_*/
+data/rosters/
+create.json
+out.json
+ghhome.txt
 
 # Generated credential sheets (contain passwords)
 reports/

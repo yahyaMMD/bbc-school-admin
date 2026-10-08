@@ -10,6 +10,9 @@ import * as TeacherPortal from "./teacherPortal.js";
 import * as ParentForm from "./parentForm.js";
 import * as ClassSessions from "./classSessions.js";
 import * as FloorPortal from "./floorPortal.js";
+import * as FloorReports from "./floorReports.js";
+import * as Timetable from "./timetable.js";
+import * as Preschool from "./preschoolPortal.js";
 
 const router = Router();
 
@@ -18,6 +21,46 @@ function sid(prefix = "S") {
 }
 
 router.get("/health", (_req, res) => res.json({ ok: true }));
+
+// ——— BBC Kids / Préscolaire (public hubs + manager) ———
+router.get("/preschool/meta", Preschool.getPublicMeta);
+router.get("/preschool/content", Preschool.getPublicContent);
+router.post("/preschool/forms", Preschool.submitForm);
+router.get(
+  "/preschool/dashboard",
+  authRequired(["preschool", "director"]),
+  Preschool.getDashboard
+);
+router.get(
+  "/preschool/forms",
+  authRequired(["preschool", "director"]),
+  Preschool.listSubmissions
+);
+router.get(
+  "/preschool/forms/:id",
+  authRequired(["preschool", "director"]),
+  Preschool.getSubmission
+);
+router.patch(
+  "/preschool/forms/:id",
+  authRequired(["preschool", "director"]),
+  Preschool.patchSubmission
+);
+router.get(
+  "/preschool/content/manage",
+  authRequired(["preschool", "director"]),
+  Preschool.listContent
+);
+router.post(
+  "/preschool/content",
+  authRequired(["preschool", "director"]),
+  Preschool.upsertContent
+);
+router.delete(
+  "/preschool/content/:id",
+  authRequired(["preschool", "director"]),
+  Preschool.deleteContent
+);
 
 // ——— Parent form (public submit + admin review) ———
 router.get("/parent-form/meta", ParentForm.listFormMeta);
@@ -55,6 +98,29 @@ router.get("/school-data", authRequired(["director", "admin"]), async (_req, res
   }
 });
 
+// ——— Weekly timetables ———
+router.get("/timetable/me", authRequired(["teacher"]), Timetable.getMyTimetable);
+router.get(
+  "/timetable/teacher/:id",
+  authRequired(["director", "admin", "teacher"]),
+  Timetable.getTeacherTimetable
+);
+router.get(
+  "/timetable/class/:id",
+  authRequired(["director", "admin", "teacher", "floor"]),
+  Timetable.getClassTimetable
+);
+router.get(
+  "/timetable/director",
+  authRequired(["director", "admin"]),
+  Timetable.getDirectorTimetable
+);
+router.post(
+  "/timetable/import",
+  authRequired(["admin", "director"]),
+  Timetable.postImportTimetable
+);
+
 // ——— Teacher portal (self) ———
 router.get("/me", authRequired(["teacher"]), TeacherPortal.getMe);
 router.get("/me/classes", authRequired(["teacher"]), TeacherPortal.getMyClasses);
@@ -73,10 +139,25 @@ router.get("/floor/me", authRequired(["floor"]), FloorPortal.getFloorMe);
 router.post("/floor/password", authRequired(["floor"]), FloorPortal.changeFloorPassword);
 router.get("/floor/day", authRequired(["floor"]), FloorPortal.getFloorDayBoard);
 router.get("/floor/classes/:id/day", authRequired(["floor"]), FloorPortal.getFloorClassDay);
+router.get("/floor/reports/day", authRequired(["floor"]), FloorReports.getFloorReportDay);
+router.put("/floor/reports/day", authRequired(["floor"]), FloorReports.putFloorReportDay);
 router.get("/floor/wa/status", authRequired(["floor"]), FloorPortal.getFloorWaStatus);
 router.get("/floor/wa/qr", authRequired(["floor"]), FloorPortal.getFloorWaQr);
 router.post("/floor/wa/logout", authRequired(["floor"]), FloorPortal.postFloorWaLogout);
+router.get("/floor/wa/groups", authRequired(["floor"]), FloorPortal.getFloorWaGroups);
+router.get("/floor/wa/day-content", authRequired(["floor"]), FloorPortal.getFloorWaDayContent);
+router.post("/floor/wa/send-groups", authRequired(["floor"]), FloorPortal.postFloorWaSendGroups);
 router.post("/floor/wa/send", authRequired(["floor"]), FloorPortal.postFloorWaSend);
+router.get(
+  "/director/floor-reports",
+  authRequired(["director"]),
+  FloorReports.listDirectorFloorReports
+);
+router.get(
+  "/director/floor-reports/:managerId",
+  authRequired(["director"]),
+  FloorReports.getDirectorFloorReport
+);
 router.get("/floor-managers", authRequired(["director", "admin"]), FloorPortal.listFloorManagers);
 router.put(
   "/floor-managers/:id/password",
@@ -242,10 +323,10 @@ router.delete("/teachers/:id", authRequired(["admin", "director"]), async (req, 
   res.json({ ok: true });
 });
 
-/** Director/admin enters a teacher's portal (impersonation token). */
+/** Director enters a teacher's portal (impersonation token). */
 router.post(
   "/teachers/:id/impersonate",
-  authRequired(["director", "admin"]),
+  authRequired(["director"]),
   async (req, res) => {
     const r = await query(
       `SELECT t.id, t.login_code, t.first_name, t.last_name, t.first_name_latin, t.last_name_latin

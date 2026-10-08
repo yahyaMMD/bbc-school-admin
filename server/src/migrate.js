@@ -114,10 +114,15 @@ export async function migrate() {
   `);
   await query(`ALTER TABLE announcements ADD COLUMN IF NOT EXISTS scheduled_at TIMESTAMPTZ`);
   await query(`ALTER TABLE announcements ADD COLUMN IF NOT EXISTS sent_at TIMESTAMPTZ`);
+  await query(`ALTER TABLE announcements ADD COLUMN IF NOT EXISTS wa_phone TEXT NOT NULL DEFAULT ''`);
   await query(
     `CREATE INDEX IF NOT EXISTS idx_announcements_scheduled
      ON announcements (scheduled_at)
      WHERE status = 'scheduled' AND scheduled_at IS NOT NULL`
+  );
+  await query(
+    `CREATE INDEX IF NOT EXISTS idx_announcements_wa_phone_created
+     ON announcements (wa_phone, created_at DESC)`
   );
 
   await query(`
@@ -297,29 +302,272 @@ export async function migrate() {
     );
     CREATE INDEX IF NOT EXISTS idx_floor_actions_manager_created
       ON floor_action_logs (floor_manager_id, created_at DESC);
+
+    CREATE TABLE IF NOT EXISTS floor_daily_reports (
+      id TEXT PRIMARY KEY,
+      floor_manager_id TEXT NOT NULL REFERENCES floor_managers(id) ON DELETE CASCADE,
+      report_date DATE NOT NULL,
+      notes TEXT NOT NULL DEFAULT '',
+      form_data JSONB NOT NULL DEFAULT '{}'::jsonb,
+      status TEXT NOT NULL DEFAULT 'draft'
+        CHECK (status IN ('draft', 'sent')),
+      submitted_at TIMESTAMPTZ,
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      UNIQUE (floor_manager_id, report_date)
+    );
+    ALTER TABLE floor_daily_reports
+      ADD COLUMN IF NOT EXISTS form_data JSONB NOT NULL DEFAULT '{}'::jsonb;
+    CREATE INDEX IF NOT EXISTS idx_floor_daily_reports_date
+      ON floor_daily_reports (report_date DESC);
+    CREATE INDEX IF NOT EXISTS idx_floor_daily_reports_manager_date
+      ON floor_daily_reports (floor_manager_id, report_date DESC);
   `);
 
-  await ensurePrimaryFloorManagers();
+  // Weekly timetables (primary 2026–2027 from school DOCX files)
+  await query(`
+    CREATE TABLE IF NOT EXISTS timetable_slots (
+      id TEXT PRIMARY KEY,
+      school_year TEXT NOT NULL DEFAULT '2026-2027',
+      class_id TEXT NOT NULL REFERENCES classes(id) ON DELETE CASCADE,
+      teacher_id TEXT REFERENCES teachers(id) ON DELETE SET NULL,
+      teacher_name TEXT NOT NULL DEFAULT '',
+      module TEXT NOT NULL DEFAULT '',
+      day_of_week TEXT NOT NULL
+        CHECK (day_of_week IN ('sun','mon','tue','wed','thu')),
+      shift TEXT NOT NULL DEFAULT 'morning'
+        CHECK (shift IN ('morning','evening')),
+      role TEXT NOT NULL DEFAULT 'general'
+        CHECK (role IN ('general','arabic','french','english_principal','english_activity')),
+      notes TEXT NOT NULL DEFAULT '',
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+    CREATE INDEX IF NOT EXISTS idx_tt_slots_teacher
+      ON timetable_slots (teacher_id, day_of_week);
+    CREATE INDEX IF NOT EXISTS idx_tt_slots_class
+      ON timetable_slots (class_id, day_of_week);
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_tt_slots_uniq
+      ON timetable_slots (school_year, class_id, day_of_week, shift, module, role);
+
+    CREATE TABLE IF NOT EXISTS class_module_teachers (
+      class_id TEXT NOT NULL REFERENCES classes(id) ON DELETE CASCADE,
+      module TEXT NOT NULL,
+      teacher_id TEXT REFERENCES teachers(id) ON DELETE SET NULL,
+      teacher_name TEXT NOT NULL DEFAULT '',
+      role TEXT NOT NULL DEFAULT 'principal'
+        CHECK (role IN ('principal','activity','homeroom')),
+      school_year TEXT NOT NULL DEFAULT '2026-2027',
+      PRIMARY KEY (class_id, module, role, school_year)
+    );
+  `);
+
+  await query(`ALTER TABLE classes ADD COLUMN IF NOT EXISTS default_shift TEXT NOT NULL DEFAULT ''`);
+
+  // Préscolaire / BBC Kids portal
+  await query(`
+    CREATE TABLE IF NOT EXISTS preschool_form_submissions (
+      id TEXT PRIMARY KEY,
+      form_type TEXT NOT NULL
+        CHECK (form_type IN ('printing', 'concern', 'filming', 'followup')),
+      payload JSONB NOT NULL DEFAULT '{}'::jsonb,
+      status TEXT NOT NULL DEFAULT 'new'
+        CHECK (status IN ('new', 'seen', 'in_progress', 'done', 'rejected')),
+      teacher_name TEXT NOT NULL DEFAULT '',
+      class_code TEXT NOT NULL DEFAULT '',
+      manager_note TEXT NOT NULL DEFAULT '',
+      unread BOOLEAN NOT NULL DEFAULT TRUE,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      seen_at TIMESTAMPTZ,
+      resolved_at TIMESTAMPTZ,
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+    CREATE INDEX IF NOT EXISTS idx_preschool_forms_type_created
+      ON preschool_form_submissions (form_type, created_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_preschool_forms_status
+      ON preschool_form_submissions (status, created_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_preschool_forms_unread
+      ON preschool_form_submissions (unread) WHERE unread = TRUE;
+
+    CREATE TABLE IF NOT EXISTS preschool_content (
+      id TEXT PRIMARY KEY,
+      kind TEXT NOT NULL
+        CHECK (kind IN ('announcement', 'drama', 'curriculum', 'contact')),
+      title TEXT NOT NULL DEFAULT '',
+      body TEXT NOT NULL DEFAULT '',
+      youtube_url TEXT NOT NULL DEFAULT '',
+      youtube_id TEXT NOT NULL DEFAULT '',
+      audience TEXT NOT NULL DEFAULT 'both'
+        CHECK (audience IN ('teachers', 'parents', 'both')),
+      published BOOLEAN NOT NULL DEFAULT TRUE,
+      sort_order INT NOT NULL DEFAULT 0,
+      meta JSONB NOT NULL DEFAULT '{}'::jsonb,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+    CREATE INDEX IF NOT EXISTS idx_preschool_content_kind
+      ON preschool_content (kind, published, sort_order);
+  `);
+
+  await ensureYearManagers();
+  await ensureStaffUsers();
+  await ensurePreschoolDepartmentMeta();
+  await ensurePreschoolContentSeed();
 }
 
-const PRIMARY_FLOORS = [
-  { n: 0, code: "FLOOR001", label: "Ground Floor", labelAr: "الطابق الأرضي" },
-  { n: 1, code: "FLOOR002", label: "Floor 1", labelAr: "الطابق الأول" },
-  { n: 2, code: "FLOOR003", label: "Floor 2", labelAr: "الطابق الثاني" },
-  { n: 3, code: "FLOOR004", label: "Floor 3", labelAr: "الطابق الثالث" },
-  { n: 4, code: "FLOOR005", label: "Floor 4", labelAr: "الطابق الرابع" },
+/** Staff passwords: director (limited), global (full), admin, whatsapp, preschool */
+async function ensureStaffUsers() {
+  const users = [
+    { role: "director", pass: process.env.DIRECTOR_PASSWORD || "Director2026" },
+    { role: "global", pass: process.env.GLOBAL_VIEW_PASSWORD || "GlobalView2026" },
+    { role: "admin", pass: process.env.ADMIN_PASSWORD || "AdminBBC2026" },
+    { role: "whatsapp", pass: process.env.WHATSAPP_PASSWORD || "WhatsApp2026" },
+    { role: "preschool", pass: process.env.PRESCHOOL_PASSWORD || "Preschool2026" },
+  ];
+  for (const u of users) {
+    const existing = await query("SELECT role FROM app_users WHERE role = $1", [u.role]);
+    if (existing.rows.length) continue;
+    const hash = await bcrypt.hash(u.pass, 10);
+    await query(
+      `INSERT INTO app_users (role, password_hash) VALUES ($1, $2)
+       ON CONFLICT (role) DO NOTHING`,
+      [u.role, hash]
+    );
+  }
+}
+
+const PRESCHOOL_DEPT = {
+  id: "preschool",
+  name: "Preschool Department",
+  label: "Préscolaire",
+  description: "Grande Section — Arabic & English",
+  image: "assets/preschool-department.png",
+  levels: [
+    {
+      id: 0,
+      name: "Grande Section",
+      nameAr: "التحضيري",
+      subtitle: "GS A–F",
+    },
+  ],
+};
+
+const PRESCHOOL_CLASSES = [
+  { id: "CL-GSA", code: "GSA", name: "GS A", nameAr: "التحضيري أ", section: 1 },
+  { id: "CL-GSB", code: "GSB", name: "GS B", nameAr: "التحضيري ب", section: 2 },
+  { id: "CL-GSC", code: "GSC", name: "GS C", nameAr: "التحضيري ج", section: 3 },
+  { id: "CL-GSD", code: "GSD", name: "GS D", nameAr: "التحضيري د", section: 4 },
+  { id: "CL-GSE", code: "GSE", name: "GS E", nameAr: "التحضيري هـ", section: 5 },
+  { id: "CL-GSF", code: "GSF", name: "GS F", nameAr: "التحضيري و", section: 6 },
 ];
 
-async function ensurePrimaryFloorManagers() {
+/** Ensure school_meta has preschool dept + empty GS classes exist */
+async function ensurePreschoolDepartmentMeta() {
+  const metaRes = await query("SELECT data FROM school_meta WHERE id = 1");
+  if (!metaRes.rows.length) return;
+  const data = metaRes.rows[0].data || {};
+  if (!data.preschool || data.preschool.id !== "preschool") {
+    data.preschool = PRESCHOOL_DEPT;
+    if (!data.preschoolModules) data.preschoolModules = ["Arabic", "English"];
+    await query(`UPDATE school_meta SET data = $1::jsonb WHERE id = 1`, [JSON.stringify(data)]);
+  } else if (!data.preschool.image) {
+    data.preschool.image = PRESCHOOL_DEPT.image;
+    await query(`UPDATE school_meta SET data = $1::jsonb WHERE id = 1`, [JSON.stringify(data)]);
+  }
+  for (const c of PRESCHOOL_CLASSES) {
+    await query(
+      `INSERT INTO classes
+         (id, department_id, level_id, name, name_ar, code, year, floor, floor_number, class_on_floor, section, stats)
+       VALUES ($1, 'preschool', 0, $2, $3, $4, 0, 'GS', 0, $5, $5, '{}'::jsonb)
+       ON CONFLICT (id) DO UPDATE SET
+         name = EXCLUDED.name,
+         name_ar = EXCLUDED.name_ar,
+         code = EXCLUDED.code,
+         department_id = 'preschool',
+         level_id = 0,
+         year = 0`,
+      [c.id, c.name, c.nameAr, c.code, c.section]
+    );
+  }
+}
+
+async function ensurePreschoolContentSeed() {
+  const count = await query(`SELECT COUNT(*)::int AS n FROM preschool_content`);
+  if ((count.rows[0]?.n || 0) > 0) return;
+
+  const drama = [
+    "Red Colour Day _2024/2025_Ms. Khadidja Hannache",
+    "Winter Is Here_2024/2025_Ms. Khadidja Hannache",
+    "My Healthy Body_2024/2025_Ms. Khadidja Hannache",
+    "International Volunteer Day_2024/2025_Collab.English Teachers",
+    "The Magical Forest_2024/2025_Ms. Khadidja Hannache",
+    "Creative Learning Activities_2024/2025_Ms. Khadidja Hannache",
+    "Orange Day_2024/2025_Ms.Khadidja Hannache",
+    "The Lion and the Mouse_2024/2025_Ms.Khadidja Hannache",
+    "Radio Day, Kids on Air_2024/2025_Ms.Khadidja Hannache",
+    "Healthy Habits_2024/2025_Ms. Khadidja",
+    "Pizza Time_2024/2025_Ms.Khadidja Hannache",
+    "All About Me_2023/2024_Ms. Khadidja",
+    "Food Competition_2023/2024_Ms. Khadidja",
+    "Shapes_2023/2024_Ms. Khadidja",
+    "Clothes_2023/2024_Ms.Khadidja",
+    "Face Review_2023/2024_Ms. Khadidja",
+    "Fun Learning Activities_2024/2025_Ms.Khadidja Hannache",
+  ];
+
+  let i = 0;
+  for (const title of drama) {
+    i += 1;
+    await query(
+      `INSERT INTO preschool_content
+         (id, kind, title, body, youtube_url, youtube_id, audience, published, sort_order)
+       VALUES ($1, 'drama', $2, '', '', '', 'teachers', TRUE, $3)`,
+      [`PSK-DRAMA-${String(i).padStart(2, "0")}`, title, i]
+    );
+  }
+
+  await query(
+    `INSERT INTO preschool_content
+       (id, kind, title, body, audience, published, sort_order)
+     VALUES
+       ('PSK-CONTACT', 'contact', 'Contact & Availability',
+        $1, 'both', TRUE, 0),
+       ('PSK-ANN-WELCOME', 'announcement', 'Welcome to BBC Kids Préscolaire',
+        $2, 'both', TRUE, 1),
+       ('PSK-CURR-1', 'curriculum', 'Curriculum & Planning',
+        $3, 'teachers', TRUE, 1)`,
+    [
+      "English Department — Préscolaire\nBouchaoui 03, Cheraga, Algiers\nPhone: 0540 27 98 01\n\nOffice hours: Sunday–Thursday, mornings.\nFor filming or printing requests, use the Teachers hub forms.",
+      "Welcome to our shared space for collaboration, creativity, and growth.\nThis hub replaces the previous Google Site — forms, announcements, and drama resources live here.",
+      "Use this space to share weekly plans, themes, and coordination notes for Grande Section English.\nUpload links or paste planning notes below as you go.",
+    ]
+  );
+}
+
+/** One manager per year — owns every class in that year (teacher registers → manager board). */
+const YEAR_MANAGERS = [
+  // Primary years 1–5 (keep FLOOR00x login codes for existing accounts)
+  { n: 0, code: "FLOOR001", dept: "primary", label: "Primary Year 1", labelAr: "السنة الأولى ابتدائي" },
+  { n: 1, code: "FLOOR002", dept: "primary", label: "Primary Year 2", labelAr: "السنة الثانية ابتدائي" },
+  { n: 2, code: "FLOOR003", dept: "primary", label: "Primary Year 3", labelAr: "السنة الثالثة ابتدائي" },
+  { n: 3, code: "FLOOR004", dept: "primary", label: "Primary Year 4", labelAr: "السنة الرابعة ابتدائي" },
+  { n: 4, code: "FLOOR005", dept: "primary", label: "Primary Year 5", labelAr: "السنة الخامسة ابتدائي" },
+  // Middle years 1–4
+  { n: 0, code: "MID001", dept: "middle", label: "Middle Year 1", labelAr: "السنة الأولى متوسط" },
+  { n: 1, code: "MID002", dept: "middle", label: "Middle Year 2", labelAr: "السنة الثانية متوسط" },
+  { n: 2, code: "MID003", dept: "middle", label: "Middle Year 3", labelAr: "السنة الثالثة متوسط" },
+  { n: 3, code: "MID004", dept: "middle", label: "Middle Year 4", labelAr: "السنة الرابعة متوسط" },
+];
+
+async function ensureYearManagers() {
   const defaultPass = process.env.FLOOR_PASSWORD || "Floor2026";
-  for (const f of PRIMARY_FLOORS) {
+  for (const f of YEAR_MANAGERS) {
     const existing = await query("SELECT id FROM floor_managers WHERE id = $1", [f.code]);
     if (existing.rows.length) {
       await query(
         `UPDATE floor_managers
-         SET floor_label = $2, floor_label_ar = $3, department_id = 'primary', floor_number = $4, updated_at = NOW()
+         SET floor_label = $2, floor_label_ar = $3, department_id = $4, floor_number = $5,
+             must_change_password = FALSE, updated_at = NOW()
          WHERE id = $1`,
-        [f.code, f.label, f.labelAr, f.n]
+        [f.code, f.label, f.labelAr, f.dept, f.n]
       );
       continue;
     }
@@ -327,10 +575,12 @@ async function ensurePrimaryFloorManagers() {
     await query(
       `INSERT INTO floor_managers
          (id, login_code, password_hash, department_id, floor_number, floor_label, floor_label_ar, must_change_password)
-       VALUES ($1, $2, $3, 'primary', $4, $5, $6, TRUE)`,
-      [f.code, f.code, hash, f.n, f.label, f.labelAr]
+       VALUES ($1, $2, $3, $4, $5, $6, $7, FALSE)`,
+      [f.code, f.code, hash, f.dept, f.n, f.label, f.labelAr]
     );
   }
+  // Never force year managers to reset password on login
+  await query(`UPDATE floor_managers SET must_change_password = FALSE WHERE must_change_password = TRUE`);
 }
 
 /** Assign TR001… to teachers missing a login_code (stable order). */

@@ -327,7 +327,7 @@ def main():
             ]
             res = req(
                 "/parent-form/bulk-link",
-                {"pairs": pairs, "fillGapsOnly": True},
+                {"pairs": pairs, "fillGapsOnly": True, "updateNames": False},
                 token=token,
             )
             linked += res.get("linked", 0)

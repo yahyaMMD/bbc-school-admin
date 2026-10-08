@@ -16,8 +16,12 @@ export function authRequired(roles = []) {
     if (!token) return res.status(401).json({ error: "Unauthorized" });
     try {
       const payload = jwt.verify(token, JWT_SECRET);
-      if (roles.length && !roles.includes(payload.role)) {
-        return res.status(403).json({ error: "Forbidden" });
+      if (roles.length) {
+        const ok =
+          roles.includes(payload.role) ||
+          // Global view has full director API access
+          (payload.role === "global" && roles.includes("director"));
+        if (!ok) return res.status(403).json({ error: "Forbidden" });
       }
       req.user = payload;
       next();
@@ -65,7 +69,8 @@ async function findTeacherAccountByPhone(phone) {
 
 async function findFloorManagerByLoginCode(loginCode) {
   const code = normalizeLoginCode(loginCode);
-  if (!/^FLOOR\d{3}$/.test(code)) return null;
+  // Primary year managers: FLOOR001–FLOOR005 · Middle year managers: MID001–MID004
+  if (!/^(FLOOR|MID)\d{3}$/.test(code)) return null;
   const r = await query(
     `SELECT id, login_code, password_hash, must_change_password, floor_number, department_id,
             floor_label, floor_label_ar
@@ -138,9 +143,9 @@ export async function loginHandler(req, res) {
   // Optional role for backward compatibility; if omitted, password alone decides access.
   const roleHint = String(req.body?.role || "").trim();
   const rolesToTry =
-    roleHint && ["director", "admin", "whatsapp"].includes(roleHint)
+    roleHint && ["director", "global", "admin", "whatsapp", "preschool"].includes(roleHint)
       ? [roleHint]
-      : ["admin", "director", "whatsapp"];
+      : ["admin", "director", "global", "whatsapp", "preschool"];
 
   for (const role of rolesToTry) {
     const result = await query("SELECT password_hash FROM app_users WHERE role = $1", [role]);

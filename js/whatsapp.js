@@ -513,6 +513,16 @@ const WhatsAppApp = (() => {
     if (!historyEl) return;
     (async () => {
       try {
+        let wa = { ready: false };
+        try {
+          wa = await fetchWaStatus();
+        } catch {
+          wa = { ready: false };
+        }
+        if (!wa.ready) {
+          historyEl.innerHTML = `<div class="admin-empty">${esc(I18n.t("annHistoryNeedsWhatsApp"))}</div>`;
+          return;
+        }
         const list = await BBC_API.get("/announcements");
         if (!list.length) {
           historyEl.innerHTML = `<div class="admin-empty">${esc(I18n.t("noAnnouncementsYet"))}</div>`;

@@ -2,6 +2,7 @@ import crypto from "crypto";
 import bcrypt from "bcryptjs";
 import { query } from "./db.js";
 import { mapStudent, mapClass } from "./schoolData.js";
+import { buildLiveSnapshot } from "./floorReports.js";
 
 const WA_BRIDGE_URL = (process.env.WA_BRIDGE_URL || "http://127.0.0.1:3847").replace(/\/$/, "");
 const SALT_ROUNDS = 10;
@@ -26,7 +27,7 @@ function mapFloorManager(row) {
   return {
     id: row.id,
     loginCode: row.login_code,
-    departmentId: row.department_id,
+    departmentId: row.department_id || "primary",
     floorNumber,
     managedYear,
     floorLabel: row.floor_label || "",
@@ -88,40 +89,23 @@ async function loadManager(req, res) {
 }
 
 async function floorClasses(manager) {
-  // Each primary floor account owns one year (FLOOR001 → year 1 … FLOOR005 → year 5).
-  // Only the 10 standard class slots (class_on_floor 1–10) for that year.
+  // Each manager owns one full year in their department (all classes in that year).
+  // Primary: FLOOR001 → year 1 … FLOOR005 → year 5
+  // Middle:  MID001 → year 1 … MID004 → year 4
   const year = Number(manager.floor_number) + 1;
   const r = await query(
     `SELECT * FROM classes
-     WHERE department_id = $1
-       AND year = $2
-       AND class_on_floor IS NOT NULL
-       AND class_on_floor BETWEEN 1 AND 10
-     ORDER BY class_on_floor, code`,
+     WHERE department_id = $1 AND year = $2
+     ORDER BY COALESCE(class_on_floor, 999), code`,
     [manager.department_id, year]
   );
-  // Fallback if older rows lack class_on_floor: first 10 by code
-  if (!r.rows.length) {
-    const fallback = await query(
-      `SELECT * FROM classes
-       WHERE department_id = $1 AND year = $2
-       ORDER BY code
-       LIMIT 10`,
-      [manager.department_id, year]
-    );
-    return fallback.rows;
-  }
   return r.rows;
 }
 
 function managerOwnsClassRow(manager, classRow) {
   const year = Number(manager.floor_number) + 1;
   if (!classRow || classRow.department_id !== manager.department_id) return false;
-  if (Number(classRow.year) !== year) return false;
-  const slot = classRow.class_on_floor;
-  if (slot == null) return true;
-  const n = Number(slot);
-  return Number.isFinite(n) && n >= 1 && n <= 10;
+  return Number(classRow.year) === year;
 }
 
 function waSessionId(manager) {
@@ -402,6 +386,94 @@ export async function postFloorWaLogout(req, res) {
   }
 }
 
+/** List WhatsApp groups for this Floor Manager's connected session */
+export async function getFloorWaGroups(req, res) {
+  try {
+    const row = await loadManager(req, res);
+    if (!row) return;
+    const sid = waSessionId(row);
+    const data = await bridgeFetch(sid, "/groups");
+    res.json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(err.status || 503).json({
+      ok: false,
+      error: err.message || "Failed to load groups",
+      groups: [],
+    });
+  }
+}
+
+/** Homework + remarks for a date (for WhatsApp composers) */
+export async function getFloorWaDayContent(req, res) {
+  try {
+    const row = await loadManager(req, res);
+    if (!row) return;
+    const date = normalizeDate(req.query.date);
+    const live = await buildLiveSnapshot(row, date);
+    res.json({
+      date,
+      manager: mapFloorManager(row),
+      summary: live.summary,
+      homework: live.homework || [],
+      remarks: live.remarks || [],
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message || "Failed to load day content" });
+  }
+}
+
+/**
+ * Send text to WhatsApp groups in this Floor Manager's session.
+ * Body: { text, groupIds[], groupNames?, actionType? }
+ */
+export async function postFloorWaSendGroups(req, res) {
+  try {
+    const row = await loadManager(req, res);
+    if (!row) return;
+    const text = String(req.body?.text || "").trim();
+    if (!text) return res.status(400).json({ error: "text required" });
+    const groupIds = Array.isArray(req.body?.groupIds)
+      ? req.body.groupIds.map((g) => String(g || "").trim()).filter(Boolean)
+      : [];
+    if (!groupIds.length) return res.status(400).json({ error: "Select at least one group" });
+    const groupNames = Array.isArray(req.body?.groupNames) ? req.body.groupNames : [];
+
+    const sid = waSessionId(row);
+    const data = await bridgeFetch(sid, "/send-text", {
+      method: "POST",
+      body: JSON.stringify({ text, groupIds }),
+    });
+
+    const actionId = newId("FA");
+    await query(
+      `INSERT INTO floor_action_logs
+         (id, floor_manager_id, class_id, student_id, session_id, action_type, channel, message, recipients, result)
+       VALUES ($1,$2,NULL,NULL,NULL,$3,'whatsapp',$4,$5::jsonb,$6::jsonb)`,
+      [
+        actionId,
+        row.id,
+        String(req.body?.actionType || "group_message").slice(0, 60),
+        text,
+        JSON.stringify(groupIds.map((id, i) => ({ groupId: id, name: groupNames[i] || "" }))),
+        JSON.stringify(data || {}),
+      ]
+    );
+
+    res.json({
+      ok: Boolean(data?.ok),
+      sent: data?.sent || 0,
+      failed: data?.failed || 0,
+      results: data?.results || [],
+      actionId,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(err.status || 500).json({ error: err.message || "Send failed" });
+  }
+}
+
 /**
  * Send WhatsApp messages to parents.
  * Body: { text, recipients: [{ phone, studentId?, name? }], actionType?, classId?, sessionId?, studentId? }
@@ -470,17 +542,24 @@ export async function postFloorWaSend(req, res) {
   }
 }
 
-/** Admin/director: list floor managers + reset password */
+/** Admin/director: list Floor Managers + reset password */
 export async function listFloorManagers(req, res) {
   try {
     const r = await query(
-      `SELECT id, login_code, department_id, floor_number, floor_label, floor_label_ar, must_change_password, updated_at
-       FROM floor_managers
-       ORDER BY department_id, floor_number`
+      `SELECT fm.id, fm.login_code, fm.department_id, fm.floor_number, fm.floor_label, fm.floor_label_ar,
+              fm.must_change_password, fm.updated_at,
+              (
+                SELECT COUNT(*)::int FROM classes c
+                WHERE c.department_id = fm.department_id
+                  AND c.year = (fm.floor_number + 1)
+              ) AS class_count
+       FROM floor_managers fm
+       ORDER BY fm.department_id, fm.floor_number`
     );
     res.json({
       managers: r.rows.map((row) => ({
         ...mapFloorManager(row),
+        classCount: row.class_count || 0,
         updatedAt: row.updated_at,
       })),
     });

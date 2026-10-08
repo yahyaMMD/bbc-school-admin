@@ -285,110 +285,113 @@ app.get("/qr", (_req, res) => {
   res.type("png").sendFile(QR_FILE);
 });
 
+async function collectGroups(waClient) {
+  let groups = [];
+
+  // Primary: library API
+  try {
+    const chats = await waClient.getChats();
+    groups = (chats || [])
+      .filter((c) => c && (c.isGroup || String(c.id?._serialized || "").endsWith("@g.us")))
+      .map((c) => ({
+        id: c.id._serialized,
+        name: c.name || c.id?.user || "Group",
+      }));
+  } catch (err) {
+    console.warn("getChats failed, using Store fallback:", err?.message || err);
+  }
+
+  // Fallback: read plain group list inside the page (avoids Puppeteer clone errors like "r: r")
+  if (!groups.length && waClient.pupPage) {
+    try {
+      await waClient.pupPage.waitForFunction(
+        () =>
+          Boolean(
+            window.require?.("WAWebCollections")?.Chat ||
+              window.Store?.Chat ||
+              window.WWebJS?.getChat
+          ),
+        { timeout: 15000 }
+      );
+    } catch {
+      /* continue anyway */
+    }
+
+    const fromStore = await waClient.pupPage.evaluate(() => {
+      const out = [];
+      const seen = new Set();
+      const push = (id, name) => {
+        const sid = id == null ? "" : String(id);
+        if (!sid.endsWith("@g.us") || seen.has(sid)) return;
+        seen.add(sid);
+        out.push({ id: sid, name: String(name || sid) });
+      };
+
+      const readModels = (models) => {
+        for (const c of models || []) {
+          try {
+            const id =
+              c?.id?._serialized ||
+              (typeof c?.id === "string" ? c.id : "") ||
+              "";
+            const isGroup =
+              Boolean(c?.isGroup) ||
+              c?.id?.server === "g.us" ||
+              (typeof c?.id?.isGroup === "function" && c.id.isGroup()) ||
+              String(id).endsWith("@g.us");
+            if (!isGroup) continue;
+            push(
+              id,
+              c.name || c.formattedTitle || c.contact?.name || c.id?.user
+            );
+          } catch (_) {
+            /* skip one */
+          }
+        }
+      };
+
+      try {
+        const coll = window.require?.("WAWebCollections")?.Chat;
+        if (coll?.getModelsArray) readModels(coll.getModelsArray());
+      } catch (_) {
+        /* next */
+      }
+
+      try {
+        const collection = window.Store?.Chat;
+        const models =
+          (collection?.getModelsArray && collection.getModelsArray()) ||
+          (typeof collection?.map === "function"
+            ? collection.map((c) => c)
+            : null) ||
+          collection?.models ||
+          collection?._models ||
+          [];
+        readModels(models);
+      } catch (_) {
+        /* next */
+      }
+
+      return out;
+    });
+
+    if (Array.isArray(fromStore) && fromStore.length) {
+      groups = fromStore;
+    }
+  }
+
+  groups.sort((a, b) =>
+    String(a.name).localeCompare(String(b.name), undefined, { sensitivity: "base" })
+  );
+  return groups;
+}
+
 app.get("/groups", async (_req, res) => {
   try {
     if (!client || !client.info) {
       return res.status(503).json({ ok: false, error: "WhatsApp not connected yet" });
     }
-
-    let groups = [];
-
-    // Primary: library API
-    try {
-      const chats = await client.getChats();
-      groups = (chats || [])
-        .filter((c) => c && (c.isGroup || String(c.id?._serialized || "").endsWith("@g.us")))
-        .map((c) => ({
-          id: c.id._serialized,
-          name: c.name || c.id?.user || "Group",
-        }));
-    } catch (err) {
-      console.warn("getChats failed, using Store fallback:", err?.message || err);
-    }
-
-    // Fallback: read plain group list inside the page (avoids Puppeteer clone errors like "r: r")
-    if (!groups.length && client.pupPage) {
-      try {
-        await client.pupPage.waitForFunction(
-          () =>
-            Boolean(
-              window.require?.("WAWebCollections")?.Chat ||
-                window.Store?.Chat ||
-                window.WWebJS?.getChat
-            ),
-          { timeout: 15000 }
-        );
-      } catch {
-        /* continue anyway */
-      }
-
-      const fromStore = await client.pupPage.evaluate(() => {
-        const out = [];
-        const seen = new Set();
-        const push = (id, name) => {
-          const sid = id == null ? "" : String(id);
-          if (!sid.endsWith("@g.us") || seen.has(sid)) return;
-          seen.add(sid);
-          out.push({ id: sid, name: String(name || sid) });
-        };
-
-        const readModels = (models) => {
-          for (const c of models || []) {
-            try {
-              const id =
-                c?.id?._serialized ||
-                (typeof c?.id === "string" ? c.id : "") ||
-                "";
-              const isGroup =
-                Boolean(c?.isGroup) ||
-                c?.id?.server === "g.us" ||
-                (typeof c?.id?.isGroup === "function" && c.id.isGroup()) ||
-                String(id).endsWith("@g.us");
-              if (!isGroup) continue;
-              push(
-                id,
-                c.name || c.formattedTitle || c.contact?.name || c.id?.user
-              );
-            } catch (_) {
-              /* skip one */
-            }
-          }
-        };
-
-        try {
-          const coll = window.require?.("WAWebCollections")?.Chat;
-          if (coll?.getModelsArray) readModels(coll.getModelsArray());
-        } catch (_) {
-          /* next */
-        }
-
-        try {
-          const collection = window.Store?.Chat;
-          const models =
-            (collection?.getModelsArray && collection.getModelsArray()) ||
-            (typeof collection?.map === "function"
-              ? collection.map((c) => c)
-              : null) ||
-            collection?.models ||
-            collection?._models ||
-            [];
-          readModels(models);
-        } catch (_) {
-          /* next */
-        }
-
-        return out;
-      });
-
-      if (Array.isArray(fromStore) && fromStore.length) {
-        groups = fromStore;
-      }
-    }
-
-    groups.sort((a, b) =>
-      String(a.name).localeCompare(String(b.name), undefined, { sensitivity: "base" })
-    );
-
+    const groups = await collectGroups(client);
     res.json({ ok: true, groups, count: groups.length });
   } catch (err) {
     console.error("groups failed", err);
@@ -1441,6 +1444,22 @@ app.post("/s/:sessionId/logout", async (req, res) => {
     res.json({ ok: true, ...status });
   } catch (err) {
     res.status(err.status || 500).json({ ok: false, error: err.message || String(err) });
+  }
+});
+
+app.get("/s/:sessionId/groups", async (req, res) => {
+  try {
+    const sid = sanitizeSessionId(req.params.sessionId);
+    const state = namedSessions.get(sid);
+    const c = state?.client;
+    if (!c || !c.info) {
+      return res.status(503).json({ ok: false, error: "WhatsApp not connected yet" });
+    }
+    const groups = await collectGroups(c);
+    res.json({ ok: true, groups, count: groups.length });
+  } catch (err) {
+    console.error("named groups failed", err);
+    res.status(500).json({ ok: false, error: err?.message || String(err) });
   }
 });
 

@@ -31,7 +31,29 @@ function mapAnnouncement(r) {
     sentAt: r.sent_at || null,
     createdBy: r.created_by || "admin",
     createdAt: r.created_at,
+    waPhone: r.wa_phone || "",
   };
+}
+
+function normalizeWaPhone(raw) {
+  const s = String(raw || "").trim();
+  if (!s) return "";
+  // Bridge may return "213…" or "213…@c.us"
+  return s.replace(/@.*$/, "").replace(/\D/g, "") || s;
+}
+
+async function currentWaAccount() {
+  try {
+    const status = await bridgeFetch("/health");
+    if (!status?.ready) return { ready: false, phone: "", pushname: "" };
+    return {
+      ready: true,
+      phone: normalizeWaPhone(status.phone),
+      pushname: String(status.pushname || "").trim(),
+    };
+  } catch {
+    return { ready: false, phone: "", pushname: "" };
+  }
 }
 
 async function bridgeFetch(path, options = {}) {
@@ -81,7 +103,7 @@ function parseScheduleInput(body) {
   return d;
 }
 
-async function deliverImageToGroups({ imageUrl, groupIds, groupNames, text, createdBy, announcementId }) {
+async function deliverImageToGroups({ imageUrl, groupIds, groupNames, text, createdBy, announcementId, waPhone }) {
   const abs = absoluteUploadPath(imageUrl);
   if (!abs || !fs.existsSync(abs)) {
     const err = new Error("Image file not found on server");
@@ -113,6 +135,7 @@ async function deliverImageToGroups({ imageUrl, groupIds, groupNames, text, crea
 
   const status =
     bridgeResult.failed === 0 ? "sent" : bridgeResult.sent > 0 ? "partial" : "failed";
+  const phone = normalizeWaPhone(waPhone);
 
   if (announcementId) {
     await query(
@@ -120,9 +143,10 @@ async function deliverImageToGroups({ imageUrl, groupIds, groupNames, text, crea
        SET status = $2,
            send_results = $3::jsonb,
            scheduled_at = NULL,
-           sent_at = NOW()
+           sent_at = NOW(),
+           wa_phone = CASE WHEN BTRIM(wa_phone) = '' AND $4 <> '' THEN $4 ELSE wa_phone END
        WHERE id = $1`,
-      [announcementId, status, JSON.stringify(bridgeResult.results || [])]
+      [announcementId, status, JSON.stringify(bridgeResult.results || []), phone]
     );
     const row = await query("SELECT * FROM announcements WHERE id = $1", [announcementId]);
     return { bridgeResult, status, announcement: mapAnnouncement(row.rows[0]) };
@@ -131,8 +155,8 @@ async function deliverImageToGroups({ imageUrl, groupIds, groupNames, text, crea
   const id = sid("ANN");
   await query(
     `INSERT INTO announcements (
-      id, text, image_path, group_ids, group_names, status, send_results, created_by, scheduled_at, sent_at
-    ) VALUES ($1,$2,$3,$4::jsonb,$5::jsonb,$6,$7::jsonb,$8,NULL,NOW())`,
+      id, text, image_path, group_ids, group_names, status, send_results, created_by, scheduled_at, sent_at, wa_phone
+    ) VALUES ($1,$2,$3,$4::jsonb,$5::jsonb,$6,$7::jsonb,$8,NULL,NOW(),$9)`,
     [
       id,
       text || "",
@@ -142,6 +166,7 @@ async function deliverImageToGroups({ imageUrl, groupIds, groupNames, text, crea
       status,
       JSON.stringify(bridgeResult.results || []),
       createdBy || "whatsapp",
+      phone,
     ]
   );
   const row = await query("SELECT * FROM announcements WHERE id = $1", [id]);
@@ -150,12 +175,18 @@ async function deliverImageToGroups({ imageUrl, groupIds, groupNames, text, crea
 
 export async function listAnnouncements(_req, res) {
   try {
+    const account = await currentWaAccount();
+    if (!account.ready || !account.phone) {
+      return res.json([]);
+    }
     const r = await query(
       `SELECT * FROM announcements
+       WHERE wa_phone = $1
        ORDER BY
          CASE WHEN status = 'scheduled' THEN 0 ELSE 1 END,
          COALESCE(scheduled_at, created_at) DESC
-       LIMIT 200`
+       LIMIT 200`,
+      [account.phone]
     );
     res.json(r.rows.map(mapAnnouncement));
   } catch (err) {
@@ -166,7 +197,14 @@ export async function listAnnouncements(_req, res) {
 
 export async function getAnnouncement(req, res) {
   try {
-    const r = await query("SELECT * FROM announcements WHERE id = $1", [req.params.id]);
+    const account = await currentWaAccount();
+    if (!account.ready || !account.phone) {
+      return res.status(404).json({ error: "Not found" });
+    }
+    const r = await query(
+      `SELECT * FROM announcements WHERE id = $1 AND wa_phone = $2`,
+      [req.params.id, account.phone]
+    );
     if (!r.rows.length) return res.status(404).json({ error: "Not found" });
     res.json(mapAnnouncement(r.rows[0]));
   } catch (err) {
@@ -300,12 +338,17 @@ export async function sendAnnouncement(req, res) {
       return res.status(400).json({ error: "Image file not found on server" });
     }
 
+    const account = await currentWaAccount();
+    if (!account.ready || !account.phone) {
+      return res.status(503).json({ error: "WhatsApp not connected" });
+    }
+
     if (scheduleAt) {
       const id = sid("ANN");
       await query(
         `INSERT INTO announcements (
-          id, text, image_path, group_ids, group_names, status, send_results, created_by, scheduled_at
-        ) VALUES ($1,$2,$3,$4::jsonb,$5::jsonb,'scheduled','[]'::jsonb,$6,$7)`,
+          id, text, image_path, group_ids, group_names, status, send_results, created_by, scheduled_at, wa_phone
+        ) VALUES ($1,$2,$3,$4::jsonb,$5::jsonb,'scheduled','[]'::jsonb,$6,$7,$8)`,
         [
           id,
           text,
@@ -314,6 +357,7 @@ export async function sendAnnouncement(req, res) {
           JSON.stringify(groupNames),
           req.user?.role || "whatsapp",
           scheduleAt.toISOString(),
+          account.phone,
         ]
       );
       const row = await query("SELECT * FROM announcements WHERE id = $1", [id]);
@@ -330,6 +374,7 @@ export async function sendAnnouncement(req, res) {
       groupNames,
       text,
       createdBy: req.user?.role || "whatsapp",
+      waPhone: account.phone,
     });
 
     res.status(201).json({
@@ -350,7 +395,14 @@ export async function sendAnnouncement(req, res) {
 export async function cancelAnnouncement(req, res) {
   try {
     const id = String(req.params.id || "");
-    const r = await query("SELECT * FROM announcements WHERE id = $1", [id]);
+    const account = await currentWaAccount();
+    if (!account.ready || !account.phone) {
+      return res.status(503).json({ error: "WhatsApp not connected" });
+    }
+    const r = await query(
+      `SELECT * FROM announcements WHERE id = $1 AND wa_phone = $2`,
+      [id, account.phone]
+    );
     if (!r.rows.length) return res.status(404).json({ error: "Not found" });
     if (r.rows[0].status !== "scheduled") {
       return res.status(400).json({ error: "Only scheduled announcements can be cancelled" });
@@ -396,6 +448,7 @@ async function processDueSchedules() {
           text: row.text || "",
           createdBy: row.created_by,
           announcementId: row.id,
+          waPhone: row.wa_phone || "",
         });
         console.log("Scheduled announcement sent:", row.id);
       } catch (err) {

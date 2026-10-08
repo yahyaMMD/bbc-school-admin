@@ -1268,6 +1268,11 @@ const AdminApp = (() => {
     studentFilter?.querySelector('[name="filter"]')?.addEventListener("change", () => {
       applyStudentFilters();
     });
+    let studentQTimer = null;
+    studentFilter?.querySelector('[name="q"]')?.addEventListener("input", () => {
+      clearTimeout(studentQTimer);
+      studentQTimer = setTimeout(() => applyStudentFilters(), 280);
+    });
 
     root.querySelector("#admin-teacher-search")?.addEventListener("submit", (e) => {
       e.preventDefault();
@@ -1277,6 +1282,24 @@ const AdminApp = (() => {
         if (b[k]) qs.set(k, b[k]);
       });
       go("/manage/teachers" + (qs.toString() ? `?${qs}` : ""));
+    });
+    const teacherFilter = root.querySelector("#admin-teacher-search");
+    const applyTeacherFilters = () => {
+      if (!teacherFilter) return;
+      const b = formData(teacherFilter);
+      const qs = new URLSearchParams();
+      ["q", "dept", "module", "filter"].forEach((k) => {
+        if (b[k]) qs.set(k, b[k]);
+      });
+      go("/manage/teachers" + (qs.toString() ? `?${qs}` : ""));
+    };
+    teacherFilter?.querySelector('[name="dept"]')?.addEventListener("change", applyTeacherFilters);
+    teacherFilter?.querySelector('[name="module"]')?.addEventListener("change", applyTeacherFilters);
+    teacherFilter?.querySelector('[name="filter"]')?.addEventListener("change", applyTeacherFilters);
+    let teacherQTimer = null;
+    teacherFilter?.querySelector('[name="q"]')?.addEventListener("input", () => {
+      clearTimeout(teacherQTimer);
+      teacherQTimer = setTimeout(applyTeacherFilters, 280);
     });
 
     root.querySelector("#admin-student-create")?.addEventListener("submit", (e) => {
@@ -1576,7 +1599,44 @@ const AdminApp = (() => {
             return cycleFromLevel(levelOf(s));
           };
 
-          const classMetaOf = (s) => (s.studentId ? classIndex.byStudent[s.studentId] || null : null);
+          const classMetaOf = (s) => {
+            if (s.studentId && classIndex.byStudent[s.studentId]) {
+              return classIndex.byStudent[s.studentId];
+            }
+            // Infer class for unlinked forms from level text (e.g. 1AP3, 2م1, 1M2)
+            const level = String(levelOf(s) || "");
+            const codeMatch =
+              level.match(/(\d)\s*[AaPp]\s*(\d{1,2})/) ||
+              level.match(/(\d)\s*م\s*(\d{1,2})/) ||
+              level.match(/(\d)\s*[Mm]\s*(\d{1,2})/);
+            if (!codeMatch) return null;
+            const year = Number(codeMatch[1]);
+            const num = Number(codeMatch[2]);
+            const cycle = /م|[Mm]iddle|moyen|متوسط/.test(level) || /م/.test(codeMatch[0])
+              ? "middle"
+              : cycleFromLevel(level) || "primary";
+            const wantCode =
+              cycle === "middle" ? `${year}M${num}` : `${year}P${String(num).padStart(2, "0")}`;
+            const altCode = cycle === "middle" ? `${year}M${String(num).padStart(2, "0")}` : `${year}AP${num}`;
+            const hit = classIndex.classes.find(
+              (c) =>
+                c.cycle === cycle &&
+                (c.code === wantCode ||
+                  c.code === altCode ||
+                  c.code === `${year}P${num}` ||
+                  String(c.label || "").includes(`${year}م${num}`) ||
+                  String(c.label || "").includes(`${year}AP${num}`))
+            );
+            return hit
+              ? {
+                  classId: hit.id,
+                  cycle: hit.cycle,
+                  classLabel: hit.label,
+                  classCode: hit.code,
+                  inferred: true,
+                }
+              : null;
+          };
 
           const csvEscape = (v) => {
             const t = String(v ?? "");
@@ -1727,12 +1787,37 @@ const AdminApp = (() => {
             if (state.classId) {
               rows = rows.filter((s) => classMetaOf(s)?.classId === state.classId);
             }
+            if (state.status) {
+              rows = rows.filter((s) => (s.status || "new") === state.status);
+            }
+            if (state.sex) {
+              rows = rows.filter((s) => sexOf(s) === state.sex);
+            }
+            if (state.idDoc === "yes") {
+              rows = rows.filter((s) => !!s.hasCompanionId);
+            } else if (state.idDoc === "no") {
+              rows = rows.filter((s) => !s.hasCompanionId);
+            }
+            if (state.dateFrom) {
+              const from = new Date(state.dateFrom).getTime();
+              rows = rows.filter((s) => new Date(s.createdAt || 0).getTime() >= from);
+            }
+            if (state.dateTo) {
+              const to = new Date(state.dateTo);
+              to.setHours(23, 59, 59, 999);
+              rows = rows.filter((s) => new Date(s.createdAt || 0).getTime() <= to.getTime());
+            }
             if (q) {
               rows = rows.filter((s) => {
                 const hay = [
                   studentNameOf(s),
+                  s.id,
+                  s.studentId,
+                  s.phonePrimary,
                   s.formData?.father?.name,
                   s.formData?.mother?.name,
+                  levelOf(s),
+                  classMetaOf(s)?.classCode,
                 ]
                   .filter(Boolean)
                   .join(" ")
@@ -1740,20 +1825,48 @@ const AdminApp = (() => {
                 return hay.includes(q);
               });
             }
-            rows.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+            const sort = state.sort || "newest";
+            rows.sort((a, b) => {
+              if (sort === "oldest") {
+                return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
+              }
+              if (sort === "name") {
+                return studentNameOf(a).localeCompare(studentNameOf(b), "ar");
+              }
+              if (sort === "level") {
+                return String(levelOf(a) || "").localeCompare(String(levelOf(b) || ""), "ar");
+              }
+              return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+            });
             return rows;
           };
 
           const readState = () => {
             const form = pfRoot.querySelector("#admin-pf-filter");
             if (!form) {
-              return { q: "", cycle: "", classId: "" };
+              return {
+                q: "",
+                cycle: "",
+                classId: "",
+                status: "",
+                sex: "",
+                idDoc: "",
+                sort: "newest",
+                dateFrom: "",
+                dateTo: "",
+              };
             }
             const fd = new FormData(form);
             return {
               q: String(fd.get("q") || ""),
               cycle: String(fd.get("cycle") || ""),
               classId: String(fd.get("classId") || ""),
+              status: String(fd.get("status") || ""),
+              sex: String(fd.get("sex") || ""),
+              idDoc: String(fd.get("idDoc") || ""),
+              sort: String(fd.get("sort") || "newest"),
+              dateFrom: String(fd.get("dateFrom") || ""),
+              dateTo: String(fd.get("dateTo") || ""),
             };
           };
 
@@ -1863,6 +1976,36 @@ const AdminApp = (() => {
                   <select name="classId" aria-label="${esc(I18n.t("parentFormsClassHint"))}">
                     ${classOptionsHtml("", "")}
                   </select>
+                  <select name="status" aria-label="${esc(I18n.t("parentFormsAllStatuses"))}">
+                    <option value="">${esc(I18n.t("parentFormsAllStatuses"))}</option>
+                    <option value="new">${esc(I18n.t("parentFormsStatusNew"))}</option>
+                    <option value="reviewed">${esc(I18n.t("parentFormsStatusReviewed"))}</option>
+                    <option value="linked">${esc(I18n.t("parentFormsStatusLinked"))}</option>
+                  </select>
+                  <select name="sex" aria-label="${esc(I18n.t("parentFormsAllSex"))}">
+                    <option value="">${esc(I18n.t("parentFormsAllSex"))}</option>
+                    <option value="male">${esc(I18n.t("parentFormsSexMale"))}</option>
+                    <option value="female">${esc(I18n.t("parentFormsSexFemale"))}</option>
+                  </select>
+                  <select name="idDoc" aria-label="${esc(I18n.t("parentFormsIdAny"))}">
+                    <option value="">${esc(I18n.t("parentFormsIdAny"))}</option>
+                    <option value="yes">${esc(I18n.t("parentFormsIdYes"))}</option>
+                    <option value="no">${esc(I18n.t("parentFormsIdNo"))}</option>
+                  </select>
+                  <select name="sort" aria-label="${esc(I18n.t("parentFormsSortNewest"))}">
+                    <option value="newest">${esc(I18n.t("parentFormsSortNewest"))}</option>
+                    <option value="oldest">${esc(I18n.t("parentFormsSortOldest"))}</option>
+                    <option value="name">${esc(I18n.t("parentFormsSortName"))}</option>
+                    <option value="level">${esc(I18n.t("parentFormsSortLevel"))}</option>
+                  </select>
+                  <label class="admin-field" style="margin:0">
+                    <span class="muted" style="font-size:0.75rem">${esc(I18n.t("parentFormsDateFrom"))}</span>
+                    <input type="date" name="dateFrom" />
+                  </label>
+                  <label class="admin-field" style="margin:0">
+                    <span class="muted" style="font-size:0.75rem">${esc(I18n.t("parentFormsDateTo"))}</span>
+                    <input type="date" name="dateTo" />
+                  </label>
                   <button type="submit" class="btn btn-primary btn-sm">${esc(I18n.t("parentFormsApply"))}</button>
                   <button type="button" class="btn btn-ghost btn-sm" data-pf-reset>${esc(I18n.t("parentFormsReset"))}</button>
                   <button type="button" class="btn btn-primary btn-sm" data-pf-export>${esc(I18n.t("parentFormsExport"))}</button>
@@ -1883,6 +2026,12 @@ const AdminApp = (() => {
                 render();
               });
               form.querySelector("select[name='classId']")?.addEventListener("change", () => render());
+              form.querySelector("select[name='status']")?.addEventListener("change", () => render());
+              form.querySelector("select[name='sex']")?.addEventListener("change", () => render());
+              form.querySelector("select[name='idDoc']")?.addEventListener("change", () => render());
+              form.querySelector("select[name='sort']")?.addEventListener("change", () => render());
+              form.querySelector("input[name='dateFrom']")?.addEventListener("change", () => render());
+              form.querySelector("input[name='dateTo']")?.addEventListener("change", () => render());
               let searchTimer = null;
               form.querySelector("input[name='q']")?.addEventListener("input", () => {
                 clearTimeout(searchTimer);
@@ -2208,6 +2357,18 @@ const AdminApp = (() => {
               <button type="button" class="btn btn-primary btn-sm" data-pf-mark="reviewed">${esc(I18n.t("parentMarkReviewed"))}</button>
               <button type="button" class="btn btn-ghost btn-sm" data-nav="#/manage/parent-forms">${esc(I18n.t("back"))}</button>
             </div>
+            <div class="info-panel" style="margin-top:1rem" data-pf-link-panel>
+              <div class="panel-label">${esc(I18n.t("parentFormsLinkStudent") || "Link to student")}</div>
+              <p class="muted" style="margin:0.35rem 0">${esc(s.studentId ? `${I18n.t("parentFormsStatusLinked")}: ${s.studentId}` : I18n.t("parentFormsNotLinked") || "Not linked yet")}</p>
+              <form id="admin-pf-link" class="admin-filter-bar admin-filter-bar-wrap" style="margin-top:0.5rem">
+                <input type="search" name="studentId" placeholder="${esc(I18n.t("parentFormsStudentId") || "Student ID")}" value="${esc(s.studentId || "")}" required autocomplete="off" />
+                <label class="admin-check" style="display:flex;align-items:center;gap:0.35rem">
+                  <input type="checkbox" name="updateNames" value="1" />
+                  <span>${esc(I18n.t("parentFormsUpdateNames") || "Update student name from form")}</span>
+                </label>
+                <button type="submit" class="btn btn-primary btn-sm">${esc(I18n.t("parentFormsLink") || "Link")}</button>
+              </form>
+            </div>
             <p class="ann-status" data-pf-msg hidden></p>
           `;
           pfDetail.querySelectorAll("[data-nav]").forEach((el) => {
@@ -2215,6 +2376,33 @@ const AdminApp = (() => {
               const target = el.getAttribute("data-nav");
               if (target) go(target);
             });
+          });
+
+          pfDetail.querySelector("#admin-pf-link")?.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const msg = pfDetail.querySelector("[data-pf-msg]");
+            const fd = new FormData(e.target);
+            const studentId = String(fd.get("studentId") || "").trim();
+            const updateNames = !!fd.get("updateNames");
+            try {
+              if (msg) {
+                msg.hidden = false;
+                msg.textContent = "…";
+              }
+              await BBC_API.post("/parent-form/link", {
+                submissionId: sid,
+                studentId,
+                fillGapsOnly: true,
+                updateNames,
+              });
+              if (msg) msg.textContent = I18n.t("saved") || "Saved";
+              go(`#/manage/parent-forms/${encodeURIComponent(sid)}`);
+            } catch (err) {
+              if (msg) {
+                msg.hidden = false;
+                msg.textContent = err.message || "Failed";
+              }
+            }
           });
 
           const renderIdPreview = async () => {

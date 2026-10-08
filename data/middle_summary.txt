@@ -1,0 +1,41 @@
+Middle school rosters extracted from PNG images (img_01.png – img_19.png)
+Source: data/rosters/
+Academic year on forms: 2026/2027  |  Form date: 9/20/2026
+School: متوسطة م خ جودة التعليم الخاصة - الشراقة
+
+Extraction rules: values taken from printed cells only; blank DOB left empty; no invented names.
+Class codes verified via magnified OCR of القسم field (RTL yearمsection form).
+
+Image        Code                      F    M  Tot   Roster rows
+----------------------------------------------------------------------
+img_01.png   1م3                      11   13   24            24
+img_02.png   (blank)                  11   10   21            21
+img_03.png   3م5                      14    8   22            22
+img_04.png   3م3                      10   15   25            25
+img_05.png   4م4                       7   13   20            20
+img_06.png   الثانية متوسط 5          16   10   26            26
+img_07.png   1م5                      14   11   25            25
+img_08.png   3م4                      10   11   21            21
+img_09.png   الثانية متوسط 2          13   12   25            25
+img_10.png   1م4                      15    9   24            25  *stats≠rows
+img_11.png   2م4                      12   12   24            26  *stats≠rows
+img_12.png   4م2                      12   10   22            22
+img_13.png   3م1                       9   11   20            20
+img_14.png   الثانية متوسط 1          11   13   24            24
+img_15.png   4م1                      14   11   25            25
+img_16.png   1م7                      11   11   22            22
+img_17.png   2م3                      11   14   25            25
+img_18.png   1م6                      14    9   23            23
+img_19.png   4م3                      14    7   21            21
+----------------------------------------------------------------------
+Classes: 19
+Printed stats sum: F=229 M=210 Total=439
+Roster rows extracted: 442
+
+Notes:
+- img_02: القسم field is blank on the form.
+- img_06/09/14: class written as 'الثانية متوسط N' (not NmN form).
+- img_10: printed total 24 vs 25 named rows on the sheet.
+- img_11: printed total 24 vs 26 visible name rows (incl. red row + #25).
+- Some gender cells disagree with typical name gender; values kept as printed.
+- Output JSON: data/middle_from_images.json

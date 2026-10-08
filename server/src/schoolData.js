@@ -44,6 +44,7 @@ function mapStudent(r) {
 }
 
 function mapClass(r, students) {
+  students = Array.isArray(students) ? students : [];
   const stats = r.stats || {};
   const total = students.length;
   return {
@@ -67,6 +68,7 @@ function mapClass(r, students) {
     },
     teacherIds: r.teacher_ids || [],
     modules: r.modules || [],
+    defaultShift: r.default_shift || "",
     students,
   };
 }
@@ -131,24 +133,40 @@ export async function buildSchoolData() {
 
   const primaryStudents = studentsRes.rows.filter((s) => s.department_id === "primary").length;
   const middleStudents = studentsRes.rows.filter((s) => s.department_id === "middle").length;
+  const preschoolStudents = studentsRes.rows.filter((s) => s.department_id === "preschool").length;
   const primaryClasses = classesRes.rows.filter((c) => c.department_id === "primary").length;
   const middleClasses = classesRes.rows.filter((c) => c.department_id === "middle").length;
+  const preschoolClasses = classesRes.rows.filter((c) => c.department_id === "preschool").length;
+
+  const preschoolMeta = base.preschool || {
+    id: "preschool",
+    name: "Preschool Department",
+    label: "Préscolaire",
+    description: "Grande Section — Arabic & English",
+    image: "assets/preschool-department.png",
+    levels: [{ id: 0, name: "Grande Section", nameAr: "التحضيري", subtitle: "GS A–F" }],
+  };
+  if (!preschoolMeta.image) preschoolMeta.image = "assets/preschool-department.png";
 
   return {
     school: base.school,
     primaryModules: base.primaryModules,
     middleModules: base.middleModules,
+    preschoolModules: base.preschoolModules || ["Arabic", "English"],
     teachers: teachersRes.rows.map(mapTeacher),
     primary: attachDept(base.primary),
     middle: attachDept(base.middle),
+    preschool: attachDept(preschoolMeta),
     meta: {
       ...(base.meta || {}),
       primaryClasses,
       middleClasses,
+      preschoolClasses,
       primaryStudents,
       middleStudents,
+      preschoolStudents,
       teachers: teachersRes.rows.length,
-      totalStudents: primaryStudents + middleStudents,
+      totalStudents: primaryStudents + middleStudents + preschoolStudents,
       live: true,
     },
     operationsIssues: issuesRes.rows.map(mapIssue),

@@ -286,13 +286,17 @@ const TeacherApp = (() => {
       I18n.t("myClasses"),
       I18n.t("myClassesLede", { name: teacherLabel(t), n: classes.length }),
       `
-      <div class="teacher-class-grid">
+      <div class="teacher-toolbar" style="margin-bottom:0.85rem">
+        <input type="search" id="teacher-class-search" class="admin-filter-bar" style="width:100%;max-width:28rem;padding:0.55rem 0.75rem;border-radius:10px;border:1px solid var(--border, #d8dde6)" placeholder="${esc(I18n.t("searchClasses") || "Search classes…")}" autocomplete="off" />
+      </div>
+      <div id="teacher-tt-host" class="tt-host" data-tt="teacher" style="margin-bottom:1rem"></div>
+      <div class="teacher-class-grid" id="teacher-class-grid">
         ${
           classes.length
             ? classes
                 .map(
                   (c) => `
-            <button type="button" class="teacher-class-card" data-nav="#/my/class/${esc(c.id)}">
+            <button type="button" class="teacher-class-card" data-nav="#/my/class/${esc(c.id)}" data-class-q="${esc(`${c.code || ""} ${classLabel(c)} ${c.year || ""}`.toLowerCase())}">
               <strong>${esc(classLabel(c))}</strong>
               <span class="muted">${esc(c.code || "")}${c.year ? ` · ${esc(I18n.t("year"))} ${esc(c.year)}` : ""}</span>
               <span class="teacher-class-count">${esc(I18n.t("studentsCount", { n: c.studentCount || 0 }))}</span>
@@ -318,9 +322,13 @@ const TeacherApp = (() => {
       <div class="page-header" style="margin-bottom:0.75rem">
         <button type="button" class="btn btn-ghost" data-nav="#/my" style="padding-left:0">${esc(I18n.t("backToClasses"))}</button>
       </div>
+      <div id="teacher-class-tt-host" class="tt-host" data-tt="class" data-class-id="${esc(classId)}" style="margin-bottom:1rem"></div>
       <div class="teacher-class-actions">
         <button type="button" class="btn btn-primary" data-nav="#/my/class/${esc(classId)}/day?date=${esc(today)}">${esc(I18n.t("openDailyRegister"))}</button>
         <p class="muted teacher-class-actions-hint">${esc(I18n.t("dailyRegisterHint"))}</p>
+      </div>
+      <div class="teacher-toolbar" style="margin:0.75rem 0">
+        <input type="search" id="teacher-roster-search" style="width:100%;max-width:28rem;padding:0.55rem 0.75rem;border-radius:10px;border:1px solid var(--border, #d8dde6)" placeholder="${esc(I18n.t("searchStudents") || "Search students…")}" autocomplete="off" />
       </div>
       <div class="student-table-wrap">
         <table class="student-table">
@@ -340,7 +348,7 @@ const TeacherApp = (() => {
                 ? students
                     .map(
                       (s) => `
-              <tr>
+              <tr data-roster-q="${esc(`${s.id || ""} ${studentLabel(s)} ${s.fullNameLatin || ""} ${s.number ?? ""}`.toLowerCase())}">
                 <td>${s.number ?? "—"}</td>
                 <td>${avatarHtml(s, "student")}</td>
                 <td dir="auto"><strong>${esc(studentLabel(s))}</strong></td>
@@ -738,6 +746,59 @@ const TeacherApp = (() => {
   function bind(root, go) {
     if (window.QEAPhoto && typeof window.QEAPhoto.bind === "function") {
       window.QEAPhoto.bind(root);
+    }
+
+    root.querySelector("#teacher-class-search")?.addEventListener("input", (e) => {
+      const q = String(e.target.value || "")
+        .toLowerCase()
+        .trim();
+      root.querySelectorAll("#teacher-class-grid [data-class-q]").forEach((el) => {
+        const hay = el.getAttribute("data-class-q") || "";
+        el.hidden = Boolean(q && !hay.includes(q));
+      });
+    });
+    root.querySelector("#teacher-roster-search")?.addEventListener("input", (e) => {
+      const q = String(e.target.value || "")
+        .toLowerCase()
+        .trim();
+      root.querySelectorAll("[data-roster-q]").forEach((el) => {
+        const hay = el.getAttribute("data-roster-q") || "";
+        el.hidden = Boolean(q && !hay.includes(q));
+      });
+    });
+
+    // Load teacher / class timetables when hosts are present
+    const loadTt = async (host, url, renderOpts = {}) => {
+      if (!host || host.dataset.loaded === "1") return;
+      try {
+        host.hidden = false;
+        host.innerHTML = `<p class="muted">${esc(I18n.t("loading") || "…")}</p>`;
+        const data = await BBC_API.get(url);
+        host.innerHTML = window.QEATimetable
+          ? window.QEATimetable.renderGrid(data, renderOpts)
+          : `<p class="muted">${esc(I18n.t("ttEmpty") || "No timetable")}</p>`;
+        host.dataset.loaded = "1";
+      } catch (err) {
+        host.innerHTML = `<p class="muted">${esc(err.message || "")}</p>`;
+      }
+    };
+    const teacherTt = root.querySelector('[data-tt="teacher"]');
+    if (teacherTt) {
+      loadTt(teacherTt, "/timetable/me", {
+        title: I18n.t("teacherTimetable") || "My weekly timetable",
+        showClass: true,
+      });
+    }
+    const classTt = root.querySelector('[data-tt="class"]');
+    if (classTt) {
+      const cid = classTt.getAttribute("data-class-id");
+      if (cid) {
+        loadTt(classTt, `/timetable/me?classId=${encodeURIComponent(cid)}`, {
+          title: I18n.t("myClassTimetable") || "My schedule in this class",
+          classId: cid,
+          showClass: false,
+        });
+      }
     }
 
     root.querySelectorAll("[data-exit-impersonation]").forEach((btn) => {

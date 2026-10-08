@@ -39,8 +39,8 @@ const BBC_API = (() => {
 
   async function enterAsTeacher(teacherId) {
     const role = getRole();
-    if (role !== "director" && role !== "admin") {
-      throw new Error("Only director can open a teacher portal");
+    if (role !== "director") {
+      throw new Error("Only the director can open a teacher portal");
     }
     sessionStorage.setItem(
       RESTORE_KEY,
@@ -76,21 +76,40 @@ const BBC_API = (() => {
     const headers = Object.assign({ "Content-Type": "application/json" }, options.headers || {});
     const token = getToken();
     if (token) headers.Authorization = `Bearer ${token}`;
-    const res = await fetch(`/api${path}`, { ...options, headers });
-    const text = await res.text();
-    let data = null;
+    const attempt = async () => {
+      const res = await fetch(`/api${path}`, { ...options, headers });
+      const text = await res.text();
+      let data = null;
+      try {
+        data = text ? JSON.parse(text) : null;
+      } catch {
+        // nginx/HTML errors (502 etc.) — keep message short
+        const looksHtml = /<!DOCTYPE|<html/i.test(text || "");
+        const msg = looksHtml
+          ? res.status === 502
+            ? "Server temporarily unavailable (502). Please retry."
+            : `Request failed (${res.status})`
+          : text || res.statusText;
+        data = { error: msg };
+      }
+      if (!res.ok) {
+        const err = new Error((data && data.error) || res.statusText || "Request failed");
+        err.status = res.status;
+        err.data = data;
+        throw err;
+      }
+      return data;
+    };
     try {
-      data = text ? JSON.parse(text) : null;
-    } catch {
-      data = { error: text || res.statusText };
-    }
-    if (!res.ok) {
-      const err = new Error((data && data.error) || res.statusText || "Request failed");
-      err.status = res.status;
-      err.data = data;
+      return await attempt();
+    } catch (err) {
+      // One retry on gateway/restart blips
+      if (err && (err.status === 502 || err.status === 503 || err.status === 504)) {
+        await new Promise((r) => setTimeout(r, 800));
+        return attempt();
+      }
       throw err;
     }
-    return data;
   }
 
   async function login(password, roleHint, phone, loginCode) {

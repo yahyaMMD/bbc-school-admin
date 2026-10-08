@@ -34,6 +34,7 @@
   function deptShortLabel(deptId) {
     if (deptId === "primary") return I18n.t("primary");
     if (deptId === "middle") return I18n.t("middle");
+    if (deptId === "preschool") return I18n.t("preschool");
     return DEPT_SHORT[deptId] || deptId;
   }
 
@@ -41,6 +42,7 @@
     if (!dept) return "—";
     if (dept.id === "primary") return I18n.t("primaryDept");
     if (dept.id === "middle") return I18n.t("middleDept");
+    if (dept.id === "preschool") return I18n.t("preschoolDept");
     return dept.label || dept.name || "—";
   }
 
@@ -261,34 +263,44 @@
     const hash = (location.hash || "").replace(/^#/, "") || "/";
     const onManage = hash === "/manage" || hash.startsWith("/manage/");
     const onWa = hash === "/whatsapp" || hash.startsWith("/whatsapp/");
+    const onPreschool = hash === "/preschool" || hash.startsWith("/preschool/");
     const onEnterTeacher = hash === "/enter-teacher" || hash.startsWith("/enter-teacher");
-    const isStaff = Auth.isAdmin() || (Auth.isDirector() && onManage);
-    const isWa = Auth.isWhatsApp() || (Auth.isDirector() && onWa);
+    const isStaff = Auth.isAdmin() || (Auth.isGlobalView() && onManage);
+    const isWa = Auth.isWhatsApp() || (Auth.isGlobalView() && onWa);
+    const isPreschool = Auth.isPreschool() || (Auth.isGlobalView() && onPreschool);
     const isTeacher = Auth.isTeacher();
+    const isFloor = Auth.isFloor();
     const isDirector = Auth.isDirector();
     const impersonating = Auth.isImpersonating();
-    const homeNav = Auth.isAdmin()
-      ? "#/manage"
-      : Auth.isWhatsApp()
-        ? "#/whatsapp"
-        : isTeacher
-          ? "#/my"
-          : "#/home";
+    const lockedRole =
+      isTeacher || isFloor || Auth.isAdmin() || Auth.isWhatsApp() || Auth.isPreschool();
+    const homeNav = `#${Auth.homePath()}`;
     const subtitle = Auth.isAdmin()
       ? I18n.t("adminConsole")
       : Auth.isWhatsApp()
         ? I18n.t("whatsappConsole")
-        : isTeacher
-          ? I18n.t("teacherPortal")
-          : I18n.t("portal");
+        : Auth.isPreschool()
+          ? I18n.t("preschoolPortal")
+          : isTeacher
+            ? I18n.t("teacherPortal")
+            : isFloor
+              ? I18n.t("floorPortal")
+              : I18n.t("portal");
 
     const directorNav =
       isDirector && !impersonating
-        ? `<nav class="director-navbar" aria-label="${esc(I18n.t("otherInterfaces"))}">
+        ? Auth.isGlobalView()
+          ? `<nav class="director-navbar" aria-label="${esc(I18n.t("otherInterfaces"))}">
             <button type="button" class="director-nav-btn${hash === "/home" || hash === "/" || hash === "" ? " is-active" : ""}" data-nav="#/home">${esc(I18n.t("home"))}</button>
             <button type="button" class="director-nav-btn${onManage ? " is-active" : ""}" data-nav="#/manage">${esc(I18n.t("openManage"))}</button>
             <button type="button" class="director-nav-btn${onWa ? " is-active" : ""}" data-nav="#/whatsapp">${esc(I18n.t("openWhatsapp"))}</button>
+            <button type="button" class="director-nav-btn${onPreschool ? " is-active" : ""}" data-nav="#/preschool">${esc(I18n.t("openPreschool"))}</button>
             <button type="button" class="director-nav-btn${onEnterTeacher ? " is-active" : ""}" data-nav="#/enter-teacher">${esc(I18n.t("openTeacherPortals"))}</button>
+          </nav>`
+          : `<nav class="director-navbar" aria-label="${esc(I18n.t("home"))}">
+            <button type="button" class="director-nav-btn${hash === "/home" || hash === "/" || hash === "" ? " is-active" : ""}" data-nav="#/home">${esc(I18n.t("home"))}</button>
+            <button type="button" class="director-nav-btn${hash.startsWith("/timetable") ? " is-active" : ""}" data-nav="#/timetable">${esc(I18n.t("timetableOverview") || "Timetables")}</button>
+            <button type="button" class="director-nav-btn${hash.startsWith("/floor-reports") ? " is-active" : ""}" data-nav="#/floor-reports">${esc(I18n.t("floorReportsInbox"))}</button>
           </nav>`
         : "";
 
@@ -299,7 +311,8 @@
         </div>`
       : "";
 
-    const showGlobalSearch = !(isStaff || isWa || isTeacher);
+    // Global search + director nav only for the director home console
+    const showGlobalSearch = isDirector && !impersonating && !onManage && !onWa;
     const globalSearch = showGlobalSearch
       ? `<form class="top-search" id="global-search" autocomplete="off">
             <input type="search" name="q" placeholder="${esc(I18n.t("searchPlaceholder"))}" value="${esc(state.searchQuery)}" />
@@ -312,7 +325,7 @@
         : "";
 
     return `
-      <div class="app-shell${isStaff || isWa || isTeacher ? " app-shell-staff" : ""}">
+      <div class="app-shell${isStaff || isWa || isTeacher || isFloor || lockedRole ? " app-shell-staff" : ""}">
         <header class="topbar">
           <div class="topbar-main">
             <button type="button" class="topbar-brand" data-nav="${homeNav}" aria-label="${esc(I18n.t("home"))}">
@@ -455,16 +468,12 @@
 
   function viewHome() {
     const stats = BBC_DATA.stats();
-    const year = BBC_DATA.school.academicYear;
     const loc =
       I18n.getLang() === "ar" ? "ar" : I18n.getLang() === "fr" ? "fr-FR" : "en-US";
     const directorGates = Auth.isDirector()
-      ? `
+      ? Auth.isGlobalView()
+        ? `
       <div class="director-gates" role="navigation" aria-label="${esc(I18n.t("otherInterfaces"))}">
-        <div class="page-header" style="margin-bottom:0.65rem">
-          <h2 class="section-title" style="margin:0">${esc(I18n.t("otherInterfaces"))}</h2>
-          <p class="lede" style="margin:0.35rem 0 0">${esc(I18n.t("otherInterfacesLede"))}</p>
-        </div>
         <div class="director-gate-grid director-gate-grid-3">
           <button type="button" class="director-gate-card" data-nav="#/manage">
             <span class="director-gate-ico" aria-hidden="true">▦</span>
@@ -482,11 +491,27 @@
             </div>
             <span class="cta">${esc(I18n.t("open"))}</span>
           </button>
+          <button type="button" class="director-gate-card" data-nav="#/preschool">
+            <span class="director-gate-ico" aria-hidden="true">◎</span>
+            <div>
+              <strong>${esc(I18n.t("openPreschool"))}</strong>
+              <p>${esc(I18n.t("openPreschoolLede"))}</p>
+            </div>
+            <span class="cta">${esc(I18n.t("open"))}</span>
+          </button>
           <button type="button" class="director-gate-card" data-nav="#/enter-teacher">
             <span class="director-gate-ico" aria-hidden="true">◇</span>
             <div>
               <strong>${esc(I18n.t("openTeacherPortals"))}</strong>
               <p>${esc(I18n.t("openTeacherPortalsLede"))}</p>
+            </div>
+            <span class="cta">${esc(I18n.t("open"))}</span>
+          </button>
+          <button type="button" class="director-gate-card" data-nav="#/timetable">
+            <span class="director-gate-ico" aria-hidden="true">▦</span>
+            <div>
+              <strong>${esc(I18n.t("timetableOverview") || "Timetables")}</strong>
+              <p>${esc(I18n.t("timetableOverviewLede") || "Weekly schedules for all primary classes")}</p>
             </div>
             <span class="cta">${esc(I18n.t("open"))}</span>
           </button>
@@ -498,6 +523,35 @@
             </div>
             <span class="cta">${esc(I18n.t("open"))}</span>
           </button>
+          <button type="button" class="director-gate-card" data-nav="#/floor-reports">
+            <span class="director-gate-ico" aria-hidden="true">▤</span>
+            <div>
+              <strong>${esc(I18n.t("floorReportsInbox"))}</strong>
+              <p>${esc(I18n.t("floorReportsInboxLede"))}</p>
+            </div>
+            <span class="cta">${esc(I18n.t("open"))}</span>
+          </button>
+        </div>
+      </div>`
+        : `
+      <div class="director-gates" role="navigation" aria-label="${esc(I18n.t("otherInterfaces"))}">
+        <div class="director-gate-grid director-gate-grid-3">
+          <button type="button" class="director-gate-card" data-nav="#/timetable">
+            <span class="director-gate-ico" aria-hidden="true">▦</span>
+            <div>
+              <strong>${esc(I18n.t("timetableOverview") || "Timetables")}</strong>
+              <p>${esc(I18n.t("timetableOverviewLede") || "Weekly schedules for all primary classes")}</p>
+            </div>
+            <span class="cta">${esc(I18n.t("open"))}</span>
+          </button>
+          <button type="button" class="director-gate-card" data-nav="#/floor-reports">
+            <span class="director-gate-ico" aria-hidden="true">▤</span>
+            <div>
+              <strong>${esc(I18n.t("floorReportsInbox"))}</strong>
+              <p>${esc(I18n.t("floorReportsInboxLede"))}</p>
+            </div>
+            <span class="cta">${esc(I18n.t("open"))}</span>
+          </button>
         </div>
       </div>`
       : "";
@@ -505,7 +559,12 @@
       ${crumb([{ label: I18n.t("home"), to: "#/home" }])}
       <div class="page-header home-header">
         <h1>${esc(I18n.t("dashboard"))}</h1>
-        <p class="lede">${esc(I18n.t("dashboardLede", { year }))}</p>
+      </div>
+
+      <div class="stats-row home-stats home-stats-top">
+        <div class="stat-card"><div class="label">${esc(I18n.t("classes"))}</div><div class="value">${stats.classes}</div></div>
+        <div class="stat-card"><div class="label">${esc(I18n.t("students"))}</div><div class="value">${stats.students.toLocaleString(loc)}</div></div>
+        <div class="stat-card"><div class="label">${esc(I18n.t("teachersListed"))}</div><div class="value">${stats.teachers}</div></div>
       </div>
 
       ${directorGates}
@@ -516,11 +575,32 @@
       <div class="dept-grid">
         ${BBC_DATA.departments
           .map((d) => {
-            const label = d.id === "primary" ? I18n.t("primary") : I18n.t("middle");
-            const desc = d.id === "primary" ? I18n.t("primaryDesc") : I18n.t("middleDesc");
+            const label =
+              d.id === "primary"
+                ? I18n.t("primary")
+                : d.id === "middle"
+                  ? I18n.t("middle")
+                  : d.id === "preschool"
+                    ? I18n.t("preschool")
+                    : d.label || d.name;
+            const desc =
+              d.id === "primary"
+                ? I18n.t("primaryDesc")
+                : d.id === "middle"
+                  ? I18n.t("middleDesc")
+                  : d.id === "preschool"
+                    ? I18n.t("preschoolDesc")
+                    : d.description || "";
+            const img =
+              d.image ||
+              (d.id === "preschool"
+                ? "assets/preschool-department.png"
+                : d.id === "middle"
+                  ? "assets/middle-department.png"
+                  : "assets/primary-department.png");
             return `
           <button type="button" class="dept-card" data-nav="#/dept/${d.id}">
-            <img src="${esc(d.image)}" alt="" loading="eager" />
+            <img src="${esc(img)}" alt="" loading="eager" />
             <div class="overlay"></div>
             <div class="content">
               <h2>${esc(label)}</h2>
@@ -538,27 +618,19 @@
           <h2 class="section-title" style="margin:0">${esc(I18n.t("directories"))}</h2>
         </div>
         <div class="home-icon-strip" role="navigation" aria-label="${esc(I18n.t("directories"))}">
-          <button type="button" class="home-icon-tile" data-nav="#/teachers">
-            <span class="home-icon-pic" aria-hidden="true">
-              <img src="assets/avatars/teacher.svg" alt="" />
+          <button type="button" class="home-icon-tile home-photo-tile" data-nav="#/teachers">
+            <span class="home-icon-pic home-photo-pic" aria-hidden="true">
+              <img src="assets/home-teachers.jpg" alt="" loading="lazy" />
             </span>
-            <strong>${esc(I18n.t("ourTeachers"))}</strong>
-            <span class="muted">${stats.teachers}</span>
+            <strong class="home-photo-label">${esc(I18n.t("ourTeachers"))}</strong>
           </button>
-          <button type="button" class="home-icon-tile" data-nav="#/students">
-            <span class="home-icon-pic" aria-hidden="true">
-              <img src="assets/avatars/student.svg" alt="" />
+          <button type="button" class="home-icon-tile home-photo-tile" data-nav="#/students">
+            <span class="home-icon-pic home-photo-pic" aria-hidden="true">
+              <img src="assets/home-students.jpg" alt="" loading="lazy" />
             </span>
-            <strong>${esc(I18n.t("ourStudents"))}</strong>
-            <span class="muted">${stats.students.toLocaleString(loc)}</span>
+            <strong class="home-photo-label">${esc(I18n.t("ourStudents"))}</strong>
           </button>
         </div>
-      </div>
-
-      <div class="stats-row home-stats">
-        <div class="stat-card"><div class="label">${esc(I18n.t("classes"))}</div><div class="value">${stats.classes}</div></div>
-        <div class="stat-card"><div class="label">${esc(I18n.t("students"))}</div><div class="value">${stats.students.toLocaleString(loc)}</div></div>
-        <div class="stat-card"><div class="label">${esc(I18n.t("teachersListed"))}</div><div class="value">${stats.teachers}</div></div>
       </div>
     `);
   }
@@ -650,6 +722,12 @@
     } catch (e) {
       err = e.message || I18n.t("failedLoad");
     }
+    const deptLabel = (id) => {
+      if (id === "middle") return I18n.t("middle");
+      if (id === "primary") return I18n.t("primary");
+      if (id === "preschool") return I18n.t("preschool");
+      return id || "—";
+    };
     const rows = managers.length
       ? managers
           .map(
@@ -657,12 +735,13 @@
         <tr>
           <td><code>${esc(m.loginCode || m.id)}</code></td>
           <td dir="auto">${esc(I18n.getLang() === "ar" && m.floorLabelAr ? m.floorLabelAr : m.floorLabel || "")}</td>
-          <td>${esc(m.floorNumber)}</td>
-          <td>${esc(I18n.t("primary"))}</td>
+          <td>${esc(m.managedYear != null ? m.managedYear : "—")}</td>
+          <td>${esc(deptLabel(m.departmentId))}</td>
+          <td>${esc(m.classCount != null ? m.classCount : "—")}</td>
         </tr>`
           )
           .join("")
-      : `<tr><td colspan="4"><div class="admin-empty">${esc(err || I18n.t("failedLoad"))}</div></td></tr>`;
+      : `<tr><td colspan="5"><div class="admin-empty">${esc(err || I18n.t("failedLoad"))}</div></td></tr>`;
 
     return shell(`
       ${crumb([
@@ -685,8 +764,9 @@
             <tr>
               <th>${esc(I18n.t("floorLoginId"))}</th>
               <th>${esc(I18n.t("floorLabel"))}</th>
-              <th>#</th>
+              <th>${esc(I18n.t("year"))}</th>
               <th>${esc(I18n.t("department"))}</th>
+              <th>${esc(I18n.t("classes"))}</th>
             </tr>
           </thead>
           <tbody>${rows}</tbody>
@@ -913,6 +993,8 @@
         <p class="lede">${esc(classDisplayExtra(cls))}</p>
       </div>
 
+      <div id="director-class-tt" class="tt-host" data-tt-class="${esc(cls.id)}" style="margin-bottom:1rem"></div>
+
       <div class="detail-layout">
         <aside class="info-panel">
           <div class="panel-label">${esc(I18n.t("enrollment"))}</div>
@@ -989,6 +1071,7 @@
                 <thead>
                   <tr>
                     <th class="col-num">#</th>
+                    <th class="col-photo">${esc(I18n.t("photo") || "Photo")}</th>
                     <th class="col-name-full hide-desktop">${esc(I18n.t("student"))}</th>
                     <th class="col-last hide-mobile">${esc(I18n.t("lastName"))}</th>
                     <th class="col-first hide-mobile">${esc(I18n.t("firstName"))}</th>
@@ -1003,6 +1086,7 @@
                       (s) => `
                     <tr data-search="${esc((s.searchName || s.fullName || s.fullNameLatin || "").toLowerCase())}">
                       <td class="col-num" data-label="#">${s.number ?? ""}</td>
+                      <td class="col-photo" data-label="${esc(I18n.t("photo") || "Photo")}">${profileAvatar(s, "student", "avatar-sm")}</td>
                       <td class="col-name-full hide-desktop" data-label="${esc(I18n.t("student"))}">${esc(BBC_DATA.studentFullName(s))}</td>
                       <td class="col-last hide-mobile" data-label="${esc(I18n.t("lastName"))}">${esc(BBC_DATA.studentLastName(s))}</td>
                       <td class="col-first hide-mobile" data-label="${esc(I18n.t("firstName"))}">${esc(BBC_DATA.studentFirstName(s))}</td>
@@ -1244,6 +1328,7 @@
               <option value="">${esc(I18n.t("all"))}</option>
               <option value="primary"${dept === "primary" ? " selected" : ""}>${esc(I18n.t("primary"))}</option>
               <option value="middle"${dept === "middle" ? " selected" : ""}>${esc(I18n.t("middle"))}</option>
+              <option value="preschool"${dept === "preschool" ? " selected" : ""}>${esc(I18n.t("preschool"))}</option>
             </select>
           </label>
           <label class="filter-field">
@@ -1353,6 +1438,7 @@
               <option value="">${esc(I18n.t("all"))}</option>
               <option value="primary"${dept === "primary" ? " selected" : ""}>${esc(I18n.t("primary"))}</option>
               <option value="middle"${dept === "middle" ? " selected" : ""}>${esc(I18n.t("middle"))}</option>
+              <option value="preschool"${dept === "preschool" ? " selected" : ""}>${esc(I18n.t("preschool"))}</option>
             </select>
           </label>
           <label class="filter-field">
@@ -1488,6 +1574,527 @@
     `);
   }
 
+  function formatFloorReportTime(iso) {
+    if (!iso) return "";
+    try {
+      const d = new Date(iso);
+      if (Number.isNaN(d.getTime())) return String(iso);
+      return d.toLocaleString();
+    } catch {
+      return String(iso);
+    }
+  }
+
+  function floorManagerLabel(m) {
+    if (!m) return "";
+    const base =
+      I18n.getLang && I18n.getLang() === "ar" && m.floorLabelAr
+        ? m.floorLabelAr
+        : m.floorLabel || m.loginCode || "";
+    const dept =
+      m.departmentId === "middle"
+        ? I18n.t("middle")
+        : m.departmentId === "primary"
+          ? I18n.t("primary")
+          : "";
+    const yearBit = m.managedYear != null ? `${I18n.t("year")} ${m.managedYear}` : "";
+    return [base, dept && yearBit ? `${dept} · ${yearBit}` : yearBit || dept].filter(Boolean).join(" · ");
+  }
+
+  function renderDirectorReportList(items, emptyKey) {
+    if (!items || !items.length) {
+      return `<p class="muted floor-report-empty">${esc(I18n.t(emptyKey || "floorReportEmptySection"))}</p>`;
+    }
+    return `<ul class="floor-report-list">
+      ${items
+        .map((it) => {
+          const cls = it.classCode || it.className || "";
+          const who = it.studentName || it.teacherName || "—";
+          const subj = it.subject ? ` · ${it.subject}` : "";
+          const teacher = it.teacherName && it.studentName ? ` · ${it.teacherName}` : "";
+          const remark = String(it.remark || it.homework || "").trim()
+            ? `<div class="floor-report-remark" dir="auto">${esc(it.remark || it.homework)}</div>`
+            : "";
+          return `<li>
+            <div class="floor-report-line">
+              <strong>${esc(cls)}</strong>
+              <span dir="auto">${esc(who)}</span>
+              <span class="muted">${esc(subj)}${esc(teacher)}</span>
+            </div>
+            ${remark}
+          </li>`;
+        })
+        .join("")}
+    </ul>`;
+  }
+
+  function formatFloorInboxDay(iso, opts = {}) {
+    if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return iso || "";
+    try {
+      const d = new Date(`${iso}T12:00:00`);
+      const lang = I18n.getLang();
+      const locale = lang === "ar" ? "ar-DZ" : lang === "fr" ? "fr-FR" : "en-GB";
+      if (opts.weekdayOnly) {
+        return d.toLocaleDateString(locale, { weekday: "short" });
+      }
+      if (opts.dayMonth) {
+        return d.toLocaleDateString(locale, { day: "numeric", month: "short" });
+      }
+      return d.toLocaleDateString(locale, {
+        weekday: "short",
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      });
+    } catch {
+      return iso;
+    }
+  }
+
+  function isoAddDays(iso, delta) {
+    const d = new Date(`${iso}T12:00:00`);
+    d.setDate(d.getDate() + delta);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  }
+
+  /** Sunday-start week containing iso date → 7 ISO days */
+  function weekDaysContaining(iso) {
+    const d = new Date(`${iso}T12:00:00`);
+    const dow = d.getDay(); // 0=Sun
+    const start = isoAddDays(iso, -dow);
+    return Array.from({ length: 7 }, (_, i) => isoAddDays(start, i));
+  }
+
+  function formatWeekRangeLabel(weekDays) {
+    if (!weekDays?.length) return "";
+    const a = formatFloorInboxDay(weekDays[0], { dayMonth: true });
+    const b = formatFloorInboxDay(weekDays[6], { dayMonth: true });
+    const y = weekDays[6].slice(0, 4);
+    return `${a} – ${b} ${y}`;
+  }
+
+  function floorInboxCard(it, date) {
+    const m = it.manager || {};
+    const sent = it.report?.status === "sent";
+    const meta = it.formMeta || {};
+    const s = it.summary || {};
+    const chips = [];
+    if (sent && meta.complaints) chips.push(I18n.t("floorReportMetaComplaints", { n: meta.complaints }));
+    if (sent && meta.staffAbsences) chips.push(I18n.t("floorReportMetaAbsences", { n: meta.staffAbsences }));
+    if (sent && meta.teacherLates) chips.push(I18n.t("floorReportMetaLates", { n: meta.teacherLates }));
+    if (sent && meta.hasIncident) chips.push(I18n.t("floorReportMetaIncident"));
+    if (sent && meta.cameraReview === "yes") chips.push(I18n.t("floorReportMetaCameras"));
+    if (sent && meta.hasFloorNeeds) chips.push(I18n.t("floorReportMetaNeeds"));
+    if (!sent) {
+      chips.push(`${s.absent || 0} ${I18n.t("attendanceAbsent")}`);
+      chips.push(`${s.late || 0} ${I18n.t("attendanceLate")}`);
+    }
+    const badge = sent
+      ? `<span class="floor-report-status is-sent">${esc(I18n.t("floorReportSent"))}</span>`
+      : `<span class="floor-report-status is-draft">${esc(I18n.t("floorReportNotSent"))}</span>`;
+    const preview = sent && it.notesPreview
+      ? `<p class="floor-report-preview" dir="auto">${esc(it.notesPreview)}</p>`
+      : sent
+        ? `<p class="muted">${esc(I18n.t("floorReportFormEmpty"))}</p>`
+        : `<p class="muted">${esc(I18n.t("floorReportNoNotes"))}</p>`;
+    return `
+      <article class="floor-report-inbox-card${sent ? " is-sent" : " is-pending"}">
+        <div class="floor-report-inbox-head">
+          <div>
+            <strong dir="auto">${esc(floorManagerLabel(m))}</strong>
+            <div class="muted"><code>${esc(m.loginCode || "")}</code></div>
+          </div>
+          ${badge}
+        </div>
+        ${chips.length ? `<div class="floor-report-inbox-chips">${chips.map((c) => `<span>${esc(c)}</span>`).join("")}</div>` : ""}
+        ${preview}
+        <button type="button" class="btn ${sent ? "btn-primary" : "btn-ghost"}" data-nav="#/floor-reports/${esc(m.id)}?date=${esc(date)}">${esc(I18n.t("floorReportOpen"))}</button>
+      </article>`;
+  }
+
+  async function viewFloorReportsInbox(params) {
+    const requested = params?.get("date") || "";
+    let data = { items: [], totals: {}, availableDates: [] };
+    let err = "";
+    try {
+      const q = requested ? `?date=${encodeURIComponent(requested)}` : "";
+      data = await BBC_API.get(`/director/floor-reports${q}`);
+    } catch (e) {
+      err = e.message || I18n.t("failedLoad");
+    }
+    const date = data.date || requested || new Date().toISOString().slice(0, 10);
+    const totals = data.totals || {};
+    const available = data.availableDates || [];
+    const sentByDate = Object.fromEntries((available || []).map((d) => [d.date, d.sent || 0]));
+    const suggested = data.suggestedDate || (available.find((d) => d.sent > 0)?.date ?? "");
+    const todayIso = new Date().toISOString().slice(0, 10);
+    const week = weekDaysContaining(date);
+    const prevWeekAnchor = isoAddDays(week[0], -7);
+    const nextWeekAnchor = isoAddDays(week[0], 7);
+    const weekSentTotal = week.reduce((n, d) => n + (sentByDate[d] || 0), 0);
+
+    const weekGrid = `<div class="floor-inbox-week" role="list">
+      ${week
+        .map((d) => {
+          const sent = sentByDate[d] || 0;
+          const active = d === date ? " is-active" : "";
+          const has = sent > 0 ? " has-sent" : "";
+          const isToday = d === todayIso ? " is-today" : "";
+          return `<button type="button" class="floor-inbox-weekday${active}${has}${isToday}" role="listitem"
+            data-nav="#/floor-reports?date=${esc(d)}"
+            title="${esc(formatFloorInboxDay(d))}">
+            <span class="floor-inbox-weekday-name">${esc(formatFloorInboxDay(d, { weekdayOnly: true }))}</span>
+            <span class="floor-inbox-weekday-num">${esc(d.slice(8, 10))}</span>
+            <span class="floor-inbox-weekday-count">${sent > 0 ? esc(I18n.t("floorReportSentCount", { n: sent })) : "·"}</span>
+          </button>`;
+        })
+        .join("")}
+    </div>`;
+
+    const sentItems = (data.items || []).filter((it) => it.report?.status === "sent");
+    const pendingItems = (data.items || []).filter((it) => it.report?.status !== "sent");
+
+    const sentBlock = sentItems.length
+      ? `<section class="floor-inbox-section">
+          <h2 class="floor-inbox-section-title">${esc(I18n.t("floorReportSubmittedSection", { n: sentItems.length }))}</h2>
+          <div class="floor-report-inbox-grid">${sentItems.map((it) => floorInboxCard(it, date)).join("")}</div>
+        </section>`
+      : `<section class="floor-inbox-empty">
+          <h2>${esc(I18n.t("floorReportEmptyDay"))}</h2>
+          <p class="lede">${esc(I18n.t("floorReportEmptyDayHint"))}</p>
+          ${suggested && suggested !== date
+            ? `<button type="button" class="btn btn-primary" data-nav="#/floor-reports?date=${esc(suggested)}">${esc(I18n.t("floorReportJumpLatest"))}</button>`
+            : ""}
+        </section>`;
+
+    const pendingBlock = pendingItems.length
+      ? `<details class="floor-inbox-pending" ${sentItems.length ? "" : "open"}>
+          <summary>${esc(I18n.t("floorReportAwaitingSection", { n: pendingItems.length }))}</summary>
+          <div class="floor-report-inbox-grid">${pendingItems.map((it) => floorInboxCard(it, date)).join("")}</div>
+        </details>`
+      : "";
+
+    return shell(`
+      ${crumb([
+        { label: I18n.t("home"), to: "#/home" },
+        { label: I18n.t("floorReportsInbox"), to: `#/floor-reports?date=${esc(date)}` },
+      ])}
+      <div class="page-header floor-inbox-header">
+        <h1>${esc(I18n.t("floorReportsInbox"))}</h1>
+        <p class="lede">${esc(I18n.t("floorReportsInboxLede"))}</p>
+      </div>
+
+      <section class="floor-inbox-archive admin-panel">
+        <div class="floor-inbox-archive-head">
+          <div>
+            <h2 class="floor-inbox-archive-title">${esc(I18n.t("floorReportWeekTitle"))}</h2>
+            <p class="muted">${esc(formatWeekRangeLabel(week))} · ${esc(I18n.t("floorReportSentCount", { n: weekSentTotal }))}</p>
+          </div>
+          <form class="floor-inbox-datejump" id="director-floor-reports-date">
+            <label class="admin-field">
+              <span>${esc(I18n.t("floorReportPickDate"))}</span>
+              <input type="date" name="date" value="${esc(date)}" required />
+            </label>
+          </form>
+        </div>
+        <div class="floor-inbox-weekbar">
+          <button type="button" class="btn btn-ghost floor-inbox-week-nav" data-nav="#/floor-reports?date=${esc(prevWeekAnchor)}">${esc(I18n.t("floorReportPrevWeek"))}</button>
+          <button type="button" class="btn btn-ghost floor-inbox-week-nav" data-nav="#/floor-reports?date=${esc(todayIso)}">${esc(I18n.t("floorReportThisWeek"))}</button>
+          <button type="button" class="btn btn-ghost floor-inbox-week-nav" data-nav="#/floor-reports?date=${esc(nextWeekAnchor)}">${esc(I18n.t("floorReportNextWeek"))}</button>
+        </div>
+        ${weekGrid}
+      </section>
+
+      <div class="floor-inbox-daybar">
+        <div>
+          <div class="floor-inbox-day-label">${esc(I18n.t("sessionDate"))}</div>
+          <strong class="floor-inbox-day-value">${esc(formatFloorInboxDay(date))}</strong>
+        </div>
+        <div class="floor-inbox-day-stats">
+          <span class="floor-inbox-stat is-sent">${esc(I18n.t("floorReportSentCount", { n: totals.sent || 0 }))}</span>
+          <span class="floor-inbox-stat">${esc(I18n.t("floorReportPendingCount", { n: totals.pending || 0 }))}</span>
+          <span class="floor-inbox-stat">${totals.absent || 0} ${esc(I18n.t("attendanceAbsent"))}</span>
+          <span class="floor-inbox-stat">${totals.late || 0} ${esc(I18n.t("attendanceLate"))}</span>
+        </div>
+      </div>
+
+      ${err ? `<div class="admin-empty is-err">${esc(err)}</div>` : ""}
+      ${sentBlock}
+      ${pendingBlock}
+    `);
+  }
+
+  function ynLabel(v) {
+    if (v === "yes" || v === true) return I18n.t("yes");
+    if (v === "no" || v === false) return I18n.t("no");
+    return I18n.t("floorReportNone");
+  }
+
+  function roleLabel(role) {
+    const map = {
+      teacher: "floorReportRoleTeacher",
+      assistant: "floorReportRoleAssistant",
+      admin: "floorReportRoleAdmin",
+      other: "floorReportRoleOther",
+    };
+    return map[role] ? I18n.t(map[role]) : role || I18n.t("floorReportNone");
+  }
+
+  function renderDirectorFormCard(report, manager, date) {
+    const form = report?.form || {};
+    const complaints = (form.complaints || []).map((c) => String(c || "").trim()).filter(Boolean);
+    const staff = (form.staffAbsences || []).filter((r) => r.name || r.role || r.substitute);
+    const lates = (form.teacherLates || []).filter(
+      (r) => r.teacherId || r.teacherName || r.duration || r.substitute
+    );
+    const empty = (html) =>
+      html || `<p class="muted floor-report-empty">${esc(I18n.t("floorReportFormEmpty"))}</p>`;
+
+    return `
+      <section class="admin-panel floor-report-notes-panel">
+        <div class="admin-panel-label">${esc(I18n.t("floorReportCardTitle"))}</div>
+        <div class="floor-report-meta facts-grid" style="margin-top:0.75rem">
+          <div class="fact-card">
+            <div class="k">${esc(I18n.t("floorLabel"))}</div>
+            <div class="v" dir="auto">${esc(floorManagerLabel(manager))}</div>
+          </div>
+          <div class="fact-card">
+            <div class="k">${esc(I18n.t("sessionDate"))}</div>
+            <div class="v">${esc(date)}</div>
+          </div>
+          <div class="fact-card">
+            <div class="k">${esc(I18n.t("floorReportTimeFrom"))} → ${esc(I18n.t("floorReportTimeTo"))}</div>
+            <div class="v">${esc(form.timeFrom || "—")} – ${esc(form.timeTo || "—")}</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="admin-panel">
+        <div class="admin-panel-label">${esc(I18n.t("floorReportComplaints"))}</div>
+        ${empty(
+          complaints.length
+            ? `<ol class="floor-report-complaint-list" dir="auto">${complaints
+                .map((c) => `<li>${esc(c)}</li>`)
+                .join("")}</ol>`
+            : ""
+        )}
+      </section>
+
+      <section class="admin-panel">
+        <div class="floor-report-split">
+          <div class="fact-card">
+            <div class="k">${esc(I18n.t("floorReportProblemsSolved"))}</div>
+            <div class="v">${esc(String(form.problemsSolved ?? 0))}</div>
+          </div>
+          <div class="fact-card">
+            <div class="k">${esc(I18n.t("floorReportParentReplied"))}</div>
+            <div class="v">${esc(ynLabel(form.parentResponded))}</div>
+          </div>
+        </div>
+        <div class="admin-field" style="margin-top:0.75rem">
+          <span>${esc(I18n.t("floorReportActionsTaken"))}</span>
+          ${
+            String(form.actionsTaken || "").trim()
+              ? `<p class="floor-report-notes-body" dir="auto">${esc(form.actionsTaken)}</p>`
+              : `<p class="muted">${esc(I18n.t("floorReportFormEmpty"))}</p>`
+          }
+        </div>
+        <div class="admin-field" style="margin-top:0.75rem">
+          <span>${esc(I18n.t("floorReportAdminEscalation"))}</span>
+          ${
+            String(form.adminEscalation || "").trim()
+              ? `<p class="floor-report-notes-body" dir="auto">${esc(form.adminEscalation)}</p>`
+              : `<p class="muted">${esc(I18n.t("floorReportFormEmpty"))}</p>`
+          }
+        </div>
+      </section>
+
+      <section class="admin-panel">
+        <div class="admin-panel-label">${esc(I18n.t("floorReportFloorNeeds"))}</div>
+        ${
+          String(form.floorNeeds || "").trim()
+            ? `<p class="floor-report-notes-body" dir="auto">${esc(form.floorNeeds)}</p>`
+            : `<p class="muted">${esc(I18n.t("floorReportFormEmpty"))}</p>`
+        }
+      </section>
+
+      <section class="admin-panel">
+        <div class="admin-panel-label">${esc(I18n.t("floorReportStaffAbsences"))}</div>
+        ${
+          staff.length
+            ? `<div class="floor-report-table-wrap"><table class="floor-report-table">
+                <thead><tr>
+                  <th>${esc(I18n.t("floorReportAbsentName"))}</th>
+                  <th>${esc(I18n.t("floorReportRole"))}</th>
+                  <th>${esc(I18n.t("floorReportSubstitute"))}</th>
+                </tr></thead>
+                <tbody>${staff
+                  .map(
+                    (r) => `<tr>
+                      <td dir="auto">${esc(r.name || "—")}</td>
+                      <td>${esc(roleLabel(r.role))}</td>
+                      <td dir="auto">${esc(r.substitute || "—")}</td>
+                    </tr>`
+                  )
+                  .join("")}</tbody>
+              </table></div>`
+            : `<p class="muted">${esc(I18n.t("floorReportFormEmpty"))}</p>`
+        }
+      </section>
+
+      <section class="admin-panel">
+        <div class="admin-panel-label">${esc(I18n.t("floorReportTeacherLates"))}</div>
+        ${
+          lates.length
+            ? `<div class="floor-report-table-wrap"><table class="floor-report-table">
+                <thead><tr>
+                  <th>${esc(I18n.t("floorReportLateTeacher"))}</th>
+                  <th>${esc(I18n.t("floorReportDuration"))}</th>
+                  <th>${esc(I18n.t("floorReportSubstitute"))}</th>
+                </tr></thead>
+                <tbody>${lates
+                  .map(
+                    (r) => `<tr>
+                      <td dir="auto">${esc(r.teacherName || "—")}</td>
+                      <td dir="auto">${esc(r.duration || "—")}</td>
+                      <td dir="auto">${esc(r.substitute || "—")}</td>
+                    </tr>`
+                  )
+                  .join("")}</tbody>
+              </table></div>`
+            : `<p class="muted">${esc(I18n.t("floorReportFormEmpty"))}</p>`
+        }
+      </section>
+
+      <section class="admin-panel">
+        <div class="admin-panel-label">${esc(I18n.t("floorReportIncident"))}</div>
+        ${
+          String(form.incident || "").trim()
+            ? `<p class="floor-report-notes-body" dir="auto">${esc(form.incident)}</p>`
+            : `<p class="muted">${esc(I18n.t("floorReportFormEmpty"))}</p>`
+        }
+        <div class="fact-card" style="margin-top:0.75rem">
+          <div class="k">${esc(I18n.t("floorReportCameraReview"))}</div>
+          <div class="v">${esc(ynLabel(form.cameraReview))}</div>
+        </div>
+      </section>
+
+      <section class="admin-panel floor-report-notes-panel">
+        <div class="admin-panel-label">${esc(I18n.t("floorReportExtraNotes"))}</div>
+        ${
+          String(report?.notes || "").trim()
+            ? `<p class="floor-report-notes-body" dir="auto">${esc(report.notes)}</p>`
+            : `<p class="muted">${esc(I18n.t("floorReportNoNotes"))}</p>`
+        }
+      </section>`;
+  }
+
+  async function viewFloorReportDetail(managerId, params) {
+    const date = params?.get("date") || new Date().toISOString().slice(0, 10);
+    let payload = null;
+    let err = "";
+    try {
+      payload = await BBC_API.get(
+        `/director/floor-reports/${encodeURIComponent(managerId)}?date=${encodeURIComponent(date)}`
+      );
+    } catch (e) {
+      err = e.message || I18n.t("failedLoad");
+    }
+    if (!payload) {
+      return shell(`
+        ${crumb([
+          { label: I18n.t("home"), to: "#/home" },
+          { label: I18n.t("floorReportsInbox"), to: "#/floor-reports" },
+        ])}
+        <div class="admin-empty is-err">${esc(err)}</div>
+      `);
+    }
+    const m = payload.manager || {};
+    const report = payload.report || {};
+    const summary = payload.summary || {};
+    const sent = report.status === "sent";
+    const statusChip = sent
+      ? `<span class="floor-report-status is-sent">${esc(I18n.t("floorReportSent"))}</span>`
+      : `<span class="floor-report-status is-draft">${esc(I18n.t("floorReportNotSent"))}</span>`;
+
+    return shell(`
+      ${crumb([
+        { label: I18n.t("home"), to: "#/home" },
+        { label: I18n.t("floorReportsInbox"), to: `#/floor-reports?date=${encodeURIComponent(date)}` },
+        { label: floorManagerLabel(m), to: `#/floor-reports/${encodeURIComponent(managerId)}?date=${encodeURIComponent(date)}` },
+      ])}
+      <div class="page-header">
+        <h1 dir="auto">${esc(floorManagerLabel(m))}</h1>
+        <p class="lede">${esc(date)} · <code>${esc(m.loginCode || "")}</code></p>
+      </div>
+      <div class="floor-report-status-row" style="margin-bottom:1rem">
+        ${statusChip}
+        ${
+          sent && report.submittedAt
+            ? `<span class="muted">${esc(I18n.t("floorReportSentAt", { time: formatFloorReportTime(report.submittedAt) }))}</span>`
+            : ""
+        }
+        <div class="register-summary" style="margin-inline-start:auto">
+          <span>${summary.absent || 0} ${esc(I18n.t("attendanceAbsent"))}</span>
+          · <span>${summary.late || 0} ${esc(I18n.t("attendanceLate"))}</span>
+          · <span>${summary.remarks || 0} ${esc(I18n.t("remark"))}</span>
+        </div>
+      </div>
+      <div class="floor-report-grid">
+        <section class="floor-report-section">
+          <h3>${esc(I18n.t("floorReportAutoAbsences"))} <span class="chip neutral">${esc(String(summary.absent || 0))}</span></h3>
+          ${renderDirectorReportList(payload.absences)}
+        </section>
+        <section class="floor-report-section">
+          <h3>${esc(I18n.t("floorReportAutoLate"))} <span class="chip neutral">${esc(String(summary.late || 0))}</span></h3>
+          ${renderDirectorReportList(payload.late)}
+        </section>
+        <section class="floor-report-section">
+          <h3>${esc(I18n.t("floorReportAutoRemarks"))} <span class="chip neutral">${esc(String(summary.remarks || 0))}</span></h3>
+          ${renderDirectorReportList(payload.remarks)}
+        </section>
+        <section class="floor-report-section">
+          <h3>${esc(I18n.t("floorReportAutoHomework"))} <span class="chip neutral">${esc(String(summary.homework || 0))}</span></h3>
+          ${
+            !(payload.homework || []).length
+              ? `<p class="muted floor-report-empty">${esc(I18n.t("floorReportEmptySection"))}</p>`
+              : `<ul class="floor-report-list">
+                  ${(payload.homework || [])
+                    .map(
+                      (h) => `<li>
+                        <div class="floor-report-line">
+                          <strong>${esc(h.classCode || "")}</strong>
+                          <span class="muted">${esc(h.subject || "")}${h.teacherName ? ` · ${esc(h.teacherName)}` : ""}</span>
+                        </div>
+                        <div class="floor-report-remark" dir="auto">${esc(h.homework || "")}</div>
+                      </li>`
+                    )
+                    .join("")}
+                </ul>`
+          }
+        </section>
+      </div>
+      ${renderDirectorFormCard(report, m, date)}
+      <p style="margin-top:1rem">
+        <button type="button" class="btn btn-ghost" data-nav="#/floor-reports?date=${esc(date)}">${esc(I18n.t("floorReportBackInbox"))}</button>
+      </p>
+    `);
+  }
+
+  function viewTimetableOverview() {
+    return shell(`
+      ${crumb([
+        { label: I18n.t("home"), to: "#/home" },
+        { label: I18n.t("timetableOverview") || "Timetables", to: "#/timetable" },
+      ])}
+      <div class="page-header">
+        <h1>${esc(I18n.t("timetableOverview") || "Timetables")}</h1>
+        <p class="lede">${esc(I18n.t("timetableOverviewLede") || "Weekly schedules for all primary classes")}</p>
+      </div>
+      <div id="director-tt-overview" class="tt-host" data-tt-director="primary"></div>
+    `);
+  }
+
   async function resolveView() {
     const { parts, params } = state.route;
     const path0 = parts[0] || "home";
@@ -1498,30 +2105,34 @@
       return viewLogin();
     }
 
-    // Keep Staff, WhatsApp, Teacher, and Floor sides separated; Director may open Manage + WhatsApp + teacher portals
-    if (Auth.isDirector() && (path0 === "my" || path0 === "floor")) {
+    // Hard isolation: non-director roles cannot open any other interface via URL hash
+    if (!Auth.canAccessPath(path0)) {
+      const home = Auth.homePath();
+      if (`/${path0}` !== home && path0 !== home.replace(/^\//, "")) {
+        go(home);
+      }
+      if (Auth.isTeacher()) {
+        const result = await TeacherApp.resolve(["my"], new URLSearchParams());
+        return shell(result.html || "");
+      }
+      if (Auth.isFloor()) {
+        const result = await FloorApp.resolve(["floor"], new URLSearchParams());
+        return shell(result.html || "");
+      }
+      if (Auth.isAdmin()) {
+        const html = AdminApp.resolve(["manage"], new URLSearchParams());
+        return shell(html || "");
+      }
+      if (Auth.isWhatsApp()) {
+        const html = WhatsAppApp.resolve(["whatsapp"]);
+        return shell(html || "");
+      }
+      if (Auth.isPreschool()) {
+        const html = await PreschoolApp.render(["preschool"]);
+        return shell(html || "");
+      }
       go("/home");
       return viewHome();
-    }
-    if (Auth.isAdmin() && path0 !== "manage") {
-      go("/manage");
-      const html = AdminApp.resolve(["manage"], new URLSearchParams());
-      return shell(html || "");
-    }
-    if (Auth.isWhatsApp() && path0 !== "whatsapp") {
-      go("/whatsapp");
-      const html = WhatsAppApp.resolve(["whatsapp"]);
-      return shell(html || "");
-    }
-    if (Auth.isTeacher() && path0 !== "my") {
-      go("/my");
-      const result = await TeacherApp.resolve(["my"], new URLSearchParams());
-      return shell(result.html || "");
-    }
-    if (Auth.isFloor() && path0 !== "floor") {
-      go("/floor");
-      const result = await FloorApp.resolve(["floor"], new URLSearchParams());
-      return shell(result.html || "");
     }
 
     if (Auth.canManage() && path0 === "manage") {
@@ -1534,6 +2145,11 @@
       if (html) return shell(html);
     }
 
+    if (Auth.canPreschool() && path0 === "preschool") {
+      const html = await PreschoolApp.render(parts);
+      return shell(html || "");
+    }
+
     if (Auth.isTeacher() && path0 === "my") {
       const result = await TeacherApp.resolve(parts, params);
       return shell(result.html || "");
@@ -1544,30 +2160,49 @@
       return shell(result.html || "");
     }
 
-    if (Auth.isDirector() && path0 === "enter-teacher") {
+    // ——— Director-only surfaces below ———
+    if (!Auth.isDirector()) {
+      go(Auth.homePath());
+      return viewHome();
+    }
+
+    if (path0 === "enter-teacher") {
+      if (!Auth.isGlobalView()) {
+        go("/home");
+        return viewHome();
+      }
       return viewEnterTeacher(params);
     }
 
-    if (Auth.isDirector() && path0 === "floor-access") {
+    if (path0 === "floor-access" || path0 === "floor-login") {
+      if (!Auth.isGlobalView()) {
+        go("/home");
+        return viewHome();
+      }
       return await viewFloorAccess();
     }
 
-    if (Auth.isDirector() && path0 === "floor-login") {
-      return await viewFloorAccess();
+    if (path0 === "floor-reports") {
+      if (parts[1]) return await viewFloorReportDetail(parts[1], params);
+      return await viewFloorReportsInbox(params);
     }
 
-    if (parts[0] === "search") {
+    if (path0 === "timetable") {
+      return viewTimetableOverview();
+    }
+
+    if (path0 === "search") {
       const q = params.get("q") || state.searchQuery || "";
       state.searchQuery = q;
       return viewSearch(q);
     }
 
-    if (parts.length === 0 || parts[0] === "home") return viewHome();
+    if (parts.length === 0 || path0 === "home") return viewHome();
 
-    if (parts[0] === "teachers") return viewTeachersDirectory(params);
-    if (parts[0] === "students") return viewStudentsDirectory(params);
+    if (path0 === "teachers") return viewTeachersDirectory(params);
+    if (path0 === "students") return viewStudentsDirectory(params);
 
-    if (parts[0] === "dept" && (parts[1] === "primary" || parts[1] === "middle")) {
+    if (path0 === "dept" && (parts[1] === "primary" || parts[1] === "middle" || parts[1] === "preschool")) {
       const deptId = parts[1];
       if (parts.length === 2) return viewLevels(deptId);
       if (parts[2] === "level" && parts[3]) {
@@ -1604,7 +2239,12 @@
       }
       try {
         app.innerHTML = `<div class="login-page"><div class="login-card"><p>${esc(I18n.t("loading"))}</p></div></div>`;
-        if (result.role !== "whatsapp" && result.role !== "teacher" && result.role !== "floor") {
+        if (
+          result.role !== "whatsapp" &&
+          result.role !== "teacher" &&
+          result.role !== "floor" &&
+          result.role !== "preschool"
+        ) {
           const data = await BBC_API.loadSchoolData();
           BBC_DATA.setData(data);
         }
@@ -1726,6 +2366,51 @@
       });
     }
 
+    const loadClassTt = async () => {
+      const host = document.getElementById("director-class-tt");
+      if (!host || host.dataset.loaded === "1") return;
+      const cid = host.getAttribute("data-tt-class");
+      if (!cid) return;
+      try {
+        host.innerHTML = `<p class="muted">${esc(I18n.t("loading") || "…")}</p>`;
+        const data = await BBC_API.get(`/timetable/class/${encodeURIComponent(cid)}`);
+        host.innerHTML = window.QEATimetable
+          ? window.QEATimetable.renderGrid(data, {
+              title: I18n.t("classTimetable") || "Class timetable",
+            })
+          : "";
+        host.dataset.loaded = "1";
+      } catch (err) {
+        host.innerHTML = `<p class="muted">${esc(err.message || "")}</p>`;
+      }
+    };
+    loadClassTt();
+
+    const loadDirectorTt = async () => {
+      const host = document.getElementById("director-tt-overview");
+      if (!host || host.dataset.loaded === "1") return;
+      try {
+        host.innerHTML = `<p class="muted">${esc(I18n.t("loading") || "…")}</p>`;
+        const data = await BBC_API.get("/timetable/director?dept=primary");
+        host.innerHTML = window.QEATimetable
+          ? window.QEATimetable.renderDirectorOverview(data)
+          : "";
+        host.dataset.loaded = "1";
+        host.querySelectorAll("[data-tt-jump]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const y = btn.getAttribute("data-tt-jump");
+            host.querySelectorAll(".tt-year-tab").forEach((b) => b.classList.remove("is-active"));
+            btn.classList.add("is-active");
+            const panel = host.querySelector(`[data-tt-year="${y}"]`);
+            if (panel) panel.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+      } catch (err) {
+        host.innerHTML = `<p class="muted">${esc(err.message || "")}</p>`;
+      }
+    };
+    loadDirectorTt();
+
     const moreBtn = document.getElementById("btn-more-details");
     const morePanel = document.getElementById("student-more-details");
     if (moreBtn && morePanel) {
@@ -1743,6 +2428,13 @@
       });
     }
 
+    document.getElementById("director-floor-reports-date")?.addEventListener("change", (e) => {
+      if (e.target?.name === "date") {
+        const date = e.target.value;
+        go(`/floor-reports?date=${encodeURIComponent(date)}`);
+      }
+    });
+
     if (Auth.canManage()) {
       AdminApp.bind(app, (path) => {
         go(path);
@@ -1755,6 +2447,10 @@
         go(path);
         render();
       });
+    }
+
+    if (Auth.canPreschool()) {
+      PreschoolApp.bind(app);
     }
 
     if (Auth.isTeacher()) {
@@ -1776,7 +2472,14 @@
         const target = el.getAttribute("data-nav");
         if (!target) return;
         e.preventDefault();
-        go(target.replace(/^#/, ""));
+        const path = target.replace(/^#/, "");
+        // Strip ?query before reading the first segment (e.g. /floor-reports?date=…)
+        const path0 = path.split("?")[0].replace(/^\//, "").split("/")[0] || "home";
+        if (Auth.isAuthenticated() && !Auth.canAccessPath(path0)) {
+          go(Auth.homePath());
+          return;
+        }
+        go(path);
       });
     });
   }
@@ -1786,13 +2489,28 @@
     if (Auth.isAuthenticated()) {
       try {
         app.innerHTML = `<div class="login-page"><div class="login-card"><p>${typeof I18n !== "undefined" ? I18n.t("loading") : "Loading…"}</p></div></div>`;
-        if (!Auth.isWhatsApp() && !Auth.isTeacher()) {
-          const data = await BBC_API.loadSchoolData();
+        if (!Auth.isWhatsApp() && !Auth.isTeacher() && !Auth.isFloor() && !Auth.isPreschool()) {
+          let data = null;
+          let lastErr = null;
+          for (let i = 0; i < 3; i++) {
+            try {
+              data = await BBC_API.loadSchoolData();
+              lastErr = null;
+              break;
+            } catch (err) {
+              lastErr = err;
+              await new Promise((r) => setTimeout(r, 600 * (i + 1)));
+            }
+          }
+          if (lastErr) throw lastErr;
           BBC_DATA.setData(data);
         }
       } catch (err) {
         Auth.logout();
         console.error(err);
+        app.innerHTML = `<div class="login-page"><div class="login-card"><h1>${esc(I18n.t("failedLoad"))}</h1><p class="lede">${esc(err.message || err)}</p><button type="button" class="btn btn-primary" id="btn-reload">${esc(I18n.t("reload"))}</button></div></div>`;
+        document.getElementById("btn-reload")?.addEventListener("click", () => location.reload());
+        return;
       }
     }
     if (!location.hash || location.hash === "#") {

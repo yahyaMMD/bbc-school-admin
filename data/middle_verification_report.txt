@@ -1,0 +1,101 @@
+Middle school roster verification report
+=======================================
+Date: 2026-09-21
+Sources: data/rosters/img_01.png … img_19.png
+Target: data/middle_from_images.json
+Method: Visual read of each roster PNG (and magnified last-name / name-band crops);
+        class codes cross-checked against prior EasyOCR (digit-order aware).
+Policy: Zero tolerance for name mistakes. Gender kept as printed. Blank DOBs left "".
+
+SUMMARY
+-------
+Classes verified: 19
+Students in JSON: 442
+Name/field corrections applied: 26
+Class-code changes: 0
+Gender changes: 0
+DOB changes: 0 (spot-checked against images; blanks preserved where printed blank)
+
+Printed stats vs extracted row counts (unchanged notes):
+  img_10.png (1م4): stats total 24, extracted students 25
+  img_11.png (2م4): stats total 24, extracted students 26 (includes unnumbered عسولي)
+
+CORRECTIONS APPLIED
+-------------------
+img_04.png #1  lastName   ويتاس → ويناس
+img_04.png #7  lastName   عيسي → عيسى
+img_05.png #4  lastName   بوتلجة → بوثلجة
+img_06.png #3  lastName   عيوب → عبوب
+img_06.png #21 lastName   بن براهيم → بن ابراهيم
+img_07.png #1  lastName   ابراهيمي → براهيمي
+img_07.png #2  firstName  آدم → ادم
+img_08.png #12 lastName   لعموش → لمعوش
+img_10.png #1  lastName   إلتين → إلتن
+img_10.png #4  lastName   بوالتجة → بوثلجة
+img_10.png #13 lastName   عضنون → عصنون
+img_11.png #3  firstName  آدم → ادم
+img_12.png #23 lastName   بمال → يمال
+img_13.png #10 lastName   شنفور → شتفور
+img_13.png #11 lastName   شنفور → شتفور
+img_14.png #24 lastName   برايح → برابح
+img_15.png #7  firstName  آدم → ادم
+img_15.png #25 firstName  آدم → ادم
+img_16.png #19 lastName   ضمان → عثمان
+img_17.png #2  lastName   بنزة → بزو
+img_17.png #14 lastName   عبد الباسط → عبد البوسط
+img_17.png #21 lastName   خدري → خداري
+img_18.png #8  lastName   خاني → خاتي
+img_18.png #22 lastName   لصطب → لصبطب
+img_18.png #23 firstName  أمر حسان → أمير حسان
+img_19.png #9  lastName   حنبلي → حمبلي
+
+CHECKED AND LEFT UNCHANGED (false alarms / confirmed correct)
+-------------------------------------------------------------
+img_05.png #7  firstName دنيل (not دنيال)
+img_07.png #14 lastName قوادرية بوجلطية (compound surname as printed)
+img_11.png #2  firstName أنس أمير (not أمين)
+img_15.png #15 lastName سني (not ستي) — re-confirmed on img_15
+img_16.png #4  lastName بن كريرة (with ة)
+img_16.png #6  lastName بوبلاطة (with ة)
+img_18.png #7  lastName تشوكتش كبير / ريهام
+Class codes for all 19 images (including blank on img_02) match OCR-confirmed values:
+  1م3, (blank), 3م5, 3م3, 4م4, الثانية متوسط 5, 1م5, 3م4, الثانية متوسط 2,
+  1م4, 2م4, 4م2, 3م1, الثانية متوسط 1, 4م1, 1م7, 2م3, 1م6, 4م3
+
+PER-IMAGE STATUS
+----------------
+img_01.png  1م3                 OK (no name fixes)
+img_02.png  (blank class)       OK
+img_03.png  3م5                 OK
+img_04.png  3م3                 2 fixes (ويناس, عيسى)
+img_05.png  4م4                 1 fix (بوثلجة)
+img_06.png  الثانية متوسط 5     2 fixes (عبوب, بن ابراهيم)
+img_07.png  1م5                 2 fixes (براهيمي, ادم)
+img_08.png  3م4                 1 fix (لمعوش)
+img_09.png  الثانية متوسط 2     OK
+img_10.png  1م4                 3 fixes (إلتن, بوثلجة, عصنون); stats≠rows
+img_11.png  2م4                 1 fix (ادم); stats≠rows; unnumbered عسولي kept
+img_12.png  4م2                 1 fix (يمال); empty printed slots 6,7,9 kept
+img_13.png  3م1                 2 fixes (شتفور ×2)
+img_14.png  الثانية متوسط 1     1 fix (برابح)
+img_15.png  4م1                 2 fixes (ادم ×2); سني confirmed
+img_16.png  1م7                 1 fix (عثمان)
+img_17.png  2م3                 3 fixes (بزو, عبد البوسط, خداري)
+img_18.png  1م6                 3 fixes (خاتي, لصبطب, أمير حسان)
+img_19.png  4م3                 1 fix (حمبلي)
+
+RESULT
+------
+middle_from_images.json updated with the 26 corrections above.
+No class-code, gender, or DOB field rewrites were required beyond name/firstName fixes.
+
+
+SECOND-PASS MANUAL SPOT-CHECK (2026-09-21)
+-------------------------------------
+Reverted incorrect auto-fixes after re-reading images:
+  img_13.png #10 lastName: 'شتفور' → 'شنفور'
+  img_13.png #11 lastName: 'شتفور' → 'شنفور'
+  img_17.png #14 lastName: 'عبد البوسط' → 'عبد الباسط'
+  img_17.png #21 lastName: 'خداري' → 'خدري'
+  img_03.png #19 firstName: 'عبدالجليل' → 'عبد الجليل'
+Confirmed: img_13 surnames شنفور; img_17 عبد الباسط + خدري.

@@ -1,6 +1,12 @@
 /**
- * Session — password alone selects Director, Staff/admin, or WhatsApp.
+ * Session — password alone selects Director, Global view, Staff/admin, or WhatsApp.
  * Teachers use login ID (TR001…) + password via teacher login.
+ * Floor managers use FLOOR001… + password.
+ *
+ * Isolation:
+ * - global (GlobalView2026): full school browse + every console
+ * - director (Director2026): school browse + timetables + floor reports only
+ * - teacher / floor / admin / WhatsApp sessions are locked to their own area
  */
 const Auth = (() => {
   function isAuthenticated() {
@@ -15,12 +21,22 @@ const Auth = (() => {
     return role() === "admin";
   }
 
+  /** Limited or full leadership browse (director + global) */
   function isDirector() {
-    return role() === "director";
+    return role() === "director" || role() === "global";
+  }
+
+  /** Full interfaces (Manage / WhatsApp / teacher portals / floor access) */
+  function isGlobalView() {
+    return role() === "global";
   }
 
   function isWhatsApp() {
     return role() === "whatsapp";
+  }
+
+  function isPreschool() {
+    return role() === "preschool";
   }
 
   function isTeacher() {
@@ -35,14 +51,18 @@ const Auth = (() => {
     return typeof BBC_API !== "undefined" && BBC_API.isImpersonating();
   }
 
-  /** Director may open Staff manage console */
+  /** Only Global view (or staff admin) may open Manage console */
   function canManage() {
-    return isAdmin() || isDirector();
+    return isAdmin() || isGlobalView();
   }
 
-  /** Director may open WhatsApp console */
+  /** Only Global view (or WhatsApp role) may open WhatsApp console */
   function canWhatsApp() {
-    return isWhatsApp() || isDirector();
+    return isWhatsApp() || isGlobalView();
+  }
+
+  function canPreschool() {
+    return isPreschool() || isGlobalView();
   }
 
   function homePath() {
@@ -50,11 +70,62 @@ const Auth = (() => {
     if (isFloor()) return "/floor";
     if (isAdmin()) return "/manage";
     if (isWhatsApp()) return "/whatsapp";
+    if (isPreschool()) return "/preschool";
     return "/home";
   }
 
+  /**
+   * Path allow-list per role. Returns true if the hash path is permitted.
+   * `path0` is the first segment (e.g. "my", "floor", "manage").
+   */
+  function canAccessPath(path0) {
+    const p = String(path0 || "home").replace(/^\//, "") || "home";
+    if (isTeacher()) return p === "my";
+    if (isFloor()) return p === "floor";
+    if (isAdmin()) return p === "manage";
+    if (isWhatsApp()) return p === "whatsapp";
+    if (isPreschool()) return p === "preschool";
+    if (isGlobalView()) {
+      const allowed = new Set([
+        "home",
+        "search",
+        "teachers",
+        "students",
+        "teacher",
+        "student",
+        "dept",
+        "manage",
+        "whatsapp",
+        "preschool",
+        "enter-teacher",
+        "floor-access",
+        "floor-reports",
+        "timetable",
+        "issues",
+      ]);
+      return allowed.has(p);
+    }
+    if (role() === "director") {
+      // Limited Directrice: browse school + timetables + floor reports
+      const allowed = new Set([
+        "home",
+        "search",
+        "teachers",
+        "students",
+        "teacher",
+        "student",
+        "dept",
+        "floor-reports",
+        "timetable",
+        "issues",
+      ]);
+      return allowed.has(p);
+    }
+    return false;
+  }
+
   function exitToDirector() {
-    if (typeof BBC_API === "undefined" || !BBC_API.exitImpersonation()) return false;
+    if (typeof BBC_API !== "undefined" && !BBC_API.exitImpersonation()) return false;
     if (typeof TeacherApp !== "undefined" && TeacherApp.reset) TeacherApp.reset();
     if (typeof FloorApp !== "undefined" && FloorApp.reset) FloorApp.reset();
     return true;
@@ -96,12 +167,16 @@ const Auth = (() => {
     role,
     isAdmin,
     isDirector,
+    isGlobalView,
     isWhatsApp,
+    isPreschool,
     isTeacher,
     isFloor,
     isImpersonating,
     canManage,
     canWhatsApp,
+    canPreschool,
+    canAccessPath,
     homePath,
     exitToDirector,
   };

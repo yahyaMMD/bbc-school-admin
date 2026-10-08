@@ -9,27 +9,25 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 async function seedUsers() {
   const directorPass = process.env.DIRECTOR_PASSWORD || "Director2026";
+  const globalPass = process.env.GLOBAL_VIEW_PASSWORD || "GlobalView2026";
   const adminPass = process.env.ADMIN_PASSWORD || "AdminBBC2026";
   const whatsappPass = process.env.WHATSAPP_PASSWORD || "WhatsApp2026";
-  const directorHash = await bcrypt.hash(directorPass, 10);
-  const adminHash = await bcrypt.hash(adminPass, 10);
-  const whatsappHash = await bcrypt.hash(whatsappPass, 10);
-  await query(
-    `INSERT INTO app_users (role, password_hash) VALUES ($1, $2)
-     ON CONFLICT (role) DO UPDATE SET password_hash = EXCLUDED.password_hash, updated_at = NOW()`,
-    ["director", directorHash]
-  );
-  await query(
-    `INSERT INTO app_users (role, password_hash) VALUES ($1, $2)
-     ON CONFLICT (role) DO UPDATE SET password_hash = EXCLUDED.password_hash, updated_at = NOW()`,
-    ["admin", adminHash]
-  );
-  await query(
-    `INSERT INTO app_users (role, password_hash) VALUES ($1, $2)
-     ON CONFLICT (role) DO UPDATE SET password_hash = EXCLUDED.password_hash, updated_at = NOW()`,
-    ["whatsapp", whatsappHash]
-  );
-  console.log("Users seeded (director / admin / whatsapp)");
+  const pairs = [
+    ["director", directorPass],
+    ["global", globalPass],
+    ["admin", adminPass],
+    ["whatsapp", whatsappPass],
+    ["preschool", process.env.PRESCHOOL_PASSWORD || "Preschool2026"],
+  ];
+  for (const [role, pass] of pairs) {
+    const hash = await bcrypt.hash(pass, 10);
+    await query(
+      `INSERT INTO app_users (role, password_hash) VALUES ($1, $2)
+       ON CONFLICT (role) DO UPDATE SET password_hash = EXCLUDED.password_hash, updated_at = NOW()`,
+      [role, hash]
+    );
+  }
+  console.log("Users seeded (director / global / admin / whatsapp / preschool)");
 }
 
 async function seedFromJson(filePath) {
@@ -70,6 +68,15 @@ async function seedFromJson(filePath) {
             subtitle: l.subtitle,
           })),
         },
+        preschool: raw.preschool || {
+          id: "preschool",
+          name: "Preschool Department",
+          label: "Préscolaire",
+          description: "Grande Section — Arabic & English",
+          image: "",
+          levels: [{ id: 0, name: "Grande Section", nameAr: "التحضيري", subtitle: "GS A–F" }],
+        },
+        preschoolModules: raw.preschoolModules || ["Arabic", "English"],
       }),
     ]
   );

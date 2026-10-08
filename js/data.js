@@ -17,7 +17,8 @@ const BBC_DATA = (() => {
 
   function departments() {
     const d = getD();
-    return [d.primary, d.middle];
+    const list = [d.preschool, d.primary, d.middle].filter(Boolean);
+    return list;
   }
 
   function getDepartment(id) {
@@ -70,7 +71,7 @@ const BBC_DATA = (() => {
       for (const level of dept.levels) {
         for (const cls of level.classes) {
           for (const s of cls.students) {
-            const hay = `${s.searchName || ""} ${s.fullName || ""} ${s.fullNameLatin || ""} ${s.firstName || ""} ${s.firstNameLatin || ""} ${s.lastName || ""} ${s.lastNameLatin || ""}`.toLowerCase();
+            const hay = `${s.id || ""} ${s.searchName || ""} ${s.fullName || ""} ${s.fullNameLatin || ""} ${s.firstName || ""} ${s.firstNameLatin || ""} ${s.lastName || ""} ${s.lastNameLatin || ""}`.toLowerCase();
             if (hay.includes(q)) results.push({ student: s, dept, level, cls });
           }
         }
@@ -132,14 +133,23 @@ const BBC_DATA = (() => {
 
   function stats() {
     const m = getD().meta || {};
+    const preschoolLevels = (getD().preschool && getD().preschool.levels) || [];
     return {
-      floors: getD().primary.levels.length + getD().middle.levels.length,
-      levels: getD().primary.levels.length + getD().middle.levels.length,
-      classes: (m.primaryClasses || 0) + (m.middleClasses || 0),
+      floors:
+        getD().primary.levels.length +
+        getD().middle.levels.length +
+        preschoolLevels.length,
+      levels:
+        getD().primary.levels.length +
+        getD().middle.levels.length +
+        preschoolLevels.length,
+      classes:
+        (m.primaryClasses || 0) + (m.middleClasses || 0) + (m.preschoolClasses || 0),
       students: m.totalStudents || 0,
       teachers: m.teachers || (getD().teachers || []).length,
       primaryStudents: m.primaryStudents || 0,
       middleStudents: m.middleStudents || 0,
+      preschoolStudents: m.preschoolStudents || 0,
     };
   }
 
@@ -231,6 +241,9 @@ const BBC_DATA = (() => {
     },
     get middle() {
       return getD().middle;
+    },
+    get preschool() {
+      return getD().preschool;
     },
     setData,
     getDepartment,

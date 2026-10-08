@@ -423,6 +423,7 @@ export async function linkSubmissionToStudent(req, res) {
     const submissionId = clean(req.body?.submissionId || req.params.id, 40);
     const studentId = clean(req.body?.studentId, 40);
     const fillGapsOnly = req.body?.fillGapsOnly !== false;
+    const updateNames = req.body?.updateNames === true;
     if (!submissionId || !studentId) {
       return res.status(400).json({ error: "submissionId and studentId required" });
     }
@@ -454,14 +455,60 @@ export async function linkSubmissionToStudent(req, res) {
         ? stu.gender
         : formGender || stu.gender || "";
 
+    let nextFirst = stu.first_name || "";
+    let nextLast = stu.last_name || "";
+    let nextFull = stu.full_name || "";
+    let nextFirstLatin = stu.first_name_latin || "";
+    let nextLastLatin = stu.last_name_latin || "";
+    let nextFullLatin = stu.full_name_latin || "";
+    let nextSearch = stu.search_name || "";
+
+    if (updateNames) {
+      const pfFirst = clean(formData.student.firstName || sub.student_first_name, 80);
+      const pfLast = clean(formData.student.lastName || sub.student_last_name, 80);
+      const pfFull = `${pfLast} ${pfFirst}`.trim();
+      if (pfFirst) nextFirst = pfFirst;
+      if (pfLast) nextLast = pfLast;
+      if (pfFull) nextFull = pfFull;
+      const pfFirstLatin = clean(formData.student.firstNameLatin || formData.student.firstNameFr || "", 80);
+      const pfLastLatin = clean(formData.student.lastNameLatin || formData.student.lastNameFr || "", 80);
+      if (pfFirstLatin) nextFirstLatin = pfFirstLatin;
+      if (pfLastLatin) nextLastLatin = pfLastLatin;
+      const pfFullLatin = `${pfFirstLatin} ${pfLastLatin}`.trim();
+      if (pfFullLatin) nextFullLatin = pfFullLatin;
+      nextSearch = [nextFull, nextFullLatin, nextFirst, nextFirstLatin, nextLast, nextLastLatin]
+        .filter(Boolean)
+        .join(" ");
+    }
+
     await query(
       `UPDATE students SET
          parent_form_id = $2,
          parent_profile = $3::jsonb,
          date_of_birth = $4,
-         gender = $5
+         gender = $5,
+         first_name = $6,
+         last_name = $7,
+         full_name = $8,
+         first_name_latin = $9,
+         last_name_latin = $10,
+         full_name_latin = $11,
+         search_name = $12
        WHERE id = $1`,
-      [studentId, submissionId, JSON.stringify(profile), nextDob, nextGender]
+      [
+        studentId,
+        submissionId,
+        JSON.stringify(profile),
+        nextDob,
+        nextGender,
+        nextFirst,
+        nextLast,
+        nextFull,
+        nextFirstLatin,
+        nextLastLatin,
+        nextFullLatin,
+        nextSearch,
+      ]
     );
 
     // Clear previous link if this submission was linked elsewhere
@@ -501,13 +548,15 @@ export async function bulkLinkSubmissions(req, res) {
     const pairs = Array.isArray(req.body?.pairs) ? req.body.pairs : [];
     if (!pairs.length) return res.status(400).json({ error: "pairs required" });
     const fillGapsOnly = req.body?.fillGapsOnly !== false;
+    const updateNames = req.body?.updateNames === true;
     const results = [];
     for (const p of pairs) {
       const fakeReq = {
         body: {
           submissionId: p.submissionId,
           studentId: p.studentId,
-          fillGapsOnly,
+          fillGapsOnly: p.fillGapsOnly !== undefined ? p.fillGapsOnly : fillGapsOnly,
+          updateNames: p.updateNames !== undefined ? p.updateNames : updateNames,
         },
         params: {},
       };
